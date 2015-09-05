@@ -13,14 +13,23 @@ die() {
 	exit 1
 }
 
-BINS="out/zImage out/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dtb"
-rm -f $BINS
+KBUILD_OUTPUT="out/"
+BINS="${KBUILD_OUTPUT}zImage ${KBUILD_OUTPUT}arch/arm/boot/dts/exynos5422-odroidxu3-lite.dtb"
+MODULES_OUT="modules-out"
+rm -fr $BINS $MODULES_OUT
 
-~/dev/tools/release.sh -c exynos -E IPV6 -t tests || die "release fail"
+~/dev/tools/release.sh -c exynos -E IPV6 -t tests -m $MODULES_OUT || die "release fail"
 
 for file in $BINS; do
 	test -f "$file" || die "No $file"
 done
 
-echo scp $BINS pi:/srv/tftp/
+echo "scp $BINS pi:/srv/tftp/"
 scp $BINS pi:/srv/tftp/
+
+ssh odroid rm -fr modules/*
+find ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/ -type 'l' -delete
+scp -r ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/* odroid:modules/
+ssh odroid sudo cp -r modules/* /lib/modules/
+echo "scp -r ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/* odroid:modules/"
+echo "cp -r modules/* /lib/modules/"
