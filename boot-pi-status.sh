@@ -23,12 +23,12 @@ mode: $(cat /sys/class/thermal/thermal_zone0/mode)
 
 Odroid:
 =======
+$(sudo /usr/local/bin/gpio-pi.py status)
 Ping: $ping
 " | /usr/bin/mail -i -s 'Target alarmpi boot up' root
 	wait
 	# TODO: Find better way to wait for sendmail finish
 	sleep 20
-#$(sudo /usr/local/bin/gpio-pi.py status)
 }
 
 pi_check
