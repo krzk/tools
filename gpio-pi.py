@@ -19,21 +19,32 @@ pin = 2
 def gpio_setup():
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-    GPIO.setup(pin, GPIO.OUT)
 
 def gpio_on():
     print("Turning on...")
+    GPIO.setup(pin, GPIO.OUT)
     GPIO.output(pin, GPIO.LOW)
 
 def gpio_off():
     print("Turning off...")
+    GPIO.setup(pin, GPIO.OUT)
     GPIO.output(pin, GPIO.HIGH)
 
 def gpio_status():
     status = "on"
-    if (GPIO.input(pin) == GPIO.HIGH):
+    direction = GPIO.gpio_function(pin)
+
+    if (direction == GPIO.IN):
         status = "off"
-    print("Current GPIO: " + status)
+    elif (direction == GPIO.OUT):
+        GPIO.setup(pin, GPIO.OUT)
+        if (GPIO.input(pin) == GPIO.HIGH):
+            status = "off"
+    else:
+        print("Unknown GPIO" + str(pin) + " function: " + str(direction))
+        return
+
+    print("Current GPIO" + str(pin) + ": " + status)
 
 def print_help():
     print("Usage: " + str(sys.argv[0]) + " <command>")
