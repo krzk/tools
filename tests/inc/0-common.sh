@@ -31,3 +31,9 @@ test_cat_gt() {
     local val="$(cat $1)"
     test $val -gt $2 || echo "ERROR: Wrong ${1}: $val"
 }
+
+# print_msg msg
+# assuming 'name' is set
+print_msg() {
+    echo "${name}: $1"
+}
