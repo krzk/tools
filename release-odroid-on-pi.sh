@@ -18,18 +18,28 @@ BINS="${KBUILD_OUTPUT}zImage ${KBUILD_OUTPUT}arch/arm/boot/dts/exynos5422-odroid
 MODULES_OUT="modules-out"
 rm -fr $BINS $MODULES_OUT
 
+echo "##############################################"
+echo "Executing:"
+echo ~/dev/tools/release.sh -c exynos -E IPV6 -t tests -m $MODULES_OUT
+echo "##############################################"
+echo
 ~/dev/tools/release.sh -c exynos -E IPV6 -t tests -m $MODULES_OUT || die "release fail"
 
 for file in $BINS; do
 	test -f "$file" || die "No $file"
 done
 
+echo "##############################################"
+echo "Executing:"
 echo "scp $BINS pi:/srv/tftp/"
+echo "ssh odroid rm -fr modules/*"
+echo "find ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/ -type 'l' -delete"
+echo "scp -r ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/* odroid:modules/"
+echo "ssh odroid sudo cp -r modules/* /lib/modules/"
+echo "##############################################"
+echo
 scp $BINS pi:/srv/tftp/
-
 ssh odroid rm -fr modules/*
 find ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/ -type 'l' -delete
 scp -r ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/* odroid:modules/
 ssh odroid sudo cp -r modules/* /lib/modules/
-echo "scp -r ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/* odroid:modules/"
-echo "cp -r modules/* /lib/modules/"
