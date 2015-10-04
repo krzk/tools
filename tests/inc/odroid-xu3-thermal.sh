@@ -14,7 +14,7 @@
 
 test_thermal() {
     local name="Thermal"
-    print_msg "Starting"
+    print_msg "Testing..."
     local therm="/sys/class/thermal"
 
     test $(ls ${therm}/*/temp | wc -l) -eq 5 || print_msg "ERROR: Number of thermal zones"
@@ -35,5 +35,5 @@ test_thermal() {
     test_cat_lt ${therm}/thermal_zone3/temp 65000
     test_cat_gt ${therm}/thermal_zone4/temp 23000
     test_cat_lt ${therm}/thermal_zone4/temp 60000
-
+    print_msg "Done"
 }

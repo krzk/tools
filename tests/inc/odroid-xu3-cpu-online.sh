@@ -13,7 +13,7 @@
 # test_cpu_online <expected>
 test_cpu_online() {
     local name="CPU online"
-    print_msg "Starting"
+    print_msg "Testing..."
     local expected=$1
 
     echo 0 > /sys/kernel/bL_switcher/active

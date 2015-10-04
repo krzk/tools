@@ -12,7 +12,8 @@
 
 test_rtc() {
     local name="RTC"
-    print_msg "Starting"
+    print_msg "Testing..."
     rtcwake -d rtc0 -m on -s 5 > /dev/null
     rtcwake -d rtc1 -m on -s 5 > /dev/null
+    print_msg "OK"
 }

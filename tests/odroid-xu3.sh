@@ -24,11 +24,11 @@ test_cpu_mmc_stress
 
 # Sound: manual or:
 sudo -u $USER aplay /usr/share/sounds/alsa/Front_Right.wav > /dev/null
-echo "Sound/aplay: OK"
+echo "Sound/aplay: Done"
 
 echo "3810000.audss-clock-controller" > /sys/bus/platform/drivers/exynos-audss-clk/unbind
 echo "3810000.audss-clock-controller" > /sys/bus/platform/drivers/exynos-audss-clk/bind
-echo "Audss rebind: OK"
+echo "Audss rebind: Done"
 
 
 

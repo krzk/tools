@@ -14,7 +14,7 @@
 
 test_cpu_mmc_stress() {
     local name="CPU stress"
-    print_msg "Starting"
+    print_msg "Testing..."
     local therm="/sys/class/thermal"
     local t1="$(cat ${therm}/thermal_zone0/temp)"
     local t2=""
