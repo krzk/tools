@@ -39,7 +39,7 @@ echo "ssh odroid sudo cp -r modules/* /lib/modules/"
 echo "##############################################"
 echo
 scp $BINS pi:/srv/tftp/
-ssh odroid rm -fr modules/*
+ssh odroid rm -fr modules/*/
 find ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/ -type 'l' -delete
 scp -r ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/* odroid:modules/
 ssh odroid sudo cp -r modules/* /lib/modules/
