@@ -16,6 +16,9 @@ die() {
 KBUILD_OUTPUT="out/"
 BINS="${KBUILD_OUTPUT}zImage ${KBUILD_OUTPUT}arch/arm/boot/dts/exynos5422-odroidxu3-lite.dtb"
 MODULES_OUT="modules-out"
+PI_REMOTE=0
+test "$1" == "-r" && PI_REMOTE=1
+
 rm -fr $BINS $MODULES_OUT
 
 echo "##############################################"
@@ -38,8 +41,13 @@ echo "scp -r ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/* odroid:modules/"
 echo "ssh odroid sudo cp -r modules/* /lib/modules/"
 echo "##############################################"
 echo
-scp $BINS pi:/srv/tftp/
-ssh odroid rm -fr modules/*/
-find ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/ -type 'l' -delete
-scp -r ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/* odroid:modules/
-ssh odroid sudo cp -r modules/* /lib/modules/
+
+if [ $PI_REMOTE -eq 1 ]; then
+	scp $BINS pi-remote:/srv/tftp/
+else
+	scp $BINS pi:/srv/tftp/
+	ssh odroid rm -fr modules/*/
+	find ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/ -type 'l' -delete
+	scp -r ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/* odroid:modules/
+	ssh odroid sudo cp -r modules/* /lib/modules/
+fi;
