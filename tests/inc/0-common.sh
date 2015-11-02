@@ -37,3 +37,7 @@ test_cat_gt() {
 print_msg() {
     echo "${name}: $1"
 }
+
+get_board_compatible() {
+    sed 's/\x0.\+/\n/' /sys/firmware/devicetree/base/compatible
+}

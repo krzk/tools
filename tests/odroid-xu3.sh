@@ -15,11 +15,13 @@
 . $(dirname ${BASH_SOURCE[0]})/inc/rtc.sh
 . $(dirname ${BASH_SOURCE[0]})/inc/odroid-xu3-board-name.sh
 . $(dirname ${BASH_SOURCE[0]})/inc/odroid-xu3-cpu-mmc-stress.sh
+. $(dirname ${BASH_SOURCE[0]})/inc/clk-s2mps11.sh
 
 test_board_name
 test_cpu_online 8
-test_thermal
 test_rtc
+test_clk_s2mps11
+test_thermal
 test_cpu_mmc_stress
 
 # Sound: manual or:
