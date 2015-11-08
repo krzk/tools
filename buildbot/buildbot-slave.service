@@ -1,0 +1,14 @@
+[Unit]
+Description=Launch buildbot slave
+After=network.target network-online.target
+Requires=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/buildbot.sh start slave
+ExecStop=/usr/local/bin/buildbot.sh stop slave
+User=buildbot
+PIDFile=/home/buildbot/slave/twistd.pid
+
+[Install]
+WantedBy=multi-user.target
