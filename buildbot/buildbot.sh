@@ -21,6 +21,8 @@ SYSTEMD=0
 BOT=""
 SCRIPT="$0"
 
+PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/bin:/usr/local/sbin
+
 die() {
 	echo "Fail: $1"
 	exit 1
