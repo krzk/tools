@@ -23,6 +23,9 @@ SCRIPT="$0"
 
 PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/bin:/usr/local/sbin
 
+# Load the VERBOSE setting and other rcS variables
+. /lib/init/vars.sh
+
 die() {
 	echo "Fail: $1"
 	exit 1
