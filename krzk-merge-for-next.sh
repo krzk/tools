@@ -8,7 +8,7 @@
 # published by the Free Software Foundation.
 #
 
-BRANCHES="fixes samsung-for-next dt-for-next dt64-for-next defconfig-for-next"
+BRANCHES="fixes next/soc next/drivers next/dt next/dt64 next/defconfig"
 
 die() {
 	echo "Fail: $1"
