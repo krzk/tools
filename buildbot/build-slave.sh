@@ -13,6 +13,8 @@ die() {
 	exit 1
 }
 
+set -e -E
+
 CROSS_COMPILE=""
 JOBS="$(grep -c processor /proc/cpuinfo)"
 JOBS="-j$(expr $JOBS + 1)"
@@ -34,3 +36,5 @@ esac
 echo "Executing build command:"
 echo "CROSS_COMPILE=\"$CROSS_COMPILE\" make $JOBS $*"
 CROSS_COMPILE="$CROSS_COMPILE" make $JOBS $*
+
+exit $?
