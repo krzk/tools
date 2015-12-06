@@ -98,7 +98,7 @@ wait_for_boot() {
 echo "Rebooting slave ${SLAVE}..."
 reboot_slave $SLAVE
 
-echo "Logging from ${SLAVE}..."
+echo "Collecting logs in background from ${SLAVE}..."
 stty -F $SERIAL 115200 cs8 ignbrk -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -iexten -echo -echoe -echok -echoctl -echoke noflsh -ixon -crtscts
 ts < $SERIAL > $LOG_FILE &
 LOG_PID=$!
