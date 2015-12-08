@@ -18,7 +18,10 @@ test $# -eq 1 || die "Missing slave name"
 SLAVE="$1"
 SLAVE_USER="buildbot"
 SSH_SLAVE="${SLAVE_USER}@${SLAVE}"
+# Timeout for particular network commands: ping and ssh, in seconds
 TIMEOUT=3
+# Number of retries (each with TIMEOUT) for ssh connection
+SSH_WAIT_FOR_BOOT_TRIES=50
 SERIAL=/dev/ttyUSB0
 LOG_FILE=serial.log
 
@@ -78,9 +81,8 @@ ssh_get_diag() {
 wait_for_boot() {
 	local slave=$1
 	local i=0
-	local tries=30
 
-	while [ $i -lt $tries ]; do
+	while [ $i -lt $SSH_WAIT_FOR_BOOT_TRIES ]; do
 		ssh -o "ConnectTimeout $TIMEOUT" $SSH_SLAVE id &> /dev/null
 		if [ $? -eq 0 ]; then
 			echo "Slave $slave booted!"
@@ -90,7 +92,7 @@ wait_for_boot() {
 		i=$(expr $i + 1)
 	done
 
-	test $i -lt $tries
+	test $i -lt $SSH_WAIT_FOR_BOOT_TRIES
 
 	return $?
 }
