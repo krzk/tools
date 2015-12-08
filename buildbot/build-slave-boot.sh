@@ -114,4 +114,12 @@ kill $LOG_PID &> /dev/null
 kill -9 $LOG_PID &> /dev/null
 
 echo "Slave $SLAVE boot: $BOOT_STATUS"
+if [ $BOOT_STATUS -ne 0 ]; then
+	# Target could be stuck in boot spinning in a stupid way with fan
+	# on high speed. It is unresponsive so useless. Power it off
+	# to save the power.
+	echo "Target $SLAVE failed to boot, power it off"
+	sudo gpio-pi.py off
+fi
+
 exit $BOOT_STATUS
