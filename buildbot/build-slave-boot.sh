@@ -13,11 +13,11 @@ die() {
 	exit 1
 }
 
-test $# -eq 1 || die "Missing slave name"
+test $# -eq 1 || die "Missing target name"
 
-SLAVE="$1"
-SLAVE_USER="buildbot"
-SSH_SLAVE="${SLAVE_USER}@${SLAVE}"
+TARGET="$1"
+TARGET_USER="buildbot"
+SSH_TARGET="${TARGET_USER}@${TARGET}"
 # Timeout for particular network commands: ping and ssh, in seconds
 TIMEOUT=3
 # Number of retries (each with TIMEOUT) for ssh connection
@@ -25,42 +25,42 @@ SSH_WAIT_FOR_BOOT_TRIES=50
 SERIAL=/dev/ttyUSB0
 LOG_FILE=serial.log
 
-# wait_for_ping_die slave
+# wait_for_ping_die target
 wait_for_ping_die() {
-	local slave=$1
+	local target=$1
 	local i=0
 	local tries=1000
 
-	ping -c 1 -W $TIMEOUT $slave > /dev/null
+	ping -c 1 -W $TIMEOUT $target > /dev/null
 
 	if [ $? -eq 1 ]; then
-		echo "Slave $slave died very fast"
+		echo "Target $target died very fast"
 		return 0
 	fi
 
 	while [ $i -lt $tries ]; do
-		ping -c 1 -W $TIMEOUT $slave > /dev/null
+		ping -c 1 -W $TIMEOUT $target > /dev/null
 		if [ $? -ne 0 ]; then
-			echo "Slave $slave dead after $i pings"
+			echo "Target $target dead after $i pings"
 			break
 		fi
 		i=$(expr $i + 1)
 	done
 
-	test $i -lt $tries || echo "Slave $slave did not die properly"
+	test $i -lt $tries || echo "Target $target did not die properly"
 
 	return 0
 }
 
-reboot_slave() {
-	local slave=$1
+reboot_target() {
+	local target=$1
 
-	echo "Checking if slave $slave is alive..."
-	ssh -o "ConnectTimeout $TIMEOUT" $SSH_SLAVE id > /dev/null
+	echo "Checking if target $target is alive..."
+	ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET id > /dev/null
 	if [ $? -eq 0 ]; then
-		echo "Slave $slave alive, powering down..."
-		ssh $SSH_SLAVE sudo poweroff &> /dev/null
-		wait_for_ping_die $slave
+		echo "Target $target alive, powering down..."
+		ssh $SSH_TARGET sudo poweroff &> /dev/null
+		wait_for_ping_die $target
 	fi
 
 	sudo gpio-pi.py restart
@@ -68,24 +68,24 @@ reboot_slave() {
 
 ssh_get_diag() {
 	echo "####################################"
-	ssh -o "ConnectTimeout $TIMEOUT" $SSH_SLAVE uname -a || return $?
+	ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET uname -a || return $?
 	echo "####################################"
 	echo "Dmesg err:"
-	ssh -o "ConnectTimeout $TIMEOUT" $SSH_SLAVE dmesg -l err
+	ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET dmesg -l err
 	echo "####################################"
 	echo "Dmesg warn:"
-	ssh -o "ConnectTimeout $TIMEOUT" $SSH_SLAVE dmesg -l warn
+	ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET dmesg -l warn
 	echo "####################################"
 }
 
 wait_for_boot() {
-	local slave=$1
+	local target=$1
 	local i=0
 
 	while [ $i -lt $SSH_WAIT_FOR_BOOT_TRIES ]; do
-		ssh -o "ConnectTimeout $TIMEOUT" $SSH_SLAVE id &> /dev/null
+		ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET id &> /dev/null
 		if [ $? -eq 0 ]; then
-			echo "Slave $slave booted!"
+			echo "Target $target booted!"
 			ssh_get_diag
 			return $?
 		fi
@@ -97,28 +97,28 @@ wait_for_boot() {
 	return $?
 }
 
-echo "Rebooting slave ${SLAVE}..."
-reboot_slave $SLAVE
+echo "Rebooting target ${TARGET}..."
+reboot_target $TARGET
 
-echo "Collecting logs in background from ${SLAVE}..."
+echo "Collecting logs in background from ${TARGET}..."
 stty -F $SERIAL 115200 cs8 ignbrk -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -iexten -echo -echoe -echok -echoctl -echoke noflsh -ixon -crtscts
 ts < $SERIAL > $LOG_FILE &
 LOG_PID=$!
 #echo "Logger PID: $LOG_PID"
 
-echo "Wait for boot of ${SLAVE}..."
-wait_for_boot $SLAVE
+echo "Wait for boot of ${TARGET}..."
+wait_for_boot $TARGET
 BOOT_STATUS=$?
 
 kill $LOG_PID &> /dev/null
 kill -9 $LOG_PID &> /dev/null
 
-echo "Slave $SLAVE boot: $BOOT_STATUS"
+echo "Target $TARGET boot: $BOOT_STATUS"
 if [ $BOOT_STATUS -ne 0 ]; then
 	# Target could be stuck in boot spinning in a stupid way with fan
 	# on high speed. It is unresponsive so useless. Power it off
 	# to save the power.
-	echo "Target $SLAVE failed to boot, power it off"
+	echo "Target $TARGET failed to boot, power it off"
 	sudo gpio-pi.py off
 fi
 
