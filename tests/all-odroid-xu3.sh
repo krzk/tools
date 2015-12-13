@@ -7,22 +7,16 @@
 # it under the terms of the GNU General Public License version 2 as
 # published by the Free Software Foundation.
 #
-#set -e -E
 
-. $(dirname ${BASH_SOURCE[0]})/inc/0-common.sh
-. $(dirname ${BASH_SOURCE[0]})/inc/odroid-xu3-cpu-online.sh
-. $(dirname ${BASH_SOURCE[0]})/inc/odroid-xu3-thermal.sh
-. $(dirname ${BASH_SOURCE[0]})/inc/rtc.sh
-. $(dirname ${BASH_SOURCE[0]})/inc/odroid-xu3-board-name.sh
-. $(dirname ${BASH_SOURCE[0]})/inc/odroid-xu3-cpu-mmc-stress.sh
-. $(dirname ${BASH_SOURCE[0]})/inc/clk-s2mps11.sh
+set -e -E
 
-test_board_name
-test_cpu_online 8
-test_rtc
-test_clk_s2mps11
-test_thermal
-test_cpu_mmc_stress
+. $(dirname ${BASH_SOURCE[0]})/inc-common.sh
+. $(dirname ${BASH_SOURCE[0]})/odroid-xu3-cpu-online.sh
+. $(dirname ${BASH_SOURCE[0]})/odroid-xu3-thermal.sh
+. $(dirname ${BASH_SOURCE[0]})/rtc.sh
+. $(dirname ${BASH_SOURCE[0]})/odroid-xu3-board-name.sh
+. $(dirname ${BASH_SOURCE[0]})/odroid-xu3-cpu-mmc-stress.sh
+. $(dirname ${BASH_SOURCE[0]})/clk-s2mps11.sh
 
 # Sound: manual or:
 sudo -u $USER aplay /usr/share/sounds/alsa/Front_Right.wav > /dev/null

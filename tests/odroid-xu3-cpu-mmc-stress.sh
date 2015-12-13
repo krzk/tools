@@ -8,7 +8,8 @@
 # published by the Free Software Foundation.
 #
 
-. $(dirname ${BASH_SOURCE[0]})/0-common.sh
+set -e -E
+. $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
 # grep . /sys/class/thermal/*/temp
 
@@ -41,3 +42,5 @@ test_cpu_mmc_stress() {
 
     print_msg "Temperature diff: $(expr $t2 - $t1)"
 }
+
+test_cpu_mmc_stress

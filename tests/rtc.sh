@@ -8,7 +8,8 @@
 # published by the Free Software Foundation.
 #
 
-. $(dirname ${BASH_SOURCE[0]})/0-common.sh
+set -e -E
+. $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
 test_rtc() {
     local name="RTC"
@@ -17,3 +18,5 @@ test_rtc() {
     rtcwake -d rtc1 -m on -s 5 > /dev/null
     print_msg "OK"
 }
+
+test_rtc

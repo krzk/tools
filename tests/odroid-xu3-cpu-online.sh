@@ -8,7 +8,8 @@
 # published by the Free Software Foundation.
 #
 
-. $(dirname ${BASH_SOURCE[0]})/0-common.sh
+set -e -E
+. $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
 # test_cpu_online <expected>
 test_cpu_online() {
@@ -27,3 +28,5 @@ test_cpu_online() {
     print_msg "$cpu_online"
     test $cpu_online -eq $expected || print_msg "ERROR: test $cpu_online -ne $expected"
 }
+
+test_cpu_online 8

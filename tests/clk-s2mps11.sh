@@ -8,7 +8,8 @@
 # published by the Free Software Foundation.
 #
 
-. $(dirname ${BASH_SOURCE[0]})/0-common.sh
+set -e -E
+. $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
 test_clk_s2mps11() {
     local name="clk-s2mps11"
@@ -38,3 +39,5 @@ test_clk_s2mps11() {
         test_cat "${clk}/clk_rate" 32768
     done
 }
+
+test_clk_s2mps11

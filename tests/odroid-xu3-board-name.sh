@@ -8,7 +8,8 @@
 # published by the Free Software Foundation.
 #
 
-. $(dirname ${BASH_SOURCE[0]})/0-common.sh
+set -e -E
+. $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
 test_board_name() {
     local of="/sys/firmware/devicetree/base/compatible"
@@ -19,3 +20,5 @@ test_board_name() {
     echo
     echo "ERROR: Wrong board"
 }
+
+test_board_name

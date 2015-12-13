@@ -8,7 +8,8 @@
 # published by the Free Software Foundation.
 #
 
-. $(dirname ${BASH_SOURCE[0]})/0-common.sh
+set -e -E
+. $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
 # grep . /sys/class/thermal/*/temp
 
@@ -37,3 +38,5 @@ test_thermal() {
     test_cat_lt ${therm}/thermal_zone4/temp 60000
     print_msg "Done"
 }
+
+test_thermal
