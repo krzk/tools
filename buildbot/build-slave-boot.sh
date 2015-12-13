@@ -78,12 +78,16 @@ ssh_get_diag() {
 	echo "####################################"
 }
 
+ssh_works() {
+	ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET id &> /dev/null
+}
+
 wait_for_boot() {
 	local target=$1
 	local i=0
 
 	while [ $i -lt $SSH_WAIT_FOR_BOOT_TRIES ]; do
-		ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET id &> /dev/null
+		ssh_works
 		if [ $? -eq 0 ]; then
 			echo "Target $target booted!"
 			ssh_get_diag
@@ -97,6 +101,16 @@ wait_for_boot() {
 	return $?
 }
 
+run_tests() {
+	local target=$1
+
+	set -e -E
+	ssh $SSH_TARGET sudo /opt/tools/tests/all-odroid-xu3.sh
+
+	ssh_works
+	set +e +E
+}
+
 echo "Rebooting target ${TARGET}..."
 reboot_target $TARGET
 
@@ -104,14 +118,10 @@ echo "Collecting logs in background from ${TARGET}..."
 stty -F $SERIAL 115200 cs8 ignbrk -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -iexten -echo -echoe -echok -echoctl -echoke noflsh -ixon -crtscts
 ts < $SERIAL > $LOG_FILE &
 LOG_PID=$!
-#echo "Logger PID: $LOG_PID"
 
 echo "Wait for boot of ${TARGET}..."
 wait_for_boot $TARGET
 BOOT_STATUS=$?
-
-kill $LOG_PID &> /dev/null
-kill -9 $LOG_PID &> /dev/null
 
 echo "Target $TARGET boot: $BOOT_STATUS"
 if [ $BOOT_STATUS -ne 0 ]; then
@@ -120,6 +130,11 @@ if [ $BOOT_STATUS -ne 0 ]; then
 	# to save the power.
 	echo "Target $TARGET failed to boot, power it off"
 	sudo gpio-pi.py off
+else
+	run_tests $TARGET
 fi
+
+kill $LOG_PID &> /dev/null
+kill -9 $LOG_PID &> /dev/null
 
 exit $BOOT_STATUS
