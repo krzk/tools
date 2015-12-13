@@ -21,6 +21,8 @@ test_cpu_mmc_stress() {
     local t2=""
     local pids=""
 
+    # Make all CPUs busy
+    echo 0 > /sys/kernel/bL_switcher/active
     test_cat_gt ${therm}/thermal_zone0/temp 25000
     test_cat_lt ${therm}/thermal_zone0/temp 45000
 
@@ -40,7 +42,7 @@ test_cpu_mmc_stress() {
 
     sudo -u $USER kill $pids
 
-    print_msg "Temperature diff: $(expr $t2 - $t1)"
+    print_msg "Temperature diff: $t2 - $t1 = $(expr $t2 - $t1)"
 }
 
 test_cpu_mmc_stress
