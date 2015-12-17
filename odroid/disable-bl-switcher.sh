@@ -8,4 +8,4 @@
 # published by the Free Software Foundation.
 #
 
-echo 0 > /sys/kernel/bL_switcher/active
+test -f /sys/kernel/bL_switcher/active && echo 0 > /sys/kernel/bL_switcher/active
