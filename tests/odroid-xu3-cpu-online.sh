@@ -17,7 +17,7 @@ test_cpu_online() {
     print_msg "Testing..."
     local expected=$1
 
-    echo 0 > /sys/kernel/bL_switcher/active
+    test -f /sys/kernel/bL_switcher/active && echo 0 > /sys/kernel/bL_switcher/active
     cpu_online=0
     for i in /sys/bus/cpu/devices/cpu*/online; do
         cpu_stat=$(cat $i)

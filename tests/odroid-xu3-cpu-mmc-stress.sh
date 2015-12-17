@@ -22,7 +22,7 @@ test_cpu_mmc_stress() {
     local pids=""
 
     # Make all CPUs busy
-    echo 0 > /sys/kernel/bL_switcher/active
+    test -f /sys/kernel/bL_switcher/active && echo 0 > /sys/kernel/bL_switcher/active
     test_cat_gt ${therm}/thermal_zone0/temp 25000
     test_cat_lt ${therm}/thermal_zone0/temp 45000
 
