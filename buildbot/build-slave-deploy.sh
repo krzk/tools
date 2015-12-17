@@ -15,7 +15,7 @@ die() {
 
 set -e -E
 
-test $# -eq 3 || die "Wrong number of parameters"
+test $# -gt 1 || die "Wrong number of parameters"
 
 TARGET="$1"
 NAME="$2"
@@ -25,7 +25,8 @@ echo "Deploying ${NAME}/${REVISION} to $TARGET"
 
 test -d lib && die "Not clean: 'lib' present"
 test -f initramfs-odroidxu3.img && die "Not clean: 'initramfs-odroidxu3.img' present"
-test -d "/tmp/modules-buildslave/${NAME}-${REVISION}" && die "Not clean: '/tmp/modules-buildslave/${NAME}-${REVISION}' present"
+# REVISION not used actually
+#test -d "/tmp/modules-buildslave/${NAME}-${REVISION}" && die "Not clean: '/tmp/modules-buildslave/${NAME}-${REVISION}' present"
 
 umask 022
 
@@ -52,10 +53,8 @@ mkimage -n "U-boot Odroid XU3 ramdisk" -A arm -O linux -T ramdisk -C gzip \
 #cp -r "lib/modules/${KERNEL_NAME}" /srv/nfs/modules-odroidxu3/
 
 chgrp -R tftp /srv/tftp/zImage /srv/tftp/exynos5422-odroidxu3-lite.dtb /srv/tftp/uboot-initramfs-odroidxu3.img /srv/tftp/*
-#', util.Interpolate(u'/srv/nfs/modules-odroidxu3/%(prop:kernel_name)s')],
 chmod -R a+r /srv/tftp/uboot-initramfs-odroidxu3.img
-#util.Interpolate(u'/srv/nfs/modules-odroidxu3/%(prop:kernel_name)s')],
-
+chmod -R g+w /srv/tftp/*
 
 echo "Deploying modules to $TARGET"
 # These may fail because target being offline
