@@ -13,9 +13,10 @@ die() {
 	exit 1
 }
 
-test $# -eq 1 || die "Missing target name"
+test $# -gt 1 || die "Missing target name"
 
 TARGET="$1"
+NAME="$2"
 TARGET_USER="buildbot"
 SSH_TARGET="${TARGET_USER}@${TARGET}"
 # Timeout for particular network commands: ping and ssh, in seconds
@@ -131,7 +132,13 @@ if [ $BOOT_STATUS -ne 0 ]; then
 	echo "Target $TARGET failed to boot, power it off"
 	sudo gpio-pi.py off
 else
-	run_tests $TARGET
+	if [ "$NAME" == "exynos" ]; then
+		run_tests $TARGET
+	else
+		# TODO: On multi_v7 some tests hang the buildbot console
+		# and some fail because of missing modules (like sound)
+		echo "Skipping tests..."
+	fi
 fi
 
 kill $LOG_PID &> /dev/null
