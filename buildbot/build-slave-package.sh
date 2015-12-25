@@ -20,6 +20,12 @@ test $# -eq 2 || die "Wrong number of parameters"
 NAME="$1"
 OUT_DIR="$2"
 
+if [ ! -f "arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts" ]; then
+	# If there is no Odroid XU3 Lite DTS, then duplicate the XU3 DTB
+	echo "No Odroid XU3 Lite DTS, using regular XU3"
+	cp ${OUT_DIR}/arch/arm/boot/dts/exynos5422-odroidxu3.dtb ${OUT_DIR}/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dtb
+fi
+
 # Remove old modules-out
 rm -fr "${OUT_DIR}/modules-out"
 # Install modules into modules-out
