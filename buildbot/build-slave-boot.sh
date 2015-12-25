@@ -22,7 +22,7 @@ SSH_TARGET="${TARGET_USER}@${TARGET}"
 # Timeout for particular network commands: ping and ssh, in seconds
 TIMEOUT=3
 # Number of retries (each with TIMEOUT) for ssh connection
-SSH_WAIT_FOR_BOOT_TRIES=50
+SSH_WAIT_FOR_BOOT_TRIES=100
 SERIAL=/dev/ttyUSB0
 LOG_FILE=serial.log
 
@@ -97,9 +97,12 @@ wait_for_boot() {
 		i=$(expr $i + 1)
 	done
 
-	test $i -lt $SSH_WAIT_FOR_BOOT_TRIES
+	if [ $i -ge $SSH_WAIT_FOR_BOOT_TRIES ]; then
+		echo "Timeout waiting for $target boot"
+		return 1
+	fi
 
-	return $?
+	return 0
 }
 
 run_tests() {
