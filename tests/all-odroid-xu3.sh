@@ -11,6 +11,7 @@
 set -e -E
 
 . $(dirname ${BASH_SOURCE[0]})/inc-common.sh
+. $(dirname ${BASH_SOURCE[0]})/odroid-xu3-pwm-fan.sh
 . $(dirname ${BASH_SOURCE[0]})/odroid-xu3-cpu-online.sh
 . $(dirname ${BASH_SOURCE[0]})/odroid-xu3-thermal.sh
 . $(dirname ${BASH_SOURCE[0]})/rtc.sh
