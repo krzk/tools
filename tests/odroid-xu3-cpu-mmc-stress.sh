@@ -20,6 +20,14 @@ test_cpu_mmc_stress() {
     local t1="$(cat ${therm}/thermal_zone0/temp)"
     local t2=""
     local pids=""
+    # TODO: iterate over all hwmon devices to find pwmfan
+    local hwmon="/sys/class/hwmon/hwmon0"
+
+    if [ -d "${hwmon}/pwm1" ]; then
+        # On older multi_v7 it may not be enabled
+        test_cat ${hwmon}/name "pwmfan"
+        test_cat ${hwmon}/pwm1 "0"
+    fi
 
     # Make all CPUs busy
     test -f /sys/kernel/bL_switcher/active && echo 0 > /sys/kernel/bL_switcher/active
@@ -39,6 +47,9 @@ test_cpu_mmc_stress() {
 
     test_cat_gt ${therm}/thermal_zone0/temp 40000
     test_cat_lt ${therm}/thermal_zone0/temp 65000
+    # Unfortunately this may not be sufficient to reach next threshold
+    # of cooling device, so fan may be still at 0
+    # test_cat_gt ${hwmon}/pwm1 50
 
     sudo -u $USER kill $pids
 
