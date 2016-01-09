@@ -18,6 +18,8 @@ set -e -E
 . $(dirname ${BASH_SOURCE[0]})/odroid-xu3-board-name.sh
 . $(dirname ${BASH_SOURCE[0]})/odroid-xu3-cpu-mmc-stress.sh
 . $(dirname ${BASH_SOURCE[0]})/clk-s2mps11.sh
+# RNG does not work on Odroid, configured in secure mode?
+#. $(dirname ${BASH_SOURCE[0]})/rng-exynos.sh
 
 # Sound: manual or:
 sudo -u $USER aplay /usr/share/sounds/alsa/Front_Right.wav > /dev/null
