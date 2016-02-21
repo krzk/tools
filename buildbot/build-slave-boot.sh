@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015 Krzysztof Kozlowski
+# Copyright (c) 2015,2016 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -132,6 +132,9 @@ if [ $BOOT_STATUS -ne 0 ]; then
 	# Target could be stuck in boot spinning in a stupid way with fan
 	# on high speed. It is unresponsive so useless. Power it off
 	# to save the power.
+	#
+	# TODO: Boot safe image so next deployment of modules (over SSH)
+	# would work.
 	echo "Target $TARGET failed to boot, power it off"
 	sudo gpio-pi.py off
 else
