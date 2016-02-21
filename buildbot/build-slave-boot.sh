@@ -105,16 +105,6 @@ wait_for_boot() {
 	return 0
 }
 
-run_tests() {
-	local target=$1
-
-	set -e -E
-	ssh $SSH_TARGET sudo /opt/tools/tests/all-odroid-xu3.sh
-
-	ssh_works
-	set +e +E
-}
-
 echo "Rebooting target ${TARGET}..."
 reboot_target $TARGET
 
@@ -137,14 +127,6 @@ if [ $BOOT_STATUS -ne 0 ]; then
 	# would work.
 	echo "Target $TARGET failed to boot, power it off"
 	sudo gpio-pi.py off
-else
-	if [ "$NAME" == "exynos" ]; then
-		run_tests $TARGET
-	else
-		# TODO: On multi_v7 some tests hang the buildbot console
-		# and some fail because of missing modules (like sound)
-		echo "Skipping tests..."
-	fi
 fi
 
 kill $LOG_PID &> /dev/null
