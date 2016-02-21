@@ -14,8 +14,13 @@ set -e -E
 test_rtc() {
 	local name="RTC"
 	print_msg "Testing..."
+
+	hwclock --systohc -f /dev/rtc0
 	rtcwake -d rtc0 -m on -s 5 > /dev/null
+
+	hwclock --systohc -f /dev/rtc1
 	rtcwake -d rtc1 -m on -s 5 > /dev/null
+
 	print_msg "OK"
 }
 
