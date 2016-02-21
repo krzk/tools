@@ -19,6 +19,7 @@ TARGET="$1"
 NAME="$2"
 TARGET_USER="buildbot"
 SSH_TARGET="${TARGET_USER}@${TARGET}"
+TOOLS_DIR="/opt/tools"
 # Timeout for particular network commands: ping and ssh, in seconds
 TIMEOUT=3
 SERIAL=/dev/ttyUSB0
@@ -32,7 +33,7 @@ run_tests() {
 	local target=$1
 
 	set -e -E
-	ssh $SSH_TARGET sudo /opt/tools/tests/all-odroid-xu3.sh
+	ssh $SSH_TARGET sudo ${TOOLS_DIR}/tests/all-odroid-xu3.sh
 
 	ssh_works
 	set +e +E

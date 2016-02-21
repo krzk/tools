@@ -21,6 +21,7 @@ TARGET="$1"
 NAME="$2"
 REVISION="$3"
 MODULES_DIR="~/modules-install"
+TOOLS_DIR="/opt/tools"
 echo "Deploying ${NAME}/${REVISION} to $TARGET"
 
 test -d lib && die "Not clean: 'lib' present"
@@ -45,7 +46,7 @@ echo "Got kernel name: $KERNEL_NAME"
 echo "Making initramfs and image"
 mkinitcpio --moduleroot . --kernel "${KERNEL_NAME}" \
 	--generate initramfs-odroidxu3.img \
-	--config /opt/tools/buildbot/${NAME}/mkinitcpio.conf
+	--config ${TOOLS_DIR}/buildbot/${NAME}/mkinitcpio.conf
 
 mkimage -n "U-boot Odroid XU3 ramdisk" -A arm -O linux -T ramdisk -C gzip \
 	-d initramfs-odroidxu3.img /srv/tftp/uboot-initramfs-odroidxu3.img
@@ -69,6 +70,6 @@ ssh "$TARGET" rm -fr "$MODULES_DIR"
 ssh "$TARGET" mkdir -p "$MODULES_DEST_DIR"
 ssh "$TARGET" rm -fr "${MODULES_DEST_DIR}"
 scp -r "lib/modules/${KERNEL_NAME}" "${TARGET}:${MODULES_DEST_DIR}"
-ssh "$TARGET" sudo /opt/tools/buildbot/build-slave-install-modules.sh "$KERNEL_NAME"
+ssh "$TARGET" sudo ${TOOLS_DIR}/buildbot/build-slave-install-modules.sh "$KERNEL_NAME"
 
 exit $?
