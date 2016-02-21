@@ -11,6 +11,8 @@
 set -e -E
 . $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
+# grep . /sys/class/hwmon/hwmon0/*/pwm1
+
 test_pwm_fan() {
 	local name="PWM fan"
 	print_msg "Testing..."
