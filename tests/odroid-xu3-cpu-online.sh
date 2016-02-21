@@ -13,20 +13,20 @@ set -e -E
 
 # test_cpu_online <expected>
 test_cpu_online() {
-    local name="CPU online"
-    print_msg "Testing..."
-    local expected=$1
+	local name="CPU online"
+	print_msg "Testing..."
+	local expected=$1
 
-    test -f /sys/kernel/bL_switcher/active && echo 0 > /sys/kernel/bL_switcher/active
-    cpu_online=0
-    for i in /sys/bus/cpu/devices/cpu*/online; do
-        cpu_stat=$(cat $i)
-        if [ $cpu_stat -eq 1 ]; then
-            let "cpu_online+=1"
-        fi
-    done
-    print_msg "$cpu_online"
-    test $cpu_online -eq $expected || print_msg "ERROR: test $cpu_online -ne $expected"
+	test -f /sys/kernel/bL_switcher/active && echo 0 > /sys/kernel/bL_switcher/active
+	cpu_online=0
+	for i in /sys/bus/cpu/devices/cpu*/online; do
+		cpu_stat=$(cat $i)
+		if [ $cpu_stat -eq 1 ]; then
+			let "cpu_online+=1"
+		fi
+	done
+	print_msg "$cpu_online"
+	test $cpu_online -eq $expected || print_msg "ERROR: test $cpu_online -ne $expected"
 }
 
 test_cpu_online 8

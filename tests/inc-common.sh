@@ -10,34 +10,34 @@
 
 # die error_msg
 die() {
-    echo "FAIL: $1"
-    exit 1
+	echo "FAIL: $1"
+	exit 1
 }
 
 # test_cat file expected
 test_cat() {
-    local val="$(cat $1)"
-    test "$val" = "$2" || echo "ERROR: Wrong $1 ($val == $2)"
+	local val="$(cat $1)"
+	test "$val" = "$2" || echo "ERROR: Wrong $1 ($val == $2)"
 }
 
 #test_cat_lt file expected
 test_cat_lt() {
-    local val="$(cat $1)"
-    test $val -lt $2 || echo "ERROR: Wrong $1 ($val < $2)"
+	local val="$(cat $1)"
+	test $val -lt $2 || echo "ERROR: Wrong $1 ($val < $2)"
 }
 
 #test_cat_gt file expected
 test_cat_gt() {
-    local val="$(cat $1)"
-    test $val -gt $2 || echo "ERROR: Wrong $1 ($val > $2)"
+	local val="$(cat $1)"
+	test $val -gt $2 || echo "ERROR: Wrong $1 ($val > $2)"
 }
 
 # print_msg msg
 # assuming 'name' is set
 print_msg() {
-    echo "${name}: $1"
+	echo "${name}: $1"
 }
 
 get_board_compatible() {
-    sed 's/\x0.\+/\n/' /sys/firmware/devicetree/base/compatible
+	sed 's/\x0.\+/\n/' /sys/firmware/devicetree/base/compatible
 }

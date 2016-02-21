@@ -12,11 +12,11 @@ set -e -E
 . $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
 test_rtc() {
-    local name="RTC"
-    print_msg "Testing..."
-    rtcwake -d rtc0 -m on -s 5 > /dev/null
-    rtcwake -d rtc1 -m on -s 5 > /dev/null
-    print_msg "OK"
+	local name="RTC"
+	print_msg "Testing..."
+	rtcwake -d rtc0 -m on -s 5 > /dev/null
+	rtcwake -d rtc1 -m on -s 5 > /dev/null
+	print_msg "OK"
 }
 
 test_rtc
