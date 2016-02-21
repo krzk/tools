@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015 Krzysztof Kozlowski
+# Copyright (c) 2015,2016 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -8,7 +8,7 @@
 # published by the Free Software Foundation.
 #
 
-set -e -E
+set -e -E -x
 
 . $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 . $(dirname ${BASH_SOURCE[0]})/odroid-xu3-pwm-fan.sh
