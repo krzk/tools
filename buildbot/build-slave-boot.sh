@@ -26,6 +26,13 @@ SSH_WAIT_FOR_BOOT_TRIES=100
 SERIAL=/dev/ttyUSB0
 LOG_FILE=serial.log
 
+kill_pid_log_serial() {
+	if [ -n "$LOG_PID" ]; then
+		kill $LOG_PID &> /dev/null
+		kill -9 $LOG_PID &> /dev/null
+	fi
+}
+
 kill_old_log_serial() {
 	local existing="$(ps -C ts -o pid --no-headers)"
 	for pid in $existing; do
@@ -33,6 +40,14 @@ kill_old_log_serial() {
 		kill $pid &> /dev/null
 		kill -9 $pid &> /dev/null
 	done
+}
+
+main_job_died() {
+	echo "Failed, cleaning up..."
+	if [ -n "$LOG_PID" ]; then
+		echo "Killing serial logging (PID: ${LOG_PID})"
+		kill_pid_log_serial
+	fi
 }
 
 # log_serial target serial log_file
@@ -132,6 +147,9 @@ reboot_target $TARGET
 kill_old_log_serial
 echo "Collecting logs in background from ${TARGET}..."
 LOG_PID=$(log_serial $TARGET $SERIAL $LOG_FILE)
+test -n "$LOG_PID" || die "No PID of logger"
+
+trap "main_job_died" EXIT
 
 echo "Wait for boot of ${TARGET}..."
 wait_for_boot $TARGET
@@ -149,7 +167,6 @@ if [ $BOOT_STATUS -ne 0 ]; then
 	sudo gpio-pi.py off
 fi
 
-kill $LOG_PID &> /dev/null
-kill -9 $LOG_PID &> /dev/null
+kill_pid_log_serial
 
 exit $BOOT_STATUS

@@ -25,6 +25,13 @@ TIMEOUT=3
 SERIAL=/dev/ttyUSB0
 LOG_FILE=serial.log
 
+kill_pid_log_serial() {
+	if [ -n "$LOG_PID" ]; then
+		kill $LOG_PID &> /dev/null
+		kill -9 $LOG_PID &> /dev/null
+	fi
+}
+
 kill_old_log_serial() {
 	local existing="$(ps -C ts -o pid --no-headers)"
 	for pid in $existing; do
@@ -32,6 +39,14 @@ kill_old_log_serial() {
 		kill $pid &> /dev/null
 		kill -9 $pid &> /dev/null
 	done
+}
+
+main_job_died() {
+	echo "Failed, cleaning up..."
+	if [ -n "$LOG_PID" ]; then
+		echo "Killing serial logging (PID: ${LOG_PID})"
+		kill_pid_log_serial
+	fi
 }
 
 # log_serial target serial log_file
@@ -50,6 +65,7 @@ ssh_works() {
 	ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET id &> /dev/null
 }
 
+# Run the tests and fail everything on error
 run_tests() {
 	local target=$1
 
@@ -63,10 +79,12 @@ run_tests() {
 kill_old_log_serial
 echo "Collecting logs in background from ${TARGET}..."
 LOG_PID=$(log_serial $TARGET $SERIAL $LOG_FILE)
+test -n "$LOG_PID" || die "No PID of logger"
+
+trap "main_job_died" EXIT
 
 run_tests $TARGET
 
-kill $LOG_PID &> /dev/null
-kill -9 $LOG_PID &> /dev/null
+kill_pid_log_serial
 
-exit $BOOT_STATUS
+exit 0
