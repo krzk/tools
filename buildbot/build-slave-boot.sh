@@ -30,6 +30,7 @@ kill_pid_log_serial() {
 	if [ -n "$LOG_PID" ]; then
 		kill $LOG_PID &> /dev/null
 		kill -9 $LOG_PID &> /dev/null
+		LOG_PID=""
 	fi
 }
 
@@ -43,7 +44,7 @@ kill_old_log_serial() {
 }
 
 main_job_died() {
-	echo "Failed, cleaning up..."
+	echo "Exit trap, cleaning up..."
 	if [ -n "$LOG_PID" ]; then
 		echo "Killing serial logging (PID: ${LOG_PID})"
 		kill_pid_log_serial
