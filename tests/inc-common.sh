@@ -38,6 +38,13 @@ print_msg() {
 	echo "${name}: $1"
 }
 
+# error_msg msg
+# assuming 'name' is set
+error_msg() {
+	echo "ERROR: ${name}: $1"
+	exit 2
+}
+
 get_board_compatible() {
 	sed 's/\x0.\+/\n/' /sys/firmware/devicetree/base/compatible
 }
