@@ -21,7 +21,7 @@ test_cooling() {
 	# TODO: iterate over all hwmon devices to find pwmfan
 	local hwmon="/sys/class/hwmon/hwmon0"
 
-	if [ -d "${hwmon}/pwm1" ]; then
+	if [ ! -f "${hwmon}/pwm1" ]; then
 		# On older multi_v7 it may not be enabled
 		print_msg "Missing ${hwmon}/pwm1, skipping"
 		return 0
