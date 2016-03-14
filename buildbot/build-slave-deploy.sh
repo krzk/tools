@@ -22,6 +22,20 @@ NAME="$2"
 REVISION="$3"
 MODULES_DIR="~/modules-install"
 TOOLS_DIR="/opt/tools"
+
+# On arch ping6 and ping were merged so '-4' and '-6' arguments are supported.
+# However on pi, the IPv6 is disabled and running just 'ping' causes error:
+# ping: socket: Address family not supported by protocol (raw socket required by specified options).
+# Detect if '-4' is supported, if it is, then use it
+get_ping() {
+	ping -h |& grep vV64 > /dev/null
+	if [ $? -eq 0 ]; then
+		echo 'ping -4'
+	else
+		echo 'ping'
+	fi
+}
+
 echo "Deploying ${NAME}/${REVISION} to $TARGET"
 
 test -d lib && die "Not clean: 'lib' present"
@@ -60,7 +74,7 @@ chmod -R g+w /srv/tftp/*
 echo "Deploying modules to $TARGET"
 # These may fail because target being offline
 set +e +E
-ping -c 1 -W 3 $TARGET > /dev/null
+$(get_ping) -c 1 -W 3 $TARGET > /dev/null
 if [ $? -eq 1 ]; then
 	echo "$TARGET is offline, modules won't be installed"
 	exit 0
