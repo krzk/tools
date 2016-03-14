@@ -26,6 +26,19 @@ SSH_WAIT_FOR_BOOT_TRIES=100
 SERIAL=/dev/ttyUSB0
 LOG_FILE=serial.log
 
+# On arch ping6 and ping were merged so '-4' and '-6' arguments are supported.
+# However on pi, the IPv6 is disabled and running just 'ping' causes error:
+# ping: socket: Address family not supported by protocol (raw socket required by specified options).
+# Detect if '-4' is supported, if it is, then use it
+get_ping() {
+	ping -h |& grep vV64 > /dev/null
+	if [ $? -eq 0 ]; then
+		echo 'ping -4'
+	else
+		echo 'ping'
+	fi
+}
+
 kill_pid_log_serial() {
 	if [ -n "$LOG_PID" ]; then
 		kill $LOG_PID &> /dev/null
@@ -69,7 +82,7 @@ wait_for_ping_die() {
 	local i=0
 	local tries=1000
 
-	ping -c 1 -W $TIMEOUT $target > /dev/null
+	$(get_ping) -c 1 -W $TIMEOUT $target > /dev/null
 
 	if [ $? -eq 1 ]; then
 		echo "Target $target died very fast"
@@ -77,7 +90,7 @@ wait_for_ping_die() {
 	fi
 
 	while [ $i -lt $tries ]; do
-		ping -c 1 -W $TIMEOUT $target > /dev/null
+		$(get_ping) -c 1 -W $TIMEOUT $target > /dev/null
 		if [ $? -ne 0 ]; then
 			echo "Target $target dead after $i pings"
 			break
