@@ -17,6 +17,7 @@ test $# -gt 1 || die "Missing target name"
 
 TARGET="$1"
 NAME="$2"
+PROJECT="$3"
 TARGET_USER="buildbot"
 SSH_TARGET="${TARGET_USER}@${TARGET}"
 TOOLS_DIR="/opt/tools"
@@ -76,6 +77,12 @@ run_tests() {
 	ssh_works
 	set +e +E
 }
+
+if [ "$PROJECT" == "stable" ]; then
+	echo "Skipping tests on project ${PROJECT} on ${TARGET} (name: ${NAME})..."
+	exit 0
+fi
+echo "Running tests on ${TARGET} (name: ${NAME}, project: ${PROJECT})..."
 
 kill_old_log_serial
 echo "Collecting logs in background from ${TARGET}..."
