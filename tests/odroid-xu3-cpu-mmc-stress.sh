@@ -13,6 +13,14 @@ set -e -E
 
 # grep . /sys/class/thermal/*/temp
 
+get_mmc() {
+	for i in `seq 0 9`; do
+		test -b /dev/mmcblk${i} && echo /dev/mmcblk${i} && return 0
+	done
+	echo ""
+	return 1
+}
+
 test_cpu_mmc_stress() {
 	local name="CPU stress"
 	print_msg "Testing..."
@@ -22,6 +30,10 @@ test_cpu_mmc_stress() {
 	local pids=""
 	# TODO: iterate over all hwmon devices to find pwmfan
 	local hwmon="/sys/class/hwmon/hwmon0"
+	local mmc=$(get_mmc)
+
+	test -n "$mmc" || error_msg "Could not find MMC device"
+	print_msg "Using $mmc device"
 
 	if [ -d "${hwmon}/pwm1" ]; then
 		# On older multi_v7 it may not be enabled
@@ -36,7 +48,7 @@ test_cpu_mmc_stress() {
 
 
 	for i in `seq 8`; do
-		{ sudo -u $USER cat /dev/mmcblk0p2 | gzip -c > /dev/null & disown ; } 2> /dev/null
+		{ sudo -u $USER cat "$mmc" | gzip -c > /dev/null & disown ; } 2> /dev/null
 		pids="$pids $!"
 	done
 
