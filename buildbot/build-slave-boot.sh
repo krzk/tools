@@ -94,13 +94,16 @@ wait_for_ping_die() {
 	while [ $i -lt $tries ]; do
 		$(get_ping) -c 1 -W $TIMEOUT $target > /dev/null
 		if [ $? -ne 0 ]; then
-			echo "Target $target dead after $i pings"
+			echo "Target $target (gracefully) off after $i pings"
+			# Network is dead but still need to sleep for few
+			# seconds to wait for umount before sending hard-reset
+			sleep 5
 			break
 		fi
 		i=$(expr $i + 1)
 	done
 
-	test $i -lt $tries || echo "Target $target did not die properly"
+	test $i -lt $tries || echo "Target $target did not die properly, will hard-reset it"
 
 	return 0
 }
@@ -111,7 +114,7 @@ reboot_target() {
 	echo "Checking if target $target is alive..."
 	ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET id > /dev/null
 	if [ $? -eq 0 ]; then
-		echo "Target $target alive, powering down..."
+		echo "Target $target alive, gracefully powering down..."
 		ssh $SSH_TARGET sudo poweroff &> /dev/null
 		wait_for_ping_die $target
 	fi
