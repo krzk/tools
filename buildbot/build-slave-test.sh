@@ -35,12 +35,8 @@ kill_pid_log_serial() {
 }
 
 kill_old_log_serial() {
-	local existing="$(ps -C ts -o pid --no-headers)"
-	for pid in $existing; do
-		echo "Killing existing instance PID $pid of 'ts'"
-		kill $pid &> /dev/null
-		kill -9 $pid &> /dev/null
-	done
+	pkill -x ts
+	pkill -x ts -9
 }
 
 test_log_serial_active() {
