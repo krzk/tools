@@ -56,6 +56,10 @@ kill_old_log_serial() {
 	done
 }
 
+test_log_serial_active() {
+	pgrep -x ts > /dev/null || die "Serial logger $SERIAL died"
+}
+
 main_job_died() {
 	echo "Exit trap, cleaning up..."
 	if [ -n "$LOG_PID" ]; then
@@ -71,7 +75,9 @@ log_serial() {
 	local serial=$2
 	local log_file=$3
 
-	stty -F $serial 115200 cs8 ignbrk -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -iexten -echo -echoe -echok -echoctl -echoke noflsh -ixon -crtscts
+	stty -F $serial 115200 cs8 ignbrk -brkint -icrnl -imaxbel -opost -onlcr \
+		-isig -icanon -iexten -echo -echoe -echok -echoctl -echoke \
+		noflsh -ixon -crtscts || exit 1
 	ts < $serial > $log_file &
 	echo $!
 }
@@ -160,8 +166,10 @@ reboot_target $TARGET
 
 kill_old_log_serial
 echo "Collecting logs in background from ${TARGET}..."
+test -c "$SERIAL" || die "Missing $SERIAL"
 LOG_PID=$(log_serial $TARGET $SERIAL $LOG_FILE)
 test -n "$LOG_PID" || die "No PID of logger"
+test_log_serial_active
 
 trap "main_job_died" EXIT
 
