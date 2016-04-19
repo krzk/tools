@@ -117,6 +117,8 @@ reboot_target() {
 		echo "Target $target alive, gracefully powering down..."
 		ssh $SSH_TARGET sudo poweroff &> /dev/null
 		wait_for_ping_die $target
+	else
+		echo "Target $target dead, just resetting the power"
 	fi
 
 	sudo gpio-pi.py restart
