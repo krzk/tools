@@ -160,9 +160,6 @@ wait_for_boot() {
 	return 0
 }
 
-echo "Rebooting target ${TARGET}..."
-reboot_target $TARGET
-
 kill_old_log_serial
 echo "Collecting logs in background from ${TARGET}..."
 test -c "$SERIAL" || die "Missing $SERIAL"
@@ -171,6 +168,9 @@ test -n "$LOG_PID" || die "No PID of logger"
 test_log_serial_active
 
 trap "main_job_died" EXIT
+
+echo "Rebooting target ${TARGET}..."
+reboot_target $TARGET
 
 echo "Wait for boot of ${TARGET}..."
 wait_for_boot $TARGET
