@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2015 Krzysztof Kozlowski
+# Copyright (c) 2015,2016 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -51,20 +51,23 @@ def print_help():
     print("   command: on, off, restart, status")
     sys.exit()
 
-if (len(sys.argv) != 2):
-    print_help()
+def main():
+    if (len(sys.argv) != 3):
+        print_help()
 
-gpio_setup()
+    gpio_setup()
 
-if (sys.argv[1] == "on"):
-    gpio_on()
-elif (sys.argv[1] == "off"):
-    gpio_off()
-elif (sys.argv[1] == "restart"):
-    gpio_off()
-    time.sleep(2)
-    gpio_on()
-elif (sys.argv[1] == "status"):
-    gpio_status()
-else:
-    print_help()
+    if (sys.argv[1] == "on"):
+        gpio_on()
+    elif (sys.argv[1] == "off"):
+        gpio_off()
+    elif (sys.argv[1] == "restart"):
+        gpio_off()
+        time.sleep(2)
+        gpio_on()
+    elif (sys.argv[1] == "status"):
+        gpio_status()
+    else:
+        print_help()
+
+main()
