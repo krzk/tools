@@ -67,7 +67,7 @@ mkimage -n "U-boot Odroid XU3 ramdisk" -A arm -O linux -T ramdisk -C gzip \
 
 #cp -r "lib/modules/${KERNEL_NAME}" /srv/nfs/modules-odroidxu3/
 
-chgrp -R tftp /srv/tftp/zImage /srv/tftp/exynos5422-odroidxu3-lite.dtb /srv/tftp/uboot-initramfs-odroidxu3.img /srv/tftp/*
+chgrp -R tftp /srv/tftp/*
 chmod -R a+r /srv/tftp/uboot-initramfs-odroidxu3.img
 chmod -R g+w /srv/tftp/*
 
