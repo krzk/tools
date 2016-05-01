@@ -144,7 +144,17 @@ ssh_get_diag() {
 }
 
 ssh_works() {
-	ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET id &> /dev/null
+	#ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET id &> /dev/null
+	local err=""
+	local rc=0
+
+	err=$(ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET id 2>&1)
+	rc=$?
+	if [[ "$err" != *"Connection timed out"* ]] && [[ "$err" != *"No route to host"* ]]; then
+		# ssh quit immediately so sleep here
+		sleep 3
+	fi
+	return $rc
 }
 
 wait_for_boot() {
