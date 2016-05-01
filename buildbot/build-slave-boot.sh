@@ -195,7 +195,7 @@ echo "Wait for boot of ${TARGET}..."
 wait_for_boot $TARGET
 BOOT_STATUS=$?
 
-echo "Target $TARGET boot: $BOOT_STATUS"
+echo "Target $TARGET boot error code: $BOOT_STATUS"
 if [ $BOOT_STATUS -ne 0 ]; then
 	# Target could be stuck in boot spinning in a stupid way with fan
 	# on high speed. It is unresponsive so useless. Power it off
