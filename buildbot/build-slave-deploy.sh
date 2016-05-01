@@ -20,7 +20,6 @@ test $# -gt 1 || die "Wrong number of parameters"
 TARGET="$1"
 NAME="$2"
 REVISION="$3"
-MODULES_DIR="~/modules-install"
 TOOLS_DIR="/opt/tools"
 
 # On arch ping6 and ping were merged so '-4' and '-6' arguments are supported.
@@ -38,6 +37,7 @@ get_ping() {
 
 echo "Deploying ${NAME}/${REVISION} to $TARGET"
 
+# Test for clean environment:
 test -d lib && die "Not clean: 'lib' present"
 test -f initramfs-odroidxu3.img && die "Not clean: 'initramfs-odroidxu3.img' present"
 # REVISION not used actually
@@ -45,6 +45,7 @@ test -f initramfs-odroidxu3.img && die "Not clean: 'initramfs-odroidxu3.img' pre
 
 umask 022
 
+# Unpack downloaded modules:
 echo "Unpacking modules..."
 tar -xzf deploy-modules-out.tar.gz
 # Be sure that there are no symlinks
@@ -52,8 +53,8 @@ find lib/modules/ -type 'l' -delete
 chmod -R a+r lib/modules/
 find lib/modules/ -type 'd' -exec chmod a+x '{}' \;
 
+# Prepare initrd:
 KERNEL_NAME=$(ls lib/modules)
-MODULES_DEST_DIR="${MODULES_DIR}/${KERNEL_NAME}"
 test -d "lib/modules/${KERNEL_NAME}" || die "Cannot get kernel name. Got: $KERNEL_NAME"
 echo "Got kernel name: $KERNEL_NAME"
 
@@ -65,25 +66,17 @@ mkinitcpio --moduleroot . --kernel "${KERNEL_NAME}" \
 mkimage -n "U-boot Odroid XU3 ramdisk" -A arm -O linux -T ramdisk -C gzip \
 	-d initramfs-odroidxu3.img /srv/tftp/uboot-initramfs-odroidxu3.img
 
-#cp -r "lib/modules/${KERNEL_NAME}" /srv/nfs/modules-odroidxu3/
-
 chgrp -R tftp /srv/tftp/*
 chmod -R a+r /srv/tftp/uboot-initramfs-odroidxu3.img
 chmod -R g+w /srv/tftp/*
 
-echo "Deploying modules to $TARGET"
-# These may fail because target being offline
-set +e +E
-$(get_ping) -c 1 -W 3 $TARGET > /dev/null
-if [ $? -eq 1 ]; then
-	echo "$TARGET is offline, modules won't be installed"
-	exit 0
-fi
+# Prepare modules:
+# TODO cron modules cleanup jobe from odroid to pi
 
-ssh "$TARGET" rm -fr "$MODULES_DIR"
-ssh "$TARGET" mkdir -p "$MODULES_DEST_DIR"
-ssh "$TARGET" rm -fr "${MODULES_DEST_DIR}"
-scp -r "lib/modules/${KERNEL_NAME}" "${TARGET}:${MODULES_DEST_DIR}"
-ssh "$TARGET" sudo ${TOOLS_DIR}/buildbot/build-slave-install-modules.sh "$KERNEL_NAME"
+MODULES_DEST_DIR="/srv/nfs/${TARGET}/lib/modules/"
+echo "Installing modules to $MODULES_DEST_DIR"
+test -d "$MODULES_DEST_DIR" || die "Destination modules dir '$MODULES_DEST_DIR' does not exist"
+rm -fr "${MODULES_DEST_DIR}/${KERNEL_NAME}"
+cp -r "lib/modules/${KERNEL_NAME}" "$MODULES_DEST_DIR"
 
 exit $?
