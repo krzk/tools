@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015 Krzysztof Kozlowski
+# Copyright (c) 2015,2016 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -8,11 +8,19 @@
 # published by the Free Software Foundation.
 #
 
+# board_ping host
+board_ping() {
+	/usr/sbin/ping -c 1 -q -W 1 $1 > /dev/null
+	if [ $? -eq 0 ]; then
+		echo "online"
+	else
+		echo "offline"
+	fi
+	return 0
+}
+
 pi_check() {
 	local hostname=$(/usr/bin/hostname)
-	local ping="offline"
-	/usr/sbin/ping -c 1 -q -W 1 odroid > /dev/null
-	test $? -eq 0 && ping="online"
 
 	echo "Target alarmpi boot up
 
@@ -22,10 +30,14 @@ IP:   $(ip addr show dev eth0 | grep inet | cut -f 6 -d ' ')
 temp: $(cat /sys/class/thermal/thermal_zone0/temp)
 mode: $(cat /sys/class/thermal/thermal_zone0/mode)
 
-Odroid:
+Boards:
 =======
-$(sudo /usr/local/bin/gpio-pi.py status)
-Ping: $ping
+Odroid XU3: $(sudo /usr/local/bin/gpio-pi.py odroidxu3 status)
+Odroid XU3 ping: $(board_ping odroidxu3)
+Odroid U3: $(sudo /usr/local/bin/gpio-pi.py odroidu3 status)
+Odroid U3 ping: $(board_ping odroidu3)
+Odroid XU: $(sudo /usr/local/bin/gpio-pi.py odroidxu status)
+Odroid XU ping: $(board_ping odroidxu)
 " | /usr/bin/mail -i -s 'Target alarmpi boot up' root
 	wait
 	# TODO: Find better way to wait for sendmail finish
