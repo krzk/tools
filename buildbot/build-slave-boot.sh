@@ -128,7 +128,7 @@ reboot_target() {
 		echo "Target $target dead, just resetting the power"
 	fi
 
-	sudo gpio-pi.py restart
+	sudo gpio-pi.py $TARGET restart
 }
 
 ssh_get_diag() {
@@ -194,7 +194,7 @@ if [ $BOOT_STATUS -ne 0 ]; then
 	# TODO: Boot safe image so next deployment of modules (over SSH)
 	# would work.
 	echo "Target $TARGET failed to boot, power it off"
-	sudo gpio-pi.py off
+	sudo gpio-pi.py $TARGET off
 fi
 
 kill_pid_log_serial
