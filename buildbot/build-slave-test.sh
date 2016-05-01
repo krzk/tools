@@ -23,8 +23,13 @@ SSH_TARGET="${TARGET_USER}@${TARGET}"
 TOOLS_DIR="/opt/tools"
 # Timeout for particular network commands: ping and ssh, in seconds
 TIMEOUT=3
-SERIAL=/dev/ttyUSB0
+# Will listen on all /dev/ttyUSBX devices
+SERIAL=/dev/ttyUSB
+# Logging to serial.log-ttyUSBX
 LOG_FILE=serial.log
+
+# Initialize global variables
+LOG_PID=""
 
 kill_pid_log_serial() {
 	if [ -n "$LOG_PID" ]; then
@@ -58,11 +63,13 @@ log_serial() {
 	local serial=$2
 	local log_file=$3
 
-	stty -F $serial 115200 cs8 ignbrk -brkint -icrnl -imaxbel -opost -onlcr \
-		-isig -icanon -iexten -echo -echoe -echok -echoctl -echoke \
-		noflsh -ixon -crtscts || exit 1
-	ts < $serial > $log_file &
-	echo $!
+	for s in ${serial}*; do
+		stty -F $s 115200 cs8 ignbrk -brkint -icrnl -imaxbel -opost -onlcr \
+			-isig -icanon -iexten -echo -echoe -echok -echoctl -echoke \
+			noflsh -ixon -crtscts || exit 1
+		ts < $s > "${log_file}-$(basename $s)" &
+		echo $!
+	done
 }
 
 ssh_works() {
@@ -88,7 +95,7 @@ echo "Running tests on ${TARGET} (name: ${NAME}, project: ${PROJECT})..."
 
 kill_old_log_serial
 echo "Collecting logs in background from ${TARGET}..."
-test -c "$SERIAL" || die "Missing $SERIAL"
+test -c "${SERIAL}0" || die "Missing at least ${SERIAL}0"
 LOG_PID=$(log_serial $TARGET $SERIAL $LOG_FILE)
 test -n "$LOG_PID" || die "No PID of logger"
 test_log_serial_active

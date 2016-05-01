@@ -23,8 +23,13 @@ SSH_TARGET="${TARGET_USER}@${TARGET}"
 TIMEOUT=3
 # Number of retries (each with TIMEOUT) for ssh connection
 SSH_WAIT_FOR_BOOT_TRIES=100
-SERIAL=/dev/ttyUSB0
+# Will listen on all /dev/ttyUSBX devices
+SERIAL=/dev/ttyUSB
+# Logging to serial.log-ttyUSBX
 LOG_FILE=serial.log
+
+# Initialize global variables
+LOG_PID=""
 
 # On arch ping6 and ping were merged so '-4' and '-6' arguments are supported.
 # However on pi, the IPv6 is disabled and running just 'ping' causes error:
@@ -71,11 +76,13 @@ log_serial() {
 	local serial=$2
 	local log_file=$3
 
-	stty -F $serial 115200 cs8 ignbrk -brkint -icrnl -imaxbel -opost -onlcr \
-		-isig -icanon -iexten -echo -echoe -echok -echoctl -echoke \
-		noflsh -ixon -crtscts || exit 1
-	ts < $serial > $log_file &
-	echo $!
+	for s in ${serial}*; do
+		stty -F $s 115200 cs8 ignbrk -brkint -icrnl -imaxbel -opost -onlcr \
+			-isig -icanon -iexten -echo -echoe -echok -echoctl -echoke \
+			noflsh -ixon -crtscts || exit 1
+		ts < $s > "${log_file}-$(basename $s)" &
+		echo $!
+	done
 }
 
 # wait_for_ping_die target
@@ -164,7 +171,7 @@ wait_for_boot() {
 
 kill_old_log_serial
 echo "Collecting logs in background from ${TARGET}..."
-test -c "$SERIAL" || die "Missing $SERIAL"
+test -c "${SERIAL}0" || die "Missing at least ${SERIAL}0"
 LOG_PID=$(log_serial $TARGET $SERIAL $LOG_FILE)
 test -n "$LOG_PID" || die "No PID of logger"
 test_log_serial_active
