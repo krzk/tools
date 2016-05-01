@@ -28,7 +28,6 @@ Pi:
 ===
 IP:   $(ip addr show dev eth0 | grep inet | cut -f 6 -d ' ')
 temp: $(cat /sys/class/thermal/thermal_zone0/temp)
-mode: $(cat /sys/class/thermal/thermal_zone0/mode)
 
 Boards:
 =======
