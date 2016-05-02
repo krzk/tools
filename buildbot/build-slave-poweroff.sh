@@ -132,7 +132,6 @@ poweroff_target() {
 
 kill_old_log_serial
 echo "Collecting logs in background from ${TARGET}..."
-test -c "${SERIAL}0" || die "Missing at least ${SERIAL}0"
 LOG_PID=$(log_serial $TARGET $SERIAL $LOG_FILE)
 test -n "$LOG_PID" || die "No PID of logger"
 test_log_serial_active
