@@ -69,7 +69,7 @@ test_thermal() {
 	test_cat ${therm}/thermal_zone0/passive "0"
 	test_cat ${therm}/thermal_zone0/trip_point_0_temp "50000"
 	# Why this is less than room temperature?
-	test_cat_gt ${therm}/thermal_zone0/temp 23000
+	test_cat_gt ${therm}/thermal_zone0/temp 13000
 	test_cat_lt ${therm}/thermal_zone0/temp 45000
 
 	test_cat_gt ${therm}/thermal_zone1/temp 30000

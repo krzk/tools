@@ -43,7 +43,7 @@ test_cpu_mmc_stress() {
 
 	# Make all CPUs busy
 	test -f /sys/kernel/bL_switcher/active && echo 0 > /sys/kernel/bL_switcher/active
-	test_cat_gt ${therm}/thermal_zone0/temp 25000
+	test_cat_gt ${therm}/thermal_zone0/temp 13000
 	test_cat_lt ${therm}/thermal_zone0/temp 45000
 
 
@@ -57,8 +57,8 @@ test_cpu_mmc_stress() {
 	t2="$(cat ${therm}/thermal_zone0/temp)"
 	test $t1 -lt $t2  || print_msg "ERROR: test $t1 -lt $t2"
 
-	test_cat_gt ${therm}/thermal_zone0/temp 40000
-	test_cat_lt ${therm}/thermal_zone0/temp 65000
+	test_cat_gt ${therm}/thermal_zone0/temp 30000
+	test_cat_lt ${therm}/thermal_zone0/temp 60000
 	# Unfortunately this may not be sufficient to reach next threshold
 	# of cooling device, so fan may be still at 0
 	# test_cat_gt ${hwmon}/pwm1 50
