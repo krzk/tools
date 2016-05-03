@@ -46,40 +46,51 @@ def gpio_status(pin):
         if (GPIO.input(pin) == GPIO.HIGH):
             status = "off"
     else:
-        print("Unknown GPIO" + str(pin) + " function: " + str(direction))
-        return
+        return "Unknown GPIO" + str(pin) + " function: " + str(direction)
 
-    print("Current GPIO" + str(pin) + ": " + status)
+    return "GPIO" + str(pin) + ": " + status
 
 def print_help():
     print("Usage: " + str(sys.argv[0]) + " <target> <command>")
     print("   target:  odroidxu3, odroidu3, odroidxu")
     print("   command: on, off, restart, status")
-    sys.exit()
+    print("            (status can be run also without target)")
+    sys.exit(0)
 
-def main():
+def status_all():
+    gpio_setup()
+    for k, v in targets.items():
+        print(k + ": " + gpio_status(v))
+
+def one_target(target, command):
     pin = 0
-    if (len(sys.argv) != 3):
-        print_help()
 
     try:
-        pin = target_to_pin(sys.argv[1])
+        pin = target_to_pin(target)
     except KeyError:
-        print ("Unknown target: '" + str(sys.argv[1]) + "'")
+        print ("Unknown target: '" + str(target) + "'")
         sys.exit(1)
 
     gpio_setup()
 
-    if (sys.argv[2] == "on"):
+    if (command == "on"):
         gpio_on(pin)
-    elif (sys.argv[2] == "off"):
+    elif (command == "off"):
         gpio_off(pin)
-    elif (sys.argv[2] == "restart"):
+    elif (command == "restart"):
         gpio_off(pin)
         time.sleep(2)
         gpio_on(pin)
-    elif (sys.argv[2] == "status"):
-        gpio_status(pin)
+    elif (command == "status"):
+        print(gpio_status(pin))
+    else:
+        print_help()
+
+def main():
+    if (len(sys.argv) == 3):
+        one_target(sys.argv[1], sys.argv[2])
+    elif (len(sys.argv) == 2) and (sys.argv[1] == "status"):
+        status_all()
     else:
         print_help()
 
