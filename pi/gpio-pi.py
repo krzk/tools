@@ -12,15 +12,14 @@ import RPi.GPIO as GPIO
 import sys
 import time
 
+targets = {
+    "odroidxu3": 2,
+    "odroidu3": 17,
+    "odroidxu": 3,
+    }
+
 def target_to_pin(target):
-    pin = 0
-    if (target == "odroidxu3"):
-        pin = 2
-    elif (target == "odroidu3"):
-        pin = 17
-    elif (target == "odroidxu"):
-        pin = 3
-    return pin
+    return targets[target]
 
 def gpio_setup():
     GPIO.setmode(GPIO.BCM)
@@ -63,9 +62,11 @@ def main():
     if (len(sys.argv) != 3):
         print_help()
 
-    pin = target_to_pin(sys.argv[1])
-    if (pin == 0):
-        raise ValueError("Could not match pin for given target: '" + str(sys.argv[1]) + "'")
+    try:
+        pin = target_to_pin(sys.argv[1])
+    except KeyError:
+        print ("Unknown target: '" + str(sys.argv[1]) + "'")
+        sys.exit(1)
 
     gpio_setup()
 
