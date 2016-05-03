@@ -18,6 +18,8 @@ def target_to_pin(target):
         pin = 2
     elif (target == "odroidu3"):
         pin = 17
+    elif (target == "odroidxu"):
+        pin = 3
     return pin
 
 def gpio_setup():
