@@ -8,10 +8,7 @@
 # published by the Free Software Foundation.
 #
 
-die() {
-	echo "Fail: $1"
-	exit 1
-}
+. $(dirname ${BASH_SOURCE[0]})/inc-build-slave.sh
 
 test $# -gt 1 || die "Missing target name"
 
@@ -30,47 +27,6 @@ LOG_FILE=serial.log
 
 # Initialize global variables
 LOG_PID=""
-
-kill_pid_log_serial() {
-	if [ -n "$LOG_PID" ]; then
-		kill $LOG_PID &> /dev/null
-		kill -9 $LOG_PID &> /dev/null
-		LOG_PID=""
-	fi
-}
-
-kill_old_log_serial() {
-	pkill -x ts
-	pkill -x ts -9
-}
-
-test_log_serial_active() {
-	pgrep -x ts > /dev/null || die "Serial logger $SERIAL died"
-}
-
-main_job_died() {
-	echo "Exit trap, cleaning up..."
-	if [ -n "$LOG_PID" ]; then
-		echo "Killing serial logging (PID: ${LOG_PID})"
-		kill_pid_log_serial
-	fi
-}
-
-# log_serial target serial log_file
-# Echos the PID of logging process
-log_serial() {
-	local target=$1
-	local serial=$2
-	local log_file=$3
-
-	for s in ${serial}*; do
-		stty -F $s 115200 cs8 ignbrk -brkint -icrnl -imaxbel -opost -onlcr \
-			-isig -icanon -iexten -echo -echoe -echok -echoctl -echoke \
-			noflsh -ixon -crtscts || exit 1
-		ts < $s > "${log_file}-$(basename $s)" &
-		echo $!
-	done
-}
 
 ssh_works() {
 	ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET id &> /dev/null

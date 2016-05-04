@@ -8,10 +8,7 @@
 # published by the Free Software Foundation.
 #
 
-die() {
-	echo "Fail: $1"
-	exit 1
-}
+. $(dirname ${BASH_SOURCE[0]})/inc-build-slave.sh
 
 set -e -E
 
