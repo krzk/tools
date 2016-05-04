@@ -40,7 +40,7 @@ poweroff_target() {
 	fi
 
 	echo "Cutting the power to ${target}..."
-	sudo gpio-pi.py $TARGET off
+	sudo gpio-pi.py $TARGET off || die "Power off GPIO failure"
 }
 
 kill_old_log_serial

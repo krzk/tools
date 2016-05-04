@@ -41,7 +41,7 @@ reboot_target() {
 		echo "Target $target dead, just resetting the power"
 	fi
 
-	sudo gpio-pi.py $TARGET restart
+	sudo gpio-pi.py $TARGET restart || die "Restart GPIO failure"
 }
 
 ssh_get_diag() {
