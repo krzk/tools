@@ -27,6 +27,30 @@ get_ping() {
 	fi
 }
 
+# get_serial target
+get_serial() {
+	local target=$1
+	local serial=""
+
+	case "$target" in
+	odroidxu3|xu3)
+		serial="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0"
+		;;
+	odroidu3|u3)
+		serial="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00DC74F5-if00-port0"
+		;;
+	odroidxu|xu)
+		serial="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_008F8288-if00-port0"
+		;;
+	*)
+		echo ""
+		return 1
+	esac
+
+	echo $serial
+	return 0
+}
+
 # Depends on global: LOG_PID
 kill_pid_log_serial() {
 	if [ -n "$LOG_PID" ]; then
@@ -54,20 +78,20 @@ main_job_died() {
 	fi
 }
 
-# log_serial target serial log_file
+# log_serial target log_file
 # Echos the PID of logging process
 log_serial() {
 	local target=$1
-	local serial=$2
-	local log_file=$3
+	local log_file=$2
+	local serial=$(get_serial $target)
 
-	for s in ${serial}*; do
-		stty -F $s 115200 cs8 ignbrk -brkint -icrnl -imaxbel -opost -onlcr \
-			-isig -icanon -iexten -echo -echoe -echok -echoctl -echoke \
-			noflsh -ixon -crtscts || exit 1
-		ts < $s > "${log_file}-$(basename $s)" &
-		echo $!
-	done
+	test -n "$serial" || die "Cannot get serial ID for target '$target'"
+
+	stty -F $serial 115200 cs8 ignbrk -brkint -icrnl -imaxbel -opost -onlcr \
+		-isig -icanon -iexten -echo -echoe -echok -echoctl -echoke \
+		noflsh -ixon -crtscts || exit 1
+	ts < $serial > "${log_file}" &
+	echo $!
 }
 
 # wait_for_ping_die target

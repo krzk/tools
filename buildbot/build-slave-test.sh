@@ -20,8 +20,6 @@ SSH_TARGET="${TARGET_USER}@${TARGET}"
 TOOLS_DIR="/opt/tools"
 # Timeout for particular network commands: ping and ssh, in seconds
 TIMEOUT=3
-# Will listen on all /dev/ttyUSBX devices
-SERIAL=/dev/ttyUSB
 # Logging to serial.log-ttyUSBX
 LOG_FILE=serial.log
 
@@ -51,7 +49,7 @@ echo "Running tests on ${TARGET} (name: ${NAME}, project: ${PROJECT})..."
 
 kill_old_log_serial
 echo "Collecting logs in background from ${TARGET}..."
-LOG_PID=$(log_serial $TARGET $SERIAL $LOG_FILE)
+LOG_PID=$(log_serial $TARGET $LOG_FILE)
 test -n "$LOG_PID" || die "No PID of logger"
 test_log_serial_active
 
