@@ -10,6 +10,14 @@
 
 SERIAL=/dev/ttyUSB
 if [ $# -gt 0 ]; then
-	SERIAL="${SERIAL}$1"
+	if [ "$1" == "xu3" ]; then
+		SERIAL="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0"
+	if [ "$1" == "u3" ]; then
+		SERIAL="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00DC74F5-if00-port0"
+	if [ "$1" == "xu" ]; then
+		SERIAL="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_008F8288-if00-port0"
+	else
+		SERIAL="${SERIAL}$1"
+	fi
 fi
 picocom -b 115200 $SERIAL
