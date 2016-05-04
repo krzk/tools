@@ -27,6 +27,7 @@ get_ping() {
 	fi
 }
 
+# Depends on global: LOG_PID
 kill_pid_log_serial() {
 	if [ -n "$LOG_PID" ]; then
 		kill $LOG_PID &> /dev/null
@@ -41,9 +42,10 @@ kill_old_log_serial() {
 }
 
 test_log_serial_active() {
-	pgrep -x ts > /dev/null || die "Serial logger $SERIAL died"
+	pgrep -x ts > /dev/null || die "Serial logger died"
 }
 
+# Depends on global: LOG_PID
 main_job_died() {
 	echo "Exit trap, cleaning up..."
 	if [ -n "$LOG_PID" ]; then
@@ -69,12 +71,14 @@ log_serial() {
 }
 
 # wait_for_ping_die target
+# Depends on global: TIMEOUT
 wait_for_ping_die() {
 	local target=$1
 	local i=0
 	local tries=1000
+	local timeout=${TIMEOUT:=3}
 
-	$(get_ping) -c 1 -W $TIMEOUT $target > /dev/null
+	$(get_ping) -c 1 -W $timeout $target > /dev/null
 
 	if [ $? -eq 1 ]; then
 		echo "Target $target died very fast"
@@ -82,7 +86,7 @@ wait_for_ping_die() {
 	fi
 
 	while [ $i -lt $tries ]; do
-		$(get_ping) -c 1 -W $TIMEOUT $target > /dev/null
+		$(get_ping) -c 1 -W $timeout $target > /dev/null
 		if [ $? -ne 0 ]; then
 			echo "Target $target (gracefully) off after $i pings"
 			# Network is dead but still need to sleep for few
