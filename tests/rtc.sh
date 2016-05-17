@@ -13,11 +13,14 @@ set -e -E
 
 test_rtc() {
 	local name="RTC"
-	print_msg "Testing..."
 
+	print_msg "Testing /dev/rtc0..."
+	test -c /dev/rtc0 || error_msg "Missing /dev/rtc0"
 	hwclock --systohc -f /dev/rtc0
 	rtcwake -d rtc0 -m on -s 5 > /dev/null
 
+	print_msg "Testing /dev/rtc1..."
+	test -c /dev/rtc1 || error_msg "Missing /dev/rtc1"
 	hwclock --systohc -f /dev/rtc1
 	rtcwake -d rtc1 -m on -s 5 > /dev/null
 
