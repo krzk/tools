@@ -12,8 +12,8 @@
 set -e -E
 . $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
-test_s5p_sss() {
-	local name="s5p-sss"
+test_s5p_sss_selftests() {
+	local name="s5p-sss selftests"
 	local expected_alg="cbc-aes-s5p ecb-aes-s5p"
 	local expected_alg_num=2
 	local found_alg=0
@@ -40,4 +40,33 @@ test_s5p_sss() {
 	print_msg "Done"
 }
 
-test_s5p_sss
+have_tcrypt() {
+	set +e
+	modinfo tcrypt > /dev/null
+	if [ $? -eq 0 ]; then
+		echo "yes"
+	else
+		echo "no"
+	fi
+	set -e
+	return 0
+}
+
+test_s5p_sss_tcrypt() {
+	local name="s5p-sss tcrypt"
+	print_msg "Testing..."
+
+	if [ "$(have_tcrypt)" != "yes" ]; then
+		print_msg "No tcrypt, skipping"
+		return 0
+	fi
+
+	set +e
+	modprobe tcrypt sec=1 mode=500
+	set -e
+
+	print_msg "Done"
+}
+
+test_s5p_sss_selftests
+test_s5p_sss_tcrypt
