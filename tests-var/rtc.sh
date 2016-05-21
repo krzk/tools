@@ -20,6 +20,29 @@ echo max77686-rtc > /sys/bus/platform/drivers/max77686-rtc/unbind
 echo max77686-rtc > /sys/bus/platform/drivers/max77686-rtc/bind
 rtcwake -d rtc2 -m mem -s 5 -v
 
+# RTC suspend cycle test:
+RTC=/dev/rtc0
+for i in `seq 50`; do
+	rtcwake -d $RTC -m mem -s 5 -v
+	if [ $? -ne 0 ]; then
+		echo "ERROR!"
+		break
+	fi
+
+	sleep 5
+	ifconfig eth0
+	if [ $? -ne 0 ]; then
+		echo "ERROR!"
+		break
+	fi
+
+	ping -c 1 google.pl
+	if [ $? -ne 0 ]; then
+		echo "ERROR!"
+		break
+	fi
+done
+
 # OLD:
 RTC=rtc0
 date 021010002012
