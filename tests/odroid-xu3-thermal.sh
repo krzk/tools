@@ -66,7 +66,8 @@ test_thermal() {
 	test $(ls ${therm}/*/temp | wc -l) -eq 5 || print_msg "ERROR: Number of thermal zones"
 
 	test_cat ${therm}/thermal_zone0/mode "enabled"
-	test_cat ${therm}/thermal_zone0/passive "0"
+	# On older stable kernels there might be no "passive" entry
+	test -f ${therm}/thermal_zone0/passive && test_cat ${therm}/thermal_zone0/passive "0"
 	test_cat ${therm}/thermal_zone0/trip_point_0_temp "50000"
 	# Why this is less than room temperature?
 	test_cat_gt ${therm}/thermal_zone0/temp 13000
