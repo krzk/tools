@@ -13,6 +13,11 @@ die() {
 	exit 1
 }
 
+have_ccache() {
+	which ccache > /dev/null
+	echo $?
+}
+
 set -e -E
 
 CROSS_COMPILE=""
@@ -40,6 +45,11 @@ case $ARCH in
 	*)
 		;;
 esac
+
+# Check and enable ccache:
+if [ "$(have_ccache)" == "0" ]; then
+	export CROSS_COMPILE="ccache $CROSS_COMPILE"
+fi
 
 echo "Executing build command:"
 echo "CROSS_COMPILE=\"$CROSS_COMPILE\" make $JOBS $*"
