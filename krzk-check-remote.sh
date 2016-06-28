@@ -8,7 +8,7 @@
 # published by the Free Software Foundation.
 #
 
-BRANCHES="next/defconfig next/drivers next/dt next/dt64 fixes for-next next/soc next/soc64"
+BRANCHES="next/defconfig next/defconfig64 next/drivers next/dt next/dt64 fixes for-next next/soc next/soc64"
 
 die() {
 	echo "Fail: $1"
