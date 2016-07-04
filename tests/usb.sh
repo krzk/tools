@@ -12,7 +12,7 @@ set -e -E
 . $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
 test_usb() {
-	local name="lsubs"
+	local name="lsusb"
 	local expected_usb=""
 
 	case "$(get_board_compatible)" in
