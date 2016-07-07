@@ -10,14 +10,13 @@
 
 . $(dirname ${BASH_SOURCE[0]})/inc-build-slave.sh
 
-test $# -gt 1 || die "Missing target name"
+test $# -gt 2 || die "Missing target/name/cmd"
 
 TARGET="$1"
 NAME="$2"
-PROJECT="$3"
+CMD="$3"
 TARGET_USER="buildbot"
 SSH_TARGET="${TARGET_USER}@${TARGET}"
-TOOLS_DIR="/opt/tools"
 # Timeout for particular network commands: ping and ssh, in seconds
 TIMEOUT=3
 # Logging to serial.log-ttyUSBX
@@ -35,17 +34,13 @@ run_tests() {
 	local target=$1
 
 	set -e -E
-	ssh $SSH_TARGET sudo ${TOOLS_DIR}/tests/all-odroid-xu3.sh
+	ssh $SSH_TARGET sudo $CMD
 
 	ssh_works
 	set +e +E
 }
 
-if [ "$PROJECT" == "stable" ]; then
-	echo "Skipping tests on project ${PROJECT} on ${TARGET} (name: ${NAME})..."
-	exit 0
-fi
-echo "Running tests on ${TARGET} (name: ${NAME}, project: ${PROJECT})..."
+echo "Running '${CMD}' on ${TARGET} (name: ${NAME})..."
 
 kill_old_log_serial
 echo "Collecting logs in background from ${TARGET}..."
