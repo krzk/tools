@@ -20,12 +20,9 @@ set -e -E -x
 . $(dirname ${BASH_SOURCE[0]})/usb.sh
 . $(dirname ${BASH_SOURCE[0]})/var-all.sh
 . $(dirname ${BASH_SOURCE[0]})/clk-s2mps11.sh
+. $(dirname ${BASH_SOURCE[0]})/audio.sh
 # RNG does not work on Odroid, configured in secure mode?
 #. $(dirname ${BASH_SOURCE[0]})/rng-exynos.sh
-
-# Sound: manual or:
-sudo -u $USER aplay /usr/share/sounds/alsa/Front_Right.wav > /dev/null
-echo "Sound/aplay: Done"
 
 echo "3810000.audss-clock-controller" > /sys/bus/platform/drivers/exynos-audss-clk/unbind
 echo "3810000.audss-clock-controller" > /sys/bus/platform/drivers/exynos-audss-clk/bind
