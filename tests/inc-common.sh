@@ -48,3 +48,12 @@ error_msg() {
 get_board_compatible() {
 	sed 's/\x0.\+/\n/' /sys/firmware/devicetree/base/compatible
 }
+
+# run_as_nonroot cmd
+run_as_nonroot() {
+	if [ "$SUDO_USER" != "" ]; then
+		sudo -u "$SUDO_USER" $*
+	else
+		$*
+	fi
+}

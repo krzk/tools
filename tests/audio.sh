@@ -14,8 +14,8 @@ set -e -E
 test_audio() {
 	local name="Audio"
 
-	sudo -u $USER aplay /usr/share/sounds/alsa/Front_Right.wav > /dev/null
-	speaker-test --channels 2  --nloops 3
+	run_as_nonroot aplay /usr/share/sounds/alsa/Front_Right.wav
+	run_as_nonroot speaker-test --channels 2  --nloops 3
 
 	print_msg "OK"
 }
