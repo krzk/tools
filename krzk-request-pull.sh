@@ -28,9 +28,9 @@ git tag -v $TAG &> /dev/null || die "Wrong tag or signature"
 
 echo "Output to: $OUT"
 echo "Subject: [GIT PULL] ARM: dts: exynos: xxx for v4.x
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 To: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@kernel.org>, arm@kernel.org
-Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>, Javier Martinez Canillas <javier@osg.samsung.com>
 
 Hi,
 
