@@ -51,10 +51,10 @@ done
 echo "##############################################"
 echo "Executing:"
 echo "scp $BINS pi:/srv/tftp/"
-echo "ssh odroid rm -fr modules/*"
+echo "ssh odroidxu3 rm -fr modules/*"
 echo "find ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/ -type 'l' -delete"
-echo "scp -r ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/* odroid:modules/"
-echo "ssh odroid sudo cp -r modules/* /lib/modules/"
+echo "scp -r ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/* odroidxu3:modules/"
+echo "ssh odroidxu3 sudo cp -r modules/* /lib/modules/"
 echo "##############################################"
 echo
 
@@ -62,8 +62,8 @@ if [ $PI_REMOTE -eq 1 ]; then
 	scp $BINS pi-remote:/srv/tftp/
 else
 	scp $BINS pi:/srv/tftp/
-	ssh odroid rm -fr modules/*/
+	ssh odroidxu3 rm -fr modules/*/
 	find ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/ -type 'l' -delete
-	scp -r ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/* odroid:modules/
-	ssh odroid sudo cp -r modules/* /lib/modules/
+	scp -r ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/* odroidxu3:modules/
+	ssh odroidxu3 sudo cp -r modules/* /lib/modules/
 fi;
