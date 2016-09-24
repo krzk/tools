@@ -16,14 +16,14 @@ die() {
 KBUILD_OUTPUT="out/"
 BINS="${KBUILD_OUTPUT}zImage ${KBUILD_OUTPUT}arch/arm/boot/dts/exynos5422-odroidxu3-lite.dtb"
 MODULES_OUT="modules-out"
-PI_REMOTE=0
+PI_HOST="pi"
 CONFIG_NAME="exynos"
 
 while getopts "rc:" flag
 do
 	case "$flag" in
 		r)
-			PI_REMOTE=1
+			PI_HOST="pi-remote"
 			;;
 		c)
 			CONFIG_NAME="$OPTARG"
@@ -50,20 +50,12 @@ done
 
 echo "##############################################"
 echo "Executing:"
-echo "scp $BINS pi:/srv/tftp/"
-echo "ssh odroidxu3 rm -fr modules/*"
+echo "scp $BINS ${PI_HOST}:/srv/tftp/"
 echo "find ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/ -type 'l' -delete"
-echo "scp -r ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/* odroidxu3:modules/"
-echo "ssh odroidxu3 sudo cp -r modules/* /lib/modules/"
+echo "scp -r ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/* ${PI_HOST}:/srv/nfs/odroidxu3/lib/modules/"
 echo "##############################################"
 echo
 
-if [ $PI_REMOTE -eq 1 ]; then
-	scp $BINS pi-remote:/srv/tftp/
-else
-	scp $BINS pi:/srv/tftp/
-	ssh odroidxu3 rm -fr modules/*/
-	find ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/ -type 'l' -delete
-	scp -r ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/* odroidxu3:modules/
-	ssh odroidxu3 sudo cp -r modules/* /lib/modules/
-fi;
+scp $BINS ${PI_HOST}:/srv/tftp/
+find ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/ -type 'l' -delete
+scp -r ${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules/* ${PI_HOST}:/srv/nfs/odroidxu3/lib/modules/
