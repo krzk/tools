@@ -35,7 +35,7 @@ do
 	esac
 done
 
-rm -fr $BINS $MODULES_OUT
+rm -fr $BINS ${KBUILD_OUTPUT}${MODULES_OUT}
 
 echo "##############################################"
 echo "Executing:"
