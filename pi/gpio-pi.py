@@ -15,10 +15,6 @@ import time
 targets = {
     "odroidxu3":    2,
     "xu3":          2,
-    "odroidu3":     17,
-    "u3":           17,
-    "odroidxu":     3,
-    "xu":           3,
     }
 
 def target_to_pin(target):
@@ -55,7 +51,7 @@ def gpio_status(pin):
 
 def print_help():
     print("Usage: " + str(sys.argv[0]) + " <target> <command>")
-    print("   target:  xu3, u3, xu")
+    print("   target:  xu3")
     print("   command: on, off, restart, status")
     print("            (status can be run also without target)")
     sys.exit(0)

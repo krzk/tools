@@ -33,10 +33,6 @@ Boards:
 =======
 Odroid XU3: $(sudo /usr/local/bin/gpio-pi.py odroidxu3 status)
 Odroid XU3 ping: $(board_ping odroidxu3)
-Odroid U3: $(sudo /usr/local/bin/gpio-pi.py odroidu3 status)
-Odroid U3 ping: $(board_ping odroidu3)
-Odroid XU: $(sudo /usr/local/bin/gpio-pi.py odroidxu status)
-Odroid XU ping: $(board_ping odroidxu)
 " | /usr/bin/mail -i -s 'Target alarmpi boot up' root
 	wait
 	# TODO: Find better way to wait for sendmail finish
