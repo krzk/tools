@@ -40,10 +40,10 @@ rm -fr $BINS ${KBUILD_OUTPUT}${MODULES_OUT}
 
 echo "##############################################"
 echo "Executing:"
-echo ~/dev/tools/release.sh -c $CONFIG_NAME -t tests -m $MODULES_OUT
+echo release.sh -c $CONFIG_NAME -t tests -m $MODULES_OUT
 echo "##############################################"
 echo
-~/dev/tools/release.sh -c $CONFIG_NAME -m $MODULES_OUT || die "release fail"
+release.sh -c $CONFIG_NAME -m $MODULES_OUT || die "release fail"
 
 for file in $BINS; do
 	test -f "$file" || die "No $file"
