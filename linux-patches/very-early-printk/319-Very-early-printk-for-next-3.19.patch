@@ -1,0 +1,38 @@
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Fri, 30 Oct 2016 20:18:56 +0200
+Subject: [PATCH] Very early printk, for 3.19
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ kernel/printk/printk.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 1b7092dbb590..269318013504 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1708,6 +1708,13 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 		}
+ 	}
+ 
++	if (1) {
++		extern void printascii(const char *);
++		printascii(text);
++		printed_len = 0;
++		goto early_printk_out;
++	}
++
+ 	if (level == LOGLEVEL_DEFAULT)
+ 		level = default_message_loglevel;
+ 
+@@ -1754,6 +1761,7 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 						 dict, dictlen, text, text_len);
+ 	}
+ 
++early_printk_out:
+ 	logbuf_cpu = UINT_MAX;
+ 	raw_spin_unlock(&logbuf_lock);
+ 	lockdep_on();
+-- 
+1.9.1
+

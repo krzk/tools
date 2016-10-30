@@ -1,0 +1,32 @@
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Fri, 30 Oct 2016 20:18:56 +0200
+Subject: [PATCH] Very early printk, for 3.15
+
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ kernel/printk/printk.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index b030cb2843b6..4d001cf4f093 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -1677,6 +1677,15 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 		}
+ 	}
+ 
++	if (1) {
++		extern void printascii(const char *);
++		printascii(text);
++		printed_len = 0;
++		if (console_trylock_for_printk(this_cpu))
++			console_unlock();
++		goto out_restore_irqs;
++	}
++
+ 	if (level == -1)
+ 		level = default_message_loglevel;
+ 
+-- 
+1.9.1
+
