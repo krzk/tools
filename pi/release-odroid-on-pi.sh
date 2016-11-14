@@ -19,7 +19,7 @@ BINS="${KBUILD_OUTPUT}zImage ${KBUILD_OUTPUT}arch/arm/boot/dts/exynos5422-odroid
 MODULES_OUT="modules-out"
 MODULES_OUT_BIN="${KBUILD_OUTPUT}${MODULES_OUT}/lib/modules"
 PI_HOST="pi"
-CONFIG_NAME="exynos"
+CONFIG_NAME=""
 
 while getopts "rc:" flag
 do
@@ -28,7 +28,7 @@ do
 			PI_HOST="pi-remote"
 			;;
 		c)
-			CONFIG_NAME="$OPTARG"
+			CONFIG_NAME="-c $OPTARG"
 			;;
 		*)
 			echo "Usage: $(basename $0) [-r] [-c config_name]"
@@ -41,10 +41,10 @@ rm -fr $BINS ${KBUILD_OUTPUT}${MODULES_OUT}
 
 echo "##############################################"
 echo "Executing:"
-echo release.sh -c $CONFIG_NAME -m $MODULES_OUT
+echo release.sh $CONFIG_NAME -m $MODULES_OUT
 echo "##############################################"
 echo
-release.sh -c $CONFIG_NAME -m $MODULES_OUT || die "release fail"
+release.sh $CONFIG_NAME -m $MODULES_OUT || die "release fail"
 
 for file in $BINS; do
 	test -f "$file" || die "No $file"
