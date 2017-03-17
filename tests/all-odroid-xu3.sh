@@ -17,6 +17,8 @@ set -e -E -x
 . $(dirname ${BASH_SOURCE[0]})/odroid-xu3-thermal.sh
 . $(dirname ${BASH_SOURCE[0]})/odroid-xu3-board-name.sh
 . $(dirname ${BASH_SOURCE[0]})/odroid-xu3-cpu-mmc-stress.sh
+. $(dirname ${BASH_SOURCE[0]})/s5p-sss.sh
+. $(dirname ${BASH_SOURCE[0]})/s5p-sss-cryptsetup.sh
 . $(dirname ${BASH_SOURCE[0]})/usb.sh
 . $(dirname ${BASH_SOURCE[0]})/var-all.sh
 . $(dirname ${BASH_SOURCE[0]})/clk-s2mps11.sh
