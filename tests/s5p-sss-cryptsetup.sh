@@ -12,6 +12,11 @@
 set -e -E
 . $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
+LOOPS=1
+if [ "$1" == "--intensive" ]; then
+	LOOPS=20
+fi
+
 prepare_s5p_sss_cryptsetup() {
 	local name="s5p-sss cryptsetup"
 	local dev="$1"
@@ -48,12 +53,9 @@ unprepare_s5p_sss_cryptsetup() {
 	rm -f /tmp/${dev}
 }
 
-test_s5p_sss_cryptsetup() {
+run_test_s5p_sss_cryptsetup() {
 	local name="s5p-sss cryptsetup"
-	local dev="testcrypt"
-	print_msg "Testing..."
-
-	prepare_s5p_sss_cryptsetup $dev
+	local dev="$1"
 
 	for i in `seq 0 1000`; do
 		echo "1234567890123456789012345678901234567890" | dd of=/dev/mapper/${dev} \
@@ -69,7 +71,19 @@ test_s5p_sss_cryptsetup() {
 
 	dd if=/dev/mapper/${dev} of=/dev/null bs=32M count=1
 	sync && sync && sync
+}
 
+
+test_s5p_sss_cryptsetup() {
+	local name="s5p-sss cryptsetup"
+	local dev="testcrypt"
+	print_msg "Testing..."
+
+	prepare_s5p_sss_cryptsetup $dev
+	for i in `seq 1 $LOOPS`; do
+		test $LOOPS -gt 1 && print_msg "Test ${i}/${LOOPS}"
+		run_test_s5p_sss_cryptsetup $dev
+	done
 	unprepare_s5p_sss_cryptsetup $dev
 
 	print_msg "Done"
