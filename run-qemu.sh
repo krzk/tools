@@ -15,8 +15,10 @@ die() {
 }
 
 usage() {
-	echo "$(basename $0) [-m machine]"
+	echo "$(basename $0) [-m machine] [-k kernel] [-d dtb]"
 	echo " -m <machine>      - smdkc210, vexpress-a9 (default: $MACHINE)"
+	echo " -k <kernel>       - path to zImage (default: $KERNEL)"
+	echo " -d <dtb>          - path to dtb (default: $DTB)"
 	exit 1
 }
 
@@ -30,9 +32,15 @@ MEM=1024
 CPU=2
 QEMU=arm-softmmu/qemu-system-arm
 
-while getopts "hm:" flag
+while getopts "hd:k:m:" flag
 do
 	case "$flag" in
+		d)
+			DTB="$OPTARG"
+			;;
+		k)
+			KERNEL="$OPTARG"
+			;;
 		m)
 			MACHINE="$OPTARG"
 			;;
