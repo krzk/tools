@@ -15,8 +15,8 @@ die() {
 }
 
 usage() {
-	echo "$(basename $0) <machine>"
-	echo "    machine: smdkc210 (default), vexpress-a9"
+	echo "$(basename $0) [-m machine]"
+	echo " -m <machine>      - smdkc210, vexpress-a9 (default: $MACHINE)"
 	exit 1
 }
 
@@ -30,7 +30,19 @@ MEM=1024
 CPU=2
 QEMU=arm-softmmu/qemu-system-arm
 
-case $1 in
+while getopts "hm:" flag
+do
+	case "$flag" in
+		m)
+			MACHINE="$OPTARG"
+			;;
+		*)
+			usage
+			;;
+	esac
+done
+
+case $MACHINE in
 	vexpress-a9)
 		MACHINE=vexpress-a9
 		DTB=${ROOT_DIR}cur-linux/dts/vexpress-v2p-ca9.dtb
