@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 		return -EINVAL;
 	}
 
-	ret = kcapi_rng_init(&rng, "drbg_nopr_hmac_sha256", 0);
+	ret = kcapi_rng_init(&rng, "exynos_rng", 0);
 	if (ret)
 		return ret;
 
