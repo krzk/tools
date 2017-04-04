@@ -33,7 +33,7 @@ for br in $BRANCHES; do
 	test $? -eq 0 || die "git rev-list error"
 	if [ $BR_COMMITS -gt 0 ]; then
 		echo "Updating: $br from $(git rev-parse ${br}) to $(git rev-parse ${br}@{u})"
-		git -B checkout $br ${br}@{u} || die "git checkout $br error"
+		git checkout -B $br ${br}@{u} || die "git checkout $br error"
 	fi
 done
 
