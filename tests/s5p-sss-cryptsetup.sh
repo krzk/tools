@@ -16,10 +16,13 @@ LOOPS=1
 if [ "$1" == "--intensive" ]; then
 	LOOPS=20
 fi
+CRYPT_MODE_CBC="--cipher=aes-cbc-essiv:sha256 --hash=sha256"
+CRYPT_MODE_XTS="--cipher=aes-xts-plain64:sha512 --hash=sha512"
 
 s5p_sss_cryptsetup_prepare() {
 	local name="s5p-sss cryptsetup"
 	local dev="$1"
+	local mode="$2"
 
 	local status="$(cryptsetup status $dev | head -n 1)"
 	if [ "$status" != "/dev/mapper/testcrypt is inactive." ]; then
@@ -35,7 +38,7 @@ s5p_sss_cryptsetup_prepare() {
 	dd if=/dev/zero of=/tmp/${dev} bs=32M count=0 seek=1 status=none
 
 	#cryptsetup -v -q --cipher aes-cbc-essiv --hash sha256 --use-urandom --key-file=/dev/urandom --master-key-file=/dev/urandom --keyfile-size=256 --key-size=256 luksFormat /tmp/${dev}
-	cryptsetup -v -q --cipher=aes-cbc-essiv:sha256 --hash=sha256 \
+	cryptsetup -v -q $mode \
 		--key-file=/dev/urandom --master-key-file=/dev/urandom \
 		--keyfile-size=256 --key-size=256 --type plain \
 		open /tmp/${dev} $dev
@@ -79,7 +82,14 @@ test_s5p_sss_cryptsetup() {
 	local dev="testcrypt"
 	print_msg "Testing..."
 
-	s5p_sss_cryptsetup_prepare $dev
+	s5p_sss_cryptsetup_prepare $dev $CRYPT_MODE_CBC
+	for i in `seq 1 $LOOPS`; do
+		test $LOOPS -gt 1 && print_msg "Test ${i}/${LOOPS}"
+		s5p_sss_cryptsetup_run $dev
+	done
+	s5p_sss_cryptsetup_unprepare $dev
+
+	s5p_sss_cryptsetup_prepare $dev $CRYPT_MODE_XTS
 	for i in `seq 1 $LOOPS`; do
 		test $LOOPS -gt 1 && print_msg "Test ${i}/${LOOPS}"
 		s5p_sss_cryptsetup_run $dev
