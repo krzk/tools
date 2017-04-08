@@ -17,7 +17,7 @@ if [ "$1" == "--intensive" ]; then
 	LOOPS=20
 fi
 
-prepare_s5p_sss_cryptsetup() {
+s5p_sss_cryptsetup_prepare() {
 	local name="s5p-sss cryptsetup"
 	local dev="$1"
 
@@ -44,7 +44,7 @@ prepare_s5p_sss_cryptsetup() {
 	return 0
 }
 
-unprepare_s5p_sss_cryptsetup() {
+s5p_sss_cryptsetup_unprepare() {
 	local name="s5p-sss cryptsetup"
 	local dev="$1"
 
@@ -53,7 +53,7 @@ unprepare_s5p_sss_cryptsetup() {
 	rm -f /tmp/${dev}
 }
 
-run_test_s5p_sss_cryptsetup() {
+s5p_sss_cryptsetup_run() {
 	local name="s5p-sss cryptsetup"
 	local dev="$1"
 
@@ -79,12 +79,12 @@ test_s5p_sss_cryptsetup() {
 	local dev="testcrypt"
 	print_msg "Testing..."
 
-	prepare_s5p_sss_cryptsetup $dev
+	s5p_sss_cryptsetup_prepare $dev
 	for i in `seq 1 $LOOPS`; do
 		test $LOOPS -gt 1 && print_msg "Test ${i}/${LOOPS}"
-		run_test_s5p_sss_cryptsetup $dev
+		s5p_sss_cryptsetup_run $dev
 	done
-	unprepare_s5p_sss_cryptsetup $dev
+	s5p_sss_cryptsetup_unprepare $dev
 
 	print_msg "Done"
 }
