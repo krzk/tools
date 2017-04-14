@@ -14,7 +14,9 @@ set -e -E
 
 test_audio() {
 	local name="Audio"
+	print_msg "Testing..."
 
+	run_as_nonroot aplay -L | grep -i odroid
 	run_as_nonroot aplay /usr/share/sounds/alsa/Front_Right.wav
 	run_as_nonroot speaker-test --channels 2  --nloops 3
 
