@@ -28,6 +28,7 @@ DTB=${ROOT_DIR}cur-linux/dts/exynos4210-smdkv310.dtb
 CMDLINE="console=ttySAC0,115200n8 console=ttyS0 earlyprintk"
 KERNEL=${ROOT_DIR}cur-linux/zImage
 INITRD=${ROOT_DIR}armv7-odroidu3-exynos-v4.10-initramfs.cpio.gz
+IMG="-drive file=${ROOT_DIR}arch-arm.qcow2,if=sd,bus=0,index=2"
 MEM=1024
 CPU=2
 QEMU=arm-softmmu/qemu-system-arm
