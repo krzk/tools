@@ -69,5 +69,5 @@ echo "Running QEMU with MACHINE $MACHINE, DTB $DTB"
 $QEMU -m $MEM -M $MACHINE -smp $CPU $IMG -append "$CMDLINE_CONSOLE $CMDLINE" \
 	-d guest_errors \
 	-serial stdio \
-	-D ${ROOT_DIR}/log-${MACHINE}.log \
+	-D ${ROOT_DIR}log-${MACHINE}.log \
 	-kernel $KERNEL -dtb $DTB -initrd $INITRD
