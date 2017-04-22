@@ -25,7 +25,8 @@ usage() {
 ROOT_DIR=../
 MACHINE=smdkc210
 DTB=${ROOT_DIR}cur-linux/dts/exynos4210-smdkv310.dtb
-CMDLINE="console=ttySAC0,115200n8 console=ttyS0 earlyprintk"
+CMDLINE_CONSOLE="console=ttySAC0,115200n8"
+CMDLINE="console=ttyS0 earlyprintk root=PARTUUID=6efc8dd5-01 rootwait rw"
 KERNEL=${ROOT_DIR}cur-linux/zImage
 INITRD=${ROOT_DIR}armv7-odroidu3-exynos-v4.10-initramfs.cpio.gz
 IMG="-drive file=${ROOT_DIR}arch-arm.qcow2,if=sd,bus=0,index=2"
@@ -55,7 +56,7 @@ case $MACHINE in
 	vexpress-a9)
 		MACHINE=vexpress-a9
 		DTB=${ROOT_DIR}cur-linux/dts/vexpress-v2p-ca9.dtb
-		CMDLINE="console=ttyAMA0,115200 console=ttyS0 earlyprintk"
+		CMDLINE_CONSOLE="console=ttyAMA0,115200"
 		;;
 	smdkc210)
 		;;
@@ -65,7 +66,7 @@ case $MACHINE in
 esac
 
 echo "Running QEMU with MACHINE $MACHINE, DTB $DTB"
-$QEMU -m $MEM -M $MACHINE -smp $CPU $IMG -append "$CMDLINE" \
+$QEMU -m $MEM -M $MACHINE -smp $CPU $IMG -append "$CMDLINE_CONSOLE $CMDLINE" \
 	-d guest_errors \
 	-serial stdio \
 	-D ${ROOT_DIR}/log-${MACHINE}.log \
