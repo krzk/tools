@@ -29,7 +29,7 @@ CMDLINE_CONSOLE="console=ttySAC0,115200n8"
 CMDLINE="console=ttyS0 earlyprintk root=PARTUUID=6efc8dd5-01 rootwait rw"
 KERNEL=${ROOT_DIR}cur-linux/zImage
 INITRD=${ROOT_DIR}armv7-odroidu3-exynos-v4.10-initramfs.cpio.gz
-IMG="-drive file=${ROOT_DIR}arch-arm.qcow2,if=sd,bus=0,index=2"
+IMG_FILE="${ROOT_DIR}arch-arm.qcow2"
 MEM=1024
 CPU=2
 QEMU=arm-softmmu/qemu-system-arm
@@ -57,8 +57,10 @@ case $MACHINE in
 		MACHINE=vexpress-a9
 		DTB=${ROOT_DIR}cur-linux/dts/vexpress-v2p-ca9.dtb
 		CMDLINE_CONSOLE="console=ttyAMA0,115200"
+		IMG="-drive file=${IMG_FILE},if=none,cache=writeback,id=mmc0 -device virtio-blk-device,drive=mmc0"
 		;;
 	smdkc210)
+		IMG="-drive file=${IMG_FILE},if=sd,bus=0,index=2"
 		;;
 	*)
 		test $# -eq 0 || usage
