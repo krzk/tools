@@ -33,3 +33,5 @@ QEMU_NBD="${QEMU_PATH}/qemu-nbd"
 umount "$DST"
 
 $QEMU_NBD -d "$FILE"
+
+nbd-client -d /dev/nbd0
