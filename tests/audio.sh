@@ -16,7 +16,12 @@ test_audio() {
 	local name="Audio"
 	print_msg "Testing..."
 
-	run_as_nonroot aplay -L | grep -i odroid
+	# On kernels <=v4.12, expected:
+	# default:CARD=OdroidXU3
+	# On kernels ~v4.13, expected is something like:
+	# default:CARD=D3830000i2sHiFi
+	run_as_nonroot aplay -L | egrep -i "odroid|D3830000i2sHiFi"
+
 	run_as_nonroot aplay /usr/share/sounds/alsa/Front_Right.wav
 	run_as_nonroot speaker-test --channels 2  --nloops 3
 
