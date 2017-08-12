@@ -13,8 +13,9 @@ Requires=network-online.target
 
 [Service]
 # Script will wait for sendmail process (so it won't get killed by
-# closed terminal) so we cannot use oneshot (it would delay the boot).
-Type=simple
+# closed terminal) so we cannot use oneshot (it would delay the boot)...
+# but with Postfix should be okay
+Type=oneshot
 ExecStart=/usr/local/bin/boot-pi-status.sh
 User=pi
 
