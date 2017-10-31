@@ -37,6 +37,9 @@ get_serial() {
 	odroidxu3|xu3)
 		serial="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0"
 		;;
+	odroidhc1|hc1)
+		serial="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D4562A-if00-port0"
+		;;
 	odroidu3|u3)
 		serial="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00DC74F5-if00-port0"
 		;;

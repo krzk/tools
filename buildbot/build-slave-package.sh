@@ -23,6 +23,11 @@ if [ ! -f "arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts" ]; then
 	echo "No Odroid XU3 Lite DTS, using regular XU3"
 	cp ${OUT_DIR}/arch/arm/boot/dts/exynos5422-odroidxu3.dtb ${OUT_DIR}/arch/arm/boot/dts/exynos5422-odroidxu3-lite.dtb
 fi
+if [ ! -f "arch/arm/boot/dts/exynos5422-odroidhc1.dts" ]; then
+	# If there is no Odroid HC1 DTS, then duplicate the XU4 DTB
+	echo "No Odroid HC1 DTS, using regular XU4"
+	cp ${OUT_DIR}/arch/arm/boot/dts/exynos5422-odroidxu4.dtb ${OUT_DIR}/arch/arm/boot/dts/exynos5422-odroidhc1.dtb
+fi
 
 # Remove old modules-out
 rm -fr "${OUT_DIR}/modules-out"

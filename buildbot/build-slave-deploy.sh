@@ -68,9 +68,6 @@ chgrp -R tftp /srv/tftp/*
 chmod -R a+r /srv/tftp/uboot-initramfs-odroidxu3.img
 chmod -R g+w /srv/tftp/*
 
-# Prepare modules:
-# TODO cron modules cleanup jobe from odroid to pi
-
 MODULES_DEST_DIR="/srv/nfs/${TARGET}/lib/modules/"
 echo "Installing modules to $MODULES_DEST_DIR"
 test -d "$MODULES_DEST_DIR" || die "Destination modules dir '$MODULES_DEST_DIR' does not exist"
