@@ -64,9 +64,8 @@ mkinitcpio --moduleroot . --kernel "${KERNEL_NAME}" \
 mkimage -n "U-boot Odroid XU3 ramdisk" -A arm -O linux -T ramdisk -C gzip \
 	-d initramfs-odroidxu3.img /srv/tftp/uboot-initramfs-odroidxu3.img
 
-chgrp -R tftp /srv/tftp/*
 chmod -R a+r /srv/tftp/uboot-initramfs-odroidxu3.img
-chmod -R g+w /srv/tftp/*
+chmod -R g+rw,a+r /srv/tftp/*
 
 MODULES_DEST_DIR="/srv/nfs/${TARGET}/lib/modules/"
 echo "Installing modules to $MODULES_DEST_DIR"
