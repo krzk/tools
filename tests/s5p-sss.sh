@@ -37,7 +37,7 @@ test_s5p_sss_selftests() {
 	test $found_alg -eq $expected_alg_num || \
 		error_msg "Found $found_alg algorithms instead of $expected_alg_num"
 
-	print_msg "Done"
+	print_msg "OK"
 }
 
 have_tcrypt() {
@@ -65,7 +65,7 @@ test_s5p_sss_tcrypt() {
 	modprobe tcrypt sec=1 mode=500
 	set -e
 
-	print_msg "Done"
+	print_msg "OK"
 }
 
 test_s5p_sss_selftests

@@ -45,7 +45,7 @@ test_pwm_fan() {
 	sleep 2
 	test_cat ${hwmon}/pwm1 "0"
 
-	print_msg "Done"
+	print_msg "OK"
 }
 
 test_pwm_fan

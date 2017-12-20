@@ -96,7 +96,7 @@ test_s5p_sss_cryptsetup() {
 	done
 	s5p_sss_cryptsetup_unprepare $dev
 
-	print_msg "Done"
+	print_msg "OK"
 }
 
 test_s5p_sss_cryptsetup

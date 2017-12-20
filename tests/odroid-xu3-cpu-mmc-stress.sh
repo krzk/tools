@@ -67,6 +67,8 @@ test_cpu_mmc_stress() {
 	sudo -u $USER kill $pids
 
 	print_msg "Temperature diff: $t2 - $t1 = $(expr $t2 - $t1)"
+
+	print_msg "OK"
 }
 
 test_cpu_mmc_stress

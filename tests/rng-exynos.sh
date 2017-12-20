@@ -29,7 +29,7 @@ test_rng_exynos() {
 	dd if=/dev/hwrng of=/dev/null bs=1 count=16
 	dd if=/dev/hwrng of=/dev/null bs=1 count=16
 
-	print_msg "Done"
+	print_msg "OK"
 }
 
 test_rng_exynos

@@ -56,7 +56,7 @@ test_cooling() {
 	test_cat ${therm}/cooling_device0/cur_state "0"
 	test_cat ${hwmon}/pwm1 "0"
 
-	print_msg "Done"
+	print_msg "OK"
 }
 
 test_thermal() {
@@ -81,7 +81,8 @@ test_thermal() {
 	test_cat_lt ${therm}/thermal_zone3/temp 65000
 	test_cat_gt ${therm}/thermal_zone4/temp 23000
 	test_cat_lt ${therm}/thermal_zone4/temp 60000
-	print_msg "Done"
+
+	print_msg "OK"
 }
 
 test_cooling

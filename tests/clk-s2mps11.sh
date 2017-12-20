@@ -39,6 +39,8 @@ test_clk_s2mps11() {
 	fi
 		test_cat "${clk}/clk_rate" 32768
 	done
+
+	print_msg "OK"
 }
 
 test_clk_s2mps11

@@ -28,6 +28,8 @@ test_cpu_online() {
 	done
 	print_msg "$cpu_online"
 	test $cpu_online -eq $expected || print_msg "ERROR: test $cpu_online -ne $expected"
+
+	print_msg "OK"
 }
 
 test_cpu_online 8
