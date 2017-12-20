@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015 Krzysztof Kozlowski
+# Copyright (c) 2015-2017 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -15,6 +15,7 @@ set -e -E
 test_board_name() {
 	local of="/sys/firmware/devicetree/base/compatible"
 	echo -n "Board: "
+	grep -z 'hardkernel,odroid-hc1$' -q $of && echo "Odroid HC1" && return 0
 	grep -z 'hardkernel,odroid-xu3-lite$' -q $of && echo "Odroid XU3 Lite" && return 0
 	grep -z 'hardkernel,odroid-xu3$' -q $of && echo "Odroid XU3" && return 0
 	grep -z 'hardkernel,odroid-xu4$' -q $of && echo "Odroid XU4" && return 0
