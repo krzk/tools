@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015 Krzysztof Kozlowski
+# Copyright (c) 2015-2017 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -23,7 +23,8 @@ test_cooling() {
 	local hwmon="/sys/class/hwmon/hwmon0"
 
 	if [ ! -f "${hwmon}/pwm1" ]; then
-		# On older multi_v7 it may not be enabled
+		# On older multi_v7 it may not be enabled.
+		# Odroid HC1 does not have it.
 		print_msg "Missing ${hwmon}/pwm1, skipping"
 		return 0
 	fi
@@ -64,22 +65,27 @@ test_thermal() {
 	print_msg "Testing..."
 	local therm="/sys/class/thermal"
 
+	local exp_tmu0_threshold="50000"
+	if [ "$(get_board_compatible)" == "hardkernel,odroid-hc1" ]; then
+		exp_tmu0_threshold="70000"
+	fi
+
 	test $(ls ${therm}/*/temp | wc -l) -eq 5 || print_msg "ERROR: Number of thermal zones"
 
 	test_cat ${therm}/thermal_zone0/mode "enabled"
 	# On older stable kernels there might be no "passive" entry
 	test -f ${therm}/thermal_zone0/passive && test_cat ${therm}/thermal_zone0/passive "0"
-	test_cat ${therm}/thermal_zone0/trip_point_0_temp "50000"
-	test_cat_gt ${therm}/thermal_zone0/temp 35000
+	test_cat ${therm}/thermal_zone0/trip_point_0_temp $exp_tmu0_threshold
+	test_cat_gt ${therm}/thermal_zone0/temp 25000
 	test_cat_lt ${therm}/thermal_zone0/temp 65000
 
-	test_cat_gt ${therm}/thermal_zone1/temp 30000
+	test_cat_gt ${therm}/thermal_zone1/temp 25000
 	test_cat_lt ${therm}/thermal_zone1/temp 65000
-	test_cat_gt ${therm}/thermal_zone2/temp 30000
+	test_cat_gt ${therm}/thermal_zone2/temp 25000
 	test_cat_lt ${therm}/thermal_zone2/temp 65000
-	test_cat_gt ${therm}/thermal_zone3/temp 23000
+	test_cat_gt ${therm}/thermal_zone3/temp 25000
 	test_cat_lt ${therm}/thermal_zone3/temp 65000
-	test_cat_gt ${therm}/thermal_zone4/temp 23000
+	test_cat_gt ${therm}/thermal_zone4/temp 25000
 	test_cat_lt ${therm}/thermal_zone4/temp 60000
 
 	print_msg "OK"
