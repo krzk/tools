@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (c) 2016 Krzysztof Kozlowski
+# Copyright (c) 2016,2017 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -9,7 +9,7 @@
 # published by the Free Software Foundation.
 #
 
-BRANCHES="next/defconfig next/defconfig64 next/drivers next/dt next/dt64 fixes for-next next/soc next/soc64"
+BRANCHES="next/defconfig next/defconfig64 next/drivers next/dt next/dt64 fixes for-next master next/soc next/soc64"
 REMOTE="krzk-korg"
 
 die() {
