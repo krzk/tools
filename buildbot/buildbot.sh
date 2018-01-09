@@ -38,6 +38,7 @@ die() {
 do_buildbot() {
 	local bot_cmd="buildbot-worker"
 	test "$2" == "master" && bot_cmd="buildbot"
+	test "$2" == "slave" && bot_cmd="buildslave"
 	cd $HOME
 	test -d "sandbox" && source sandbox/bin/activate
 	test -d "$2" || die "No buildbot: $2"
@@ -46,8 +47,8 @@ do_buildbot() {
 }
 
 usage() {
-	echo "Usage: $0 {start|stop|reload} [master|worker]"
-	echo "  master|worker argument can be determined from executable suffix"
+	echo "Usage: $0 {start|stop|reload} [master|worker|slave]"
+	echo "  master|worker|slave argument can be determined from executable suffix"
 	exit 1
 }
 
