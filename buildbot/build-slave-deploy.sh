@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015 Krzysztof Kozlowski
+# Copyright (c) 2015-2018 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -64,8 +64,12 @@ mkinitcpio --moduleroot . --kernel "${KERNEL_NAME}" \
 mkimage -n "U-boot Odroid XU3 ramdisk" -A arm -O linux -T ramdisk -C gzip \
 	-d initramfs-odroidxu3.img /srv/tftp/uboot-initramfs-odroidxu3.img
 
-chmod -R a+r /srv/tftp/uboot-initramfs-odroidxu3.img
-chmod -R g+rw,a+r /srv/tftp/*
+# Contents of /srv/tftp should be:
+# - writeable and chmod/chown by buildbot: buildbot as owner
+# - writeable by kozik (over SSH): kozik in buildbot group
+# - readable by tftp: a+r
+chown -R buildbot:buildbot /srv/tftp
+chmod -R g+rw,a+r /srv/tftp
 
 MODULES_DEST_DIR="/srv/nfs/${TARGET}/lib/modules/"
 echo "Installing modules to $MODULES_DEST_DIR"
