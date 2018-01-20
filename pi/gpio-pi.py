@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2015-2017 Krzysztof Kozlowski
+# Copyright (c) 2015-2018 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -18,7 +18,8 @@ targets = {
     "xu3":          2,
     "odroidhc1":    3,
     "hc1":          3,
-    #"NOT_USED":     4,
+    "odroidxu":     4,
+    "xu":           4,
     "odroidu3":     17,
     "u3":           17,
     }
@@ -57,7 +58,7 @@ def gpio_status(pin):
 
 def print_help():
     print("Usage: " + str(sys.argv[0]) + " <target> <command>")
-    print("   target:  xu3, u3, hc1")
+    print("   target:  xu3, xu, u3, hc1")
     print("   command: on, off, restart, status")
     print("            (status can be run also without target)")
     sys.exit(2)
