@@ -60,7 +60,7 @@ def print_help():
     print("   target:  xu3, u3, hc1")
     print("   command: on, off, restart, status")
     print("            (status can be run also without target)")
-    sys.exit(0)
+    sys.exit(2)
 
 def status_all():
     gpio_setup()
@@ -98,5 +98,6 @@ def main():
         status_all()
     else:
         print_help()
+    sys.exit(0)
 
 main()
