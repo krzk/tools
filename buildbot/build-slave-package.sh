@@ -18,6 +18,11 @@ test $# -eq 2 || die "Wrong number of parameters"
 NAME="$1"
 OUT_DIR="$2"
 
+if [ ! -f "arch/arm/boot/dts/exynos5410-odroidxu.dts" ]; then
+	# If there is no Odroid XU DTS, then duplicate the SMDK DTB
+	echo "No Odroid XU DTS, using SMDK5410"
+	cp ${OUT_DIR}/arch/arm/boot/dts/exynos5410-smdk5410.dtb ${OUT_DIR}/arch/arm/boot/dts/exynos5410-odroidxu.dtb
+fi
 if [ ! -f "arch/arm/boot/dts/exynos5422-odroidxu3-lite.dts" ]; then
 	# If there is no Odroid XU3 Lite DTS, then duplicate the XU3 DTB
 	echo "No Odroid XU3 Lite DTS, using regular XU3"
