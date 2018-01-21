@@ -32,6 +32,7 @@ temp: $(cat /sys/class/thermal/thermal_zone0/temp)
 
 Boards:
 =======
+Odroid XU: $(sudo /usr/local/bin/gpio-pi.py odroidxu status)
 Odroid XU ping: $(board_ping odroidxu)
 Odroid XU3: $(sudo /usr/local/bin/gpio-pi.py odroidxu3 status)
 Odroid XU3 ping: $(board_ping odroidxu3)
