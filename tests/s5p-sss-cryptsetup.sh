@@ -30,10 +30,7 @@ s5p_sss_cryptsetup_prepare() {
 		return 1
 	fi
 
-	if [ -f /tmp/${dev} ]; then
-		print_msg "/tmp/${dev} already exists"
-		return 1
-	fi
+	test -f /tmp/${dev} && { print_msg "/tmp/${dev} already exists"; return 1 ; }
 
 	dd if=/dev/zero of=/tmp/${dev} bs=32M count=0 seek=1 status=none
 
