@@ -26,11 +26,11 @@ s5p_sss_cryptsetup_prepare() {
 
 	local status="$(cryptsetup status $dev | head -n 1)"
 	if [ "$status" != "/dev/mapper/testcrypt is inactive." ]; then
-		print_msg "Crypt device $dev is being used"
+		print_msg "ERROR: Crypt device $dev is being used"
 		return 1
 	fi
 
-	test -f /tmp/${dev} && { print_msg "/tmp/${dev} already exists"; return 1 ; }
+	test -f /tmp/${dev} && { print_msg "ERROR: /tmp/${dev} already exists"; return 1 ; }
 
 	dd if=/dev/zero of=/tmp/${dev} bs=32M count=0 seek=1 status=none
 
