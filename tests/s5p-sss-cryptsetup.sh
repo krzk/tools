@@ -58,7 +58,7 @@ s5p_sss_cryptsetup_prepare() {
 	else
 		cryptsetup -v -q $mode \
 			--key-file=/dev/urandom --master-key-file=/dev/urandom \
-			--keyfile-size=256 --key-size=256 --type plain \
+			--keyfile-size=32 --key-size=256 --type plain \
 			open /tmp/${dev} $dev
 	fi
 	cryptsetup status $dev
