@@ -79,14 +79,14 @@ test_s5p_sss_cryptsetup() {
 	local dev="testcrypt"
 	print_msg "Testing..."
 
-	s5p_sss_cryptsetup_prepare $dev $CRYPT_MODE_CBC
+	s5p_sss_cryptsetup_prepare $dev "$CRYPT_MODE_CBC"
 	for i in `seq 1 $LOOPS`; do
 		test $LOOPS -gt 1 && print_msg "Test ${i}/${LOOPS}"
 		s5p_sss_cryptsetup_run $dev
 	done
 	s5p_sss_cryptsetup_unprepare $dev
 
-	s5p_sss_cryptsetup_prepare $dev $CRYPT_MODE_XTS
+	s5p_sss_cryptsetup_prepare $dev "$CRYPT_MODE_XTS"
 	for i in `seq 1 $LOOPS`; do
 		test $LOOPS -gt 1 && print_msg "Test ${i}/${LOOPS}"
 		s5p_sss_cryptsetup_run $dev
