@@ -34,6 +34,9 @@ get_serial() {
 	local serial=""
 
 	case "$target" in
+	odroidu3|u3)
+		serial="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D45567-if00-port0"
+		;;
 	odroidxu3|xu3)
 		serial="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0"
 		;;
