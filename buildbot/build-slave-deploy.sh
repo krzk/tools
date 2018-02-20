@@ -20,19 +20,6 @@ NAME="$2"
 REVISION="$3"
 TOOLS_DIR="/opt/tools"
 
-# On arch ping6 and ping were merged so '-4' and '-6' arguments are supported.
-# However on pi, the IPv6 is disabled and running just 'ping' causes error:
-# ping: socket: Address family not supported by protocol (raw socket required by specified options).
-# Detect if '-4' is supported, if it is, then use it
-get_ping() {
-	ping -h |& grep vV64 > /dev/null
-	if [ $? -eq 0 ]; then
-		echo 'ping -4'
-	else
-		echo 'ping'
-	fi
-}
-
 echo "Deploying ${NAME}/${REVISION} to $TARGET"
 
 # Test for clean environment:
