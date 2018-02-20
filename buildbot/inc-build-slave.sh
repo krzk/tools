@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2016 Krzysztof Kozlowski
+# Copyright (c) 2016-2018 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -119,7 +119,7 @@ wait_for_ping_die() {
 			echo "Target $target (gracefully) off after $i pings"
 			# Network is dead but still need to sleep for few
 			# seconds to wait for umount before sending hard-reset
-			sleep 5
+			sleep 10
 			break
 		fi
 		i=$(expr $i + 1)
