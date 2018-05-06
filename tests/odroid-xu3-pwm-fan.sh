@@ -33,8 +33,11 @@ test_pwm_fan() {
 		return 0
 	fi
 
+	# We test for idle fan, so settle first
+	sleep 5
+
 	test_cat ${hwmon}/name "pwmfan"
-	test_cat ${hwmon}/pwm1 "0"
+	test_cat_ge ${hwmon}/pwm1 "0"
 
 	echo 100 > ${hwmon}/pwm1
 	sleep 2

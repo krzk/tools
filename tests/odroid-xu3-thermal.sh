@@ -38,11 +38,14 @@ test_cooling() {
 
 	# TODO: test other cooling devices (after DTS changes)
 
+	# We test for idle fan, so settle first
+	sleep 5
+
 	test $(ls ${therm}/*/temp | wc -l) -eq 5 || print_msg "ERROR: Number of thermal zones"
-	test_cat ${therm}/cooling_device0/cur_state "0"
+	test_cat_ge ${therm}/cooling_device0/cur_state "0"
 	test_cat ${therm}/cooling_device0/max_state "3"
 
-	test_cat ${hwmon}/pwm1 "0"
+	test_cat_ge ${hwmon}/pwm1 "0"
 
 	echo 1 > ${therm}/cooling_device0/cur_state
 	sleep 1

@@ -39,6 +39,13 @@ test_cat_gt() {
 	return 0
 }
 
+#test_cat_ge file expected
+test_cat_ge() {
+	local val="$(cat $1)"
+	test $val -ge $2 || { echo "ERROR: Wrong $1 ($val >= $2)"; return 1; }
+	return 0
+}
+
 # print_msg msg
 # assuming 'name' is set
 print_msg() {
