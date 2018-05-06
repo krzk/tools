@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015 Krzysztof Kozlowski
+# Copyright (c) 2015-2018 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -8,6 +8,9 @@
 # it under the terms of the GNU General Public License version 2 as
 # published by the Free Software Foundation.
 #
+
+TARGET="$1"
+NAME="$2"
 
 # die error_msg
 die() {
