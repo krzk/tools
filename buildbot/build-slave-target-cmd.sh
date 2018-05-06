@@ -15,7 +15,8 @@ test $# -gt 2 || die "Missing target/name/cmd"
 
 TARGET="$1"
 NAME="$2"
-CMD="$3"
+shift 2
+CMD="$*"
 TARGET_USER="buildbot"
 SSH_TARGET="${TARGET_USER}@${TARGET}"
 # Timeout for particular network commands: ping and ssh, in seconds
