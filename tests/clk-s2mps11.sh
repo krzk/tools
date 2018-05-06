@@ -31,11 +31,11 @@ test_clk_s2mps11() {
 	for clk in /sys/kernel/debug/clk/${clk_name}_*; do
 		test_cat "${clk}/clk_enable_count" 0
 		test_cat "${clk}/clk_notifier_count" 0
-	if [[ "$clk" =~ "${clk_name}_ap" ]]; then
-		test_cat "${clk}/clk_prepare_count" 1
-	else
-		test_cat "${clk}/clk_prepare_count" 0
-	fi
+		if [[ "$clk" =~ "${clk_name}_ap" ]]; then
+			test_cat "${clk}/clk_prepare_count" 1
+		else
+			test_cat "${clk}/clk_prepare_count" 0
+		fi
 		test_cat "${clk}/clk_rate" 32768
 	done
 
