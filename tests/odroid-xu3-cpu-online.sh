@@ -22,7 +22,7 @@ test_cpu_online() {
 	hardkernel,odroid-hc1|hardkernel,odroid-xu3|hardkernel,odroid-xu3-lite|hardkernel,odroid-xu4)
 		expected_cpus=8
 		;;
-	hardkernel,odroid-u3)
+	hardkernel,odroid-u3|hardkernel,odroid-xu)
 		expected_cpus=4
 		;;
 	*)
