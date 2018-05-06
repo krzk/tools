@@ -31,8 +31,8 @@ ssh_works() {
 	ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET id &> /dev/null
 }
 
-# Run the tests and fail everything on error
-run_tests() {
+# Run the cmd and fail everything on error
+run_cmd_target() {
 	local target=$1
 
 	set -e -E
@@ -52,7 +52,7 @@ test_log_serial_active
 
 trap "main_job_died" EXIT
 
-run_tests $TARGET
+run_cmd_target $TARGET
 
 kill_pid_log_serial
 
