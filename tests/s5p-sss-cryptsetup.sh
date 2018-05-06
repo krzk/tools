@@ -90,9 +90,9 @@ s5p_sss_cryptsetup_run() {
 	local name="s5p-sss cryptsetup"
 	local dev="$1"
 
-	for i in `seq 0 1000`; do
-		echo "1234567890123456789012345678901234567890" | dd of=/dev/mapper/${dev} \
-			bs=1 seek=$(expr $i \* 40) status=none
+	for i in `seq 0 50`; do
+		echo "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" \
+			| dd of=/dev/mapper/${dev} bs=1 seek=$(expr $i \* 160) status=none
 	done
 	sync && sync && sync
 
