@@ -19,7 +19,7 @@ test_rtc_device() {
 	if [ -c /dev/${rtc} ]; then
 		hwclock --systohc -f /dev/${rtc}
 		for i in `seq 3`; do
-			rtcwake -d $rtc -m on -s 5 > /dev/null
+			rtcwake -d $rtc -m on -s 5 -v
 		done
 	else
 		error_msg "Missing /dev/${rtc}"

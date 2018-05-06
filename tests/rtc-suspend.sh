@@ -19,7 +19,7 @@ test_rtc_suspend_device() {
 	if [ -c /dev/${rtc} ]; then
 		hwclock --systohc -f /dev/${rtc}
 		for i in `seq 3`; do
-			rtcwake -d $rtc -m mem -s 5 > /dev/null
+			rtcwake -d $rtc -m mem -s 5 -v
 			# Test whether network works after suspend:
 			sleep 5
 			ifconfig eth0
