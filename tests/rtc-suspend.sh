@@ -18,7 +18,7 @@ test_rtc_suspend_device() {
 	print_msg "Testing /dev/${rtc}..."
 	if [ -c /dev/${rtc} ]; then
 		hwclock --systohc -f /dev/${rtc}
-		for i in `seq 5`; do
+		for i in `seq 3`; do
 			rtcwake -d $rtc -m mem -s 5 > /dev/null
 			# Test whether network works after suspend:
 			sleep 5
