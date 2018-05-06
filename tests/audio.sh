@@ -9,7 +9,7 @@
 # published by the Free Software Foundation.
 #
 
-set -e -E
+set -e -E -x
 . $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
 test_audio() {

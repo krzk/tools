@@ -9,7 +9,7 @@
 # published by the Free Software Foundation.
 #
 
-set -e -E
+set -e -E -x
 . $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
 test_board_name() {
@@ -20,7 +20,7 @@ test_board_name() {
 	grep -z 'hardkernel,odroid-xu3$' -q $of && echo "Odroid XU3" && return 0
 	grep -z 'hardkernel,odroid-xu4$' -q $of && echo "Odroid XU4" && return 0
 	echo
-	echo "ERROR: Wrong board"
+	error_msg "Wrong board"
 }
 
 test_board_name

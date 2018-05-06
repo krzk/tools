@@ -9,7 +9,7 @@
 # published by the Free Software Foundation.
 #
 
-set -e -E
+set -e -E -x
 . $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
 test_clk_s2mps11() {
@@ -22,8 +22,7 @@ test_clk_s2mps11() {
 		clk_name="s2mps11"
 		;;
 	*)
-		print_msg "ERROR: Wrong board"
-		return
+		error_msg "Wrong board"
 	esac
 
 	test -d "/sys/kernel/debug/clk/${clk_name}_ap" || print_msg "ERROR: No ${clk_name}_ap"

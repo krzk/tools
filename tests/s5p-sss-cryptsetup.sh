@@ -9,7 +9,7 @@
 # published by the Free Software Foundation.
 #
 
-set -e -E
+set -e -E -x
 . $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
 LOOPS=1
@@ -21,6 +21,12 @@ CRYPT_MODE_XTS="--cipher=aes-xts-plain64:sha512 --hash=sha512"
 TEST_DATA_SIZE="32M"
 # Size of crypt device should be at least TEST_DATA_SIZE+LUKS headers
 CRYTP_DEV_SIZE="34M"
+
+s5p_sss_cryptsetup_cleanup() {
+	print_msg "Exit trap, cleaning up..."
+	s5p_sss_cryptsetup_unprepare $dev
+	trap - EXIT
+}
 
 # s5p_sss_cryptsetup_prepare <dev_name> <mode (as cryptsetup argument list)> [luksformat]
 s5p_sss_cryptsetup_prepare() {
@@ -81,7 +87,8 @@ s5p_sss_cryptsetup_unprepare() {
 	local name="s5p-sss cryptsetup"
 	local dev="$1"
 
-	cryptsetup close $dev
+	# Need to echo so shell will not exit if cleanup command fails
+	cryptsetup close $dev || print_msg "Closing $dev failed"
 
 	rm -f /tmp/${dev} /tmp/${dev}-keyfile
 }
@@ -105,7 +112,6 @@ s5p_sss_cryptsetup_run() {
 	dd if=/dev/mapper/${dev} of=/dev/null bs=${TEST_DATA_SIZE} count=1
 	sync && sync && sync
 }
-
 
 test_s5p_sss_cryptsetup() {
 	local name="s5p-sss cryptsetup"
@@ -143,4 +149,6 @@ test_s5p_sss_cryptsetup() {
 	print_msg "OK"
 }
 
+trap "s5p_sss_cryptsetup_cleanup" EXIT
 test_s5p_sss_cryptsetup
+trap - EXIT

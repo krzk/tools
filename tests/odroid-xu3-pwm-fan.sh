@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015 Krzysztof Kozlowski
+# Copyright (c) 2015-2018 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -9,10 +9,17 @@
 # published by the Free Software Foundation.
 #
 
-set -e -E
+set -e -E -x
 . $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
 # grep . /sys/class/hwmon/hwmon0/*/pwm1
+
+pwm_fan_cleanup() {
+	print_msg "Exit trap, cleaning up..."
+	# Need to echo so shell will not exit if cleanup command fails
+	echo 0 > ${hwmon}/pwm1 || print_msg "Cleaning $hwmon failed"
+	trap - EXIT
+}
 
 test_pwm_fan() {
 	local name="PWM fan"
@@ -48,4 +55,6 @@ test_pwm_fan() {
 	print_msg "OK"
 }
 
+trap "pwm_fan_cleanup" EXIT
 test_pwm_fan
+trap - EXIT

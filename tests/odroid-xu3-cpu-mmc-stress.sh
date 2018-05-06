@@ -9,10 +9,17 @@
 # published by the Free Software Foundation.
 #
 
-set -e -E
+set -e -E -x
 . $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
 # grep . /sys/class/thermal/*/temp
+
+cpu_mmc_stress_cleanup() {
+	print_msg "Exit trap, cleaning up..."
+	# Need to echo so shell will not exit if cleanup command fails
+	sudo -u $USER kill $pids || print_msg "Cleaning $pids failed"
+	trap - EXIT
+}
 
 get_mmc() {
 	for i in `seq 0 9`; do
@@ -72,4 +79,6 @@ test_cpu_mmc_stress() {
 	print_msg "OK"
 }
 
+trap "cpu_mmc_stress_cleanup" EXIT
 test_cpu_mmc_stress
+trap - EXIT

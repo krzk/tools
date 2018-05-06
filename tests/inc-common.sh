@@ -18,19 +18,22 @@ die() {
 # test_cat file expected
 test_cat() {
 	local val="$(cat $1)"
-	test "$val" = "$2" || echo "ERROR: Wrong $1 ($val == $2)"
+	test "$val" = "$2" || { echo "ERROR: Wrong $1 ($val == $2)"; return 1; }
+	return 0
 }
 
 #test_cat_lt file expected
 test_cat_lt() {
 	local val="$(cat $1)"
-	test $val -lt $2 || echo "ERROR: Wrong $1 ($val < $2)"
+	test $val -lt $2 || { echo "ERROR: Wrong $1 ($val < $2)"; return 1; }
+	return 0
 }
 
 #test_cat_gt file expected
 test_cat_gt() {
 	local val="$(cat $1)"
-	test $val -gt $2 || echo "ERROR: Wrong $1 ($val > $2)"
+	test $val -gt $2 || { echo "ERROR: Wrong $1 ($val > $2)"; return 1; }
+	return 0
 }
 
 # print_msg msg

@@ -9,7 +9,7 @@
 # published by the Free Software Foundation.
 #
 
-set -e -E
+set -e -E -x
 . $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
 test_usb() {
@@ -26,8 +26,7 @@ test_usb() {
 		expected_usb="1_1d6b:0001 2_1d6b:0002 1_1d6b:0003 1_0424:ec00 1_0424:9514"
 		;;
 	*)
-		print_msg "ERROR: Wrong board"
-		return
+		error_msg "Wrong board"
 	esac
 
 	for usb in $expected_usb; do

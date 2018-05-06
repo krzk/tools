@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2017 Krzysztof Kozlowski
+# Copyright (c) 2015-2018 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -9,11 +9,18 @@
 # published by the Free Software Foundation.
 #
 
-set -e -E
+set -e -E -x
 . $(dirname ${BASH_SOURCE[0]})/inc-common.sh
 
 # grep . /sys/class/thermal/*/temp
 # grep . /sys/class/thermal/cooling_device*/*
+
+cooling_cleanup() {
+	print_msg "Exit trap, cleaning up..."
+	# Need to echo so shell will not exit if cleanup command fails
+	echo 0 > ${therm}/cooling_device0/cur_state || print_msg "Cleaning $therm failed"
+	trap - EXIT
+}
 
 test_cooling() {
 	local name="Cooling"
@@ -91,5 +98,7 @@ test_thermal() {
 	print_msg "OK"
 }
 
+trap "cooling_cleanup" EXIT
 test_cooling
 test_thermal
+trap - EXIT
