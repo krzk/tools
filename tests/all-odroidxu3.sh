@@ -27,11 +27,7 @@ set -e -E -x
 . $(dirname ${BASH_SOURCE[0]})/rtc.sh
 # RNG does not work on Odroid, configured in secure mode?
 #. $(dirname ${BASH_SOURCE[0]})/rng-exynos.sh
-
-echo "3810000.audss-clock-controller" > /sys/bus/platform/drivers/exynos-audss-clk/unbind
-echo "3810000.audss-clock-controller" > /sys/bus/platform/drivers/exynos-audss-clk/bind
-echo "Audss rebind: Done"
-
+. $(dirnam ${BASH_SOURCE[0]})/audss.sh
 
 
 # Other:
