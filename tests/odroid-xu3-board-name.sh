@@ -24,6 +24,9 @@ test_board_name() {
 		grep -z 'hardkernel,odroid-xu3-lite$' -q $of && echo "Odroid XU3 Lite" && return 0
 		grep -z 'hardkernel,odroid-xu3$' -q $of && echo "Odroid XU3" && return 0
 		;;
+	odroidxu|xu)
+		grep -z 'hardkernel,odroid-xu$' -q $of && echo "Odroid XU" && return 0
+		;;
 	odroidhc1|hc1)
 		grep -z 'hardkernel,odroid-hc1$' -q $of && echo "Odroid HC1" && return 0
 		grep -z 'hardkernel,odroid-xu4$' -q $of && echo "Odroid XU4" && return 0
@@ -31,6 +34,7 @@ test_board_name() {
 	*)
 		grep -z 'hardkernel,odroid-hc1$' -q $of && echo "Odroid HC1" && return 0
 		grep -z 'hardkernel,odroid-u3$' -q $of && echo "Odroid U3" && return 0
+		grep -z 'hardkernel,odroid-xu$' -q $of && echo "Odroid XU" && return 0
 		grep -z 'hardkernel,odroid-xu3-lite$' -q $of && echo "Odroid XU3 Lite" && return 0
 		grep -z 'hardkernel,odroid-xu3$' -q $of && echo "Odroid XU3" && return 0
 		grep -z 'hardkernel,odroid-xu4$' -q $of && echo "Odroid XU4" && return 0
