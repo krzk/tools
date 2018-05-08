@@ -19,8 +19,11 @@ TARGET_USER="buildbot"
 SSH_TARGET="${TARGET_USER}@${TARGET}"
 # Timeout for particular network commands: ping and ssh, in seconds
 TIMEOUT=10
-# Number of retries (each with TIMEOUT) for ssh connection
-SSH_WAIT_FOR_BOOT_TRIES=30
+# Sleep between ssh_works tries, if ssh quit immediately
+TIMEOUT_SSH_REFUSED=3
+# Number of seconds for retries for ssh connection
+# 360 - 6 minutes for target to boot
+SSH_WAIT_FOR_BOOT_TRIES=360
 # Logging to serial.log-ttyUSBX
 LOG_FILE=serial.log
 
@@ -55,6 +58,7 @@ ssh_get_diag() {
 	echo "####################################"
 }
 
+# Return 0 on success, 1 on immediate failure, 2 on timeout failure
 ssh_works() {
 	#ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET id &> /dev/null
 	local err=""
@@ -62,29 +66,38 @@ ssh_works() {
 
 	err=$(ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET id 2>&1)
 	rc=$?
-	if [[ "$err" != *"Connection timed out"* ]] && [[ "$err" != *"No route to host"* ]]; then
-		# ssh quit immediately so sleep here
-		sleep 3
+	if [ $rc -eq 0 ]; then
+		return 0
+	elif [[ "$err" != *"Connection timed out"* ]] && [[ "$err" != *"No route to host"* ]]; then
+		return 1
 	fi
-	return $rc
+	return 2
 }
 
 wait_for_boot() {
 	local target=$1
 	local i=0
+	local rc=9
 
 	while [ $i -lt $SSH_WAIT_FOR_BOOT_TRIES ]; do
 		ssh_works
-		if [ $? -eq 0 ]; then
+		rc=$?
+		if [ $rc -eq 0 ]; then
 			echo "Target $target booted!"
 			ssh_get_diag
 			return $?
+		elif [ $rc -eq 1 ]; then
+			# ssh quit immediately, so sleep for some time (shorter than TIMEOUT)
+			sleep $TIMEOUT_SSH_REFUSED
+			i=$(expr $i + $TIMEOUT_SSH_REFUSED)
+		else
+			# Timeouted, increase the retries counter
+			i=$(expr $i + $TIMEOUT)
 		fi
-		i=$(expr $i + 1)
 	done
 
 	if [ $i -ge $SSH_WAIT_FOR_BOOT_TRIES ]; then
-		echo "Timeout waiting for $target boot"
+		echo "Timeout waiting for $target boot ($i tries)"
 		return 1
 	fi
 
