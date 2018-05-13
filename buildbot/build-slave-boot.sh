@@ -18,12 +18,12 @@ NAME="$2"
 TARGET_USER="buildbot"
 SSH_TARGET="${TARGET_USER}@${TARGET}"
 # Timeout for particular network commands: ping and ssh, in seconds
-TIMEOUT=10
+TIMEOUT=20
 # Sleep between ssh_works tries, if ssh quit immediately
 TIMEOUT_SSH_REFUSED=3
 # Number of seconds for retries for ssh connection
 # 360 - 6 minutes for target to boot
-SSH_WAIT_FOR_BOOT_TRIES=360
+SSH_WAIT_FOR_BOOT_TRIES=480
 # Logging to serial.log-ttyUSBX
 LOG_FILE=serial.log
 
