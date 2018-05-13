@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015 Krzysztof Kozlowski
+# Copyright (c) 2015-2018 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -12,6 +12,8 @@
 . $(dirname ${BASH_SOURCE[0]})/inc-build-slave.sh
 
 set -e -E
+# Be verbose for Buildbot debugging
+set -x
 
 test $# -eq 2 || die "Wrong number of parameters"
 

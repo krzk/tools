@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015,2016 Krzysztof Kozlowski
+# Copyright (c) 2015-2018 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -10,6 +10,9 @@
 #
 
 . $(dirname ${BASH_SOURCE[0]})/inc-build-slave.sh
+
+# Be verbose for Buildbot debugging
+set -x
 
 test $# -gt 2 || die "Missing target/name/cmd"
 

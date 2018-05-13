@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015 Krzysztof Kozlowski
+# Copyright (c) 2015-2018 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -20,6 +20,8 @@ have_ccache() {
 }
 
 set -e -E
+# Be verbose for Buildbot debugging
+set -x
 
 CROSS_COMPILE=""
 JOBS="$(grep -c processor /proc/cpuinfo)"

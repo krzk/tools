@@ -12,6 +12,8 @@
 . $(dirname ${BASH_SOURCE[0]})/inc-build-slave.sh
 
 set -e -E
+# Be verbose for Buildbot debugging
+set -x
 
 test $# -gt 1 || die "Wrong number of parameters"
 
