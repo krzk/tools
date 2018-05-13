@@ -28,6 +28,20 @@ test_cooling() {
 	local therm="/sys/class/thermal"
 	# TODO: iterate over all hwmon devices to find pwmfan
 	local hwmon="/sys/class/hwmon/hwmon0"
+	local exp_tmu_zones=5
+	local exp_cool_level_1=130
+	local exp_cool_level_2=170
+	local exp_cool_level_3=230
+
+	case "$(get_board_compatible)" in
+	hardkernel,odroid-u3)
+		exp_tmu_zones=1
+		exp_cool_level_1=102
+		;;
+	hardkernel,odroid-xu)
+		exp_tmu_zones=4
+		;;
+	esac
 
 	if [ ! -f "${hwmon}/pwm1" ]; then
 		# On older multi_v7 it may not be enabled.
@@ -41,7 +55,7 @@ test_cooling() {
 	# We test for idle fan, so settle first
 	sleep 5
 
-	test $(ls ${therm}/*/temp | wc -l) -eq 5 || print_msg "ERROR: Number of thermal zones"
+	test $(ls ${therm}/*/temp | wc -l) -eq ${exp_tmu_zones} || error_msg "ERROR: Number of thermal zones"
 	test_cat_ge ${therm}/cooling_device0/cur_state "0"
 	test_cat ${therm}/cooling_device0/max_state "3"
 
@@ -50,17 +64,17 @@ test_cooling() {
 	echo 1 > ${therm}/cooling_device0/cur_state
 	sleep 1
 	test_cat ${therm}/cooling_device0/cur_state "1"
-	test_cat ${hwmon}/pwm1 "130"
+	test_cat ${hwmon}/pwm1 $exp_cool_level_1
 
 	echo 2 > ${therm}/cooling_device0/cur_state
 	sleep 1
 	test_cat ${therm}/cooling_device0/cur_state "2"
-	test_cat ${hwmon}/pwm1 "170"
+	test_cat ${hwmon}/pwm1 $exp_cool_level_2
 
 	echo 3 > ${therm}/cooling_device0/cur_state
 	sleep 1
 	test_cat ${therm}/cooling_device0/cur_state "3"
-	test_cat ${hwmon}/pwm1 "230"
+	test_cat ${hwmon}/pwm1 $exp_cool_level_3
 
 	echo 0 > ${therm}/cooling_device0/cur_state
 	sleep 1
@@ -76,27 +90,32 @@ test_thermal() {
 	local therm="/sys/class/thermal"
 
 	local exp_tmu0_threshold="50000"
-	if [ "$(get_board_compatible)" == "hardkernel,odroid-hc1" ]; then
-		exp_tmu0_threshold="70000"
-	fi
+	local exp_tmu_zones=5
 
-	test $(ls ${therm}/*/temp | wc -l) -eq 5 || print_msg "ERROR: Number of thermal zones"
+	case "$(get_board_compatible)" in
+	hardkernel,odroid-hc1)
+		exp_tmu0_threshold="70000"
+		;;
+	hardkernel,odroid-u3)
+		exp_tmu0_threshold="70000"
+		exp_tmu_zones=1
+		;;
+	hardkernel,odroid-xu)
+		exp_tmu_zones=4
+		;;
+	esac
+
+	test $(ls ${therm}/*/temp | wc -l) -eq $exp_tmu_zones || error_msg "ERROR: Number of thermal zones"
 
 	test_cat ${therm}/thermal_zone0/mode "enabled"
 	# On older stable kernels there might be no "passive" entry
 	test -f ${therm}/thermal_zone0/passive && test_cat ${therm}/thermal_zone0/passive "0"
 	test_cat ${therm}/thermal_zone0/trip_point_0_temp $exp_tmu0_threshold
-	test_cat_gt ${therm}/thermal_zone0/temp 25000
-	test_cat_lt ${therm}/thermal_zone0/temp 65000
 
-	test_cat_gt ${therm}/thermal_zone1/temp 25000
-	test_cat_lt ${therm}/thermal_zone1/temp 65000
-	test_cat_gt ${therm}/thermal_zone2/temp 25000
-	test_cat_lt ${therm}/thermal_zone2/temp 65000
-	test_cat_gt ${therm}/thermal_zone3/temp 25000
-	test_cat_lt ${therm}/thermal_zone3/temp 65000
-	test_cat_gt ${therm}/thermal_zone4/temp 25000
-	test_cat_lt ${therm}/thermal_zone4/temp 60000
+	for tmu in $(seq 0 $((exp_tmu_zones - 1))); do
+		test_cat_gt ${therm}/thermal_zone${tmu}/temp 25000
+		test_cat_lt ${therm}/thermal_zone${tmu}/temp 65000
+	done
 
 	print_msg "OK"
 }
