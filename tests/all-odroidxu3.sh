@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015,2016 Krzysztof Kozlowski
+# Copyright (c) 2015-2018 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -12,11 +12,11 @@
 set -e -E -x
 
 . $(dirname ${BASH_SOURCE[0]})/inc-common.sh
-. $(dirname ${BASH_SOURCE[0]})/odroid-xu3-pwm-fan.sh
-. $(dirname ${BASH_SOURCE[0]})/odroid-xu3-cpu-online.sh
-. $(dirname ${BASH_SOURCE[0]})/odroid-xu3-thermal.sh
+. $(dirname ${BASH_SOURCE[0]})/pwm-fan.sh
+. $(dirname ${BASH_SOURCE[0]})/cpu-online.sh
+. $(dirname ${BASH_SOURCE[0]})/thermal.sh
 . $(dirname ${BASH_SOURCE[0]})/odroid-xu3-board-name.sh
-. $(dirname ${BASH_SOURCE[0]})/odroid-xu3-cpu-mmc-stress.sh
+. $(dirname ${BASH_SOURCE[0]})/cpu-mmc-stress.sh
 . $(dirname ${BASH_SOURCE[0]})/s5p-sss.sh
 . $(dirname ${BASH_SOURCE[0]})/s5p-sss-cryptsetup.sh
 . $(dirname ${BASH_SOURCE[0]})/usb.sh
@@ -27,7 +27,7 @@ set -e -E -x
 . $(dirname ${BASH_SOURCE[0]})/rtc.sh
 # RNG does not work on Odroid, configured in secure mode?
 #. $(dirname ${BASH_SOURCE[0]})/rng-exynos.sh
-. $(dirnam ${BASH_SOURCE[0]})/audss.sh
+. $(dirname ${BASH_SOURCE[0]})/audss.sh
 
 
 # Other:
