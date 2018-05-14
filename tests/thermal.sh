@@ -55,7 +55,7 @@ test_cooling() {
 	# We test for idle fan, so settle first
 	sleep 5
 
-	test $(ls ${therm}/*/temp | wc -l) -eq ${exp_tmu_zones} || error_msg "ERROR: Number of thermal zones"
+	test $(ls ${therm}/*/temp | wc -l) -eq ${exp_tmu_zones} || error_msg "Number of thermal zones"
 	test_cat_ge ${therm}/cooling_device0/cur_state "0"
 	test_cat ${therm}/cooling_device0/max_state "3"
 
@@ -105,7 +105,7 @@ test_thermal() {
 		;;
 	esac
 
-	test $(ls ${therm}/*/temp | wc -l) -eq $exp_tmu_zones || error_msg "ERROR: Number of thermal zones"
+	test $(ls ${therm}/*/temp | wc -l) -eq $exp_tmu_zones || error_msg "Number of thermal zones"
 
 	test_cat ${therm}/thermal_zone0/mode "enabled"
 	# On older stable kernels there might be no "passive" entry
