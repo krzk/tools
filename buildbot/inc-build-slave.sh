@@ -105,8 +105,9 @@ wait_for_ping_die() {
 	local i=0
 	local tries=1000
 	local timeout=${TIMEOUT:=3}
+	local ping_cmd="$(get_ping)"
 
-	$(get_ping) -c 1 -W $timeout $target > /dev/null
+	${ping_cmd} -c 1 -W $timeout $target > /dev/null
 
 	if [ $? -eq 1 ]; then
 		echo "Target $target died very fast"
@@ -114,7 +115,7 @@ wait_for_ping_die() {
 	fi
 
 	while [ $i -lt $tries ]; do
-		$(get_ping) -c 1 -W $timeout $target > /dev/null
+		${ping_cmd} -c 1 -W $timeout $target > /dev/null
 		if [ $? -ne 0 ]; then
 			echo "Target $target (gracefully) off after $i pings"
 			# Network is dead but still need to sleep for few
