@@ -38,17 +38,10 @@ LOG_PID=""
 reboot_target() {
 	local target=$1
 
-	echo "Checking if target $target is alive..."
-	ssh -o "ConnectTimeout $TIMEOUT_SSH" $SSH_TARGET id > /dev/null
-	if [ $? -eq 0 ]; then
-		echo "Target $target alive, gracefully powering down..."
-		ssh $SSH_TARGET sudo poweroff &> /dev/null
-		wait_for_ping_die $target $TIMEOUT_WAIT_FOR_BOOT
-	else
-		echo "Target $target dead, just resetting the power"
-	fi
+	ssh_poweroff_target $target $TARGET_USER $TIMEOUT_WAIT_FOR_BOOT
 
-	sudo gpio-pi.py $TARGET restart || die "Restart GPIO failure"
+	echo "Resetting the power to ${target}..."
+	sudo gpio-pi.py $target restart || die "Power off GPIO failure"
 }
 
 ssh_get_diag() {

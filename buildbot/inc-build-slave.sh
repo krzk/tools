@@ -129,3 +129,20 @@ wait_for_ping_die() {
 
 	return 0
 }
+
+# ssh_poweroff_target host user timeout
+ssh_poweroff_target() {
+	local target=$1
+	local ssh_target="${2}@${target}"
+	local timeout=${3:=3}
+
+	echo "Checking if target $target is alive..."
+	ssh -o "ConnectTimeout $timeout" $ssh_target id > /dev/null
+	if [ $? -eq 0 ]; then
+		echo "Target $target alive, gracefully powering down..."
+		ssh $ssh_target sudo poweroff &> /dev/null
+		wait_for_ping_die $target $timeout
+	else
+		echo "Target $target already dead"
+	fi
+}

@@ -19,9 +19,8 @@ test $# -gt 1 || die "Missing target name"
 TARGET="$1"
 NAME="$2"
 TARGET_USER="buildbot"
-SSH_TARGET="${TARGET_USER}@${TARGET}"
-# Timeout for particular network commands: ping and ssh, in seconds
-TIMEOUT=10
+# Timeout during wait_for_boot loop - for ssh and pings, in seconds
+TIMEOUT_WAIT_FOR_BOOT=20
 # Logging to serial.log-ttyUSBX
 LOG_FILE=serial.log
 
@@ -31,18 +30,10 @@ LOG_PID=""
 poweroff_target() {
 	local target=$1
 
-	echo "Checking if target $target is alive..."
-	ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET id > /dev/null
-	if [ $? -eq 0 ]; then
-		echo "Target $target alive, gracefully powering down..."
-		ssh $SSH_TARGET sudo poweroff &> /dev/null
-		wait_for_ping_die $target $TIMEOUT
-	else
-		echo "Target $target dead, just cutting the power"
-	fi
+	ssh_poweroff_target $target $TARGET_USER $TIMEOUT_WAIT_FOR_BOOT
 
 	echo "Cutting the power to ${target}..."
-	sudo gpio-pi.py $TARGET off || die "Power off GPIO failure"
+	sudo gpio-pi.py $target off || die "Power off GPIO failure"
 }
 
 kill_old_log_serial
