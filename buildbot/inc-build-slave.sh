@@ -122,7 +122,7 @@ wait_for_ping_die() {
 			sleep 10
 			break
 		fi
-		i=$(expr $i + 1)
+		i=$(($i + 1))
 	done
 
 	test $i -lt $tries || echo "Target $target did not die properly, will hard-reset it"

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2017 Krzysztof Kozlowski
+# Copyright (c) 2015-2018 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -74,7 +74,7 @@ test_cpu_mmc_stress() {
 
 	sudo -u $USER kill $pids
 
-	print_msg "Temperature diff: $t2 - $t1 = $(expr $t2 - $t1)"
+	print_msg "Temperature diff: $t2 - $t1 = $(($t2 - $t1))"
 
 	print_msg "OK"
 }

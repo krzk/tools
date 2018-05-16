@@ -97,7 +97,7 @@ wait_for_boot() {
 			return $?
 		else
 			# Timeouted, increase the retries counter
-			i=$(expr $i + $rc)
+			i=$(($i + $rc))
 		fi
 	done
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2016 Krzysztof Kozlowski
+# Copyright (c) 2016-2018 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -31,7 +31,7 @@ test_s5p_sss_selftests() {
 		$cmd | grep "blocksize    : 16" > /dev/null || error_msg "${alg}: not matching 'min keysize  : 16'"
 		$cmd | grep "min keysize  : 16" > /dev/null || error_msg "${alg}: not matching 'min keysize  : 16'"
 		$cmd | grep "max keysize  : 32" > /dev/null || error_msg "${alg}: not mathing 'max keysize  : 32'"
-		found_alg=$(expr $found_alg + 1)
+		found_alg=$(($found_alg + 1))
 	done
 
 	test $found_alg -eq $expected_alg_num || \
