@@ -38,7 +38,7 @@ test_cpu_online() {
 		fi
 	fi
 	for i in /sys/bus/cpu/devices/cpu*/online; do
-		cpu_stat=$(cat $i)
+		read -r cpu_stat < $i
 		if [ $cpu_stat -eq 1 ]; then
 			let "cpu_online+=1"
 		fi
