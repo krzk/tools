@@ -36,7 +36,7 @@ poweroff_target() {
 	if [ $? -eq 0 ]; then
 		echo "Target $target alive, gracefully powering down..."
 		ssh $SSH_TARGET sudo poweroff &> /dev/null
-		wait_for_ping_die $target
+		wait_for_ping_die $target $TIMEOUT
 	else
 		echo "Target $target dead, just cutting the power"
 	fi

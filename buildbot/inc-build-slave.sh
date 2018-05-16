@@ -98,13 +98,12 @@ log_serial() {
 	echo $!
 }
 
-# wait_for_ping_die target
-# Depends on global: TIMEOUT
+# wait_for_ping_die target timeout
 wait_for_ping_die() {
 	local target=$1
 	local i=0
 	local tries=1000
-	local timeout=${TIMEOUT:=3}
+	local timeout=${2:=3}
 	local ping_cmd="$(get_ping)"
 
 	${ping_cmd} -c 1 -W $timeout $target > /dev/null

@@ -20,8 +20,10 @@ TARGET="$1"
 NAME="$2"
 TARGET_USER="buildbot"
 SSH_TARGET="${TARGET_USER}@${TARGET}"
-# Timeout for particular network commands: ping and ssh, in seconds
-TIMEOUT=20
+# Timeout for regular SSH commands, in seconds
+TIMEOUT_SSH=30
+# Timeout during wait_for_boot loop - for ssh and pings, in seconds
+TIMEOUT_WAIT_FOR_BOOT=20
 # Sleep between ssh_works tries, if ssh quit immediately
 TIMEOUT_SSH_REFUSED=3
 # Number of seconds for retries for ssh connection
@@ -37,11 +39,11 @@ reboot_target() {
 	local target=$1
 
 	echo "Checking if target $target is alive..."
-	ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET id > /dev/null
+	ssh -o "ConnectTimeout $TIMEOUT_SSH" $SSH_TARGET id > /dev/null
 	if [ $? -eq 0 ]; then
 		echo "Target $target alive, gracefully powering down..."
 		ssh $SSH_TARGET sudo poweroff &> /dev/null
-		wait_for_ping_die $target
+		wait_for_ping_die $target $TIMEOUT_WAIT_FOR_BOOT
 	else
 		echo "Target $target dead, just resetting the power"
 	fi
@@ -51,30 +53,34 @@ reboot_target() {
 
 ssh_get_diag() {
 	echo "####################################"
-	ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET uname -a || return $?
+	ssh -o "ConnectTimeout $TIMEOUT_SSH" $SSH_TARGET uname -a || return $?
 	echo "####################################"
 	echo "Dmesg err:"
-	ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET dmesg -l err
+	ssh -o "ConnectTimeout $TIMEOUT_SSH" $SSH_TARGET dmesg -l err
 	echo "####################################"
 	echo "Dmesg warn:"
-	ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET dmesg -l warn
+	ssh -o "ConnectTimeout $TIMEOUT_SSH" $SSH_TARGET dmesg -l warn
 	echo "####################################"
 }
 
-# Return 0 on success, 1 on immediate failure, 2 on timeout failure
+# Return 0 on success, otherwise number of seconds command was sleeping
 ssh_works() {
-	#ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET id &> /dev/null
 	local err=""
 	local rc=0
 
-	err=$(ssh -o "ConnectTimeout $TIMEOUT" $SSH_TARGET id 2>&1)
+	err=$(ssh -o "ConnectTimeout $TIMEOUT_WAIT_FOR_BOOT" $SSH_TARGET id 2>&1)
 	rc=$?
 	if [ $rc -eq 0 ]; then
 		return 0
-	elif [[ "$err" != *"Connection timed out"* ]] && [[ "$err" != *"No route to host"* ]]; then
-		return 1
+	elif [[ "$err" == *"Connection timed out"* ]]; then
+		return $TIMEOUT_WAIT_FOR_BOOT
+	elif [[ "$err" == *"No route to host"* ]]; then
+		# ssh sleeps short time here (~3 seconds), so assume it will be TIMEOUT_SSH_REFUSED
+		return  $TIMEOUT_SSH_REFUSED
 	fi
-	return 2
+	# Immediate failure
+	sleep $TIMEOUT_SSH_REFUSED
+	return $TIMEOUT_SSH_REFUSED
 }
 
 wait_for_boot() {
@@ -89,13 +95,9 @@ wait_for_boot() {
 			echo "Target $target booted!"
 			ssh_get_diag
 			return $?
-		elif [ $rc -eq 1 ]; then
-			# ssh quit immediately, so sleep for some time (shorter than TIMEOUT)
-			sleep $TIMEOUT_SSH_REFUSED
-			i=$(expr $i + $TIMEOUT_SSH_REFUSED)
 		else
 			# Timeouted, increase the retries counter
-			i=$(expr $i + $TIMEOUT)
+			i=$(expr $i + $rc)
 		fi
 	done
 
