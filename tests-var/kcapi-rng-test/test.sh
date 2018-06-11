@@ -1,4 +1,11 @@
 #!/bin/bash
+#
+# Copyright (c) 2017 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+#                             <krzk@kernel.org>
+#
+# SPDX-License-Identifier: GPL-2.0
+#
 
 set +e +E
 
