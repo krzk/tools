@@ -25,6 +25,7 @@ pi_check() {
 
 Pi:
 ===
+hostname: $hostname
 IP:   $(ip addr show dev eth0 | grep inet | cut -f 6 -d ' ')
 temp: $(cat /sys/class/thermal/thermal_zone0/temp)
 
@@ -38,8 +39,7 @@ Odroid HC1: $(sudo /usr/local/bin/gpio-pi.py odroidhc1 status)
 Odroid HC1 ping: $(board_ping odroidhc1)
 Odroid U3: $(sudo /usr/local/bin/gpio-pi.py odroidu3 status)
 Odroid U3 ping: $(board_ping odroidu3)
-" | /usr/bin/mail -i -s 'Target alarmpi boot up' root
+" | /usr/bin/mail -i -s "Target $hostname boot up" root
 }
 
 pi_check
-# TODO: setsid, disown?
