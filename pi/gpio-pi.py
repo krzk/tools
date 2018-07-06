@@ -7,52 +7,56 @@
 # SPDX-License-Identifier: GPL-2.0
 #
 
-import RPi.GPIO as GPIO
+from wiringX import gpio
 import sys
 import time
 
+gpio.setup(gpio.RASPBERRYPI3)
 targets = {
-    "odroidxu3":    2,
-    "xu3":          2,
-    "odroidhc1":    3,
-    "hc1":          3,
-    "odroidxu":     4,
-    "xu":           4,
-    "odroidu3":     17,
-    "u3":           17,
+    "odroidxu3":    gpio.PIN8,  # RPI pin 2
+    "xu3":          gpio.PIN8,
+    "odroidhc1":    gpio.PIN9,  # RPI pin 3
+    "hc1":          gpio.PIN9,
+    "odroidxu":     gpio.PIN10, # RPI pin 4
+    "xu":           gpio.PIN10,
+    "odroidu3":     gpio.PIN0,  # RPI pin 17
+    "u3":           gpio.PIN0,
     }
 
 def target_to_pin(target):
     return targets[target]
 
-def gpio_setup():
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setwarnings(False)
-
 def gpio_on(pin):
     print("Turning on...")
-    GPIO.setup(pin, GPIO.OUT)
-    GPIO.output(pin, GPIO.LOW)
+    gpio.pinMode(pin, gpio.PINMODE_OUTPUT)
+    gpio.digitalWrite(pin, gpio.LOW)
 
 def gpio_off(pin):
     print("Turning off...")
-    GPIO.setup(pin, GPIO.OUT)
-    GPIO.output(pin, GPIO.HIGH)
+    gpio.pinMode(pin, gpio.PINMODE_OUTPUT)
+    gpio.digitalWrite(pin, gpio.HIGH)
 
 def gpio_status(pin):
-    status = "on"
-    direction = GPIO.gpio_function(pin)
-
-    if (direction == GPIO.IN):
-        status = "off"
-    elif (direction == GPIO.OUT):
-        GPIO.setup(pin, GPIO.OUT)
-        if (GPIO.input(pin) == GPIO.HIGH):
-            status = "off"
-    else:
-        return "Unknown GPIO" + str(pin) + " function: " + str(direction)
-
+    #gpio.pinMode(pin, gpio.PINMODE_INPUT);
+    gpio.pinMode(pin, gpio.PINMODE_OUTPUT)
+    status = "off"
+    if gpio.digitalRead(pin):
+        status = "on"
     return "GPIO" + str(pin) + ": " + status
+
+#    status = "on"
+#    direction = GPIO.gpio_function(pin)
+#
+#    if (direction == GPIO.IN):
+#        status = "off"
+#    elif (direction == GPIO.OUT):
+#        GPIO.setup(pin, GPIO.OUT)
+#        if (GPIO.input(pin) == GPIO.HIGH):
+#            status = "off"
+#    else:
+#        return "Unknown GPIO" + str(pin) + " function: " + str(direction)
+#
+#    return "GPIO" + str(pin) + ": " + status
 
 def print_help():
     print("Usage: " + str(sys.argv[0]) + " <target> <command>")
@@ -62,7 +66,6 @@ def print_help():
     sys.exit(2)
 
 def status_all():
-    gpio_setup()
     for k, v in targets.items():
         print(k + ": " + gpio_status(v))
 
@@ -74,8 +77,6 @@ def one_target(target, command):
     except KeyError:
         print ("Unknown target: '" + str(target) + "'")
         sys.exit(1)
-
-    gpio_setup()
 
     if (command == "on"):
         gpio_on(pin)
