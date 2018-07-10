@@ -47,9 +47,9 @@ test -d "${MODULES_TMP}/lib/modules/${KERNEL_NAME}" || die "Cannot get kernel na
 echo "Got kernel name: $KERNEL_NAME"
 
 echo "Making initramfs and image"
-make-initramfs.sh ${TOOLS_DIR}/buildbot/arch-arm-bin/initramfs-odroid-armv7hf-base.cpio \
+make-initramfs.sh ${TOOLS_DIR}/buildbot/initramfs/initramfs-odroid-armv7hf-base.cpio \
 		  $MODULES_TMP \
-		  ${TOOLS_DIR}/buildbot/arch-arm-bin/initramfs-odroid-armv7hf-addons \
+		  ${TOOLS_DIR}/buildbot/initramfs/initramfs-odroid-armv7hf-addons \
 		  /srv/tftp/uboot-initramfs-odroidxu3.img
 #mkinitcpio --moduleroot . --kernel "${KERNEL_NAME}" \
 #	--generate initramfs-odroidxu3.img \
