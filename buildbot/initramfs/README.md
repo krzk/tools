@@ -1,4 +1,4 @@
-# initramfs-odroid-armv7hf-base.cpio
+## initramfs-odroid-armv7hf-base.cpio
 Initramfs (with binaries) created on existing Arch ARM Linux system
 (armv7hf architecture).  For sources please refer to [1] [2].
 
@@ -10,15 +10,15 @@ fakeroot mkinitcpio --kernel none --generate initramfs-odroid-armv7hf-base.cpio.
     --config /opt/tools/buildbot/initramfs/src-etc/mkinitcpio.conf
 ```
 
-# initramfs-odroid-armv7hf-addons
+## initramfs-odroid-armv7hf-addons
 Additional binaries taken from existing Arch ARM Linux system
 (armv7hf architecture).  For sources please refer to [1] [2].
 
 
-# src-etc
+## src-etc
 Configuration files for creating initramfs-odroid-armv7hf-base.cpio.
 
 
-# References
-[1] https://github.com/archlinuxarm
-[2] https://archlinuxarm.org
+## References
+* [1] https://github.com/archlinuxarm
+* [2] https://archlinuxarm.org
