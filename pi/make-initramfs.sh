@@ -17,6 +17,14 @@ die() {
 	exit 1
 }
 
+MODULES_TMP=""
+OUTPUT_TMP=""
+temp_cleanup() {
+	echo "Exit trap, cleaning up tmp..."
+	test -n && rm -fr $MODULES_TMP
+	test -n && rm -fr $OUTPUT_TMP
+}
+
 test $# -eq 4 || usage
 
 BASE_CPIO="$(readlink -f $1)"
@@ -30,6 +38,8 @@ MODULES_WANTED="phy-exynos-usb2 ohci-exynos dwc2 r8152"
 test -f "$BASE_CPIO" || die "Missing base_cpio file"
 test -d "$MODULES_DIR" || die "Missing modules directory"
 test -d "$ADDONS_DIR" || die "Missing addons directory"
+
+trap "temp_cleanup" EXIT
 
 KERNEL_NAME=$(ls ${MODULES_DIR}/lib/modules)
 test -d "${MODULES_DIR}/lib/modules/${KERNEL_NAME}" || die "Cannot get kernel name. Got: $KERNEL_NAME"
