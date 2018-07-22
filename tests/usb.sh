@@ -23,6 +23,10 @@ test_usb() {
 		# Format: NUMBER_VENDOR:PRODUCT
 		expected_usb="1_1d6b:0002 1_0424:3503 1_0424:9730"
 		;;
+	hardkernel,odroid-xu)
+		# Format: NUMBER_VENDOR:PRODUCT
+		expected_usb="1_1d6b:0001 2_1d6b:0002 1_1d6b:0003 1_0424:3503 1_0424:9730"
+		;;
 	hardkernel,odroid-xu3|hardkernel,odroid-xu3-lite)
 		# Format: NUMBER_VENDOR:PRODUCT
 		expected_usb="1_1d6b:0001 2_1d6b:0002 1_1d6b:0003 1_0424:ec00 1_0424:9514"
