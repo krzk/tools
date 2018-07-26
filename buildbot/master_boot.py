@@ -4,8 +4,12 @@
 
 from buildbot.plugins import steps, util
 
-# Dynamic (executed during runtime of builder) helper:
-def build_boot_for_tests(step):
+def if_step_want_tests(step):
+    """ Returns true if step is for booting kernel suitable for tests
+
+    Dynamic (executed during runtime of builder) helper
+    """
+
     project = str(step.getProperty('project', default='none'))
     # Match stable and stable-rc:
     if 'stable' in project:
@@ -34,21 +38,21 @@ def step_boot_run_pm_tests(target, config):
         logfiles={'serial0': 'serial.log'},
         lazylogfiles=True,
         env=f_env_odroid, name='PM-QA cpuhotplug tests: ' + target,
-        haltOnFailure=True, doStepIf=build_boot_for_tests))
+        haltOnFailure=True, doStepIf=if_step_want_tests))
     st.append(steps.ShellCommand(
         command=['build-slave-target-cmd.sh', target, config,
                  '/usr/sbin/make -C /opt/pm-qa/cpuidle check'],
         logfiles={'serial0': 'serial.log'},
         lazylogfiles=True,
         env=f_env_odroid, name='PM-QA cpuidle tests: ' + target,
-        haltOnFailure=True, doStepIf=build_boot_for_tests))
+        haltOnFailure=True, doStepIf=if_step_want_tests))
     st.append(steps.ShellCommand(
         command=['build-slave-target-cmd.sh', target, config,
                  '/usr/sbin/make -C /opt/pm-qa/cputopology check'],
         logfiles={'serial0': 'serial.log'},
         lazylogfiles=True,
         env=f_env_odroid, name='PM-QA cputopology tests: ' + target,
-        haltOnFailure=True, doStepIf=build_boot_for_tests))
+        haltOnFailure=True, doStepIf=if_step_want_tests))
     return st
 
 def step_boot_run_test(target, config, test):
@@ -60,7 +64,7 @@ def step_boot_run_test(target, config, test):
         lazylogfiles=True,
         env=f_env_odroid, name='Test: ' + test + ' @' + target,
         haltOnFailure=False,
-        doStepIf=build_boot_for_tests)
+        doStepIf=if_step_want_tests)
 
 def steps_boot_run_tests(target, config):
     st = []
