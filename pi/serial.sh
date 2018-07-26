@@ -21,4 +21,4 @@ if [ $# -gt 0 ]; then
 		SERIAL="${SERIAL}$1"
 	fi
 fi
-picocom -b 115200 $SERIAL
+picocom -b 115200 --flow none $SERIAL
