@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015,2016 Krzysztof Kozlowski
+# Copyright (c) 2015-2018 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -19,15 +19,18 @@ board_ping() {
 }
 
 pi_check() {
-	local hostname=$(/usr/bin/hostname)
+	local hostname="$(/usr/bin/hostname)"
 
-	echo "Target alarmpi boot up
+	local msg="Target alarmpi boot up
 
 Pi:
 ===
 hostname: $hostname
 IP:   $(ip addr show dev eth0 | grep inet | cut -f 6 -d ' ')
-temp: $(cat /sys/class/thermal/thermal_zone0/temp)
+temp: $(cat /sys/class/thermal/thermal_zone0/temp)"
+
+	if [ "$hostname" == "pi3" ]; then
+		msg="$msg
 
 Boards:
 =======
@@ -39,7 +42,9 @@ Odroid HC1: $(sudo /usr/local/bin/gpio-pi.py odroidhc1 status)
 Odroid HC1 ping: $(board_ping odroidhc1)
 Odroid U3: $(sudo /usr/local/bin/gpio-pi.py odroidu3 status)
 Odroid U3 ping: $(board_ping odroidu3)
-" | /usr/bin/mail -i -s "Target $hostname boot up" root
+"
+	fi
+	echo "$msg" | /usr/bin/mail -i -s "Target $hostname boot up" root
 }
 
 pi_check
