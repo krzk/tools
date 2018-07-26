@@ -95,7 +95,7 @@ def steps_boot(builder_name, target, config, run_tests=False, run_pm_tests=False
     mastersrc_dir = u'bins-deploy/%(prop:trigger_builder)s/%(prop:revision)s'
     st.append(steps.ShellCommand(
         command=['rm', '-fr', 'lib', 'deploy-modules-out.tar.gz', 'initramfs-odroidxu3.img'],
-        env=f_env_odroid, name='Remove old binaries'))
+        name='Remove old binaries'))
     st.append(steps.FileDownload(
         mastersrc=util.Interpolate(mastersrc_dir + '/zImage'),
         workerdest=u'/srv/tftp/zImage',
