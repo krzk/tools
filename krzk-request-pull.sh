@@ -34,7 +34,7 @@ case "$REMOTE" in
 		;;
 	krzk-pinctrl)
 		TO="Linus Walleij <linus.walleij@linaro.org>"
-		CC="Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org"
+		CC="Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org"
 		SUBJECT="pinctrl: samsung:"
 		;;
 	*)
