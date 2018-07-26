@@ -5,10 +5,6 @@ Collection of my tools, mostly Linux oriented.
 Buildbot master configuration and scripts executed by workers for building
 and booting ARM embedded targets at https://krzk.eu.
 
-## /linux-patches
-
-Random Linux kernel patches
-
 ## /odroid
 
 Helper scripts for Exynos-based Odroid boards.
