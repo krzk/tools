@@ -27,9 +27,9 @@ temp_cleanup() {
 
 test $# -eq 4 || usage
 
-BASE_CPIO="$(readlink -f $1)"
-MODULES_DIR="$(readlink -f $2)"
-ADDONS_DIR="$(readlink -f $3)"
+BASE_CPIO="$(readlink -f """$1""")"
+MODULES_DIR="$(readlink -f """$2""")"
+ADDONS_DIR="$(readlink -f """$3""")"
 OUTPUT_FILE="$4"
 
 # TODO: finish modules
@@ -41,12 +41,12 @@ test -d "$ADDONS_DIR" || die "Missing addons directory"
 
 trap "temp_cleanup" EXIT
 
-KERNEL_NAME=$(ls ${MODULES_DIR}/lib/modules)
+KERNEL_NAME="$(ls """${MODULES_DIR}/lib/modules""")"
 test -d "${MODULES_DIR}/lib/modules/${KERNEL_NAME}" || die "Cannot get kernel name. Got: $KERNEL_NAME"
 echo "Got kernel name: $KERNEL_NAME"
 
 cp "$BASE_CPIO" "$OUTPUT_FILE"
-OUTPUT_FILE_FULL="$(readlink -f $OUTPUT_FILE)"
+OUTPUT_FILE_FULL="$(readlink -f """$OUTPUT_FILE""")"
 
 #cd "$ADDONS_DIR" && fakeroot find -mindepth 1 -printf '%P\0' | LANG=C bsdcpio -0 -o -H newc -R 0:0 >> "$OUTPUT_FILE_FULL"
 cd "$ADDONS_DIR" && fakeroot find -mindepth 1 -printf '%P\0' | LANG=C cpio -0 -oA -H newc -R 0:0 -F "$OUTPUT_FILE_FULL"
