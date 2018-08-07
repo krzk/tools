@@ -21,8 +21,8 @@ MODULES_TMP=""
 OUTPUT_TMP=""
 temp_cleanup() {
 	echo "Exit trap, cleaning up tmp..."
-	test -n && rm -fr $MODULES_TMP
-	test -n && rm -fr $OUTPUT_TMP
+	test -n "$MODULES_TMP" && rm -fr "$MODULES_TMP"
+	test -n "$OUTPUT_TMP" && rm -fr "$OUTPUT_TMP"
 }
 
 test $# -eq 4 || usage
