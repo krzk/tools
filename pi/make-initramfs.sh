@@ -53,7 +53,7 @@ cd "$ADDONS_DIR" && fakeroot find -mindepth 1 -printf '%P\0' | LANG=C cpio -0 -o
 test $? -eq 0 || die "Adding addons to cpio failed"
 cd -
 
-test -d "${MODULES_DIR}/lib" || die "Module directory should be top-level, containinig /lib"
+test -d "${MODULES_DIR}/lib" || die "Module directory should be top-level, containing /lib"
 MODULES_TMP="`mktemp -d`" || die "Create tmp directory for modules failed"
 for module in $MODULES_WANTED; do
 	echo "Copying module: $module"
