@@ -32,8 +32,7 @@ MODULES_DIR="$(readlink -f """$2""")"
 ADDONS_DIR="$(readlink -f """$3""")"
 OUTPUT_FILE="$4"
 
-# TODO: finish modules
-MODULES_WANTED="phy-exynos-usb2 ohci-exynos dwc2 r8152"
+MODULES_WANTED="phy-exynos-usb2 ohci-exynos dwc2 r8152 rtl8150 lan78xx s2mpa01 s2mps11 s5m8767 clk-s2mps11 sec-irq sec-core rtc-s5m"
 
 test -f "$BASE_CPIO" || die "Missing base_cpio file"
 test -d "$MODULES_DIR" || die "Missing modules directory"
@@ -48,19 +47,34 @@ echo "Got kernel name: $KERNEL_NAME"
 cp "$BASE_CPIO" "$OUTPUT_FILE"
 OUTPUT_FILE_FULL="$(readlink -f """$OUTPUT_FILE""")"
 
-#cd "$ADDONS_DIR" && fakeroot find -mindepth 1 -printf '%P\0' | LANG=C bsdcpio -0 -o -H newc -R 0:0 >> "$OUTPUT_FILE_FULL"
 cd "$ADDONS_DIR" && fakeroot find -mindepth 1 -printf '%P\0' | LANG=C cpio -0 -oA -H newc -R 0:0 -F "$OUTPUT_FILE_FULL"
 test $? -eq 0 || die "Adding addons to cpio failed"
 cd - > /dev/null
 
 test -d "${MODULES_DIR}/lib" || die "Module directory should be top-level, containing /lib"
 MODULES_TMP="`mktemp -d`" || die "Create tmp directory for modules failed"
+MODULES_TMP_SUBDIR="${MODULES_TMP}/usr/lib"
+mkdir -p "$MODULES_TMP_SUBDIR"
+
 for module in $MODULES_WANTED; do
 	echo "Copying module: $module"
+	module_file="$(cd """${MODULES_DIR}/lib""" && find ./ -name """${module}.ko""")"
+
+	# Missing module is okay - MODULES_WANTED contains everything for different kernels, even for builtin
+	test -n "$module_file" || continue
+
+	module_dir="$(dirname """$module_file""")"
+	mkdir -p "${MODULES_TMP_SUBDIR}/$module_dir" || die "Cannot make directory for module $module_file"
+	cp "${MODULES_DIR}/lib/${module_file}" "${MODULES_TMP_SUBDIR}/${module_dir}" || die "Cannot copy module $module_file"
 done
-#cd "$MODULES_DIR" && fakeroot find -mindepth 1 -printf '%P\0' | LANG=C cpio -0 -oA -H newc -R 0:0 -F "$OUTPUT_FILE_FULL"
-#test $? -eq 0 || die "Adding modules to cpio failed"
-#cd -
+
+cp "${MODULES_DIR}/lib/modules/${KERNEL_NAME}/modules.order" "${MODULES_DIR}/lib/modules/${KERNEL_NAME}/modules.builtin" \
+	"${MODULES_TMP_SUBDIR}/modules/${KERNEL_NAME}" || die "Cannot copy modules.order and modules.builtin for kernel $KERNEL_NAME"
+depmod --basedir "${MODULES_TMP}/usr" "$KERNEL_NAME" || die "depmod for kernel $KERNEL_NAME failed"
+
+cd "$MODULES_TMP" && fakeroot find -mindepth 1 -printf '%P\0' | LANG=C cpio -0 -oA -H newc -R 0:0 -F "$OUTPUT_FILE_FULL"
+test $? -eq 0 || die "Adding modules to cpio failed"
+cd - > /dev/null
 
 OUTPUT_TMP="`mktemp`" || die "Creating tmp file for compression failed"
 cat "${OUTPUT_FILE_FULL}" | gzip -c > "${OUTPUT_TMP}"
