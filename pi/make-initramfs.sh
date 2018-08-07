@@ -8,7 +8,7 @@
 #
 
 usage() {
-	echo $(basename $0) base_cpio modules_dir addons_dir output_file
+	echo "$(basename $0) <base_cpio> <modules_dir> <addons_dir> <output_file>"
 	exit 1
 }
 
