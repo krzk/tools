@@ -28,7 +28,10 @@ targets = {
     "u3":           17,
     }
 
-PIN_BASE = 458
+# For ARMv7, v4.14.59-1-ARCH:
+PIN_BASE = 0
+# For ARMv8, v4.17
+# PIN_BASE = 458
 
 def target_to_pin(target):
     return targets[target]
