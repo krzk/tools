@@ -100,7 +100,7 @@ log_serial() {
 wait_for_ping_die() {
 	local target=$1
 	local i=0
-	local tries=1000
+	local tries=50
 	local timeout=${2:=3}
 	local ping_cmd="$(get_ping)"
 
@@ -121,6 +121,8 @@ wait_for_ping_die() {
 			break
 		fi
 		i=$(($i + 1))
+		# Sleep between pings for at least 1 second (to not be too busy)
+		sleep 1
 	done
 
 	test $i -lt $tries || echo "Target $target did not die properly, will hard-reset it"
