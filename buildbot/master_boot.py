@@ -508,17 +508,17 @@ def steps_download(target):
 def steps_boot(builder_name, target, config, run_tests=False, run_pm_tests=False):
     st = []
 
-    st.append(steps.ShellCommand(
-        command=['rm', '-fr', 'lib', 'deploy-modules-out.tar.gz', 'initramfs-odroidxu3.img'],
-        name='Remove old binaries'))
+    st.append(steps.ShellCommand(command=['rm', '-fr', 'lib',
+                                          'deploy-modules-out.tar.gz', 'initramfs-odroidxu3.img'],
+                                 name='Remove old binaries'))
     st = st + steps_download(target)
 
-    st.append(steps.ShellCommand(
-        command=['/opt/tools/buildbot/build-slave-deploy.sh', target, config, util.Property('revision'), 'modules-tmp'],
-        haltOnFailure=True,
-        name='Deploy on server binaries for booting'))
-    st.append(steps.SetPropertyFromCommand(
-        command='ls modules-tmp/lib/modules', property='kernel_version', haltOnFailure=True))
+    st.append(steps.ShellCommand(command=['/opt/tools/buildbot/build-slave-deploy.sh',
+                                          target, config, util.Property('revision'), 'modules-tmp'],
+                                 haltOnFailure=True,
+                                 name='Deploy on server binaries for booting'))
+    st.append(steps.SetPropertyFromCommand(command='ls modules-tmp/lib/modules',
+                                           property='kernel_version', haltOnFailure=True))
 
     st.append(step_serial_open(target))
 
