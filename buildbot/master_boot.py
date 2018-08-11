@@ -143,7 +143,7 @@ finally:
     return cmd
 
 def step_pexpect(name, target, python_code, interpolate=False,
-                 do_step_if=True, always_run=False,
+                 do_step_if=True, always_run=False, halt_on_failure=True,
                  verbose=False):
     """ Return step for executing Python code with pexpect.
 
@@ -154,7 +154,8 @@ def step_pexpect(name, target, python_code, interpolate=False,
     Optional arguments:
         interpolate - put the python_cmd within buildbot.util.Interpolate (default: False)
         do_step_if - optional callable whether step should be done (passed to doStepIf) (default: True)
-        always_run - whether step should be executed always and do not halt on failure (default: False)
+        always_run - whether step should be executed always (default: False)
+        halt_on_failure - whether step should halt the build on failure (default: True)
         verbose - be verbose and print everything (including serial connection logs) to stdout
     Returns:
         step
@@ -169,9 +170,10 @@ def step_pexpect(name, target, python_code, interpolate=False,
                               logfiles={'serial0': SERIAL_LOG},
                               doStepIf=do_step_if,
                               alwaysRun=always_run,
-                              haltOnFailure=not always_run)
+                              haltOnFailure=halt_on_failure)
 
-def step_subprocess(name, target, command, always_run=False):
+def step_subprocess(name, target, command,
+                    do_step_if=True, always_run=False, halt_on_failure=True):
     """ Return step for executing one command in subprocess while
     still getting all the logs and handling serial with pexpect
 
@@ -180,7 +182,9 @@ def step_subprocess(name, target, command, always_run=False):
         target - which board
         command - list with command to execute (passed to subprocess.call())
     Optional arguments:
-        always_run - whether step should be executed always and do not halt on failure (default: False)
+        do_step_if - optional callable whether step should be done (passed to doStepIf) (default: True)
+        always_run - whether step should be executed always (default: False)
+        halt_on_failure - whether step should halt the build on failure (default: True)
     Returns:
         step
     """
@@ -188,19 +192,24 @@ def step_subprocess(name, target, command, always_run=False):
     subprocess.run(""" + str(command) + """, check=True)
     """
 
-    return step_pexpect(name=name, target=target, python_code=pexpect_cmd, always_run=always_run)
+    return step_pexpect(name=name, target=target, python_code=pexpect_cmd, do_step_if=do_step_if,
+                        always_run=always_run, halt_on_failure=halt_on_failure)
 
-def step_ssh(name, target, command):
+def step_ssh(name, target, command, do_step_if=True, halt_on_failure=True):
     """ Return step for executing one command on the target via SSH
 
     Arguments:
         name - name of step
         target - which board
         command - list with command to execute (passed to subprocess.run())
+    Optional arguments:
+        do_step_if - optional callable whether step should be done (passed to doStepIf) (default: True)
+        halt_on_failure - whether step should halt the build on failure (default: True)
     Returns:
         step
     """
-    return step_subprocess(name, target, cmd_ssh(target, command))
+    return step_subprocess(name, target, cmd_ssh(target, command),
+                           do_step_if=do_step_if, halt_on_failure=halt_on_failure)
 
 def step_boot_to_prompt(target, config):
     """ Return step for booting the target to user-space prompt
@@ -345,6 +354,7 @@ def step_test_dmesg_errors(target, config):
     Returns:
         step
     """
+    # TODO: report as warnings?
     return step_ssh('Test: dmesg errors', target, ['dmesg', '-l', 'err'])
 
 def step_test_dmesg_warnings(target, config):
@@ -353,6 +363,7 @@ def step_test_dmesg_warnings(target, config):
     Returns:
         step
     """
+    # TODO: report as warnings?
     return step_ssh('Test: dmesg warnings', target, ['dmesg', '-l', 'warn'])
 
 def steps_shutdown(target, config):
@@ -366,7 +377,7 @@ def steps_shutdown(target, config):
     # TODO: use expect to wait for target death so XU will not reboot
     st.append(step_subprocess('Power off: ' + target,target,
                               ['/opt/tools/buildbot/target-poweroff.sh', target, config],
-                              always_run=True))
+                              always_run=True, halt_on_failure=False))
     st.append(step_serial_close(target))
     st.append(steps.ShellCommand(command=['sudo', 'gpio-pi.py', target, 'off'],
                                  name='Cut the power: ' + target,
@@ -396,42 +407,42 @@ def if_step_want_tests(step):
     # All rest, so either krzk trees or mainline/next with specific boards (HC1 and U3)
     return True
 
-def step_boot_run_test(target, config, test):
-    return steps.ShellCommand(
-        command=['build-slave-target-cmd.sh', target, config,
-                 '/opt/tools/tests/' + test + '.sh',
-                 target, config],
-        logfiles={'serial0': 'serial.log'},
-        lazylogfiles=True,
-        env=ENV_PATH, name='Test: ' + test + ' @' + target,
-        haltOnFailure=False,
-        doStepIf=if_step_want_tests)
+def step_test_case(target, config, test, is_simple=False):
+    """ Return step for executing one test
 
-def steps_boot_run_tests(target, config):
+    Arguments:
+        target - which board
+        config
+        test - name of test to execute (should match /opt/tools/tests/)
+    Optional arguments:
+        is_simple - whether test is simple and should be executed on all targets and configs (default: False)
+    Returns:
+        step
+    """
+    return step_ssh('Test: ' + test + ' @' + target, target,
+                    ['sudo', '/opt/tools/tests/' + test + '.sh', target, config],
+                    halt_on_failure=False,
+                    do_step_if=lambda step: is_simple or if_step_want_tests(step))
+
+def steps_test_suite(target, config):
     st = []
-    st.append(step_boot_run_test(target, config, 'drm'))
     if target != 'odroidhc1':
-        st.append(step_boot_run_test(target, config, 'pwm-fan'))
-    st.append(step_boot_run_test(target, config, 'cpu-online'))
-    st.append(step_boot_run_test(target, config, 'thermal'))
-    st.append(step_boot_run_test(target, config, 'odroid-xu3-board-name'))
+        st.append(step_test_case(target, config, 'pwm-fan'))
+    st.append(step_test_case(target, config, 'thermal'))
     if target == 'odroidxu3':
         # Intensive and not that important test, run it only on XU3
-        st.append(step_boot_run_test(target, config, 'cpu-mmc-stress'))
-    st.append(step_boot_run_test(target, config, 's5p-sss'))
-    st.append(step_boot_run_test(target, config, 's5p-sss-cryptsetup'))
-    st.append(step_boot_run_test(target, config, 'usb'))
-    st.append(step_boot_run_test(target, config, 'var-all'))
-    st.append(step_boot_run_test(target, config, 'clk-s2mps11'))
+        st.append(step_test_case(target, config, 'cpu-mmc-stress'))
+    st.append(step_test_case(target, config, 's5p-sss'))
+    st.append(step_test_case(target, config, 's5p-sss-cryptsetup'))
     if target != 'odroidhc1':
-        st.append(step_boot_run_test(target, config, 'audio'))
+        st.append(step_test_case(target, config, 'audio'))
     # RTC often fail on NFS root so put it at the end
     # Also RTC of max77686 seems to fail pretty often, so skip U3:
     if target != 'odroidu3':
-	    st.append(step_boot_run_test(target, config, 'rtc'))
+	    st.append(step_test_case(target, config, 'rtc'))
     # RNG does not work on Odroid, missing clock enable?
-    # st.append(step_boot_run_test(target, config, 'rng-exynos'))
-    st.append(step_boot_run_test(target, config, 'audss'))
+    # st.append(step_test_case(target, config, 'rng-exynos'))
+    st.append(step_test_case(target, config, 'audss'))
 
     return st
 
@@ -503,16 +514,25 @@ def steps_boot(builder_name, target, config, run_tests=False, run_pm_tests=False
     st.append(step_test_uname(target, config))
     st.append(step_test_dmesg_errors(target, config))
     st.append(step_test_dmesg_warnings(target, config))
+    # Run all non-intensive, non-disruptive and non-dependant tests
+    st.append(step_test_case(target, config, 'drm', is_simple=True))
+    st.append(step_test_case(target, config, 'cpu-online', is_simple=True))
+    st.append(step_test_case(target, config, 'odroid-xu3-board-name', is_simple=True))
+    st.append(step_test_case(target, config, 'usb', is_simple=True))
+    st.append(step_test_case(target, config, 'var-all', is_simple=True))
+    st.append(step_test_case(target, config, 'clk-s2mps11', is_simple=True))
 
-    # TODO: not ready
-    # if run_tests:
-    #     # Run tests only on exynos_defconfig because on multi_v7 some tests hang
-    #     # the buildbot console and some fail because of missing modules
-    #     # (like sound).
-    #     # This requires also decent kernel, so do not run on stable (limited
-    #     # by doStepIf=if_step_want_tests).
-    #     # See: Matrix of configurations
-    #     st = st + steps_boot_run_tests(target, config)
+    if run_tests:
+        # Run intensive tests only on exynos_defconfig because on multi_v7 some tests hang
+        # the buildbot console and some fail because of missing modules (like sound).
+        # This requires also decent kernel, so do not run on stable (limited
+        # by doStepIf=if_step_want_tests).
+        # See: Matrix of configurations
+        st = st + steps_test_suite(target, config)
+
+    # After all the tests check again if ping and SSH are working:
+    st.append(step_test_ping(target, config))
+    st.append(step_test_uname(target, config))
 
     st = st + steps_shutdown(target, config)
 
