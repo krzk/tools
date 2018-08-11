@@ -396,33 +396,6 @@ def if_step_want_tests(step):
     # All rest, so either krzk trees or mainline/next with specific boards (HC1 and U3)
     return True
 
-# Run some of the PM-QA tests. I don't want heating tests
-# (thermal, cpufreq) because they stress the board needlessly.
-def step_boot_run_pm_tests(target, config):
-    st = []
-    st.append(steps.ShellCommand(
-        command=['build-slave-target-cmd.sh', target, config,
-                 '/usr/sbin/make -C /opt/pm-qa/cpuhotplug check'],
-        logfiles={'serial0': 'serial.log'},
-        lazylogfiles=True,
-        env=ENV_PATH, name='PM-QA cpuhotplug tests: ' + target,
-        haltOnFailure=True, doStepIf=if_step_want_tests))
-    st.append(steps.ShellCommand(
-        command=['build-slave-target-cmd.sh', target, config,
-                 '/usr/sbin/make -C /opt/pm-qa/cpuidle check'],
-        logfiles={'serial0': 'serial.log'},
-        lazylogfiles=True,
-        env=ENV_PATH, name='PM-QA cpuidle tests: ' + target,
-        haltOnFailure=True, doStepIf=if_step_want_tests))
-    st.append(steps.ShellCommand(
-        command=['build-slave-target-cmd.sh', target, config,
-                 '/usr/sbin/make -C /opt/pm-qa/cputopology check'],
-        logfiles={'serial0': 'serial.log'},
-        lazylogfiles=True,
-        env=ENV_PATH, name='PM-QA cputopology tests: ' + target,
-        haltOnFailure=True, doStepIf=if_step_want_tests))
-    return st
-
 def step_boot_run_test(target, config, test):
     return steps.ShellCommand(
         command=['build-slave-target-cmd.sh', target, config,
@@ -540,8 +513,6 @@ def steps_boot(builder_name, target, config, run_tests=False, run_pm_tests=False
     #     # by doStepIf=if_step_want_tests).
     #     # See: Matrix of configurations
     #     st = st + steps_boot_run_tests(target, config)
-    #     if run_pm_tests:
-    #         st = st + step_boot_run_pm_tests(target, config)
 
     st = st + steps_shutdown(target, config)
 
