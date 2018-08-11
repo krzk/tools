@@ -54,7 +54,7 @@ cd - > /dev/null
 test -d "${MODULES_DIR}/lib" || die "Module directory should be top-level, containing /lib"
 MODULES_TMP="`mktemp -d`" || die "Create tmp directory for modules failed"
 MODULES_TMP_SUBDIR="${MODULES_TMP}/usr/lib"
-mkdir -p "$MODULES_TMP_SUBDIR"
+mkdir -p "${MODULES_TMP_SUBDIR}/modules/${KERNEL_NAME}"
 
 for module in $MODULES_WANTED; do
 	echo "Copying module: $module"
