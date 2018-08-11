@@ -52,6 +52,18 @@ def cmd_serial(target, close=False):
 
     return cmd
 
+def cmd_ssh(target, command):
+    """
+    Arguments:
+        name - name of step
+        target - which board
+        command - list with command to execute (passed to ssh)
+    Returns
+        list of strings with cmd
+    """
+    return ['ssh', '-o', 'ConnectTimeout %s' % CONN_TIMEOUT,
+            '%s@%s' % (TARGET_SSH_USER, target)] + command
+
 def step_serial_open(target):
     """
     Returns:
@@ -89,6 +101,7 @@ def pexpect_start(target, log_file, verbose):
         pexpect_logfile = 'sys.stdout'
     cmd = """
 import os
+import re
 import subprocess
 import sys
 import time
@@ -176,6 +189,18 @@ def step_subprocess(name, target, command, always_run=False):
     """
 
     return step_pexpect(name=name, target=target, python_code=pexpect_cmd, always_run=always_run)
+
+def step_ssh(name, target, command):
+    """ Return step for executing one command on the target via SSH
+
+    Arguments:
+        name - name of step
+        target - which board
+        command - list with command to execute (passed to subprocess.run())
+    Returns:
+        step
+    """
+    return step_subprocess(name, target, cmd_ssh(target, command))
 
 def step_boot_to_prompt(target, config):
     """ Return step for booting the target to user-space prompt
@@ -294,6 +319,41 @@ def step_test_ping(target, config):
     """
     return step_subprocess('Test: ping', target,
                            ['ping', '-c', '1', '-W', CONN_TIMEOUT, target])
+
+def step_test_uname(target, config):
+    """ Return step for executing uname on the target via SSH and checking
+    if it matches expected kernel
+
+    Returns:
+        step
+    """
+    pexpect_cmd = """
+    process = subprocess.run(""" + str(cmd_ssh(target, ['uname', '-a'])) + """,
+                             check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                             encoding='utf-8', errors='ignore')
+    expected_output = '^Linux """ + target + """ %(prop:kernel_version:-)s #2 SMP PREEMPT [0-9a-zA-Z: ]+ armv7l GNU/Linux$'
+    print('checking if uname matches expected: ' + expected_output)
+    print('uname output: ' + process.stdout)
+    if not re.search(expected_output, process.stdout):
+        raise Exception('uname of target does not match expected (output: ' + process.stdout + ')')
+    """
+    return step_pexpect(name='Test: uname', target=target, python_code=pexpect_cmd, interpolate=True)
+
+def step_test_dmesg_errors(target, config):
+    """ Return step for getting dmesg errors on the target via SSH
+
+    Returns:
+        step
+    """
+    return step_ssh('Test: dmesg errors', target, ['dmesg', '-l', 'err'])
+
+def step_test_dmesg_warnings(target, config):
+    """ Return step for getting dmesg warnings on the target via SSH
+
+    Returns:
+        step
+    """
+    return step_ssh('Test: dmesg warnings', target, ['dmesg', '-l', 'warn'])
 
 def steps_shutdown(target, config):
     """ Return steps for shutting down the target
@@ -467,12 +527,9 @@ def steps_boot(builder_name, target, config, run_tests=False, run_pm_tests=False
 
     st.append(step_boot_to_prompt(target, config))
     st.append(step_test_ping(target, config))
-    # TODO: not ready
-    # st.append(step_test_ssh_id(target, config))
-    # st.append(step_test_ssh_uname(target, config))
-    # st.append(step_test_ssh_dmesg_errors(target, config))
-    # st.append(step_test_ssh_dmesg_warnings(target, config))
-    # st.append(step_test_ssh_id(target, config))
+    st.append(step_test_uname(target, config))
+    st.append(step_test_dmesg_errors(target, config))
+    st.append(step_test_dmesg_warnings(target, config))
 
     # TODO: not ready
     # if run_tests:
