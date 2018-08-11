@@ -31,7 +31,13 @@ test_cpu_online() {
 	cpu_online=0
 	if [ ! -r /sys/bus/cpu/devices/cpu0/online ]; then
 		# On recent kernels on U3, the CPU0 is always online
-		if [ -r /sys/bus/cpu/devices/cpu0/cpu_capacity ]; then
+		# Test recent kernel by checking hotplug (v4.9) or cpu_capacity (newer)
+		if [ -r /sys/bus/cpu/devices/cpu0/hotplug/state ]; then
+			read -r cpu_stat < /sys/bus/cpu/devices/cpu0/hotplug/state
+			if [ $cpu_stat -eq 150 ]; then
+				let "cpu_online+=1"
+			fi
+		elif [ -r /sys/bus/cpu/devices/cpu0/cpu_capacity ]; then
 			let "cpu_online+=1"
 		fi
 	fi
