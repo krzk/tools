@@ -288,7 +288,7 @@ def step_boot_to_prompt(target, config):
     child.expect_exact('bootserver=192.168.1.10, rootserver=192.168.1.10, rootpath=')
 
     print('Target """ + target + """ reached: Mount NFS root')
-    child.expect_exact(':: running hook [udev]')
+    child.expect_exact([':: running early hook [udev]', ':: running hook [udev]', ':: Triggering uevents...'])
     child.expect_exact(':: running hook [net_nfs4]')
     child.expect_exact('IP-Config: eth0 complete (from 192.168.1.10):')
     child.expect_exact('NFS-Mount: 192.168.1.10:/srv/nfs/""" + target + """')
