@@ -215,6 +215,9 @@ def step_ssh(name, target, command, do_step_if=True, halt_on_failure=True):
 def step_boot_to_prompt(target, config):
     """ Return step for booting the target to user-space prompt
 
+    Arguments:
+        target - which board
+        config - which config us being tested (e.g. exynos, multi_v7)
     Returns:
         step
     """
@@ -334,6 +337,9 @@ def step_test_uname(target, config):
     """ Return step for executing uname on the target via SSH and checking
     if it matches expected kernel
 
+    Arguments:
+        target - which board
+        config - which config us being tested (e.g. exynos, multi_v7)
     Returns:
         step
     """
@@ -352,6 +358,9 @@ def step_test_uname(target, config):
 def step_test_dmesg_errors(target, config):
     """ Return step for getting dmesg errors on the target via SSH
 
+    Arguments:
+        target - which board
+        config - which config us being tested (e.g. exynos, multi_v7)
     Returns:
         step
     """
@@ -361,6 +370,9 @@ def step_test_dmesg_errors(target, config):
 def step_test_dmesg_warnings(target, config):
     """ Return step for getting dmesg warnings on the target via SSH
 
+    Arguments:
+        target - which board
+        config - which config us being tested (e.g. exynos, multi_v7)
     Returns:
         step
     """
@@ -370,6 +382,9 @@ def step_test_dmesg_warnings(target, config):
 def step_gracefull_shutdown(target, config, always_run=False, halt_on_failure=True):
     """ Return step for graceful shutdown the target over SSH
 
+    Arguments:
+        target - which board
+        config - which config us being tested (e.g. exynos, multi_v7)
     Optional arguments:
         always_run - whether step should be executed always (default: False)
         halt_on_failure - whether step should halt the build on failure (default: True)
@@ -403,6 +418,9 @@ def step_gracefull_shutdown(target, config, always_run=False, halt_on_failure=Tr
 def steps_shutdown(target, config):
     """ Return steps for shutting down the target
 
+    Arguments:
+        target - which board
+        config - which config us being tested (e.g. exynos, multi_v7)
     Returns:
         list of steps
     """
@@ -443,7 +461,7 @@ def step_test_case(target, config, test, is_simple=False):
 
     Arguments:
         target - which board
-        config
+        config - which config us being tested (e.g. exynos, multi_v7)
         test - name of test to execute (should match /opt/tools/tests/)
     Optional arguments:
         is_simple - whether test is simple and should be executed on all targets and configs (default: False)
