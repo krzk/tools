@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2017 Krzysztof Kozlowski
+# Copyright (c) 2015-2018 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -20,6 +20,10 @@ test_clk_s2mps11() {
 	hardkernel,odroid-hc1|hardkernel,odroid-xu3|hardkernel,odroid-xu3-lite|hardkernel,odroid-xu4)
 		clk_name="s2mps11"
 		clk_suffixes="ap bt cp"
+		;;
+	hardkernel,odroid-xu)
+		clk_name="32khz"
+		clk_suffixes="ap cp"
 		;;
 	hardkernel,odroid-u3)
 		clk_name="32khz"
