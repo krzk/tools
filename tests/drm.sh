@@ -22,7 +22,7 @@ test_drm() {
 	hardkernel,odroid-u3|hardkernel,odroid-xu3|hardkernel,odroid-xu3-lite|hardkernel,odroid-xu4)
 		expected_cards="card0/card0-HDMI-A-1 card0-HDMI-A-1"
 		;;
-	hardkernel,odroid-hc1)
+	hardkernel,odroid-hc1|hardkernel,odroid-xu)
 		expected_nodrm=1
 		;;
 	*)
