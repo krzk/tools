@@ -346,7 +346,7 @@ def step_test_uname(target, config):
     pexpect_cmd = """
     process = subprocess.run(""" + str(cmd_ssh(target, ['uname', '-a'])) + """,
                              check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                             encoding='utf-8', errors='ignore')
+                             encoding='utf-8', errors='replace')
     expected_output = '^Linux """ + target + """ %(prop:kernel_version:-)s #2 SMP PREEMPT [0-9a-zA-Z: ]+ armv7l GNU/Linux$'
     print('checking if uname matches expected: ' + expected_output)
     print('uname output: ' + process.stdout)
