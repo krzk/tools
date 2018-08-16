@@ -114,7 +114,8 @@ try:
     except OSError:
         pass
     child = pexpect.spawn('picocom -b 115200 --noinit --noreset --flow none --log """ + log_file + """ ' + serial,
-                          logfile=""" + pexpect_logfile + """)
+                          logfile=""" + pexpect_logfile + """,
+                          encoding='utf-8', codec_errors='replace')
     child.expect_exact('Terminal ready')
 """
     return cmd
@@ -366,6 +367,39 @@ def step_test_dmesg_warnings(target, config):
     # TODO: report as warnings?
     return step_ssh('Test: dmesg warnings', target, ['dmesg', '-l', 'warn'])
 
+def step_gracefull_shutdown(target, config, always_run=False, halt_on_failure=True):
+    """ Return step for graceful shutdown the target over SSH
+
+    Optional arguments:
+        always_run - whether step should be executed always (default: False)
+        halt_on_failure - whether step should halt the build on failure (default: True)
+    Returns:
+        step
+    """
+    pexpect_cmd = """
+    process = subprocess.run(""" + str(cmd_ssh(target, ['sudo', 'poweroff'])) + """,
+                             check=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                             encoding='utf-8', errors='replace')
+    print('SSH poweroff returned: %d' % process.returncode)
+    print('SSH poweroff returned: %s' % process.stdout)
+    if not process.returncode or ('Connection to """ + target + """ closed by remote host.' in process.stdout):
+        child.expect_exact(['Stopped Login Service.', 'Stopped Network Time Synchronization.',
+                            'Unmounted /home.', 'Stopped target Swap.'])
+        child.expect_exact('Reached target Shutdown')
+        child.expect_exact('systemd-shutdown[1]: Unmounting file systems.')
+        child.expect_exact('shutdown[1]: Unmounting file systems.')
+        child.expect_exact(['All filesystems unmounted.',
+                            'Unmounting \\'/oldroot/sys/kernel/config\\'.',
+                            'Remounting \\'/oldroot/sys/fs/cgroup/systemd\\' read-only'])
+        print('Target reached last shutdown log')
+        # Wait for final shutdown
+        time.sleep(2)
+        print('Target reached shutdown state')
+    """
+    return step_pexpect(name='Power off: ' + target, target=target, python_code=pexpect_cmd,
+                        always_run=always_run, halt_on_failure=halt_on_failure,
+                        verbose=True)
+
 def steps_shutdown(target, config):
     """ Return steps for shutting down the target
 
@@ -374,10 +408,7 @@ def steps_shutdown(target, config):
     """
     st = []
 
-    # TODO: use expect to wait for target death so XU will not reboot
-    st.append(step_subprocess('Power off: ' + target,target,
-                              ['/opt/tools/buildbot/target-poweroff.sh', target, config],
-                              always_run=True, halt_on_failure=False))
+    st.append(step_gracefull_shutdown(target, config, always_run=True, halt_on_failure=False))
     st.append(step_serial_close(target))
     st.append(steps.ShellCommand(command=['sudo', 'gpio-pi.py', target, 'off'],
                                  name='Cut the power: ' + target,
@@ -506,8 +537,7 @@ def steps_boot(builder_name, target, config, run_tests=False, run_pm_tests=False
 
     st.append(step_serial_open(target))
 
-    st.append(step_subprocess('Power off: ' + target,target,
-                              ['/opt/tools/buildbot/target-poweroff.sh', target, config]))
+    st.append(step_gracefull_shutdown(target, config))
 
     st.append(step_boot_to_prompt(target, config))
     st.append(step_test_ping(target, config))
