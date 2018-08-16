@@ -29,7 +29,11 @@ test_usb() {
 		;;
 	hardkernel,odroid-xu3|hardkernel,odroid-xu3-lite)
 		# Format: NUMBER_VENDOR:PRODUCT
-		expected_usb="1_1d6b:0001 2_1d6b:0002 1_1d6b:0003 1_0424:ec00 1_0424:9514"
+		if is_kernel_le 4 4; then
+			expected_usb="1_1d6b:0001 3_1d6b:0002 2_1d6b:0003 1_0424:ec00 1_0424:9514"
+		else
+			expected_usb="1_1d6b:0001 2_1d6b:0002 1_1d6b:0003 1_0424:ec00 1_0424:9514"
+		fi
 		;;
 	*)
 		error_msg "Wrong board"
@@ -39,7 +43,7 @@ test_usb() {
 		usb_no=${usb%_*}
 		usb_dev=${usb#*_}
 		found=$(lsusb -d "$usb_dev" | wc -l)
-		test "$found" == "$usb_no" || error_msg "Missing USB device: $usb"
+		test "$found" == "$usb_no" || error_msg "Not matched USB device: $usb (found: $found, expected: $usb_no)"
 	done
 
 	print_msg "OK"

@@ -61,6 +61,24 @@ get_board_compatible() {
 	sed 's/\x0.\+/\n/' /sys/firmware/devicetree/base/compatible
 }
 
+# is_kernel_le major minor
+# returns 0 if current kernel is less or equal to major.minor
+is_kernel_le() {
+	local exp_major="$1"
+	local exp_minor="$2"
+	local kver="$(uname -r)"
+	local kmajor="${kver%%.*}"
+	local kminor="${kver#*.}"
+	kminor="${kminor%%.*}"
+
+	test $kmajor -lt $exp_major && return 0
+	if [ $kmajor -eq $exp_major ]; then
+		test $kminor -le $exp_minor && return 0
+	fi
+
+	return 1
+}
+
 # run_as_nonroot cmd
 run_as_nonroot() {
 	if [ "$SUDO_USER" != "" ]; then
