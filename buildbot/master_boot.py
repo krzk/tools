@@ -86,19 +86,28 @@ def step_serial_close(target):
                               alwaysRun=True,
                               haltOnFailure=False)
 
-def pexpect_start(target, log_file, verbose):
+def pexpect_start(target, log_file, verbose, no_special_chars):
     """ Return string with Python code for new pexpect session inside a "try" block.
 
     Arguments:
         target - which board
         log_file - where to store serial logs coming from picocom
         verbose - be verbose and print everything (including serial connection logs) to stdout
+        no_special_chars - convert all special (non-printable) characters to hex value and do not
+                           write to log file (cause this would still store special characters there);
+                           when enabled you probably should set verbose=True as well to get the
+                           output of log
     Returns:
         string with Python code
     """
     pexpect_logfile = 'None'
     if verbose:
         pexpect_logfile = 'sys.stdout'
+    picocom_args = 'picocom -b 115200 --noinit --noreset --flow none'
+    if no_special_chars:
+        picocom_args += ' --imap spchex'
+    else:
+        picocom_args += ' --log ' + log_file
     cmd = """
 import os
 import re
@@ -113,9 +122,9 @@ try:
         os.remove('""" + log_file + """')
     except OSError:
         pass
-    child = pexpect.spawn('picocom -b 115200 --noinit --noreset --flow none --log """ + log_file + """ ' + serial,
+    child = pexpect.spawn('""" + picocom_args + """ ' + serial,
                           logfile=""" + pexpect_logfile + """,
-                          encoding='utf-8', codec_errors='replace')
+                          encoding='utf-8', codec_errors='ignore')
     child.expect_exact('Terminal ready')
 """
     return cmd
@@ -136,16 +145,18 @@ finally:
     child.sendcontrol('x')
     child.expect_exact('Thanks for using picocom')
     # Wait gracefully for shutdown before sending killing signals
+    print('Waiting for terminal close')
     for i in range(20):
         if child.isalive():
             time.sleep(0.1)
     child.close(force=True)
+    print('Terminal closed')
 """
     return cmd
 
 def step_pexpect(name, target, python_code, interpolate=False,
                  do_step_if=True, always_run=False, halt_on_failure=True,
-                 verbose=False):
+                 verbose=False, no_special_chars=False):
     """ Return step for executing Python code with pexpect.
 
     Arguments:
@@ -157,14 +168,18 @@ def step_pexpect(name, target, python_code, interpolate=False,
         do_step_if - optional callable whether step should be done (passed to doStepIf) (default: True)
         always_run - whether step should be executed always (default: False)
         halt_on_failure - whether step should halt the build on failure (default: True)
-        verbose - be verbose and print everything (including serial connection logs) to stdout
+        verbose - be verbose and print everything (including serial connection logs) to stdout (default: False)
+        no_special_chars - convert all special (non-printable) characters to hex value and do not
+                           write to log file (cause this would still store special characters there);
+                           when enabled you probably should set verbose=True as well to get the
+                           output of log (default: False)
     Returns:
         step
     """
     if interpolate:
-        full_cmd = util.Interpolate(pexpect_start(target, SERIAL_LOG, verbose) + "\n" + python_code + "\n" + pexpect_finish())
+        full_cmd = util.Interpolate(pexpect_start(target, SERIAL_LOG, verbose, no_special_chars) + "\n" + python_code + "\n" + pexpect_finish())
     else:
-        full_cmd = pexpect_start(target, SERIAL_LOG, verbose) + "\n" + python_code + "\n" + pexpect_finish()
+        full_cmd = pexpect_start(target, SERIAL_LOG, verbose, no_special_chars) + "\n" + python_code + "\n" + pexpect_finish()
 
     return steps.ShellCommand(command=['/usr/bin/env', 'python', '-c', full_cmd],
                               name=name,
@@ -395,8 +410,7 @@ def step_gracefull_shutdown(target, config, always_run=False, halt_on_failure=Tr
     process = subprocess.run(""" + str(cmd_ssh(target, ['sudo', 'poweroff'])) + """,
                              check=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                              encoding='utf-8', errors='replace')
-    print('SSH poweroff returned: %d' % process.returncode)
-    print('SSH poweroff returned: %s' % process.stdout)
+    print('SSH poweroff returned: %d (%s)' % (process.returncode, process.stdout))
     if not process.returncode or ('Connection to """ + target + """ closed by remote host.' in process.stdout):
         child.expect_exact(['Stopped Login Service.', 'Stopped Network Time Synchronization.',
                             'Unmounted /home.', 'Stopped target Swap.'])
@@ -411,9 +425,11 @@ def step_gracefull_shutdown(target, config, always_run=False, halt_on_failure=Tr
         time.sleep(2)
         print('Target reached shutdown state')
     """
+    # no_special_chars+verbose are necessary to fix Buildbot 1.2.0-1.3.0 issue with stalled
+    # command when non-printable character (coming from board with reboot message) is retrieved
     return step_pexpect(name='Power off: ' + target, target=target, python_code=pexpect_cmd,
                         always_run=always_run, halt_on_failure=halt_on_failure,
-                        verbose=True)
+                        verbose=True, no_special_chars=True)
 
 def steps_shutdown(target, config):
     """ Return steps for shutting down the target
