@@ -320,7 +320,8 @@ def step_boot_to_prompt(target, config):
     # Old (v4.4) kernels: random: nonblocking pool is initialized
     # child.expect_exact('random: crng init done', timeout=60)
     child.expect_exact(':: running cleanup hook [udev]', timeout=60)
-    child.expect_exact('systemd[1]: Detected architecture arm.', timeout=60)
+    # On certain next kernels (next-20180924), this takes up to 100 seconds:
+    child.expect_exact('systemd[1]: Detected architecture arm.', timeout=180)
     child.expect_exact('Set hostname to <""" + target + """>.')
     child.expect_exact('Reached target Swap.')
     child.expect_exact('Started udev Kernel Device Manager')
