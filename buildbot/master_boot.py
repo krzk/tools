@@ -1,6 +1,12 @@
 # -*- python -*-
 # ex: set filetype=python:
 #
+# Copyright (c) 2016-2018 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+#                             <krzk@kernel.org>
+#
+# SPDX-License-Identifier: GPL-2.0
+#
 
 from buildbot.plugins import steps, util
 
