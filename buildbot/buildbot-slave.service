@@ -10,7 +10,7 @@ After=network.target network-online.target
 Requires=network-online.target
 
 [Service]
-Type=simple
+Type=forking
 ExecStart=/usr/local/bin/buildbot.sh start worker
 ExecStop=/usr/local/bin/buildbot.sh stop worker
 User=buildbot
