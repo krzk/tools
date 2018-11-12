@@ -316,10 +316,14 @@ def step_boot_to_prompt(target, config):
     print('Target """ + target + """ reached: Mounted NFS root, start system')
     # NFS mount sometimes take a lot of time so add additional intermediate expects
     # and use higher timeouts.
-    # New kernels: random: crng init done
-    # Old (v4.4) kernels: random: nonblocking pool is initialized
-    # child.expect_exact('random: crng init done', timeout=60)
-    child.expect_exact(':: running cleanup hook [udev]', timeout=60)
+    # Sometimes these messages got corrupted and mixed with each other so look for any of them:
+    child.expect_exact([':: running cleanup hook [udev]',
+                        'System time before build time, advancing clock.',
+                        # New kernels:
+                        'random: crng init done',
+                        # Old (v4.4) kernels:
+                        'random: nonblocking pool is initialized'],
+                       timeout=60)
     # On certain next kernels (next-20180924), this takes up to 100 seconds:
     child.expect_exact('systemd[1]: Detected architecture arm.', timeout=180)
     child.expect_exact('Set hostname to <""" + target + """>.')
