@@ -111,7 +111,7 @@ test_thermal() {
 	test_cat ${therm}/thermal_zone0/trip_point_0_temp $exp_tmu0_threshold
 
 	for tmu in $(seq 0 $((exp_tmu_zones - 1))); do
-		test_cat_gt ${therm}/thermal_zone${tmu}/temp 25000
+		test_cat_gt ${therm}/thermal_zone${tmu}/temp 20000
 		test_cat_lt ${therm}/thermal_zone${tmu}/temp 65000
 	done
 

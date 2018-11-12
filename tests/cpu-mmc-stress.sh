@@ -50,7 +50,7 @@ test_cpu_mmc_stress() {
 
 	# Enable all CPUs and check if they have sensible temperature
 	test -f /sys/kernel/bL_switcher/active && echo 0 > /sys/kernel/bL_switcher/active
-	test_cat_gt ${therm}/thermal_zone0/temp 25000
+	test_cat_gt ${therm}/thermal_zone0/temp 20000
 	test_cat_lt ${therm}/thermal_zone0/temp 65000
 
 	# Make all CPUs busy
