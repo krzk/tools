@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2018 Krzysztof Kozlowski
+# Copyright (c) 2015-2019 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -70,5 +70,7 @@ echo "Installing modules to $MODULES_DEST_DIR"
 test -d "$MODULES_DEST_DIR" || die "Destination modules dir '$MODULES_DEST_DIR' does not exist"
 rm -fr "${MODULES_DEST_DIR}/${KERNEL_NAME}"
 cp -r "${MODULES_TMP}/lib/modules/${KERNEL_NAME}" "$MODULES_DEST_DIR"
+chown -R buildbot:buildbot "${MODULES_DEST_DIR}/${KERNEL_NAME}"
+chmod -R g+rw,a+r "${MODULES_DEST_DIR}/${KERNEL_NAME}"
 
 exit $?
