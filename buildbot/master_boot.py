@@ -248,7 +248,6 @@ def step_boot_to_prompt(target, config):
         raise Exception('Cannot restart target (rc: %d)' % process.returncode)
 
     child.expect_exact('U-Boot ')
-    child.expect_exact('CPU: ')
     #                  New U-Boot,                      Old vendor U-Boot on Odroid XU
     child.expect_exact(['Hit any key to stop autoboot', 'Press \\'Enter\\' or \\'Space\\' to stop autoboot'])
     child.expect_exact('scanning usb for ethernet devices... 1 Ethernet Device(s) found')
@@ -279,7 +278,6 @@ def step_boot_to_prompt(target, config):
     child.expect_exact('Everything fetched and written to /boot')
     child.expect_exact('resetting ...')
     child.expect_exact('U-Boot ')
-    child.expect_exact('CPU: ')
     child.expect_exact('Hit any key to stop autoboot')
     child.expect_exact('reading tftpboot-boot.scr')
     child.expect_exact('Booting from fetched data')
