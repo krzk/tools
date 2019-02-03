@@ -160,93 +160,71 @@ finally:
 """
     return cmd
 
-def step_pexpect(name, target, python_code, interpolate=False,
-                 do_step_if=True, always_run=False, halt_on_failure=True,
-                 verbose=False, no_special_chars=False):
-    """ Return step for executing Python code with pexpect.
-
-    Arguments:
-        name - name of step
-        target - which board
-        python_code - Python code to execute after setting up pexpect (this can be actually any Python code)
-    Optional arguments:
-        interpolate - put the python_cmd within buildbot.util.Interpolate (default: False)
-        do_step_if - optional callable whether step should be done (passed to doStepIf) (default: True)
-        always_run - whether step should be executed always (default: False)
-        halt_on_failure - whether step should halt the build on failure (default: True)
-        verbose - be verbose and print everything (including serial connection logs) to stdout (default: False)
-        no_special_chars - convert all special (non-printable) characters to hex value and do not
-                           write to log file (cause this would still store special characters there);
-                           when enabled you probably should set verbose=True as well to get the
-                           output of log (default: False)
-    Returns:
-        step
-    """
-    if interpolate:
-        full_cmd = util.Interpolate(pexpect_start(target, SERIAL_LOG, verbose, no_special_chars) + "\n" + python_code + "\n" + pexpect_finish())
-    else:
-        full_cmd = pexpect_start(target, SERIAL_LOG, verbose, no_special_chars) + "\n" + python_code + "\n" + pexpect_finish()
-
-    return steps.ShellCommand(command=['/usr/bin/env', 'python', '-c', full_cmd],
-                              name=name,
-                              logfiles={'serial0': SERIAL_LOG},
-                              doStepIf=do_step_if,
-                              alwaysRun=always_run,
-                              haltOnFailure=halt_on_failure)
-
-def step_subprocess(name, target, command,
-                    do_step_if=True, always_run=False, halt_on_failure=True):
-    """ Return step for executing one command in subprocess while
-    still getting all the logs and handling serial with pexpect
-
-    Arguments:
-        name - name of step
-        target - which board
-        command - list with command to execute (passed to subprocess.call())
-    Optional arguments:
-        do_step_if - optional callable whether step should be done (passed to doStepIf) (default: True)
-        always_run - whether step should be executed always (default: False)
-        halt_on_failure - whether step should halt the build on failure (default: True)
-    Returns:
-        step
-    """
-    pexpect_cmd = """
-    subprocess.run(""" + str(command) + """, check=True)
-    """
-
-    return step_pexpect(name=name, target=target, python_code=pexpect_cmd, do_step_if=do_step_if,
-                        always_run=always_run, halt_on_failure=halt_on_failure)
-
-def step_ssh(name, target, command, do_step_if=True, halt_on_failure=True):
-    """ Return step for executing one command on the target via SSH
-
-    Arguments:
-        name - name of step
-        target - which board
-        command - list with command to execute (passed to subprocess.run())
-    Optional arguments:
-        do_step_if - optional callable whether step should be done (passed to doStepIf) (default: True)
-        halt_on_failure - whether step should halt the build on failure (default: True)
-    Returns:
-        step
-    """
-    return step_subprocess(name, target, cmd_ssh(target, command),
-                           do_step_if=do_step_if, halt_on_failure=halt_on_failure)
-
-def step_boot_to_prompt(target, config):
-    """ Return step for booting the target to user-space prompt
+def pexpect_hard_reset(target, config):
+    """ Return string with Python code for hard resetting the power.
 
     Arguments:
         target - which board
         config - which config us being tested (e.g. exynos, multi_v7)
     Returns:
-        step
+        string with Python code
     """
     pexpect_cmd = """
     process = subprocess.run(['sudo', 'gpio-pi.py', '""" + target + """', 'restart'])
     if process.returncode:
         raise Exception('Cannot restart target (rc: %d)' % process.returncode)
+    """
+    return pexpect_cmd
 
+def pexpect_gracefull_shutdown(target, config, halt_on_failure=True, reboot=False):
+    """ Return string with Python code for graceful shutdown the target over SSH
+
+    Arguments:
+        target - which board
+        config - which config us being tested (e.g. exynos, multi_v7)
+    Optional arguments:
+        halt_on_failure - whether step should halt the build on failure;
+                          SSH command turning off the target and any pexpect failures
+                          will mark this as failure (default: True)
+        reboot - whether step should perform reboot instead of poweroff
+    Returns:
+        string with Python code
+        Remember about no_special_chars=True
+    """
+    power_cmd = 'reboot' if reboot else 'poweroff'
+    pexpect_cmd = """
+    process = subprocess.run(""" + str(cmd_ssh(target, ['sudo', power_cmd])) + """,
+                             check=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                             encoding='utf-8', errors='replace')
+    print('SSH poweroff returned: %d (%s)' % (process.returncode, process.stdout))
+    if not process.returncode or ('Connection to """ + target + """ closed by remote host.' in process.stdout):
+        child.expect_exact(['Stopped Login Service.', 'Stopped Network Time Synchronization.',
+                            'Unmounted /home.', 'Stopped target Swap.'])
+        child.expect_exact('Reached target Shutdown')
+        child.expect_exact('systemd-shutdown[1]: Unmounting file systems.')
+        child.expect_exact('shutdown[1]: Unmounting file systems.')
+        child.expect_exact(['All filesystems unmounted.',
+                            'Unmounting \\'/oldroot/sys/kernel/config\\'.',
+                            'Remounting \\'/oldroot/sys/fs/cgroup/systemd\\' read-only'])
+        print('Target reached last shutdown log')
+        # Wait for final shutdown
+        time.sleep(2)
+        print('Target reached shutdown state')
+    elif """ + ("%d" % halt_on_failure) + """:
+        raise Exception('Cannot shutdown target (rc: %d)' % process.returncode)
+    """
+    return pexpect_cmd
+
+def pexpect_boot_to_prompt(target, config):
+    """ Return string with Python code for booting the target to user-space prompt.
+
+    Arguments:
+        target - which board
+        config - which config us being tested (e.g. exynos, multi_v7)
+    Returns:
+        string with Python code
+    """
+    pexpect_cmd = """
     child.expect_exact('U-Boot ')
     #                  New U-Boot,                      Old vendor U-Boot on Odroid XU
     child.expect_exact(['Hit any key to stop autoboot', 'Press \\'Enter\\' or \\'Space\\' to stop autoboot'])
@@ -346,6 +324,91 @@ def step_boot_to_prompt(target, config):
     child.expect('Arch Linux [0-9a-z\.-]+ \\(""" + EXPECTED[target]['serial'] + """\\)')
     child.expect_exact('""" + target + """ login:')
     """
+    return pexpect_cmd
+
+def step_pexpect(name, target, python_code, interpolate=False,
+                 do_step_if=True, always_run=False, halt_on_failure=True,
+                 verbose=False, no_special_chars=False):
+    """ Return step for executing Python code with pexpect.
+
+    Arguments:
+        name - name of step
+        target - which board
+        python_code - Python code to execute after setting up pexpect (this can be actually any Python code)
+    Optional arguments:
+        interpolate - put the python_cmd within buildbot.util.Interpolate (default: False)
+        do_step_if - optional callable whether step should be done (passed to doStepIf) (default: True)
+        always_run - whether step should be executed always (default: False)
+        halt_on_failure - whether step should halt the build on failure (default: True)
+        verbose - be verbose and print everything (including serial connection logs) to stdout (default: False)
+        no_special_chars - convert all special (non-printable) characters to hex value and do not
+                           write to log file (cause this would still store special characters there);
+                           when enabled you probably should set verbose=True as well to get the
+                           output of log (default: False)
+    Returns:
+        step
+    """
+    if interpolate:
+        full_cmd = util.Interpolate(pexpect_start(target, SERIAL_LOG, verbose, no_special_chars) + "\n" + python_code + "\n" + pexpect_finish())
+    else:
+        full_cmd = pexpect_start(target, SERIAL_LOG, verbose, no_special_chars) + "\n" + python_code + "\n" + pexpect_finish()
+
+    return steps.ShellCommand(command=['/usr/bin/env', 'python', '-c', full_cmd],
+                              name=name,
+                              logfiles={'serial0': SERIAL_LOG},
+                              doStepIf=do_step_if,
+                              alwaysRun=always_run,
+                              haltOnFailure=halt_on_failure)
+
+def step_subprocess(name, target, command,
+                    do_step_if=True, always_run=False, halt_on_failure=True):
+    """ Return step for executing one command in subprocess while
+    still getting all the logs and handling serial with pexpect
+
+    Arguments:
+        name - name of step
+        target - which board
+        command - list with command to execute (passed to subprocess.call())
+    Optional arguments:
+        do_step_if - optional callable whether step should be done (passed to doStepIf) (default: True)
+        always_run - whether step should be executed always (default: False)
+        halt_on_failure - whether step should halt the build on failure (default: True)
+    Returns:
+        step
+    """
+    pexpect_cmd = """
+    subprocess.run(""" + str(command) + """, check=True)
+    """
+
+    return step_pexpect(name=name, target=target, python_code=pexpect_cmd, do_step_if=do_step_if,
+                        always_run=always_run, halt_on_failure=halt_on_failure)
+
+def step_ssh(name, target, command, do_step_if=True, halt_on_failure=True):
+    """ Return step for executing one command on the target via SSH
+
+    Arguments:
+        name - name of step
+        target - which board
+        command - list with command to execute (passed to subprocess.run())
+    Optional arguments:
+        do_step_if - optional callable whether step should be done (passed to doStepIf) (default: True)
+        halt_on_failure - whether step should halt the build on failure (default: True)
+    Returns:
+        step
+    """
+    return step_subprocess(name, target, cmd_ssh(target, command),
+                           do_step_if=do_step_if, halt_on_failure=halt_on_failure)
+
+def step_boot_to_prompt(target, config):
+    """ Return step for booting the target to user-space prompt
+
+    Arguments:
+        target - which board
+        config - which config us being tested (e.g. exynos, multi_v7)
+    Returns:
+        step
+    """
+    pexpect_cmd = pexpect_hard_reset(target, config) + pexpect_boot_to_prompt(target, config)
     return step_pexpect(name='Boot: ' + target, target=target, python_code=pexpect_cmd)
 
 def step_test_ping(target, config):
@@ -403,7 +466,7 @@ def step_test_dmesg_warnings(target, config):
     # TODO: report as warnings?
     return step_ssh('Test: dmesg warnings', target, ['dmesg', '-l', 'warn'])
 
-def step_gracefull_shutdown(target, config, always_run=False, halt_on_failure=True):
+def step_gracefull_shutdown(target, config, always_run=False, halt_on_failure=True, reboot=False):
     """ Return step for graceful shutdown the target over SSH
 
     Arguments:
@@ -411,33 +474,38 @@ def step_gracefull_shutdown(target, config, always_run=False, halt_on_failure=Tr
         config - which config us being tested (e.g. exynos, multi_v7)
     Optional arguments:
         always_run - whether step should be executed always (default: False)
-        halt_on_failure - whether step should halt the build on failure (default: True)
+        halt_on_failure - whether step should halt the build on failure;
+                          SSH command turning off the target and any pexpect failures
+                          will mark this as failure (default: True)
+        reboot - whether step should perform reboot instead of poweroff
     Returns:
         step
     """
-    pexpect_cmd = """
-    process = subprocess.run(""" + str(cmd_ssh(target, ['sudo', 'poweroff'])) + """,
-                             check=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                             encoding='utf-8', errors='replace')
-    print('SSH poweroff returned: %d (%s)' % (process.returncode, process.stdout))
-    if not process.returncode or ('Connection to """ + target + """ closed by remote host.' in process.stdout):
-        child.expect_exact(['Stopped Login Service.', 'Stopped Network Time Synchronization.',
-                            'Unmounted /home.', 'Stopped target Swap.'])
-        child.expect_exact('Reached target Shutdown')
-        child.expect_exact('systemd-shutdown[1]: Unmounting file systems.')
-        child.expect_exact('shutdown[1]: Unmounting file systems.')
-        child.expect_exact(['All filesystems unmounted.',
-                            'Unmounting \\'/oldroot/sys/kernel/config\\'.',
-                            'Remounting \\'/oldroot/sys/fs/cgroup/systemd\\' read-only'])
-        print('Target reached last shutdown log')
-        # Wait for final shutdown
-        time.sleep(2)
-        print('Target reached shutdown state')
-    """
+    power_title = 'Reboot: ' if reboot else 'Power off: '
+    pexpect_cmd = pexpect_gracefull_shutdown(target, config, halt_on_failure=halt_on_failure, reboot=reboot)
     # no_special_chars+verbose are necessary to fix Buildbot 1.2.0-1.3.0 issue with stalled
     # command when non-printable character (coming from board with reboot message) is retrieved
-    return step_pexpect(name='Power off: ' + target, target=target, python_code=pexpect_cmd,
+    return step_pexpect(name=power_title + target, target=target, python_code=pexpect_cmd,
                         always_run=always_run, halt_on_failure=halt_on_failure,
+                        verbose=True, no_special_chars=True)
+
+def step_test_reboot(target, config):
+    """ Return step for rebooting target (and waiting to come up)
+
+    Arguments:
+        target - which board
+        config - which config us being tested (e.g. exynos, multi_v7)
+    Returns:
+        step
+    """
+    # Perform gracefull shutdown and boot in one pexpect because otherwise U-Boot prints
+    # could be missed.
+    pexpect_cmd = pexpect_gracefull_shutdown(target, config, halt_on_failure=True, reboot=True)
+    pexpect_cmd += pexpect_boot_to_prompt(target, config)
+    # no_special_chars+verbose are necessary to fix Buildbot 1.2.0-1.3.0 issue with stalled
+    # command when non-printable character (coming from board with reboot message) is retrieved
+    return step_pexpect(name='Reboot: ' + target, target=target,
+                        python_code=pexpect_cmd,
                         verbose=True, no_special_chars=True)
 
 def steps_shutdown(target, config):
@@ -604,6 +672,11 @@ def steps_boot(builder_name, target, config, run_tests=False, run_pm_tests=False
         st = st + steps_test_suite(target, config)
 
     # After all the tests check again if ping and SSH are working:
+    st.append(step_test_ping(target, config))
+    st.append(step_test_uname(target, config))
+
+    # Test reboot
+    st.append(step_test_reboot(target, config))
     st.append(step_test_ping(target, config))
     st.append(step_test_uname(target, config))
 
