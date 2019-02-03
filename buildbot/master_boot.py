@@ -580,7 +580,7 @@ def steps_boot(builder_name, target, config, run_tests=False, run_pm_tests=False
 
     st.append(step_serial_open(target))
 
-    st.append(step_gracefull_shutdown(target, config))
+    st.append(step_gracefull_shutdown(target, config, halt_on_failure=False))
 
     st.append(step_boot_to_prompt(target, config))
     st.append(step_test_ping(target, config))
