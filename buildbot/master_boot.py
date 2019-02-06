@@ -228,6 +228,17 @@ def pexpect_boot_to_prompt(target, config):
     child.expect_exact('U-Boot ')
     #                  New U-Boot,                      Old vendor U-Boot on Odroid XU
     child.expect_exact(['Hit any key to stop autoboot', 'Press \\'Enter\\' or \\'Space\\' to stop autoboot'])
+    child.sendline('')
+    child.sendline('')
+    #                   XU3, HC1        XU             U3
+    child.expect_exact(['ODROID-XU3 #', 'ODROID-XU #', 'Odroid #'])
+    """
+    if target == 'odroidu3':
+       uboot_netboot = """setenv netboot \\'tftpboot 0x40008000 """ + target + """/zImage; tftpboot 0x44000000 """ + target + """/"${fdtfile}"; tftpboot 0x45000000 """ + target + """/uboot-initramfs-odroidxu3.img; bootz 0x40008000 0x45000000 0x44000000\\'"""
+    else:
+        uboot_netboot = """setenv netboot \\'tftpboot 0x40008000 """ + target + """/zImage; tftpboot 0x44000000 """ + target + """/"${fdtfile}"; tftpboot 0x45000000 """ + target + """/uboot-initramfs-odroidxu3.img; bootz 0x40008000 0x45000000 0x44000000\\'"""
+    pexpect_cmd += """
+    child.sendline('""" + uboot_netboot + """')
     child.expect_exact('scanning usb for ethernet devices... 1 Ethernet Device(s) found')
     child.expect_exact('Waiting for Ethernet connection... done.')
 
@@ -591,33 +602,33 @@ def steps_download(target):
 
     st.append(steps.FileDownload(
         mastersrc=util.Interpolate(mastersrc_dir + '/zImage'),
-        workerdest=u'/srv/tftp/zImage',
+        workerdest='/srv/tftp/%s/zImage' % target,
         haltOnFailure=True, mode=0664, name='Download zImage'))
     st.append(steps.FileDownload(
         mastersrc=util.Interpolate(mastersrc_dir + '/exynos5422-odroidxu3-lite.dtb'),
-        workerdest=u'/srv/tftp/exynos5422-odroidxu3-lite.dtb',
+        workerdest='/srv/tftp/%s/exynos5422-odroidxu3-lite.dtb' % target,
         haltOnFailure=True, mode=0664, name='Download Odroid XU3 DTB'))
     st.append(steps.FileDownload(
         mastersrc=util.Interpolate(mastersrc_dir + '/exynos4412-odroidu3.dtb'),
-        workerdest=u'/srv/tftp/exynos4412-odroidu3.dtb',
+        workerdest='/srv/tftp/%s/exynos4412-odroidu3.dtb' % target,
         haltOnFailure=True, mode=0664, name='Download Odroid U3 DTB'))
 
     # XU, XU4 and HC1 might be missing for older kernels
     st.append(steps.FileDownload(
         mastersrc=util.Interpolate(mastersrc_dir + '/exynos5410-odroidxu.dtb'),
-        workerdest=u'/srv/tftp/exynos5410-odroidxu.dtb',
+        workerdest='/srv/tftp/%s/exynos5410-odroidxu.dtb' % target,
         haltOnFailure=False, warnOnFailure=True, flunkOnFailure=False,
         mode=0664, name='Download Odroid XU DTB'))
     st.append(steps.FileDownload(
         mastersrc=util.Interpolate(mastersrc_dir + '/exynos5422-odroidxu4.dtb'),
-        workerdest=u'/srv/tftp/exynos5422-odroidxu4.dtb',
+        workerdest='/srv/tftp/%s/exynos5422-odroidxu4.dtb' % target,
         # In case of failure do not halt, do not fail and mark build as warning.
         # flunkOnFailure is by default True.
         haltOnFailure=False, warnOnFailure=True, flunkOnFailure=False,
         mode=0664, name='Download Odroid XU4 DTB'))
     st.append(steps.FileDownload(
         mastersrc=util.Interpolate(mastersrc_dir + '/exynos5422-odroidhc1.dtb'),
-        workerdest=u'/srv/tftp/exynos5422-odroidhc1.dtb',
+        workerdest='/srv/tftp/%s/exynos5422-odroidhc1.dtb' % target,
         haltOnFailure=False, warnOnFailure=True, flunkOnFailure=False,
         mode=0664, name='Download Odroid HC1 DTB'))
 

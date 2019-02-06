@@ -50,7 +50,7 @@ echo "Making initramfs and image"
 make-initramfs.sh ${TOOLS_DIR}/buildbot/initramfs/initramfs-odroid-armv7hf-base.cpio \
 		  $MODULES_TMP \
 		  ${TOOLS_DIR}/buildbot/initramfs/initramfs-odroid-armv7hf-addons \
-		  /srv/tftp/uboot-initramfs-odroidxu3.img
+		  "/srv/tftp/${TARGET}/uboot-initramfs-odroidxu3.img"
 #mkinitcpio --moduleroot . --kernel "${KERNEL_NAME}" \
 #	--generate initramfs-odroidxu3.img \
 #	--config ${TOOLS_DIR}/buildbot/${NAME}/mkinitcpio.conf
