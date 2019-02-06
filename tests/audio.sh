@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2016 Krzysztof Kozlowski
+# Copyright (c) 2016-2019 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -13,6 +13,11 @@ set -e -E -x
 test_audio() {
 	local name="Audio"
 	print_msg "Testing..."
+
+	if [ "$(get_board_compatible)" == "hardkernel,odroid-hc1" ]; then
+		print_msg "No audio, skipping"
+		return 0
+	fi
 
 	# On kernels <=v4.12, expected:
 	# default:CARD=OdroidXU3
