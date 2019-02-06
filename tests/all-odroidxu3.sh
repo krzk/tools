@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2018 Krzysztof Kozlowski
+# Copyright (c) 2015-2019 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -14,6 +14,7 @@ set -e -E -x
 . $(dirname ${BASH_SOURCE[0]})/pwm-fan.sh
 . $(dirname ${BASH_SOURCE[0]})/cpu-online.sh
 . $(dirname ${BASH_SOURCE[0]})/thermal.sh
+. $(dirname ${BASH_SOURCE[0]})/thermal-cooling.sh
 . $(dirname ${BASH_SOURCE[0]})/odroid-xu3-board-name.sh
 . $(dirname ${BASH_SOURCE[0]})/cpu-mmc-stress.sh
 . $(dirname ${BASH_SOURCE[0]})/s5p-sss.sh
