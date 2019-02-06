@@ -570,21 +570,18 @@ def steps_test_suite(target, config):
     st = []
     if target != 'odroidhc1':
         st.append(step_test_case(target, config, 'pwm-fan'))
-    st.append(step_test_case(target, config, 'thermal'))
+    st.append(step_test_case(target, config, 'thermal-cooling'))
     if target == 'odroidxu3':
         # Intensive and not that important test, run it only on XU3
         st.append(step_test_case(target, config, 'cpu-mmc-stress'))
     st.append(step_test_case(target, config, 's5p-sss'))
     st.append(step_test_case(target, config, 's5p-sss-cryptsetup'))
-    if target != 'odroidhc1':
-        st.append(step_test_case(target, config, 'audio'))
     # RTC often fail on NFS root so put it at the end
     # Also RTC of max77686 seems to fail pretty often, so skip U3:
     if target != 'odroidu3':
 	    st.append(step_test_case(target, config, 'rtc'))
     # RNG does not work on Odroid, missing clock enable?
     # st.append(step_test_case(target, config, 'rng-exynos'))
-    st.append(step_test_case(target, config, 'audss'))
 
     return st
 
@@ -658,10 +655,13 @@ def steps_boot(builder_name, target, config, run_tests=False, run_pm_tests=False
     # Run all non-intensive, non-disruptive and non-dependant tests
     st.append(step_test_case(target, config, 'drm', is_simple=True))
     st.append(step_test_case(target, config, 'cpu-online', is_simple=True))
+    st.append(step_test_case(target, config, 'thermal', is_simple=True))
     st.append(step_test_case(target, config, 'odroid-xu3-board-name', is_simple=True))
     st.append(step_test_case(target, config, 'usb', is_simple=True))
     st.append(step_test_case(target, config, 'var-all', is_simple=True))
     st.append(step_test_case(target, config, 'clk-s2mps11', is_simple=True))
+    st.append(step_test_case(target, config, 'audio', is_simple=True))
+    st.append(step_test_case(target, config, 'audss', is_simple=True))
 
     if run_tests:
         # Run intensive tests only on exynos_defconfig because on multi_v7 some tests hang
