@@ -18,28 +18,28 @@ die() {
 
 # test_cat file expected
 test_cat() {
-	read -r val < $1
+	read -r val < "$1"
 	test "$val" = "$2" || { echo "ERROR: Wrong $1 ($val == $2)"; return 1; }
 	return 0
 }
 
 #test_cat_lt file expected
 test_cat_lt() {
-	read -r val < $1
+	read -r val < "$1"
 	test $val -lt $2 || { echo "ERROR: Wrong $1 ($val < $2)"; return 1; }
 	return 0
 }
 
 #test_cat_gt file expected
 test_cat_gt() {
-	read -r val < $1
+	read -r val < "$1"
 	test $val -gt $2 || { echo "ERROR: Wrong $1 ($val > $2)"; return 1; }
 	return 0
 }
 
 #test_cat_ge file expected
 test_cat_ge() {
-	read -r val < $1
+	read -r val < "$1"
 	test $val -ge $2 || { echo "ERROR: Wrong $1 ($val >= $2)"; return 1; }
 	return 0
 }
