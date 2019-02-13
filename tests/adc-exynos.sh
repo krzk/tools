@@ -13,7 +13,7 @@ set -e -E -x
 test_adc_exynos() {
 	local name="adc-exynos"
 	# adc0 on XU3-lite jumps from 1400-2700
-	local adc_values=("1000 3000" "0 1" "0 1" "2700 2800" "0 1" "0 1" "0 1" "0 1" "0 1" "0 1")
+	local adc_values=("1000 3000" "0 1" "0 1" "1000 3000" "0 1" "0 1" "0 1" "0 1" "0 1" "0 1")
 	local iio_path="/sys/bus/iio/devices/iio:device0"
 	print_msg "Testing..."
 
