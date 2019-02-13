@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2018 Krzysztof Kozlowski
+# Copyright (c) 2015-2019 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -41,6 +41,14 @@ test_cat_gt() {
 test_cat_ge() {
 	read -r val < $1
 	test $val -ge $2 || { echo "ERROR: Wrong $1 ($val >= $2)"; return 1; }
+	return 0
+}
+
+#test_cat_gt file expected_low expected_high
+test_cat_range() {
+	read -r val < "$1"
+	test $val -ge $2 || { echo "ERROR: Wrong $1 ($val >= $2)"; return 1; }
+	test $val -le $3 || { echo "ERROR: Wrong $1 ($val <= $3)"; return 1; }
 	return 0
 }
 

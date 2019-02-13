@@ -23,6 +23,7 @@ set -e -E -x
 . $(dirname ${BASH_SOURCE[0]})/var-all.sh
 . $(dirname ${BASH_SOURCE[0]})/clk-s2mps11.sh
 . $(dirname ${BASH_SOURCE[0]})/audio.sh
+. $(dirname ${BASH_SOURCE[0]})/adc-exynos.sh
 # RTC often fail on NFS root so put it at the end
 . $(dirname ${BASH_SOURCE[0]})/rtc.sh
 # RNG does not work on Odroid, configured in secure mode?
