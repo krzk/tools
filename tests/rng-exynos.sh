@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2016 Krzysztof Kozlowski
+# Copyright (c) 2016-2019 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -12,8 +12,8 @@ set -e -E -x
 
 test_rng_exynos() {
 	local name="rng-exynos"
-	print_msg "Testing..."
 	local rng="/sys/class/misc/hw_random/rng_current"
+	print_msg "Testing..."
 
 	if [ ! -f "$rng" ]; then
 		print_msg "Missing ${rng}, skipping"
