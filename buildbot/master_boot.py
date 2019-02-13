@@ -21,7 +21,8 @@ ENV_PATH = {'PATH': '/opt/tools/buildbot:/opt/tools/pi:/usr/local/bin:${PATH}'}
 
 TARGET_SSH_USER = 'buildbot'
 SERIAL_LOG = 'serial.log'
-CONN_TIMEOUT = '20'
+TIMEOUT_PING = '20'
+TIMEOUT_SSH = '30'
 
 EXPECTED = {
     'odroidhc1': {
@@ -67,7 +68,7 @@ def cmd_ssh(target, command):
     Returns
         list of strings with cmd
     """
-    return ['ssh', '-o', 'ConnectTimeout %s' % CONN_TIMEOUT,
+    return ['ssh', '-o', 'ConnectTimeout %s' % TIMEOUT_SSH,
             '%s@%s' % (TARGET_SSH_USER, target)] + command
 
 def step_serial_open(target):
@@ -418,7 +419,7 @@ def step_test_ping(target, config):
         step
     """
     return step_subprocess('Test: ping', target,
-                           ['ping', '-c', '1', '-W', CONN_TIMEOUT, target])
+                           ['ping', '-c', '1', '-W', TIMEOUT_PING, target])
 
 def step_test_uname(target, config):
     """ Return step for executing uname on the target via SSH and checking
