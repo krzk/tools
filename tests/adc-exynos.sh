@@ -24,7 +24,12 @@ test_adc_exynos() {
 	hardkernel,odroid-xu3-lite)
 		adc_values[9]="367 377"
 		;;
-	hardkernel,odroid-xu,hardkernel,odroid-u3)
+	hardkernel,odroid-xu)
+		adc_values[3]="0 1"
+		# Should be around 372 but in practice higher tolerance is needed
+		adc_values[9]="365 379"
+		;;
+	hardkernel,odroid-u3)
 		print_msg "ADC not supported, skipping"
 		return 0
 		;;
