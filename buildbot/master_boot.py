@@ -197,7 +197,9 @@ def pexpect_gracefull_shutdown(target, config, halt_on_failure=True, reboot=Fals
     process = subprocess.run(""" + str(cmd_ssh(target, ['sudo', power_cmd])) + """,
                              check=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                              encoding='utf-8', errors='replace')
-    print('SSH poweroff returned: %d (%s)' % (process.returncode, process.stdout))
+    print('cmd \\'%s\\' returned: %d, output:' % ('""" + power_cmd + """', process.returncode))
+    print(process.stdout)
+    print('---')
     if not process.returncode or ('Connection to """ + target + """ closed by remote host.' in process.stdout):
         child.expect_exact(['Stopped Login Service.', 'Stopped Network Time Synchronization.',
                             'Unmounted /home.', 'Stopped target Swap.'])
@@ -430,16 +432,25 @@ def step_test_uname(target, config):
         config - which config us being tested (e.g. exynos, multi_v7)
     Returns:
         step
+                print('cmd %s returned: %d, output:' % ('uname -a', process.returncode))
     """
+    # Since this is going to interpolate, we cannot use '%' string format inside. Use format().
     pexpect_cmd = """
     process = subprocess.run(""" + str(cmd_ssh(target, ['uname', '-a'])) + """,
-                             check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                             encoding='utf-8', errors='replace')
-    expected_output = '^Linux """ + target + """ %(prop:kernel_version:-)s #2 SMP PREEMPT [0-9a-zA-Z: ]+ armv7l GNU/Linux$'
-    print('checking if uname matches expected: ' + expected_output)
-    print('uname output: ' + process.stdout)
-    if not re.search(expected_output, process.stdout):
-        raise Exception('uname of target does not match expected (output: ' + process.stdout + ')')
+                            check=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                            encoding='utf-8', errors='replace')
+
+    print('cmd \\'{0}\\' returned: {1}, output:'.format('umame -a', process.returncode))
+    print(process.stdout)
+    print('---')
+    if not process.returncode:
+        expected_output = '^Linux """ + target + """ %(prop:kernel_version:-)s #2 SMP PREEMPT [0-9a-zA-Z: ]+ armv7l GNU/Linux$'
+        print('checking if uname matches expected: ' + expected_output)
+        print('uname output: ' + process.stdout)
+        if not re.search(expected_output, process.stdout):
+            raise Exception('uname of target does not match expected (output: ' + process.stdout + ')')
+    else:
+        raise Exception('Cannot run cmd target (rc: {0})'.format(process.returncode))
     """
     return step_pexpect(name='Test: uname', target=target, python_code=pexpect_cmd, interpolate=True)
 
