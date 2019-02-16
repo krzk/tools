@@ -205,8 +205,8 @@ def pexpect_gracefull_shutdown(target, config, halt_on_failure=True, reboot=Fals
                             'Unmounted /home.', 'Stopped target Swap.'])
         child.expect_exact('Reached target Shutdown')
         child.expect_exact('systemd-shutdown[1]: Unmounting file systems.')
-        child.expect_exact('shutdown[1]: Unmounting file systems.')
-        child.expect_exact(['All filesystems unmounted.',
+        child.expect_exact(['shutdown[1]: Unmounting file systems.',
+                            'All filesystems unmounted.',
                             'Unmounting \\'/oldroot/sys/kernel/config\\'.',
                             'Remounting \\'/oldroot/sys/fs/cgroup/systemd\\' read-only'])
         print('Target reached last shutdown log')
