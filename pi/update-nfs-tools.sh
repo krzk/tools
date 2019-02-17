@@ -8,7 +8,7 @@
 #
 
 SRV_NFS_PATH="/srv/nfs"
-SRV_NFS_BOARDS="odroidhc1 odroidu3 odroidxu odroidxu3"
+SRV_NFS_BOARDS="arndaleocta odroidhc1 odroidu3 odroidxu odroidxu3"
 TOOLS_PATH="opt/tools"
 
 for board in $SRV_NFS_BOARDS; do

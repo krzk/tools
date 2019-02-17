@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2016-2018 Krzysztof Kozlowski
+# Copyright (c) 2016-2019 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -32,6 +32,9 @@ get_serial() {
 	local serial=""
 
 	case "$target" in
+	arndaleocta|octa)
+		serial="/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A50285BI-if00-port0"
+		;;
 	odroidu3|u3)
 		serial="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D45567-if00-port0"
 		;;
