@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2016,2017 Krzysztof Kozlowski
+# Copyright (c) 2016-2019 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -44,7 +44,7 @@ esac
 git tag -v $TAG &> /dev/null || die "Wrong tag or signature"
 
 echo "Output to: $OUT"
-echo "Subject: [GIT PULL] $SUBJECT xxx for v4.x
+echo "Subject: [GIT PULL] $SUBJECT xxx for v5.x
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: $TO
 Cc: $CC
