@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2017 Krzysztof Kozlowski
+# Copyright (c) 2015-2019 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -15,6 +15,9 @@ test_board_name() {
 	echo -n "Board: "
 
 	case "$TARGET" in
+	arndaleocta|octa)
+		grep -z 'insignal,arndale-octa$' -q $of && echo "Arndale Octa" && return 0
+		;;
 	odroidu3|u3)
 		grep -z 'hardkernel,odroid-u3$' -q $of && echo "Odroid U3" && return 0
 		;;

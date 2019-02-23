@@ -668,7 +668,7 @@ def steps_boot(builder_name, target, config, run_tests=False, run_pm_tests=False
     st.append(step_test_case(target, config, 'drm', is_simple=True))
     st.append(step_test_case(target, config, 'cpu-online', is_simple=True))
     st.append(step_test_case(target, config, 'thermal', is_simple=True))
-    st.append(step_test_case(target, config, 'odroid-xu3-board-name', is_simple=True))
+    st.append(step_test_case(target, config, 'board-name', is_simple=True))
     st.append(step_test_case(target, config, 'usb', is_simple=True))
     st.append(step_test_case(target, config, 'var-all', is_simple=True))
     st.append(step_test_case(target, config, 'clk-s2mps11', is_simple=True))

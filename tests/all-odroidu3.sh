@@ -15,7 +15,7 @@ set -e -E -x
 . $(dirname ${BASH_SOURCE[0]})/cpu-online.sh
 . $(dirname ${BASH_SOURCE[0]})/thermal.sh
 . $(dirname ${BASH_SOURCE[0]})/thermal-cooling.sh
-. $(dirname ${BASH_SOURCE[0]})/odroid-xu3-board-name.sh
+. $(dirname ${BASH_SOURCE[0]})/board-name.sh
 #. $(dirname ${BASH_SOURCE[0]})/cpu-mmc-stress.sh
 . $(dirname ${BASH_SOURCE[0]})/s5p-sss.sh
 . $(dirname ${BASH_SOURCE[0]})/s5p-sss-cryptsetup.sh
