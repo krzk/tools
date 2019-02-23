@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015 Krzysztof Kozlowski
+# Copyright (c) 2015-2019 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -20,7 +20,7 @@ test_cpu_online() {
 	hardkernel,odroid-hc1|hardkernel,odroid-xu3|hardkernel,odroid-xu3-lite|hardkernel,odroid-xu4)
 		expected_cpus="0-7"
 		;;
-	hardkernel,odroid-u3|hardkernel,odroid-xu)
+	hardkernel,odroid-u3|hardkernel,odroid-xu|insignal,arndale-octa)
 		expected_cpus="0-3"
 		;;
 	*)

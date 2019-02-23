@@ -32,6 +32,9 @@ test_thermal() {
 	hardkernel,odroid-xu)
 		exp_tmu_zones=4
 		;;
+	insignal,arndale-octa)
+		exp_tmu0_trip="55000"
+		;;
 	esac
 
 	test $(ls ${therm}/*/temp | wc -l) -eq $exp_tmu_zones || error_msg "Number of thermal zones"

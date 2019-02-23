@@ -37,6 +37,10 @@ test_adc_exynos() {
 		print_msg "ADC not supported (values not known), skipping"
 		return 0
 		;;
+	insignal,arndale-octa)
+		print_msg "Not implemented"
+		return 0
+		;;
 	*)
 		error_msg "Wrong board"
 	esac

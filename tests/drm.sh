@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2018 Krzysztof Kozlowski
+# Copyright (c) 2018-2019 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -25,8 +25,11 @@ test_drm() {
 	hardkernel,odroid-hc1|hardkernel,odroid-xu)
 		expected_nodrm=1
 		;;
+	insignal,arndale-octa)
+		print_msg "Not implemented"
+		return 0
+		;;
 	*)
-		# hardkernel,odroid-xu
 		error_msg "Wrong board"
 	esac
 

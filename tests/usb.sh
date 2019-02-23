@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2016-2018 Krzysztof Kozlowski
+# Copyright (c) 2016-2019 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -34,6 +34,10 @@ test_usb() {
 		else
 			expected_usb="1_1d6b:0001 2_1d6b:0002 1_1d6b:0003 1_0424:ec00 1_0424:9514"
 		fi
+		;;
+	insignal,arndale-octa)
+		print_msg "Not implemented"
+		return 0
 		;;
 	*)
 		error_msg "Wrong board"

@@ -16,7 +16,7 @@ test_audss() {
 	print_msg "Testing..."
 
 	case "$(get_board_compatible)" in
-	hardkernel,odroid-hc1|hardkernel,odroid-xu3|hardkernel,odroid-xu3-lite|hardkernel,odroid-xu4|hardkernel,odroid-xu)
+	hardkernel,odroid-hc1|hardkernel,odroid-xu3|hardkernel,odroid-xu3-lite|hardkernel,odroid-xu4|hardkernel,odroid-xu|insignal,arndale-octa)
 		device="3810000.audss-clock-controller"
 		;;
 	hardkernel,odroid-u3)
