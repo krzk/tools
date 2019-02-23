@@ -13,15 +13,22 @@ set -e -E -x
 test_rng_exynos() {
 	local name="rng-exynos"
 	local rng="/sys/class/misc/hw_random/rng_current"
+	local rng_name=""
 	print_msg "Testing..."
 
-	if [ ! -f "$rng" ]; then
-		print_msg "Missing ${rng}, skipping"
+	if [ "$(get_board_compatible)" == "hardkernel,odroid-u3" ]; then
+		print_msg "RNG not supported yet (or broken?), skipping"
 		return 0
 	fi
 
-	echo "exynos" > $rng
-	test_cat $rng "exynos"
+	if is_kernel_le 4 16; then
+		rng_name="exynos"
+	else
+		rng_name="10830600.rng"
+	fi
+
+	echo "$rng_name" > $rng
+	test_cat $rng "$rng_name"
 
 	dd if=/dev/hwrng of=/dev/null bs=1 count=16
 	dd if=/dev/hwrng of=/dev/null bs=1 count=16
