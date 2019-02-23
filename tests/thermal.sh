@@ -18,15 +18,15 @@ test_thermal() {
 	print_msg "Testing..."
 	local therm="/sys/class/thermal"
 
-	local exp_tmu0_threshold="50000"
+	local exp_tmu0_trip="50000"
 	local exp_tmu_zones=5
 
 	case "$(get_board_compatible)" in
 	hardkernel,odroid-hc1)
-		exp_tmu0_threshold="70000"
+		exp_tmu0_trip="70000"
 		;;
 	hardkernel,odroid-u3)
-		exp_tmu0_threshold="70000"
+		exp_tmu0_trip="70000"
 		exp_tmu_zones=1
 		;;
 	hardkernel,odroid-xu)
