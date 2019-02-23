@@ -26,8 +26,7 @@ test_drm() {
 		expected_nodrm=1
 		;;
 	insignal,arndale-octa)
-		print_msg "Not implemented"
-		return 0
+		expected_cards="card0/card0-HDMI-A-1 card0-HDMI-A-1"
 		;;
 	*)
 		error_msg "Wrong board"
