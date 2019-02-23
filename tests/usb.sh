@@ -36,8 +36,7 @@ test_usb() {
 		fi
 		;;
 	insignal,arndale-octa)
-		print_msg "Not implemented"
-		return 0
+		expected_usb="1_1d6b:0001 3_1d6b:0002 2_1d6b:0003 1_0b95:772a 1_05e3:0610"
 		;;
 	*)
 		error_msg "Wrong board"
