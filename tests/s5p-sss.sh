@@ -21,14 +21,14 @@ test_s5p_sss_selftests() {
 		print_msg "Testing for ${alg}..."
 		cmd="grep -A 11 "$alg" /proc/crypto"
 
-		$cmd | grep "selftest     : passed" > /dev/null || error_msg "${alg}: not matching passed"
-		$cmd | grep "module       : kernel" > /dev/null || error_msg "${alg}: not matching module kernel"
-		$cmd | grep "refcnt       : 1" > /dev/null || error_msg "${alg}: not matching refcnt 1"
-		$cmd | grep "internal     : no" > /dev/null || error_msg "${alg}: not matching no internal"
-		$cmd | grep "type         : ablkcipher" > /dev/null || error_msg "${alg}: not matching ablkcipher"
-		$cmd | grep "blocksize    : 16" > /dev/null || error_msg "${alg}: not matching 'min keysize  : 16'"
-		$cmd | grep "min keysize  : 16" > /dev/null || error_msg "${alg}: not matching 'min keysize  : 16'"
-		$cmd | grep "max keysize  : 32" > /dev/null || error_msg "${alg}: not mathing 'max keysize  : 32'"
+		$cmd | grep "selftest     : passed" > /dev/null || error_msg "${alg}: not matching: passed"
+		$cmd | grep "module       : kernel" > /dev/null || error_msg "${alg}: not matching: module kernel"
+		$cmd | grep "refcnt       : 1" > /dev/null || error_msg "${alg}: not matching: refcnt 1"
+		$cmd | grep "internal     : no" > /dev/null || error_msg "${alg}: not matching: no internal"
+		$cmd | grep "type         : ablkcipher" > /dev/null || error_msg "${alg}: not matching: ablkcipher"
+		$cmd | grep "blocksize    : 16" > /dev/null || error_msg "${alg}: not matching: 'min keysize  : 16'"
+		$cmd | grep "min keysize  : 16" > /dev/null || error_msg "${alg}: not matching: 'min keysize  : 16'"
+		$cmd | grep "max keysize  : 32" > /dev/null || error_msg "${alg}: not matching: 'max keysize  : 32'"
 		found_alg=$(($found_alg + 1))
 	done
 
