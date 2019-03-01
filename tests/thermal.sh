@@ -42,7 +42,7 @@ test_thermal() {
 	test_cat ${therm}/thermal_zone0/mode "enabled"
 	# On older stable kernels there might be no "passive" entry
 	test -f ${therm}/thermal_zone0/passive && test_cat ${therm}/thermal_zone0/passive "0"
-	test_cat ${therm}/thermal_zone0/trip_point_0_temp $exp_tmu0_threshold
+	test_cat ${therm}/thermal_zone0/trip_point_0_temp $exp_tmu0_trip
 
 	for tmu in $(seq 0 $((exp_tmu_zones - 1))); do
 		test_cat_gt ${therm}/thermal_zone${tmu}/temp 20000
