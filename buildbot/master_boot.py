@@ -586,8 +586,10 @@ def steps_test_suite(target, config):
     if target == 'odroidxu3':
         # Intensive and not that important test, run it only on XU3
         st.append(step_test_case(target, config, 'cpu-mmc-stress'))
-    st.append(step_test_case(target, config, 's5p-sss'))
-    st.append(step_test_case(target, config, 's5p-sss-cryptsetup'))
+    # No point to test tcrypt - it does not use s5p-sss anymore
+    #st.append(step_test_case(target, config, 's5p-sss-tcrypt'))
+    # No point to test cryptsetup - it does not use s5p-sss anymore
+    #st.append(step_test_case(target, config, 's5p-sss-cryptsetup'))
     # RTC often fail on NFS root so put it at the end
     # Also RTC of max77686 seems to fail pretty often, so skip U3:
     if target != 'odroidu3':
@@ -669,6 +671,7 @@ def steps_boot(builder_name, target, config, run_tests=False, run_pm_tests=False
     st.append(step_test_case(target, config, 'cpu-online', is_simple=True))
     st.append(step_test_case(target, config, 'thermal', is_simple=True))
     st.append(step_test_case(target, config, 'board-name', is_simple=True))
+    st.append(step_test_case(target, config, 's5p-sss', is_simple=True))
     st.append(step_test_case(target, config, 'usb', is_simple=True))
     st.append(step_test_case(target, config, 'var-all', is_simple=True))
     st.append(step_test_case(target, config, 'clk-s2mps11', is_simple=True))
