@@ -18,6 +18,7 @@ set -e -E -x
 . $(dirname ${BASH_SOURCE[0]})/board-name.sh
 . $(dirname ${BASH_SOURCE[0]})/cpu-mmc-stress.sh
 . $(dirname ${BASH_SOURCE[0]})/s5p-sss.sh
+. $(dirname ${BASH_SOURCE[0]})/s5p-sss-tcrypt.sh
 . $(dirname ${BASH_SOURCE[0]})/s5p-sss-cryptsetup.sh
 . $(dirname ${BASH_SOURCE[0]})/usb.sh
 . $(dirname ${BASH_SOURCE[0]})/var-all.sh
