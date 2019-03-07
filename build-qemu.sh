@@ -21,7 +21,7 @@ fi
 
 ../qemu/configure --cc="$CC" --cxx="$CXX" --enable-debug --enable-fdt --enable-kvm --enable-libusb --enable-libssh2 --enable-lzo --enable-bzip2 --enable-curses --enable-gtk  --enable-cap-ng --enable-debug-tcg
 
-make -j8
+make -j`getconf _NPROCESSORS_ONLN`
 
 if [ $TEST -eq 1 ]; then
     sudo modprobe kvm_intel

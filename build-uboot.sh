@@ -24,7 +24,7 @@ build() {
 	echo "#########################################################"
 	echo "Building config: $config"
 	CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm make ${config}_config
-	CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm make -j4
+	CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm make -j`getconf _NPROCESSORS_ONLN`
 }
 
 set -e -E
