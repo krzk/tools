@@ -543,6 +543,8 @@ def if_step_want_tests(step):
     """ Returns true if step is for booting kernel suitable for tests
 
     Dynamic (executed during runtime of builder) helper
+
+    See: Matrix of configurations
     """
 
     project = str(step.getProperty('project', default='none'))
@@ -559,9 +561,11 @@ def if_step_want_tests(step):
         return False
 
     # Reamining projects: krzk
+    if ('boot-odroid-xu-' in step.build.builder.name):
+        return False
     return True
 
-def step_test_case(target, config, test, is_simple=False):
+def step_test_case(target, config, test, is_fast=False):
     """ Return step for executing one test
 
     Arguments:
@@ -569,17 +573,43 @@ def step_test_case(target, config, test, is_simple=False):
         config - which config us being tested (e.g. exynos, multi_v7)
         test - name of test to execute (should match /opt/tools/tests/)
     Optional arguments:
-        is_simple - whether test is simple and should be executed on all targets and configs (default: False)
+        is_fast - whether test is simple and should be executed on all targets and configs (default: False)
     Returns:
         step
     """
     return step_ssh('Test: ' + test + ' @' + target, target,
                     ['sudo', '/opt/tools/tests/' + test + '.sh', target, config],
                     halt_on_failure=False,
-                    do_step_if=lambda step: is_simple or if_step_want_tests(step))
+                    do_step_if=lambda step: is_fast or if_step_want_tests(step))
 
-def steps_test_suite(target, config):
+def steps_test_suite_fast(target, config):
     st = []
+    if config != 'exynos':
+        return st
+
+    # Run all non-intensive, non-disruptive and non-dependant tests
+    st.append(step_test_case(target, config, 'drm', is_fast=True))
+    st.append(step_test_case(target, config, 'cpu-online', is_fast=True))
+    st.append(step_test_case(target, config, 'thermal', is_fast=True))
+    st.append(step_test_case(target, config, 'board-name', is_fast=True))
+    st.append(step_test_case(target, config, 's5p-sss', is_fast=True))
+    st.append(step_test_case(target, config, 'usb', is_fast=True))
+    st.append(step_test_case(target, config, 'var-all', is_fast=True))
+    st.append(step_test_case(target, config, 'clk-s2mps11', is_fast=True))
+    st.append(step_test_case(target, config, 'audio', is_fast=True))
+    st.append(step_test_case(target, config, 'audss', is_fast=True))
+
+    return st
+
+def steps_test_suite_slow(target, config):
+    st = []
+    # Run intensive tests only on exynos_defconfig because on multi_v7 some tests hang
+    # the buildbot console and some fail because of missing modules (like sound).
+    # This requires also decent kernel, so do not run on stable (limited
+    # by doStepIf=if_step_want_tests).
+    # See: Matrix of configurations
+    if config != 'exynos':
+        return st
     if target != 'odroidhc1':
         st.append(step_test_case(target, config, 'pwm-fan'))
     st.append(step_test_case(target, config, 'thermal-cooling'))
@@ -642,7 +672,7 @@ def steps_download(target):
 
     return st
 
-def steps_boot(builder_name, target, config, run_tests=False, run_pm_tests=False):
+def steps_boot(builder_name, target, config, run_pm_tests=False):
     st = []
 
     st.append(steps.ShellCommand(command=['rm', '-fr', 'lib',
@@ -666,25 +696,9 @@ def steps_boot(builder_name, target, config, run_tests=False, run_pm_tests=False
     st.append(step_test_uname(target, config))
     st.append(step_test_dmesg_errors(target, config))
     st.append(step_test_dmesg_warnings(target, config))
-    # Run all non-intensive, non-disruptive and non-dependant tests
-    st.append(step_test_case(target, config, 'drm', is_simple=True))
-    st.append(step_test_case(target, config, 'cpu-online', is_simple=True))
-    st.append(step_test_case(target, config, 'thermal', is_simple=True))
-    st.append(step_test_case(target, config, 'board-name', is_simple=True))
-    st.append(step_test_case(target, config, 's5p-sss', is_simple=True))
-    st.append(step_test_case(target, config, 'usb', is_simple=True))
-    st.append(step_test_case(target, config, 'var-all', is_simple=True))
-    st.append(step_test_case(target, config, 'clk-s2mps11', is_simple=True))
-    st.append(step_test_case(target, config, 'audio', is_simple=True))
-    st.append(step_test_case(target, config, 'audss', is_simple=True))
 
-    if run_tests:
-        # Run intensive tests only on exynos_defconfig because on multi_v7 some tests hang
-        # the buildbot console and some fail because of missing modules (like sound).
-        # This requires also decent kernel, so do not run on stable (limited
-        # by doStepIf=if_step_want_tests).
-        # See: Matrix of configurations
-        st = st + steps_test_suite(target, config)
+    st = st + steps_test_suite_fast(target, config)
+    st = st + steps_test_suite_slow(target, config)
 
     # After all the tests check again if ping and SSH are working:
     st.append(step_test_ping(target, config))
