@@ -1,0 +1,5 @@
+MODULES="phy_exynos_usb2 ohci_exynos r8152"
+EARLYHOOKS="udev"
+HOOKS="udev net_nfs4"
+LATEHOOKS=""
+CLEANUPHOOKS="udev"
