@@ -26,6 +26,8 @@ TARGETS = {
     "xu":           4,
     "odroidu3":     17,
     "u3":           17,
+    "arndaleocta":  10,
+    "octa":         10,
     }
 
 # For ARMv7, v4.14.59-1-ARCH:
