@@ -606,39 +606,39 @@ def steps_download(target):
     st.append(steps.FileDownload(
         mastersrc=util.Interpolate(mastersrc_dir + '/zImage'),
         workerdest=u'/srv/tftp/zImage',
-        haltOnFailure=True, mode=0664, name='Download zImage'))
+        haltOnFailure=True, mode=0o0664, name='Download zImage'))
     st.append(steps.FileDownload(
         mastersrc=util.Interpolate(mastersrc_dir + '/exynos5422-odroidxu3-lite.dtb'),
         workerdest=u'/srv/tftp/exynos5422-odroidxu3-lite.dtb',
-        haltOnFailure=True, mode=0664, name='Download Odroid XU3 DTB'))
+        haltOnFailure=True, mode=0o0664, name='Download Odroid XU3 DTB'))
     st.append(steps.FileDownload(
         mastersrc=util.Interpolate(mastersrc_dir + '/exynos4412-odroidu3.dtb'),
         workerdest=u'/srv/tftp/exynos4412-odroidu3.dtb',
-        haltOnFailure=True, mode=0664, name='Download Odroid U3 DTB'))
+        haltOnFailure=True, mode=0o0664, name='Download Odroid U3 DTB'))
 
     # XU, XU4 and HC1 might be missing for older kernels
     st.append(steps.FileDownload(
         mastersrc=util.Interpolate(mastersrc_dir + '/exynos5410-odroidxu.dtb'),
         workerdest=u'/srv/tftp/exynos5410-odroidxu.dtb',
         haltOnFailure=False, warnOnFailure=True, flunkOnFailure=False,
-        mode=0664, name='Download Odroid XU DTB'))
+        mode=0o0664, name='Download Odroid XU DTB'))
     st.append(steps.FileDownload(
         mastersrc=util.Interpolate(mastersrc_dir + '/exynos5422-odroidxu4.dtb'),
         workerdest=u'/srv/tftp/exynos5422-odroidxu4.dtb',
         # In case of failure do not halt, do not fail and mark build as warning.
         # flunkOnFailure is by default True.
         haltOnFailure=False, warnOnFailure=True, flunkOnFailure=False,
-        mode=0664, name='Download Odroid XU4 DTB'))
+        mode=0o0664, name='Download Odroid XU4 DTB'))
     st.append(steps.FileDownload(
         mastersrc=util.Interpolate(mastersrc_dir + '/exynos5422-odroidhc1.dtb'),
         workerdest=u'/srv/tftp/exynos5422-odroidhc1.dtb',
         haltOnFailure=False, warnOnFailure=True, flunkOnFailure=False,
-        mode=0664, name='Download Odroid HC1 DTB'))
+        mode=0o0664, name='Download Odroid HC1 DTB'))
 
     st.append(steps.FileDownload(
         mastersrc=util.Interpolate(mastersrc_dir + '/modules-out.tar.gz'),
         workerdest='deploy-modules-out.tar.gz',
-        haltOnFailure=True, mode=0644, name='Download modules'))
+        haltOnFailure=True, mode=0o0644, name='Download modules'))
 
     return st
 
