@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2015-2018 Krzysztof Kozlowski
+# Copyright (c) 2015-2019 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -17,7 +17,7 @@ import os
 import sys
 import time
 
-targets = {
+TARGETS = {
     "odroidxu3":    2,
     "xu3":          2,
     "odroidhc1":    3,
@@ -34,7 +34,7 @@ PIN_BASE = 0
 # PIN_BASE = 458
 
 def target_to_pin(target):
-    return targets[target]
+    return TARGETS[target]
 
 def gpio_sysfs_get_value(pinb):
     with open("/sys/class/gpio/gpio%d/value" % pinb, "r") as f:
@@ -94,7 +94,7 @@ def print_help():
     sys.exit(2)
 
 def status_all():
-    for k, v in targets.items():
+    for k, v in TARGETS.items():
         print(k + ": " + gpio_status(v))
 
 def one_target(target, command):
