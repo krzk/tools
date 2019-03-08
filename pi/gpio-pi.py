@@ -88,7 +88,7 @@ def gpio_status(pin):
 
 def print_help():
     print("Usage: " + str(sys.argv[0]) + " <target> <command>")
-    print("   target:  xu3, xu, u3, hc1")
+    print("   target:  " + ", ".join(TARGETS.keys()))
     print("   command: on, off, restart, status")
     print("            (status can be run also without target)")
     sys.exit(2)
