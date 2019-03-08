@@ -565,7 +565,7 @@ def if_step_want_tests(step):
         return False
     return True
 
-def step_test_case(target, config, test, is_fast=False):
+def step_test_case(target, config, test, is_fast=False, force_skip=False):
     """ Return step for executing one test
 
     Arguments:
@@ -574,13 +574,17 @@ def step_test_case(target, config, test, is_fast=False):
         test - name of test to execute (should match /opt/tools/tests/)
     Optional arguments:
         is_fast - whether test is simple and should be executed on all targets and configs (default: False)
+        force_skip - whether test should be skipped because it does not match the target;
+                     overrides is_simple and if_step_want_tests() (default: False)
     Returns:
         step
     """
+    test_allowed = not force_skip
+
     return step_ssh('Test: ' + test + ' @' + target, target,
                     ['sudo', '/opt/tools/tests/' + test + '.sh', target, config],
                     halt_on_failure=False,
-                    do_step_if=lambda step: is_fast or if_step_want_tests(step))
+                    do_step_if=lambda step: test_allowed and (is_fast or if_step_want_tests(step)))
 
 def steps_test_suite_fast(target, config):
     st = []
@@ -612,17 +616,15 @@ def steps_test_suite_slow(target, config):
         return st
     st.append(step_test_case(target, config, 'pwm-fan'))
     st.append(step_test_case(target, config, 'thermal-cooling'))
-    if target == 'odroidxu3':
-        # Intensive and not that important test, run it only on XU3
-        st.append(step_test_case(target, config, 'cpu-mmc-stress'))
+    # Intensive and not that important test, run it only on XU3
+    st.append(step_test_case(target, config, 'cpu-mmc-stress', force_skip=(target != 'odroidxu3')))
     # No point to test tcrypt - it does not use s5p-sss anymore
     #st.append(step_test_case(target, config, 's5p-sss-tcrypt'))
     # No point to test cryptsetup - it does not use s5p-sss anymore
     #st.append(step_test_case(target, config, 's5p-sss-cryptsetup'))
     # RTC often fail on NFS root so put it at the end
     # Also RTC of max77686 seems to fail pretty often, so skip U3:
-    if target != 'odroidu3':
-	    st.append(step_test_case(target, config, 'rtc'))
+    st.append(step_test_case(target, config, 'rtc', force_skip=(target == 'odroidu3')))
     # RNG does not work on Odroid, missing clock enable?
     # st.append(step_test_case(target, config, 'rng-exynos'))
 
