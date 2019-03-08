@@ -294,9 +294,16 @@ def pexpect_boot_to_prompt(target, config):
     # New kernels: OF: fdt: Machine model: Hardkernel Odroid XU3 Lite
     child.expect_exact('Machine model: """ + TARGET_CONFIG[target]['machine'] + """')
     child.expect_exact('SMP: Total of """ + TARGET_CONFIG[target]['cpus'] + """ processors activated')
+    """
+
+    if config == 'exynos':
+        # Aparently on multi_v7 IP configuration does not appear (modules instead of built-in)
+        pexpect_cmd += """
     child.expect_exact('IP-Config: Complete:')
     child.expect_exact('bootserver=192.168.1.10, rootserver=192.168.1.10, rootpath=')
+    """
 
+    pexpect_cmd += """
     print('Target """ + target + """ reached: Mount NFS root')
     child.expect_exact([':: running early hook [udev]', ':: running hook [udev]', ':: Triggering uevents...'])
     child.expect_exact(':: running hook [net_nfs4]')
