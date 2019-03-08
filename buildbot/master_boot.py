@@ -558,7 +558,7 @@ def if_step_want_tests(step):
             return True
         return False
 
-    # All rest, so either krzk trees or mainline/next with specific boards (HC1 and U3)
+    # Reamining projects: krzk
     return True
 
 def step_test_case(target, config, test, is_simple=False):
