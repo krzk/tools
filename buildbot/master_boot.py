@@ -610,8 +610,7 @@ def steps_test_suite_slow(target, config):
     # See: Matrix of configurations
     if config != 'exynos':
         return st
-    if target != 'odroidhc1':
-        st.append(step_test_case(target, config, 'pwm-fan'))
+    st.append(step_test_case(target, config, 'pwm-fan'))
     st.append(step_test_case(target, config, 'thermal-cooling'))
     if target == 'odroidxu3':
         # Intensive and not that important test, run it only on XU3
