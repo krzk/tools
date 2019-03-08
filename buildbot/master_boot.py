@@ -11,6 +11,7 @@
 from buildbot.plugins import steps, util
 
 TARGET_SERIAL_DEV = {
+    'arndaleocta': 'usb-FTDI_FT232R_USB_UART_A50285BI-if00-port0',
     'odroidhc1': 'usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D4562A-if00-port0',
     'odroidu3': 'usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D45567-if00-port0',
     'odroidxu': 'usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00521AAE-if00-port0',
@@ -24,7 +25,12 @@ SERIAL_LOG = 'serial.log'
 TIMEOUT_PING = '20'
 TIMEOUT_SSH = '30'
 
-EXPECTED = {
+TARGET_CONFIG = {
+    'arndaleocta': {
+        'cpus': '4',
+        'machine': 'Insignal Arndale Octa evaluation board based on EXYNOS5420',
+        'serial': 'ttySAC3',
+    },
     'odroidhc1': {
         'cpus': '8',
         'machine': 'Hardkernel Odroid HC1',
@@ -267,18 +273,18 @@ def pexpect_boot_to_prompt(target, config):
     child.expect_exact('reading tftpboot-zImage')
     """
 
-    if target != 'odroidxu':
+    if target not in ['odroidxu', 'arndaleocta']:
         pexpect_cmd += """child.expect_exact('Kernel image @ ')"""
 
     pexpect_cmd += """
-    child.expect_exact('## Loading init Ramdisk from Legacy Image at 45000000 ...')
+    child.expect('## Loading init Ramdisk from Legacy Image at [0-9a-z]+0000 ...')
     child.expect_exact('Image Name:   U-Boot Odroid ARMv7 ramdisk')
     child.expect_exact('Image Type:   ARM Linux RAMDisk Image (gzip compressed)')
     """
-    if target != 'odroidxu':
+    if target not in ['odroidxu', 'arndaleocta']:
         pexpect_cmd += """child.expect_exact('Verifying Checksum ... OK')"""
     pexpect_cmd += """
-    child.expect_exact('## Flattened Device Tree blob at 44000000')
+    child.expect('## Flattened Device Tree blob at [0-9a-z]+0000')
 
     print('Target """ + target + """ reached: Boot kernel')
     child.expect_exact('Starting kernel ...')
@@ -286,8 +292,8 @@ def pexpect_boot_to_prompt(target, config):
     # TODO: Add check in tests
     # Older (e.g. v4.4) kernels: fdt: Machine model: Hardkernel Odroid XU3 Lite
     # New kernels: OF: fdt: Machine model: Hardkernel Odroid XU3 Lite
-    child.expect_exact('Machine model: """ + EXPECTED[target]['machine'] + """')
-    child.expect_exact('SMP: Total of """ + EXPECTED[target]['cpus'] + """ processors activated')
+    child.expect_exact('Machine model: """ + TARGET_CONFIG[target]['machine'] + """')
+    child.expect_exact('SMP: Total of """ + TARGET_CONFIG[target]['cpus'] + """ processors activated')
     child.expect_exact('IP-Config: Complete:')
     child.expect_exact('bootserver=192.168.1.10, rootserver=192.168.1.10, rootpath=')
 
@@ -324,7 +330,7 @@ def pexpect_boot_to_prompt(target, config):
     child.expect_exact('Reached target Graphical Interface.')
 
     print('Target """ + target + """ reached: Reached login interface')
-    child.expect('Arch Linux [0-9a-z\.-]+ \\(""" + EXPECTED[target]['serial'] + """\\)')
+    child.expect('Arch Linux [0-9a-z\.-]+ \\(""" + TARGET_CONFIG[target]['serial'] + """\\)')
     child.expect_exact('""" + target + """ login:')
     """
     return pexpect_cmd
@@ -634,10 +640,15 @@ def steps_download(target):
     st = []
     mastersrc_dir = u'bins-deploy/%(prop:trigger_builder)s/%(prop:revision)s'
 
+    # Everything going to /srv should be group-writeable so I can update it manually
     st.append(steps.FileDownload(
         mastersrc=util.Interpolate(mastersrc_dir + '/zImage'),
         workerdest=u'/srv/tftp/zImage',
         haltOnFailure=True, mode=0o0664, name='Download zImage'))
+    st.append(steps.FileDownload(
+        mastersrc=util.Interpolate(mastersrc_dir + '/exynos5420-arndale-octa.dtb'),
+        workerdest=u'/srv/tftp/exynos5420-arndale-octa.dtb',
+        haltOnFailure=True, mode=0o0664, name='Download Arndale Octa DTB'))
     st.append(steps.FileDownload(
         mastersrc=util.Interpolate(mastersrc_dir + '/exynos5422-odroidxu3-lite.dtb'),
         workerdest=u'/srv/tftp/exynos5422-odroidxu3-lite.dtb',
