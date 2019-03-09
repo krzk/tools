@@ -457,7 +457,7 @@ def step_test_uname(target, config):
     print(process.stdout)
     print('---')
     if not process.returncode:
-        expected_output = '^Linux """ + target + """ %(prop:kernel_version:-)s #2 SMP PREEMPT [0-9a-zA-Z: ]+ armv7l GNU/Linux$'
+        expected_output = '^Linux """ + target + """ %(prop:kernel_version:-)s #2 SMP (PREEMPT )?[0-9a-zA-Z: ]+ armv7l GNU/Linux$'
         print('checking if uname matches expected: ' + expected_output)
         print('uname output: ' + process.stdout)
         if not re.search(expected_output, process.stdout):
