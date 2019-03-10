@@ -14,7 +14,8 @@ test_audio() {
 	local name="Audio"
 	print_msg "Testing..."
 
-	if [ "$(get_board_compatible)" == "hardkernel,odroid-hc1" ]; then
+	if [ "$(get_board_compatible)" == "hardkernel,odroid-hc1" ] ||
+		[ "$(get_board_compatible)" == "insignal,arndale-octa" ]; then
 		print_msg "No audio, skipping"
 		return 0
 	fi

@@ -33,7 +33,11 @@ test_thermal() {
 		exp_tmu_zones=4
 		;;
 	insignal,arndale-octa)
-		exp_tmu0_trip="55000"
+		if is_kernel_le 5 1; then
+			echo "Proper thermal support for Arndale Octa comes up with v5.2"
+			return 0
+		fi
+		exp_tmu0_trip="60000"
 		;;
 	esac
 
