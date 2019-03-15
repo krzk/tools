@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2018 Krzysztof Kozlowski
+# Copyright (c) 2015-2019 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -34,6 +34,8 @@ temp: $(cat /sys/class/thermal/thermal_zone0/temp)"
 
 Boards:
 =======
+Arndale Octa: $(sudo /usr/local/bin/gpio-pi.py arndaleocta status)
+Arndale Octa ping: $(board_ping arndaleocta)
 Odroid XU: $(sudo /usr/local/bin/gpio-pi.py odroidxu status)
 Odroid XU ping: $(board_ping odroidxu)
 Odroid XU3: $(sudo /usr/local/bin/gpio-pi.py odroidxu3 status)
