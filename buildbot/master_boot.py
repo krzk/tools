@@ -209,14 +209,16 @@ def pexpect_gracefull_shutdown(target, config, halt_on_failure=True, reboot=Fals
     if not process.returncode or ('Connection to """ + target + """ closed by remote host.' in process.stdout):
         child.expect_exact(['Stopped Login Service.', 'Stopped Network Time Synchronization.',
                             'Unmounted /home.', 'Stopped target Swap.'])
-        child.expect_exact('Reached target Shutdown')
-        child.expect_exact(['Reached target Unmount All Filesystems.',
-                            'All filesystems unmounted.',
-                            'Unmounting \\'/oldroot/sys/kernel/config\\'.',
-                            'Remounting \\'/oldroot/sys/fs/cgroup/systemd\\' read-only'])
+        child.expect_exact(['Reached target Shutdown',
+                            'Reached target Unmount All Filesystems.',
+                            'Reached target Final Step.'])
+        child.expect_exact(['Unmounting \\'/oldroot/sys/kernel/config\\'.',
+                            'Remounting \\'/oldroot/sys/fs/cgroup/systemd\\' read-only',
+                            'shutdown[1]: All filesystems unmounted.',
+                            'shutdown[1]: All loop devices detached.'])
         print('Target reached last shutdown log')
-        # Wait for final shutdown
-        time.sleep(2)
+        # Wait for final shutdown (it might be 1 second after some of these logs)
+        time.sleep(3)
         print('Target reached shutdown state')
     elif """ + ("%d" % halt_on_failure) + """:
         raise Exception('Cannot shutdown target (rc: %d)' % process.returncode)
