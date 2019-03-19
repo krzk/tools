@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2018 Krzysztof Kozlowski
+# Copyright (c) 2017-2019 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -10,6 +10,27 @@
 
 
 # Count older commits in next:
-SELECT COUNT(*) FROM buildbot.changes where project = 'next' and when_timestamp < unix_timestamp(DATE_SUB(now(), INTERVAL 7 DAY));
+SELECT * FROM buildbot.changes
+LEFT JOIN buildbot.sourcestamps ON buildbot.changes.sourcestampid = buildbot.sourcestamps.id
+LEFT JOIN buildbot.change_files ON buildbot.changes.changeid = buildbot.change_files.changeid
+WHERE
+  buildbot.changes.when_timestamp < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 7 DAY))
+  AND buildbot.changes.project = 'next';
+
 # Get rid of them:
-DELETE FROM buildbot.changes where project = 'next' and when_timestamp < unix_timestamp(DATE_SUB(now(), INTERVAL 7 DAY));
+DELETE buildbot.changes, buildbot.sourcestamps, buildbot.change_files FROM buildbot.changes
+LEFT JOIN buildbot.sourcestamps ON buildbot.changes.sourcestampid = buildbot.sourcestamps.id
+LEFT JOIN buildbot.change_files ON buildbot.changes.changeid = buildbot.change_files.changeid
+WHERE
+  buildbot.changes.when_timestamp < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 7 DAY))
+  AND buildbot.changes.project = 'next';
+
+DELETE buildbot.change_files FROM buildbot.change_files
+LEFT JOIN buildbot.changes ON buildbot.changes.changeid = buildbot.change_files.changeid
+WHERE buildbot.changes.changeid IS NULL
+
+DELETE buildbot.sourcestamps FROM buildbot.sourcestamps
+LEFT JOIN buildbot.changes ON buildbot.changes.sourcestampid = buildbot.sourcestamps.id
+WHERE buildbot.changes.changeid IS NULL
+
+OPTIMIZE TABLE buildbot.changes, buildbot.sourcestamps, buildbot.change_files
