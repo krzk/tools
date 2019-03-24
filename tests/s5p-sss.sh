@@ -17,6 +17,12 @@ test_s5p_sss_selftests() {
 	local found_alg=0
 	print_msg "Testing..."
 
+	if is_kernel_le 4 4; then
+		# On v4.4 s5p-sss might not be enabled
+		print_msg "Old kernel, skipped"
+		return 0
+	fi
+
 	for alg in $expected_alg; do
 		print_msg "Testing for ${alg}..."
 		cmd="grep -A 11 "$alg" /proc/crypto"
