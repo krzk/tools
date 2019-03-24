@@ -8,22 +8,35 @@
 # Dump entire buildbot DB:
 # mysqldump --add-drop-table --add-locks  --extended-insert --lock-tables -u buildbot -p -h localhost -P 3306 --protocol tcp buildbot > bck-db-buildbot-$(date +%Y-%m-%d).sql
 
-
-# Count older commits in next:
+# next:
 SELECT * FROM buildbot.changes
 LEFT JOIN buildbot.sourcestamps ON buildbot.changes.sourcestampid = buildbot.sourcestamps.id
 LEFT JOIN buildbot.change_files ON buildbot.changes.changeid = buildbot.change_files.changeid
 WHERE
-  buildbot.changes.when_timestamp < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 7 DAY))
+  buildbot.changes.when_timestamp < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 30 DAY))
   AND buildbot.changes.project = 'next';
 
-# Get rid of them:
 DELETE buildbot.changes, buildbot.sourcestamps, buildbot.change_files FROM buildbot.changes
 LEFT JOIN buildbot.sourcestamps ON buildbot.changes.sourcestampid = buildbot.sourcestamps.id
 LEFT JOIN buildbot.change_files ON buildbot.changes.changeid = buildbot.change_files.changeid
 WHERE
-  buildbot.changes.when_timestamp < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 7 DAY))
+  buildbot.changes.when_timestamp < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 30 DAY))
   AND buildbot.changes.project = 'next';
+
+# stable and stable-rc
+SELECT * FROM buildbot.changes
+LEFT JOIN buildbot.sourcestamps ON buildbot.changes.sourcestampid = buildbot.sourcestamps.id
+LEFT JOIN buildbot.change_files ON buildbot.changes.changeid = buildbot.change_files.changeid
+WHERE
+  buildbot.changes.when_timestamp < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 90 DAY))
+  AND (buildbot.changes.project = 'stable-rc' OR buildbot.changes.project = 'stable');
+
+DELETE buildbot.changes, buildbot.sourcestamps, buildbot.change_files FROM buildbot.changes
+LEFT JOIN buildbot.sourcestamps ON buildbot.changes.sourcestampid = buildbot.sourcestamps.id
+LEFT JOIN buildbot.change_files ON buildbot.changes.changeid = buildbot.change_files.changeid
+WHERE
+  buildbot.changes.when_timestamp < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 90 DAY))
+AND (buildbot.changes.project = 'stable-rc' OR buildbot.changes.project = 'stable');
 
 DELETE buildbot.change_files FROM buildbot.change_files
 LEFT JOIN buildbot.changes ON buildbot.changes.changeid = buildbot.change_files.changeid
@@ -34,3 +47,5 @@ LEFT JOIN buildbot.changes ON buildbot.changes.sourcestampid = buildbot.sourcest
 WHERE buildbot.changes.changeid IS NULL
 
 OPTIMIZE TABLE buildbot.changes, buildbot.sourcestamps, buildbot.change_files
+
+SELECT COUNT(*),project FROM buildbot.changes GROUP BY project;
