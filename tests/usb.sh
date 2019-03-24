@@ -36,8 +36,11 @@ test_usb() {
 		fi
 		;;
 	insignal,arndale-octa)
-		if is_kernel_le 4 14; then
-			# Kernel v4.14 does not detect one USB 3.0 hub
+		if is_kernel_le 4 9; then
+			expected_usb="1_1d6b:0001 3_1d6b:0002 2_1d6b:0003 1_0b95:772a 1_05e3:0610"
+		elif is_kernel_le 4 14; then
+			# Kernel v4.14 does not detect one USB 3.0 hub. v4.4 and v4.9 have the same
+			# as mainline.
 			expected_usb="1_1d6b:0001 2_1d6b:0002 1_1d6b:0003 1_0b95:772a 1_05e3:0610"
 		else
 			expected_usb="1_1d6b:0001 3_1d6b:0002 2_1d6b:0003 1_0b95:772a 1_05e3:0610"
