@@ -1,0 +1,9 @@
+---
+- hosts: servers
+  roles:
+  - sshd
+
+- hosts: gates
+  roles:
+  - sshd
+  - gate

@@ -1,0 +1,80 @@
+---
+- name: Include vars
+  include_vars:
+    file: ~/etc/ansible/vars/tunnel.yml
+
+- name: Check requirements for variables
+  assert:
+    that: '{{ item }} is defined'
+  with_items:
+  - host_gate
+  - port_buildbot
+  - port_gate
+  - port_tunnel_on_gate
+  - pubkey_gate
+  - user_gate
+  - user_tunnel
+
+- name: Set environment for Debian
+  set_fact:
+    ssh_cmd: "/usr/bin/ssh"
+  when: ansible_os_family == "Debian"
+
+- name: Set environment for ArchLinux
+  set_fact:
+    ssh_cmd: "/usr/sbin/ssh"
+  when: ansible_os_family == "Archlinux"
+
+- name: Create unprivileged user for making tunnel
+  user:
+    name: '{{ user_tunnel }}'
+    shell: /bin/bash
+    home: '/home/{{ user_tunnel }}'
+    state: present
+    create_home: yes
+    force: no
+    generate_ssh_key: yes
+    # SSH logins not allowed
+    append: no
+    groups: ''
+  notify:
+    - Print public SSH key
+  become: yes
+  become_user: root
+
+# TODO: after migrating to Ansible v2.6, use user:password_lock
+- name: Lock user password
+  command: passwd -l {{ user_tunnel }}
+  become: yes
+  become_user: root
+
+# Pubkey retrieved with: ssh-keyscan -H -p PORT HOSTNAME IP
+- name: Add server to known hosts
+  known_hosts:
+    name: '{{ host_gate }}'
+    state: present
+    key: "{{ lookup('file', pubkey_gate) }}"
+  become: yes
+  become_user: '{{ user_tunnel }}'
+
+- name: Install SystemD unit file
+  template:
+    src: tunnel.service.j2
+    dest: /etc/systemd/system/tunnel.service
+    mode: 0644
+  become: yes
+  become_user: root
+
+- name: Systemd reload
+  systemd:
+    daemon_reload: yes
+  become: yes
+  become_user: root
+
+- name: Systemd enable service
+  systemd:
+    name: tunnel.service
+    enabled: yes
+    masked: no
+  become: yes
+  become_user: root

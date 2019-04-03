@@ -1,0 +1,62 @@
+---
+- name: Include vars
+  include_vars:
+    file: ~/etc/ansible/vars/buildbot-boot.yml
+
+- name: Check requirements for variables
+  assert:
+    that: '{{ item }} is defined'
+  with_items:
+  - group_buildbot
+  - user_buildbot
+
+- name: Add admin to Buildbot group
+  user:
+    name: '{{ ansible_user_id }}'
+    state: present
+    append: yes
+    groups: '{{ group_buildbot }}'
+
+- name: Check that Buildbot user has proper groups (no SSH login) and locked password
+  user:
+    name: '{{ user_buildbot }}'
+    state: present
+    create_home: no
+    force: no
+    generate_ssh_key: no
+    append: no
+    groups: uucp
+    #password_lock: yes
+  become: yes
+  become_user: root
+
+# TODO: after migrating to Ansible v2.6, use user:password_lock
+- name: Lock user password
+  command: passwd -l {{ user_buildbot }}
+  become: yes
+  become_user: root
+
+- name: Check that Buildbot user does not have authorized_keys
+  shell: 'test ! -f /home/{{ user_buildbot }}/.ssh/authorized_keys'
+  check_mode: no
+  changed_when: no
+
+- name: Install service files
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    mode: '{{ item.mode }}'
+  with_items:
+    - {src: 'buildbot-cleanup.service.j2', dest: '/etc/systemd/system/buildbot-cleanup.service', mode: '0644'}
+    - {src: 'buildbot-cleanup.timer.j2', dest: '/etc/systemd/system/buildbot-cleanup.timer', mode: '0644'}
+    - {src: 'buildbot-cleanup.sh.j2', dest: '/usr/local/bin/buildbot-cleanup.sh', mode: '0755'}
+  become: yes
+  become_user: root
+
+- name: Systemd reload
+  systemd:
+    name: buildbot-cleanup.timer
+    enabled: yes
+    daemon_reload: yes
+  become: yes
+  become_user: root

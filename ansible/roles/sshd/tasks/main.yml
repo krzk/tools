@@ -1,0 +1,45 @@
+---
+- name: Add group for SSH logins
+  group:
+    name: ssh_allow
+    state: present
+  become: yes
+  become_user: root
+
+- name: Allow group SSH logins
+  lineinfile:
+    path: '/etc/ssh/sshd_config'
+    state: present
+    insertafter: EOF
+    line: '{{ item }}'
+  with_items:
+    - 'AllowGroups ssh_allow'
+  become: yes
+  become_user: root
+
+- name: Configure SSH
+  lineinfile:
+    path: '/etc/ssh/sshd_config'
+    state: present
+    insertafter: EOF
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+  with_items:
+    - { regexp: '^PermitRootLogin ', line: 'PermitRootLogin no' }
+    - { regexp: '^PasswordAuthentication ', line: 'PasswordAuthentication no' }
+    - { regexp: '^ChallengeResponseAuthentication ', line: 'ChallengeResponseAuthentication no' }
+    - { regexp: '^ClientAliveCountMax ', line: 'ClientAliveCountMax 3' }
+    - { regexp: '^ClientAliveInterval ', line: 'ClientAliveInterval 30' }
+  become: yes
+  become_user: root
+  # TODO: reload ssh
+
+- name: Check if only one AllowGroups is set in SSH
+  shell: test $(grep AllowGroups /etc/ssh/sshd_config | wc -l) -eq 1
+  check_mode: no
+  changed_when: no
+
+- name: Check if old AllowUsers is not set in SSH
+  shell: test $(grep AllowUsers /etc/ssh/sshd_config | wc -l) -eq 0
+  check_mode: no
+  changed_when: no

@@ -1,0 +1,6 @@
+---
+- hosts: pis
+  roles:
+  - sshd
+  - tunnel
+  - buildbot-boot

@@ -1,0 +1,18 @@
+# Copyright (c) 2019 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+#                             <krzk@kernel.org>
+#
+# SPDX-License-Identifier: GPL-2.0
+#
+
+[Unit]
+Description=Cleanup Buildbot during night
+Requires=buildbot-cleanup.service
+
+[Timer]
+Unit=buildbot-cleanup.service
+OnCalendar=weekly
+#RandomizedDelaySec=15m
+
+[Install]
+WantedBy=buildbot-slave.service

@@ -1,0 +1,47 @@
+---
+- name: Include vars
+  include_vars:
+    file: ~/etc/ansible/vars/gate.yml
+
+- name: Check requirements for variables
+  assert:
+    that: '{{ item }} is defined'
+  with_items:
+  - authorized_keys_gate
+  - user_gate
+
+- name: Create gateway unprivileged user
+  user:
+    name: '{{ user_gate }}'
+    shell: /bin/bash
+    home: '/home/{{ user_gate }}'
+    state: present
+    create_home: yes
+    force: no
+    generate_ssh_key: no
+    append: no
+    groups: ssh_allow
+  become: yes
+  become_user: root
+
+# TODO: after migrating to Ansible v2.6, use user:password_lock
+- name: Lock user password
+  command: passwd -l {{ user_gate }}
+  become: yes
+  become_user: root
+
+- name: Add to authorized keys - current key
+  authorized_key:
+    user: '{{ user_gate }}'
+    state: present
+    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+  become: yes
+  become_user: root
+
+- name: Add to authorized keys - all keys
+  authorized_key:
+    user: '{{ user_gate }}'
+    state: present
+    key: '{{ item }}'
+  with_file: '{{ authorized_keys_gate }} '
+  remote_user: '{{ user_gate }}'

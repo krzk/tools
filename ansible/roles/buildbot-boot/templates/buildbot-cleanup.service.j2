@@ -1,0 +1,17 @@
+# Copyright (c) 2019 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+#                             <krzk@kernel.org>
+#
+# SPDX-License-Identifier: GPL-2.0
+#
+
+[Unit]
+Description=Cleanup Buildbot
+
+[Service]
+Type=simple
+Nice=19
+IOSchedulingClass=idle
+IOSchedulingPriority=7
+ExecStart=/usr/local/bin/buildbot-cleanup.sh
+User={{ user_buildbot }}
