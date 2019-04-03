@@ -32,22 +32,17 @@ set -e -E
 BOARD="$1"
 test -n "$BOARD" || usage
 
-if [ "$BOARD" == "all" ]; then
+if [ "$BOARD" = "all" ]; then
 	CONFIG="arndale odroid odroid-xu3 origen peach-pi peach-pit s5pc210_universal s5p_goni smdk5250 smdk5420 smdkc100 smdkv310 snow trats trats2"
 	# TODO: espresso7420
 else
 	CONFIG="$BOARD"
 fi
 
-if [ $BUILD_ALL -eq 0 ]; then
-	CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm make clean
-	build $CONFIG
-else
-	CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm make clean
-	for config in $CONFIG; do
-		build $config
-	done
-fi
+CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm make clean
+for config in $CONFIG; do
+	build $config
+done
 
 echo "U-boot fusing for SD:"
 echo "dd iflag=dsync oflag=dsync if=u-boot-dtb.bin of=/dev/mmcblk0 seek=63"
