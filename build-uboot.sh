@@ -23,8 +23,8 @@ build() {
 
 	echo "#########################################################"
 	echo "Building config: $config"
-	CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm make ${config}_config
-	CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm make -j`getconf _NPROCESSORS_ONLN`
+	make ${config}_config
+	make -j`getconf _NPROCESSORS_ONLN`
 }
 
 set -e -E
@@ -39,7 +39,9 @@ else
 	CONFIG="$BOARD"
 fi
 
-CROSS_COMPILE=arm-linux-gnueabi- ARCH=arm make clean
+export CROSS_COMPILE="${CROSS_COMPILE:=arm-linux-gnueabi-}" ARCH="${ARCH:=arm}"
+
+make clean
 for config in $CONFIG; do
 	build $config
 done
