@@ -1,5 +1,11 @@
 Collection of my tools, mostly Linux oriented.
 
+## /ansible
+
+Ansible playbooks and roles for configuring services and servers.  Just some
+basic automation stuff.  More advanced usage is incoming - I just need to
+clean it up.
+
 ## /buildbot
 
 Buildbot master configuration and scripts executed by workers for building
