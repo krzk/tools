@@ -17,7 +17,7 @@ RestartSec=10
 # -N - Just forward ports - but keep it still in foreground, needed for "simple" systemd service.
 # Run in batch mode (no password prompt) with fast connection failure detection.
 # Use default ServerAliveCountMax (3) so connection will retry after 3*30 seconds.
-ExecStart={{ ssh_cmd }} -o "BatchMode yes" -o "ServerAliveInterval 30" -o "ExitOnForwardFailure yes" -R {{ port_tunnel_on_gate }}:localhost:22 -L {{ port_buildbot }}:localhost:{{ port_buildbot }} -N -v -p {{ port_gate }} {{ user_gate }}@{{ host_gate }}
+ExecStart={{ ssh_cmd }} -o "BatchMode yes" -o "ServerAliveInterval 30" -o "ExitOnForwardFailure yes" -R {{ port_tunnel_on_gate }}:localhost:22 -L {{ port_buildbot }}:localhost:{{ port_buildbot }} -N -p {{ port_gate }} {{ user_gate }}@{{ host_gate }}
 User={{ user_tunnel }}
 
 [Install]
