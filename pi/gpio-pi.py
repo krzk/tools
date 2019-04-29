@@ -24,6 +24,8 @@ TARGETS = {
     "hc1":          3,
     "odroidu3":     17,
     "u3":           17,
+    "odroidx2":     9,
+    "x2":           9,
     "odroidxu3":    2,
     "xu3":          2,
     "odroidxu":     4,
