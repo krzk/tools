@@ -18,16 +18,16 @@ import sys
 import time
 
 TARGETS = {
-    "odroidxu3":    2,
-    "xu3":          2,
-    "odroidhc1":    3,
-    "hc1":          3,
-    "odroidxu":     4,
-    "xu":           4,
-    "odroidu3":     17,
-    "u3":           17,
     "arndaleocta":  10,
     "octa":         10,
+    "odroidhc1":    3,
+    "hc1":          3,
+    "odroidu3":     17,
+    "u3":           17,
+    "odroidxu3":    2,
+    "xu3":          2,
+    "odroidxu":     4,
+    "xu":           4,
     }
 
 # For ARMv7, v4.14.59-1-ARCH:
