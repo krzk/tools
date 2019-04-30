@@ -99,6 +99,9 @@ def step_serial_close(target):
                               alwaysRun=True,
                               haltOnFailure=False)
 
+def systemd_color(expected):
+    return '\x1b[0;1;39m{}\x1b[0m'.format(expected)
+
 def pexpect_start(target, log_file, verbose, no_special_chars):
     """ Return string with Python code for new pexpect session inside a "try" block.
 
@@ -207,11 +210,20 @@ def pexpect_gracefull_shutdown(target, config, halt_on_failure=True, reboot=Fals
     print(process.stdout)
     print('---')
     if not process.returncode or ('Connection to """ + target + """ closed by remote host.' in process.stdout):
-        child.expect_exact(['Stopped Login Service.', 'Stopped Network Time Synchronization.',
-                            'Unmounted /home.', 'Stopped target Swap.'])
+        child.expect_exact(['Stopped Login Service',
+                            'Stopped """ + systemd_color('Login Service') + """',
+                            'Stopped Network Time Synchronization',
+                            'Stopped """ + systemd_color('Network Time Synchronization') + """',
+                            'Unmounted /home',
+                            'Unmounted """ + systemd_color('/home') + """',
+                            'Stopped target Swap',
+                            'Stopped target """ + systemd_color('Swap') + """'])
         child.expect_exact(['Reached target Shutdown',
-                            'Reached target Unmount All Filesystems.',
-                            'Reached target Final Step.'])
+                            'Reached target """ + systemd_color('Shutdown') + """',
+                            'Reached target Unmount All Filesystems',
+                            'Reached target """ + systemd_color('Unmount All Filesystems') + """',
+                            'Reached target Final Step',
+                            'Reached target """ + systemd_color('Final Step') + """'])
         child.expect_exact(['Unmounting \\'/oldroot/sys/kernel/config\\'.',
                             'Remounting \\'/oldroot/sys/fs/cgroup/systemd\\' read-only',
                             'shutdown[1]: All filesystems unmounted.',
@@ -326,16 +338,22 @@ def pexpect_boot_to_prompt(target, config):
     # On certain next kernels (next-20180924), this takes up to 100 seconds:
     child.expect_exact('systemd[1]: Detected architecture arm.', timeout=180)
     child.expect_exact('Set hostname to <""" + target + """>.')
-    child.expect_exact('Reached target Swap.')
-    child.expect_exact('Started udev Kernel Device Manager')
+    child.expect_exact(['Reached target Swap',
+                        'Reached target """ + systemd_color('Swap') + """'])
+    child.expect_exact(['Started udev Kernel Device Manager',
+                        'Started """ + systemd_color('udev Kernel Device Manager') + """'])
     # Detection of all devices (including storage) can take up to 15 seconds
     # (Odroid HC1) on Pi3 Ethernet.
     # On Pi3 Wireless this takes up to one minute
-    child.expect_exact('Reached target Local File Systems.', timeout=120)
+    child.expect_exact(['Reached target Local File Systems',
+                        'Reached target """ + systemd_color('Local File Systems') + """'],
+                       timeout=120)
 
     print('Target """ + target + """ reached: Mounted local file systems')
-    child.expect_exact('Reached target Login Prompts.')
-    child.expect_exact('Reached target Graphical Interface.')
+    child.expect_exact(['Reached target Login Prompts',
+                        'Reached target """ + systemd_color('Login Prompts') + """'])
+    child.expect_exact(['Reached target Graphical Interface',
+                        'Reached target """ + systemd_color('Graphical Interface') + """'])
 
     print('Target """ + target + """ reached: Reached login interface')
     child.expect('Arch Linux [0-9a-z\.-]+ \\(""" + TARGET_CONFIG[target]['serial'] + """\\)')
@@ -513,7 +531,7 @@ def step_gracefull_shutdown(target, config, always_run=False, halt_on_failure=Tr
     # command when non-printable character (coming from board with reboot message) is retrieved
     return step_pexpect(name=power_title + target, target=target, python_code=pexpect_cmd,
                         always_run=always_run, halt_on_failure=halt_on_failure,
-                        verbose=True, no_special_chars=True)
+                        verbose=True, no_special_chars=False)
 
 def step_test_reboot(target, config):
     """ Return step for rebooting target (and waiting to come up)
@@ -532,7 +550,7 @@ def step_test_reboot(target, config):
     # command when non-printable character (coming from board with reboot message) is retrieved
     return step_pexpect(name='Reboot: ' + target, target=target,
                         python_code=pexpect_cmd,
-                        verbose=True, no_special_chars=True)
+                        verbose=True, no_special_chars=False)
 
 def steps_shutdown(target, config):
     """ Return steps for shutting down the target
