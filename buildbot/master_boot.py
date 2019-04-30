@@ -665,6 +665,10 @@ def steps_download(target):
         mastersrc=util.Interpolate(mastersrc_dir + '/exynos4412-odroidu3.dtb'),
         workerdest=u'/srv/tftp/exynos4412-odroidu3.dtb',
         haltOnFailure=True, mode=0o0664, name='Download Odroid U3 DTB'))
+    st.append(steps.FileDownload(
+        mastersrc=util.Interpolate(mastersrc_dir + '/exynos4412-odroidx2.dtb'),
+        workerdest=u'/srv/tftp/exynos4412-odroidx2.dtb',
+        haltOnFailure=True, mode=0o0664, name='Download Odroid X2 DTB'))
 
     # XU, XU4 and HC1 might be missing for older kernels
     st.append(steps.FileDownload(
