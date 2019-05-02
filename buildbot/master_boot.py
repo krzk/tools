@@ -143,7 +143,7 @@ try:
         pass
     child = pexpect.spawn('""" + picocom_args + """ ' + serial,
                           logfile=""" + pexpect_logfile + """,
-                          encoding='utf-8', codec_errors='ignore')
+                          encoding='utf-8', codec_errors='backslashreplace')
     child.expect_exact('Terminal ready')
 """
     return cmd
@@ -208,7 +208,7 @@ def pexpect_gracefull_shutdown(target, config, halt_on_failure=True, reboot=Fals
     pexpect_cmd = """
     process = subprocess.run(""" + str(cmd_ssh(target, ['sudo', power_cmd])) + """,
                              check=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                             encoding='utf-8', errors='replace')
+                             encoding='utf-8', errors='backslashreplace')
     print('cmd \\'%s\\' returned: %d, output:' % ('""" + power_cmd + """', process.returncode))
     print(process.stdout)
     print('---')
@@ -468,7 +468,7 @@ def step_test_uname(target, config):
     pexpect_cmd = """
     process = subprocess.run(""" + str(cmd_ssh(target, ['uname', '-a'])) + """,
                             check=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                            encoding='utf-8', errors='replace')
+                            encoding='utf-8', errors='backslashreplace')
 
     print('cmd \\'{0}\\' returned: {1}, output:'.format('umame -a', process.returncode))
     print(process.stdout)
