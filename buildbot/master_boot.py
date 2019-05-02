@@ -102,6 +102,9 @@ def step_serial_close(target):
 def systemd_color(expected):
     return '\x1b[0;1;39m{}\x1b[0m'.format(expected)
 
+def systemd_log(expected_msg, expected_target):
+    return "'{0} {1}', '{0} \x1b[0;1;39m{1}\x1b[0m', '{0} [1b][0;1;39m{1}[1b][0m',".format(expected_msg, expected_target)
+
 def pexpect_start(target, log_file, verbose, no_special_chars):
     """ Return string with Python code for new pexpect session inside a "try" block.
 
@@ -210,20 +213,15 @@ def pexpect_gracefull_shutdown(target, config, halt_on_failure=True, reboot=Fals
     print(process.stdout)
     print('---')
     if not process.returncode or ('Connection to """ + target + """ closed by remote host.' in process.stdout):
-        child.expect_exact(['Stopped Login Service',
-                            'Stopped """ + systemd_color('Login Service') + """',
-                            'Stopped Network Time Synchronization',
-                            'Stopped """ + systemd_color('Network Time Synchronization') + """',
-                            'Unmounted /home',
-                            'Unmounted """ + systemd_color('/home') + """',
-                            'Stopped target Swap',
-                            'Stopped target """ + systemd_color('Swap') + """'])
-        child.expect_exact(['Reached target Shutdown',
-                            'Reached target """ + systemd_color('Shutdown') + """',
-                            'Reached target Unmount All Filesystems',
-                            'Reached target """ + systemd_color('Unmount All Filesystems') + """',
-                            'Reached target Final Step',
-                            'Reached target """ + systemd_color('Final Step') + """'])
+        child.expect_exact([""" + \
+            systemd_log('Stopped', 'Login Service') + \
+            systemd_log('Stopped', 'Network Time Synchronization') + \
+            systemd_log('Unmounted', '/home') + \
+            systemd_log('Stopped target', 'Swap') + """])
+        child.expect_exact([""" + \
+            systemd_log('Reached target', 'Shutdown') + \
+            systemd_log('Reached target', 'Unmount All Filesystems') + \
+            systemd_log('Reached target', 'Final Step') + """])
         child.expect_exact(['Unmounting \\'/oldroot/sys/kernel/config\\'.',
                             'Remounting \\'/oldroot/sys/fs/cgroup/systemd\\' read-only',
                             'shutdown[1]: All filesystems unmounted.',
@@ -531,7 +529,7 @@ def step_gracefull_shutdown(target, config, always_run=False, halt_on_failure=Tr
     # command when non-printable character (coming from board with reboot message) is retrieved
     return step_pexpect(name=power_title + target, target=target, python_code=pexpect_cmd,
                         always_run=always_run, halt_on_failure=halt_on_failure,
-                        verbose=True, no_special_chars=False)
+                        verbose=True, no_special_chars=True)
 
 def step_test_reboot(target, config):
     """ Return step for rebooting target (and waiting to come up)
@@ -546,11 +544,9 @@ def step_test_reboot(target, config):
     # could be missed.
     pexpect_cmd = pexpect_gracefull_shutdown(target, config, halt_on_failure=True, reboot=True)
     pexpect_cmd += pexpect_boot_to_prompt(target, config)
-    # no_special_chars+verbose are necessary to fix Buildbot 1.2.0-1.3.0 issue with stalled
-    # command when non-printable character (coming from board with reboot message) is retrieved
     return step_pexpect(name='Reboot: ' + target, target=target,
                         python_code=pexpect_cmd,
-                        verbose=True, no_special_chars=False)
+                        verbose=False, no_special_chars=False)
 
 def steps_shutdown(target, config):
     """ Return steps for shutting down the target
