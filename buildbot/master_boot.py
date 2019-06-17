@@ -620,6 +620,7 @@ def steps_test_suite_fast(target, config):
         return st
 
     # Run all non-intensive, non-disruptive and non-dependant tests
+    st.append(step_test_case(target, config, 'arm-pmu', is_fast=True))
     st.append(step_test_case(target, config, 'drm', is_fast=True))
     st.append(step_test_case(target, config, 'cpu-online', is_fast=True))
     st.append(step_test_case(target, config, 'thermal', is_fast=True))
