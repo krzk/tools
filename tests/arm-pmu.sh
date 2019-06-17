@@ -16,6 +16,11 @@ test_arm_pmu() {
 	local expected_hardware_cache_events=0
 	print_msg "Testing..."
 
+	if is_kernel_le 4 14; then
+		print_msg "SKIPPED: older kernel, not implemented"
+		return 0
+	fi
+
 	case "$(get_board_compatible)" in
 	insignal,arndale-octa|hardkernel,odroid-hc1|hardkernel,odroid-xu3|hardkernel,odroid-xu4|hardkernel,odroid-xu)
 		expected_hardware_events=7
@@ -26,7 +31,7 @@ test_arm_pmu() {
 		expected_hardware_cache_events=10
 		;;
 	hardkernel,odroid-xu3-lite)
-		print_msg "Not implemented"
+		print_msg "SKIPPED: not implemented"
 		return 0
 		;;
 	*)
