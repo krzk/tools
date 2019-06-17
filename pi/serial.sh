@@ -7,18 +7,24 @@
 # SPDX-License-Identifier: GPL-2.0
 #
 
+SERIAL_u3="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D45567-if00-port0"
+SERIAL_xu3="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0"
+SERIAL_xu="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00521AAE-if00-port0"
+SERIAL_hc1="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D4562A-if00-port0"
+SERIAL_arndaleocta="/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A50285BI-if00-port0"
+
 SERIAL=/dev/ttyUSB
 if [ $# -gt 0 ]; then
 	if [ "$1" = "u3" ]; then
-		SERIAL="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D45567-if00-port0"
+		SERIAL="$SERIAL_u3"
 	elif [ "$1" = "xu3" ]; then
-		SERIAL="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0"
+		SERIAL="$SERIAL_xu3"
 	elif [ "$1" = "xu" ]; then
-		SERIAL="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00521AAE-if00-port0"
+		SERIAL="$SERIAL_xu"
 	elif [ "$1" = "hc1" ]; then
-		SERIAL="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D4562A-if00-port0"
+		SERIAL="$SERIAL_hc1"
 	elif [ "$1" = "arndaleocta" ] || [ "$1" = "octa" ]; then
-		SERIAL="/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A50285BI-if00-port0"
+		SERIAL="$SERIAL_arndaleocta"
 	else
 		SERIAL="${SERIAL}$1"
 	fi
