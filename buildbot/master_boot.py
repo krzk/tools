@@ -1,7 +1,7 @@
 # -*- python -*-
 # ex: set filetype=python:
 #
-# Copyright (c) 2016-2018 Krzysztof Kozlowski
+# Copyright (c) 2016-2019 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -11,11 +11,12 @@
 from buildbot.plugins import steps, util
 
 TARGET_SERIAL_DEV = {
-    'arndaleocta': 'usb-FTDI_FT232R_USB_UART_A50285BI-if00-port0',
-    'odroidhc1': 'usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D4562A-if00-port0',
-    'odroidu3': 'usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D45567-if00-port0',
-    'odroidxu': 'usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00521AAE-if00-port0',
-    'odroidxu3': 'usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0',
+    'arndaleocta': 'by-path/platform-3f980000.usb-usb-0:1.1.3:1.0-port0',
+    'odroidhc1': 'by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D4562A-if00-port0',
+    'odroidu3': 'by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D45567-if00-port0',
+    'odroidx': 'by-path/platform-3f980000.usb-usb-0:1.1.2.1:1.0-port0',
+    'odroidxu': 'by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00521AAE-if00-port0',
+    'odroidxu3': 'by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0',
 }
 
 ENV_PATH = {'PATH': '/opt/tools/buildbot:/opt/tools/pi:/usr/local/bin:${PATH}'}
@@ -61,7 +62,7 @@ def cmd_serial(target, close=False):
     cmd = ['picocom', '-b', '115200', '--flow', 'none', '--exit']
     if not close:
         cmd.append('--noreset')
-    cmd.append('/dev/serial/by-id/' + TARGET_SERIAL_DEV[target])
+    cmd.append('/dev/serial/' + TARGET_SERIAL_DEV[target])
 
     return cmd
 

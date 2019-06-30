@@ -8,10 +8,11 @@
 #
 
 SERIAL_u3="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D45567-if00-port0"
+SERIAL_x="/dev/serial/by-path/platform-3f980000.usb-usb-0:1.1.2.1:1.0-port0"
 SERIAL_xu3="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0"
 SERIAL_xu="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00521AAE-if00-port0"
 SERIAL_hc1="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D4562A-if00-port0"
-SERIAL_arndaleocta="/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A50285BI-if00-port0"
+SERIAL_arndaleocta="/dev/serial/by-path/platform-3f980000.usb-usb-0:1.1.3:1.0-port0"
 
 # board_ping host
 board_ping() {
@@ -54,6 +55,9 @@ Boards:
 Arndale Octa: $(sudo /usr/local/bin/gpio-pi.py arndaleocta status)
 Arndale Octa serial: $(serial_check $SERIAL_arndaleocta)
 Arndale Octa ping: $(board_ping arndaleocta)
+Odroid X: $(sudo /usr/local/bin/gpio-pi.py odroidx status)
+Odroid X serial: $(serial_check $SERIAL_x)
+Odroid X ping: $(board_ping odroidx)
 Odroid XU: $(sudo /usr/local/bin/gpio-pi.py odroidxu status)
 Odroid XU serial: $(serial_check $SERIAL_xu)
 Odroid XU ping: $(board_ping odroidxu)
