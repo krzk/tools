@@ -28,7 +28,7 @@ OUT="pull-$(date +%Y.%m.%d)-${TAG}.txt"
 
 case "$REMOTE" in
 	krzk-korg)
-		TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org"
+		TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
 		CC="Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>"
 		SUBJECT="ARM: dts: exynos:"
 		;;
