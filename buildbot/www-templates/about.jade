@@ -33,9 +33,9 @@
             b build 
             | and 
             b boot testing 
-            | of Linux kernel on Samsung's Exynos-based boards (Hardkernel Odroid).
-          p The goal is to ensure that Exynos based boards work fine with current mainline Linux kernel. Additionally it automatically validates and tests commits being added to my officially maintained Linux kernel trees.
-          p This Buildbot builds Linux kernel in different configurations, boots target boards with built kernel and runs few Exynos-specific tests.  The boards take rootfs from NFS server.
+            | of Linux kernel on Samsung's Exynos-based boards.  I started it in November 2015 with only one Odroid XU3 board and since then it grew to few more.
+          p The goal is to ensure that Exynos based boards work fine with current mainline Linux kernel.  Additionally the system validates and tests all commits being added to my officially maintained Linux kernel trees.
+          p This Buildbot first builds Linux kernel in different configurations, then boots target boards with built kernel and finally runs few Exynos-specific tests.  The boards take rootfs from NFS server.
           p
             b List of booted target boards:
           ul
