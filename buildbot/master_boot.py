@@ -136,7 +136,7 @@ import sys
 import time
 import pexpect
 
-serial = '/dev/serial/by-id/""" + TARGET_SERIAL_DEV[target] + """'
+serial = '/dev/serial/""" + TARGET_SERIAL_DEV[target] + """'
 try:
     try:
         os.remove('""" + log_file + """')
