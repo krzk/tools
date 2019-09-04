@@ -623,15 +623,17 @@ def steps_test_suite_fast(target, config):
     # Run all non-intensive, non-disruptive and non-dependant tests
     st.append(step_test_case(target, config, 'adc-exynos', is_fast=True))
     st.append(step_test_case(target, config, 'arm-pmu', is_fast=True))
-    st.append(step_test_case(target, config, 'drm', is_fast=True))
-    st.append(step_test_case(target, config, 'cpu-online', is_fast=True))
-    st.append(step_test_case(target, config, 'thermal', is_fast=True))
+    st.append(step_test_case(target, config, 'audio', is_fast=True))
     st.append(step_test_case(target, config, 'board-name', is_fast=True))
+    st.append(step_test_case(target, config, 'clk-s2mps11', is_fast=True))
+    st.append(step_test_case(target, config, 'cpu-online', is_fast=True))
+    st.append(step_test_case(target, config, 'drm', is_fast=True))
     st.append(step_test_case(target, config, 's5p-sss', is_fast=True))
+    st.append(step_test_case(target, config, 'thermal', is_fast=True))
     st.append(step_test_case(target, config, 'usb', is_fast=True))
     st.append(step_test_case(target, config, 'var-all', is_fast=True))
-    st.append(step_test_case(target, config, 'clk-s2mps11', is_fast=True))
-    st.append(step_test_case(target, config, 'audio', is_fast=True))
+
+    # Tries unbind-bind which might affect audio, so should be last:
     st.append(step_test_case(target, config, 'audss', is_fast=True))
 
     return st
@@ -645,19 +647,21 @@ def steps_test_suite_slow(target, config):
     # See: Matrix of configurations
     if config != 'exynos':
         return st
-    st.append(step_test_case(target, config, 'pwm-fan'))
-    st.append(step_test_case(target, config, 'thermal-cooling'))
-    # Intensive and not that important test, run it only on XU3
     st.append(step_test_case(target, config, 'cpu-mmc-stress', force_skip=(target != 'odroidxu3')))
+    st.append(step_test_case(target, config, 'pwm-fan'))
+    # Intensive and not that important test, run it only on XU3
     # No point to test tcrypt - it does not use s5p-sss anymore
     #st.append(step_test_case(target, config, 's5p-sss-tcrypt'))
     # No point to test cryptsetup - it does not use s5p-sss anymore
     #st.append(step_test_case(target, config, 's5p-sss-cryptsetup'))
+
+    # RNG does not work on Odroid, missing clock enable?
+    # st.append(step_test_case(target, config, 'rng-exynos'))
+
     # RTC often fail on NFS root so put it at the end
     # Also RTC of max77686 seems to fail pretty often, so skip U3:
     st.append(step_test_case(target, config, 'rtc', force_skip=(target == 'odroidu3')))
-    # RNG does not work on Odroid, missing clock enable?
-    # st.append(step_test_case(target, config, 'rng-exynos'))
+    st.append(step_test_case(target, config, 'thermal-cooling'))
 
     return st
 
