@@ -3,6 +3,7 @@
 #
 # Copyright (C) 2019 Stephen Rothwell <sfr@canb.auug.org.au>
 # Copyright (C) 2019 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+# Copyright (c) 2019 Krzysztof Kozlowski <krzk@kernel.org>
 #
 # Verify that the "Fixes:" tag is correct in a kernel commit
 #
@@ -16,10 +17,6 @@
 # Thanks to Stephen Rothwell <sfr@canb.auug.org.au> for the majority of this code
 #
 
-# Only thing you might want to change here, the location of where Linus's git
-# tree is on your system:
-Linus_tree="/home/gregkh/linux/work/torvalds/"
-
 ##########################################
 # No need to touch anything below here
 
@@ -31,7 +28,7 @@ help()
 {
 	echo "error, git range not found"
 	echo "usage:"
-	echo "	$0 GIT_RANGE"
+	echo "	$0 LINUS_REPO GIT_RANGE"
 	exit 1
 }
 
@@ -181,9 +178,10 @@ verify_fixes()
 	fi
 }
 
-git_range=$1
+Linus_tree="$1"
+git_range=$2
 
-if [ "${git_range}" == "" ] ; then
+if [ "${git_range}" == "" ] || [ "${Linus_tree}" == "" ] ; then
 	help
 fi
 
