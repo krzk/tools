@@ -11,6 +11,10 @@ clean it up.
 Buildbot master configuration and scripts executed by workers for building
 and booting ARM embedded targets at https://krzk.eu.
 
+## /linux
+
+Helpers in maintaining Linux kernel (specific to my maintainer area).
+
 ## /odroid
 
 Helper scripts for Exynos-based Odroid boards.
@@ -19,6 +23,10 @@ Helper scripts for Exynos-based Odroid boards.
 
 Helper scripts for managing automated booting and testing setup on Raspberry Pi
 for https://krzk.eu.
+
+## /qemu
+
+Helpers to run and build QEMU.
 
 ## /tests-var
 
@@ -31,6 +39,10 @@ components.
 Testsuite for Linux kernel, Exynos SoC and Exynos-based boards.
 It is being run on https://krzk.eu on my boards for testing current Linux
 kernel development.
+
+## /usb
+
+Programs to manage USB hubs (not necessarily working).
 
 ## The rest
 
