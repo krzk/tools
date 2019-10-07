@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2018 Krzysztof Kozlowski
+# Copyright (c) 2015-2019 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -52,8 +52,6 @@ if [ "$(have_ccache)" == "0" ]; then
 	export CROSS_COMPILE="ccache $CROSS_COMPILE"
 fi
 
-echo "Executing build command:"
-echo "CROSS_COMPILE=\"$CROSS_COMPILE\" make $JOBS $*"
 CROSS_COMPILE="$CROSS_COMPILE" make $JOBS $*
 
 exit $?
