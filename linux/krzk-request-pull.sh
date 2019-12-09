@@ -13,18 +13,19 @@ die() {
 }
 
 usage() {
-	echo "$(basename $0) <remote> <tag> [start]"
-	echo "    remote - <krzk-korg> or <krzk-pinctrl>"
+	echo "$(basename $0) <tag> [start]"
 	exit 1
 }
 
-# Two or more args needed
-test $# -gt 1 || usage
-REMOTE="$1"
-TAG="$2"
-START="$3"
+# One or more args needed
+test $# -ge 1 || usage
+TAG="$1"
+START="$2"
 START="${START:=master}"
 OUT="pull-$(date +%Y.%m.%d)-${TAG}.txt"
+
+REMOTE="$(git rev-parse --abbrev-ref master@{upstream})"
+REMOTE="${REMOTE%%/*}"
 
 case "$REMOTE" in
 	krzk-korg)
