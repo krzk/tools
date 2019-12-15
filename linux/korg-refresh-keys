@@ -8,10 +8,9 @@
 #
 # Remove the following line. It is there so people don't run this
 # script directly from the git repository.
-exit 0
 
 # FIX ME: point at the actual location of pgpkeys.git clone
-PGPKEYS="$HOME/git/korg-pgpkeys"
+PGPKEYS="$HOME/dev/3rdparty/korg-pgpkeys"
 
 # If you remove "--import-options merge-only", it will import keys
 # not already present on your keyring, which is not what you want!
