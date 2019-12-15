@@ -1,0 +1,61 @@
+#!/bin/bash
+# This script is for refreshing your keyring on a regular
+# basis. It can be run from cron or manually. See README.rst
+# for details on how to set it up.
+#
+# Remove the following line. It is there so people don't run this
+# script directly from the git repository.
+exit 0
+
+# FIX ME: point at the actual location of pgpkeys.git clone
+PGPKEYS="$HOME/git/korg-pgpkeys"
+
+# If you remove "--import-options merge-only", it will import keys
+# not already present on your keyring, which is not what you want!
+IMPORTFLAGS="--import-options import-clean --import-options merge-only"
+
+# Make sure this points to your gpg v2 binary. You can also add other
+# flags here, such as --homedir
+GPGBIN="/usr/bin/gpg2 --batch"
+
+# Run with -q from cron to silence most output
+[[ $1 == '-q' ]] && Q='-q'
+
+cd $PGPKEYS || exit 1
+# Exit if we can't run git fetch (perhaps not online?)
+[[ -z "$Q" ]] && echo "Updating the repository"
+git fetch $Q || exit 0
+
+
+if [[ $(git rev-parse HEAD) == $(git rev-parse @{u}) ]]; then
+    [[ -z $Q ]] && echo "No changes since last run"
+    exit 0
+fi
+
+# Verify that the signature on the tip is both good and valid.
+# To be valid, it needs to be signed by a key with ultimate or
+# full ownertrust -- see README for details.
+[[ -z $Q ]] && echo "Verifying commit signature at the tip"
+COUNT=$(git verify-commit --raw @{u} 2>&1 | grep -c -E '^\[GNUPG:\] (GOODSIG|VALIDSIG)')
+if [[ ${COUNT} -lt 2 ]]; then
+    # Hopefully, this never happens. :)
+    echo "$0: FAILED TO VERIFY COMMIT SIGNATURE!"
+    exit 1
+fi
+
+CHANGED=$(git diff --name-only HEAD @{u} | grep '.asc$')
+
+git pull $Q
+
+IMPORTFILES=''
+for ASCFILE in $CHANGED; do
+    # It may have been a delete, so check if it's still there
+    [[ -f $ASCFILE ]] && IMPORTFILES="$IMPORTFILES $ASCFILE"
+done
+
+# This is a somewhat hacky but effective way to trim space
+IMPORTFILES=$(echo $IMPORTFILES | xargs)
+if [[ ! -z $IMPORTFILES ]]; then
+    [[ -z "$Q" ]] && echo "Updating keyring"
+    $GPGBIN $Q --import $IMPORTFLAGS $IMPORTFILES
+fi
