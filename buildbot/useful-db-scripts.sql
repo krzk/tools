@@ -8,8 +8,10 @@
 # Dump entire buildbot DB:
 # mysqldump --add-drop-table --add-locks  --extended-insert --lock-tables -u buildbot -p -h localhost -P 3306 --protocol tcp buildbot > bck-db-buildbot-$(date +%Y-%m-%d).sql
 
+SELECT COUNT(*),project FROM buildbot.changes GROUP BY project;
+
 # next:
-SELECT * FROM buildbot.changes
+SELECT COUNT(*) FROM buildbot.changes
 LEFT JOIN buildbot.sourcestamps ON buildbot.changes.sourcestampid = buildbot.sourcestamps.id
 LEFT JOIN buildbot.change_files ON buildbot.changes.changeid = buildbot.change_files.changeid
 WHERE
@@ -24,7 +26,7 @@ WHERE
   AND buildbot.changes.project = 'next';
 
 # stable and stable-rc
-SELECT * FROM buildbot.changes
+SELECT COUNT(*) FROM buildbot.changes
 LEFT JOIN buildbot.sourcestamps ON buildbot.changes.sourcestampid = buildbot.sourcestamps.id
 LEFT JOIN buildbot.change_files ON buildbot.changes.changeid = buildbot.change_files.changeid
 WHERE
@@ -36,8 +38,22 @@ LEFT JOIN buildbot.sourcestamps ON buildbot.changes.sourcestampid = buildbot.sou
 LEFT JOIN buildbot.change_files ON buildbot.changes.changeid = buildbot.change_files.changeid
 WHERE
   buildbot.changes.when_timestamp < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 90 DAY))
-AND (buildbot.changes.project = 'stable-rc' OR buildbot.changes.project = 'stable');
+  AND (buildbot.changes.project = 'stable-rc' OR buildbot.changes.project = 'stable');
 
+# All (so also krzk and mainline):
+SELECT COUNT(*) FROM buildbot.changes
+LEFT JOIN buildbot.sourcestamps ON buildbot.changes.sourcestampid = buildbot.sourcestamps.id
+LEFT JOIN buildbot.change_files ON buildbot.changes.changeid = buildbot.change_files.changeid
+WHERE
+  buildbot.changes.when_timestamp < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 360 DAY));
+
+DELETE buildbot.changes, buildbot.sourcestamps, buildbot.change_files FROM buildbot.changes
+LEFT JOIN buildbot.sourcestamps ON buildbot.changes.sourcestampid = buildbot.sourcestamps.id
+LEFT JOIN buildbot.change_files ON buildbot.changes.changeid = buildbot.change_files.changeid
+WHERE
+  buildbot.changes.when_timestamp < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 360 DAY));
+
+# Cleanup after previous deletes:
 DELETE buildbot.change_files FROM buildbot.change_files
 LEFT JOIN buildbot.changes ON buildbot.changes.changeid = buildbot.change_files.changeid
 WHERE buildbot.changes.changeid IS NULL;
