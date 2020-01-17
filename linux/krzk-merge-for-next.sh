@@ -1,13 +1,13 @@
 #!/bin/sh
 #
-# Copyright (c) 2015 Krzysztof Kozlowski
+# Copyright (c) 2015-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
 # SPDX-License-Identifier: GPL-2.0
 #
 
-BRANCHES="fixes next/soc next/soc64 next/drivers next/dt next/dt64 next/defconfig next/defconfig64"
+BRANCHES="fixes next/defconfig next/defconfig64 next/drivers next/dt next/dt64 next/soc next/soc64"
 
 die() {
 	echo "Fail: $1"

@@ -7,7 +7,7 @@
 # SPDX-License-Identifier: GPL-2.0
 #
 
-BRANCHES="next/defconfig next/defconfig64 next/drivers next/dt next/dt64 fixes for-next master next/soc next/soc64"
+BRANCHES="fixes for-next master next/defconfig next/defconfig64 next/drivers next/dt next/dt64 next/soc next/soc64"
 
 die() {
 	echo "Fail: $1"
