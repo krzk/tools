@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2019 Krzysztof Kozlowski
+# Copyright (c) 2017-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -40,12 +40,12 @@ AND (buildbot.changes.project = 'stable-rc' OR buildbot.changes.project = 'stabl
 
 DELETE buildbot.change_files FROM buildbot.change_files
 LEFT JOIN buildbot.changes ON buildbot.changes.changeid = buildbot.change_files.changeid
-WHERE buildbot.changes.changeid IS NULL
+WHERE buildbot.changes.changeid IS NULL;
 
 DELETE buildbot.sourcestamps FROM buildbot.sourcestamps
 LEFT JOIN buildbot.changes ON buildbot.changes.sourcestampid = buildbot.sourcestamps.id
-WHERE buildbot.changes.changeid IS NULL
+WHERE buildbot.changes.changeid IS NULL;
 
-OPTIMIZE TABLE buildbot.changes, buildbot.sourcestamps, buildbot.change_files
+OPTIMIZE TABLE buildbot.changes, buildbot.sourcestamps, buildbot.change_files;
 
 SELECT COUNT(*),project FROM buildbot.changes GROUP BY project;
