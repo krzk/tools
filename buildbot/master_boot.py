@@ -1,7 +1,7 @@
 # -*- python -*-
 # ex: set filetype=python:
 #
-# Copyright (c) 2016-2019 Krzysztof Kozlowski
+# Copyright (c) 2016-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -475,7 +475,7 @@ def step_test_uname(target, config):
     print(process.stdout)
     print('---')
     if not process.returncode:
-        expected_output = '^Linux """ + target + """ %(prop:kernel_version:-)s #2 SMP (PREEMPT )?[0-9a-zA-Z: ]+ armv7l GNU/Linux$'
+        expected_output = '^Linux """ + target + """ %(prop:kernel_version:-)s #[0-9] SMP (PREEMPT )?[0-9a-zA-Z: ]+ armv7l GNU/Linux$'
         print('checking if uname matches expected: ' + expected_output)
         print('uname output: ' + process.stdout)
         if not re.search(expected_output, process.stdout):
