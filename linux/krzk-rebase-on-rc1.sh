@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (c) 2019 Krzysztof Kozlowski
+# Copyright (c) 2019-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -26,6 +26,12 @@ fi
 for br in $BRANCHES; do
 	echo "Updating ${br}"
 	git push ${REMOTE} master:${br}
+done
+
+# Need to give server time to update refs, before fetching
+sleep 1
+
+for br in $BRANCHES; do
 	echo git fetch ${REMOTE} ${br}:${br}
 	git fetch ${REMOTE} ${br}:${br}
 done
