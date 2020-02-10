@@ -27,7 +27,7 @@ Configuration files for creating initramfs-odroid-armv7hf-base.cpio.
 ## Manual updates
 ```
 mkdir tmpout
-cd tmpout && ../cpio -idv < ../initramfs-odroid-armv7hf-base.cpio && cd ..
+cd tmpout && cpio -idv < ../initramfs-odroid-armv7hf-base.cpio && cd ..
 ```
 ```
 cd tmpout && fakeroot find -mindepth 1 -printf '%P\0' | LANG=C cpio -0 -o -H newc -R 0:0 -F "../initramfs-odroid-armv7hf-base.cpio" && cd ..
