@@ -5,12 +5,14 @@ Initramfs (with binaries) created on existing Arch ARM Linux system
 The initramfs was created with (from machine booted with modules present, e.g. from multi_v7 defconfig):
 ```
 sudo pacman -S mkinitcpio-nfs-utils
+sudo cp src-etc/initcpio/hooks/net_nfs4 /etc/initcpio/hooks/
+sudo cp src-etc/initcpio/install/net_nfs4 /etc/install/hooks/
 
 fakeroot mkinitcpio --kernel none --generate initramfs-odroid-armv7hf-base.cpio.gz \
     --config /opt/tools/buildbot/initramfs/src-etc/mkinitcpio.conf
 mkdir tmpout
 cd tmpout && ../cpio -idv < ../initramfs-odroid-armv7hf-base.cpio
-rm -f config
+rm -fr opt
 fakeroot find -mindepth 1 -printf '%P\0' | LANG=C cpio -0 -o -H newc -R 0:0 -F "../initramfs-odroid-armv7hf-base.cpio"
 cd ..
 ```
