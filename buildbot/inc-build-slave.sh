@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2016-2019 Krzysztof Kozlowski
+# Copyright (c) 2016-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -38,7 +38,7 @@ get_serial() {
 	odroidu3|u3)
 		serial="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D45567-if00-port0"
 		;;
-	odroidxu3|xu3)
+	odroidmc1|mc1)
 		serial="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0"
 		;;
 	odroidxu|xu)

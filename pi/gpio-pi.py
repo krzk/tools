@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (c) 2015-2019 Krzysztof Kozlowski
+# Copyright (c) 2015-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -22,12 +22,12 @@ TARGETS = {
     "octa":         10,
     "odroidhc1":    3,
     "hc1":          3,
+    "odroidmc1":    2,
+    "mc1":          2,
     "odroidu3":     17,
     "u3":           17,
     "odroidx":      9,
     "x":            9,
-    "odroidxu3":    2,
-    "xu3":          2,
     "odroidxu":     4,
     "xu":           4,
     }

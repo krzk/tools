@@ -16,7 +16,7 @@ TARGET_SERIAL_DEV = {
     'odroidu3': 'by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D45567-if00-port0',
     'odroidx': 'by-path/platform-3f980000.usb-usb-0:1.1.2.1:1.0-port0',
     'odroidxu': 'by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00521AAE-if00-port0',
-    'odroidxu3': 'by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0',
+    'odroidmc1': 'by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0',
 }
 
 ENV_PATH = {'PATH': '/opt/tools/buildbot:/opt/tools/pi:/usr/local/bin:${PATH}'}
@@ -47,9 +47,9 @@ TARGET_CONFIG = {
         'machine': 'Hardkernel Odroid XU',
         'serial': 'ttySAC2',
     },
-    'odroidxu3': {
+    'odroidmc1': {
         'cpus': '8',
-        'machine': 'Hardkernel Odroid XU3 Lite',
+        'machine': 'Hardkernel Odroid HC1',
         'serial': 'ttySAC2',
     },
 }

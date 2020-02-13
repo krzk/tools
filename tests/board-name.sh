@@ -18,6 +18,10 @@ test_board_name() {
 	arndaleocta|octa)
 		grep -z 'insignal,arndale-octa$' -q $of && echo "Arndale Octa" && return 0
 		;;
+	odroidmc1|mc1)
+		grep -z 'hardkernel,odroid-hc1$' -q $of && echo "Odroid HC1" && return 0
+		grep -z 'hardkernel,odroid-xu4$' -q $of && echo "Odroid XU4" && return 0
+		;;
 	odroidu3|u3)
 		grep -z 'hardkernel,odroid-u3$' -q $of && echo "Odroid U3" && return 0
 		;;

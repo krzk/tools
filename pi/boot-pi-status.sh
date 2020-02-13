@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2019 Krzysztof Kozlowski
+# Copyright (c) 2015-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -9,7 +9,7 @@
 
 SERIAL_u3="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D45567-if00-port0"
 SERIAL_x="/dev/serial/by-path/platform-3f980000.usb-usb-0:1.1.2.1:1.0-port0"
-SERIAL_xu3="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0"
+SERIAL_mc1="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0"
 SERIAL_xu="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00521AAE-if00-port0"
 SERIAL_hc1="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D4562A-if00-port0"
 SERIAL_arndaleocta="/dev/serial/by-path/platform-3f980000.usb-usb-0:1.1.3:1.0-port0"
@@ -61,9 +61,9 @@ Odroid X ping: $(board_ping odroidx)
 Odroid XU: $(sudo /usr/local/bin/gpio-pi.py odroidxu status)
 Odroid XU serial: $(serial_check $SERIAL_xu)
 Odroid XU ping: $(board_ping odroidxu)
-Odroid XU3: $(sudo /usr/local/bin/gpio-pi.py odroidxu3 status)
-Odroid XU3 serial: $(serial_check $SERIAL_xu3)
-Odroid XU3 ping: $(board_ping odroidxu3)
+Odroid MC1: $(sudo /usr/local/bin/gpio-pi.py odroidmc1 status)
+Odroid MC1 serial: $(serial_check $SERIAL_mc1)
+Odroid MC1 ping: $(board_ping odroidmc1)
 Odroid HC1: $(sudo /usr/local/bin/gpio-pi.py odroidhc1 status)
 Odroid HC1 serial: $(serial_check $SERIAL_hc1)
 Odroid HC1 ping: $(board_ping odroidhc1)
