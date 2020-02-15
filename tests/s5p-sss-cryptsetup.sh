@@ -18,7 +18,8 @@ CRYPT_MODE_CBC="--cipher=aes-cbc-essiv:sha256 --hash=sha256"
 CRYPT_MODE_XTS="--cipher=aes-xts-plain64:sha512 --hash=sha512"
 TEST_DATA_SIZE="32M"
 # Size of crypt device should be at least TEST_DATA_SIZE+LUKS headers
-CRYTP_DEV_SIZE="34M"
+# For LUKS1, 2 MB was enough. For LUKS2, much more space is needed (or something here is wrong).
+CRYTP_DEV_SIZE="48M"
 
 s5p_sss_cryptsetup_cleanup() {
 	print_msg "Exit trap, cleaning up..."
