@@ -50,7 +50,7 @@ s5p_sss_cryptsetup_prepare() {
 			--key-file=/tmp/${dev}-keyfile --master-key-file=/tmp/${dev}-keyfile \
 			--keyfile-size=32 --key-size=256 \
 			luksFormat /tmp/${dev}
-		local status=`file /tmp/${dev} | grep -c "/tmp/${dev}: LUKS encrypted file, ver 1"`
+		local status=`file /tmp/${dev} | grep -c "/tmp/${dev}: LUKS encrypted file, ver "`
 		if [ "$status" != "1" ]; then
 			print_msg "ERROR: Crypt device $dev not detected as LUKS"
 			return 1
@@ -67,18 +67,18 @@ s5p_sss_cryptsetup_prepare() {
 	fi
 	cryptsetup status $dev
 	local detected_type="$(cryptsetup status $dev | grep 'type:')"
-	local expected_type="  type:    PLAIN"
+	local expected_type='^[[:space:]]+type:[[:space:]]+PLAIN$'
 	if [ "$luks" != "" ]; then
-		local expected_type="  type:    LUKS1"
+		local expected_type='^[[:space:]]+type:[[:space:]]+LUKS[12]$'
 	fi
-	if [ "$detected_type" != "$expected_type" ]; then
-		# FIXME: cleanup in trap hook?
-		s5p_sss_cryptsetup_unprepare $dev
-		print_msg "ERROR: Wrong type of crypt device (\"$detected_type\" != \"$expected_type\")"
-		return 1
+	if [[ "$detected_type" =~ $expected_type ]]; then
+		return 0
 	fi
 
-	return 0
+	# FIXME: cleanup in trap hook?
+	s5p_sss_cryptsetup_unprepare $dev
+	print_msg "ERROR: Wrong type of crypt device (\"$detected_type\" != \"$expected_type\")"
+	return 1
 }
 
 s5p_sss_cryptsetup_unprepare() {
