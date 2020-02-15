@@ -33,6 +33,8 @@ s5p_sss_cryptsetup_prepare() {
 	local mode="$2"
 	local luks="$3"
 
+	print_msg "s5p_sss_cryptsetup_prepare: dev ${dev}, mode ${mode}, luks ${luks}"
+
 	local status="$(cryptsetup status $dev | head -n 1)"
 	if [ "$status" != "/dev/mapper/testcrypt is inactive." ]; then
 		print_msg "ERROR: Crypt device $dev is being used"
