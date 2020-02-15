@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2019 Krzysztof Kozlowski
+# Copyright (c) 2015-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -25,6 +25,9 @@ test_board_name() {
 	odroidu3|u3)
 		grep -z 'hardkernel,odroid-u3$' -q $of && echo "Odroid U3" && return 0
 		;;
+	odroidx|x)
+		grep -z 'hardkernel,odroid-x$' -q $of && echo "Odroid X" && return 0
+		;;
 	odroidxu3|xu3)
 		grep -z 'hardkernel,odroid-xu3-lite$' -q $of && echo "Odroid XU3 Lite" && return 0
 		grep -z 'hardkernel,odroid-xu3$' -q $of && echo "Odroid XU3" && return 0
@@ -39,6 +42,7 @@ test_board_name() {
 	*)
 		grep -z 'hardkernel,odroid-hc1$' -q $of && echo "Odroid HC1" && return 0
 		grep -z 'hardkernel,odroid-u3$' -q $of && echo "Odroid U3" && return 0
+		grep -z 'hardkernel,odroid-x$' -q $of && echo "Odroid X" && return 0
 		grep -z 'hardkernel,odroid-xu$' -q $of && echo "Odroid XU" && return 0
 		grep -z 'hardkernel,odroid-xu3-lite$' -q $of && echo "Odroid XU3 Lite" && return 0
 		grep -z 'hardkernel,odroid-xu3$' -q $of && echo "Odroid XU3" && return 0
