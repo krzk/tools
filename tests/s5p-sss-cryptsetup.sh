@@ -16,6 +16,7 @@ if [ "$1" == "--intensive" ]; then
 fi
 CRYPT_MODE_CBC="--cipher=aes-cbc-essiv:sha256 --hash=sha256"
 CRYPT_MODE_XTS="--cipher=aes-xts-plain64:sha512 --hash=sha512"
+CRYPT_MODE_XTS_LUKS="--cipher=aes-xts-plain64 --hash=sha512"
 TEST_DATA_SIZE="32M"
 # Size of crypt device should be at least TEST_DATA_SIZE+LUKS headers
 # For LUKS1, 2 MB was enough. For LUKS2, much more space is needed (or something here is wrong).
@@ -140,7 +141,7 @@ test_s5p_sss_cryptsetup() {
 	done
 	s5p_sss_cryptsetup_unprepare $dev
 
-	s5p_sss_cryptsetup_prepare $dev "$CRYPT_MODE_XTS" yes
+	s5p_sss_cryptsetup_prepare $dev "$CRYPT_MODE_XTS_LUKS" yes
 	for i in `seq 1 $LOOPS`; do
 		test $LOOPS -gt 1 && print_msg "Test ${i}/${LOOPS}"
 		s5p_sss_cryptsetup_run $dev
