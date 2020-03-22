@@ -1,4 +1,4 @@
-# Copyright (c) 2015,2016 Krzysztof Kozlowski
+# Copyright (c) 2015-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -10,7 +10,7 @@ After=network.target network-online.target
 Requires=network-online.target
 
 [Service]
-Type=simple
+Type=forking
 ExecStart=/usr/local/bin/buildbot.sh start master
 ExecStop=/usr/local/bin/buildbot.sh stop master
 ExecReload=/usr/local/bin/buildbot.sh reload master
