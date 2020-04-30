@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2018-2019 Krzysztof Kozlowski
+# Copyright (c) 2018-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -20,7 +20,7 @@ test_drm() {
 	local expected_nodrm=0
 
 	case "$(get_board_compatible)" in
-	hardkernel,odroid-u3|hardkernel,odroid-xu3|hardkernel,odroid-xu3-lite|hardkernel,odroid-xu4)
+	hardkernel,odroid-u3|hardkernel,odroid-x|hardkernel,odroid-xu3|hardkernel,odroid-xu3-lite|hardkernel,odroid-xu4)
 		expected_outputs="card0/card0-HDMI-A-1 card0-HDMI-A-1"
 		;;
 	hardkernel,odroid-hc1|hardkernel,odroid-xu)

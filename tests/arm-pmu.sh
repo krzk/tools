@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2019 Krzysztof Kozlowski
+# Copyright (c) 2019-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -26,7 +26,7 @@ test_arm_pmu() {
 		expected_hardware_events=7
 		expected_hardware_cache_events=15
 		;;
-	hardkernel,odroid-u3)
+	hardkernel,odroid-u3|hardkernel,odroid-x)
 		expected_hardware_events=8
 		expected_hardware_cache_events=10
 		;;

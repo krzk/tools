@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2016-2019 Krzysztof Kozlowski
+# Copyright (c) 2016-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -22,6 +22,10 @@ test_usb() {
 	hardkernel,odroid-u3)
 		# Format: NUMBER_VENDOR:PRODUCT
 		expected_usb="1_1d6b:0002 1_0424:3503 1_0424:9730"
+		;;
+	hardkernel,odroid-x)
+		# Format: NUMBER_VENDOR:PRODUCT
+		expected_usb="1_1d6b:0002 1_0424:3503 1_0424:9514 1_0424:ec00"
 		;;
 	hardkernel,odroid-xu)
 		# Format: NUMBER_VENDOR:PRODUCT

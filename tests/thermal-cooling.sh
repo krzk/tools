@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2019 Krzysztof Kozlowski
+# Copyright (c) 2015-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -32,7 +32,7 @@ test_cooling() {
 	local exp_cool_level_3=230
 
 	case "$(get_board_compatible)" in
-	hardkernel,odroid-u3)
+	hardkernel,odroid-u3|hardkernel,odroid-x)
 		exp_tmu_zones=1
 		exp_cool_level_1=102
 		;;

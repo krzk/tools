@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2019 Krzysztof Kozlowski
+# Copyright (c) 2019-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -14,6 +14,7 @@ test_adc_exynos() {
 	local name="adc-exynos"
 	# adc0 on XU3-lite jumps from 1400-2700
 	local adc_values=("1000 3000" "0 1" "0 1" "1000 3000" "0 1" "0 1" "0 1" "0 1" "0 1" "0 1")
+	local adc_dev="12d10000.adc"
 	local iio_path="/sys/bus/iio/devices/iio:device0"
 	print_msg "Testing..."
 
@@ -29,6 +30,10 @@ test_adc_exynos() {
 		;;
 	hardkernel,odroid-xu3-lite)
 		adc_values[9]="367 377"
+		;;
+	hardkernel,odroid-x)
+		adc_values=("1000 4000" "2500 3500" "2500 3500" "1000 4000")
+		adc_dev="126c0000.adc"
 		;;
 	hardkernel,odroid-xu)
 		if is_kernel_le 5 2; then
@@ -61,7 +66,7 @@ test_adc_exynos() {
 		error_msg "Wrong board"
 	esac
 
-	test_cat "${iio_path}/name" "12d10000.adc"
+	test_cat "${iio_path}/name" "$adc_dev"
 
 	cnt=${#adc_values[@]}
 	for (( i = 0 ; i < cnt ; i++ )); do
@@ -69,8 +74,8 @@ test_adc_exynos() {
 	done
 
 	print_msg "Testing rebind..."
-	echo "12d10000.adc" > /sys/bus/platform/drivers/exynos-adc/unbind
-	echo "12d10000.adc" > /sys/bus/platform/drivers/exynos-adc/bind
+	echo "$adc_dev" > /sys/bus/platform/drivers/exynos-adc/unbind
+	echo "$adc_dev" > /sys/bus/platform/drivers/exynos-adc/bind
 
 	print_msg "OK"
 }

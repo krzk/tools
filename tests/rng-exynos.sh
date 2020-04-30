@@ -16,10 +16,12 @@ test_rng_exynos() {
 	local rng_name=""
 	print_msg "Testing..."
 
-	if [ "$(get_board_compatible)" == "hardkernel,odroid-u3" ]; then
+	case "$(get_board_compatible)" in
+	hardkernel,odroid-u3|hardkernel,odroid-x)
 		print_msg "RNG not supported yet (or broken?), skipping"
 		return 0
-	fi
+		;;
+	esac
 
 	if is_kernel_le 4 16; then
 		rng_name="exynos"
