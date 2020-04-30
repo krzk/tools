@@ -42,6 +42,11 @@ TARGET_CONFIG = {
         'machine': 'Hardkernel ODROID-U3 board based on Exynos4412',
         'serial': 'ttySAC1',
     },
+    'odroidx': {
+        'cpus': '4',
+        'machine': 'Hardkernel ODROID-X board based on Exynos4412',
+        'serial': 'ttySAC1',
+    },
     'odroidxu': {
         'cpus': '4',
         'machine': 'Hardkernel Odroid XU',
@@ -687,9 +692,9 @@ def steps_download(target):
         workerdest=u'/srv/tftp/exynos4412-odroidu3.dtb',
         haltOnFailure=True, mode=0o0664, name='Download Odroid U3 DTB'))
     st.append(steps.FileDownload(
-        mastersrc=util.Interpolate(mastersrc_dir + '/exynos4412-odroidx2.dtb'),
-        workerdest=u'/srv/tftp/exynos4412-odroidx2.dtb',
-        haltOnFailure=True, mode=0o0664, name='Download Odroid X2 DTB'))
+        mastersrc=util.Interpolate(mastersrc_dir + '/exynos4412-odroidx.dtb'),
+        workerdest=u'/srv/tftp/exynos4412-odroidx.dtb',
+        haltOnFailure=True, mode=0o0664, name='Download Odroid X DTB'))
 
     # XU, XU4 and HC1 might be missing for older kernels
     st.append(steps.FileDownload(
