@@ -7,14 +7,14 @@
             li Krzysztof Kozlowski
             li Embedded Linux Kernel developer
             li You can reach me by e-mail: &lt;krzk at kernel dot org&gt;
-            li Linux Kernel maintainer of Samsung Exynos ARM and ARM64 architectures (and few other parts)
+            li Linux Kernel maintainer of Samsung Exynos ARM and ARM64 architectures, memory controller drivers (and few other parts)
             li
               a(href="https://github.com/krzk") github.com/krzk
             li
               a(href="https://www.linkedin.com/in/krzkoz") LinkedIn profile / CV
 
   mixin markus
-    |  (donated by Markus Reichl, 
+    |  (donated by Markus Reichl,
     a(href="http://www.fivetechno.de/") five technologies GmbH
     | )
   mixin google
@@ -29,10 +29,10 @@
           | &nbsp;running for&nbsp;
           a(ng-href="{{config.titleURL}}") {{config.title}}
         .row
-          p This personal projects provides a continuous 
-            b build 
-            | and 
-            b boot testing 
+          p This personal projects provides a continuous
+            b build
+            | and
+            b boot testing
             | of Linux kernel on Samsung's Exynos-based boards.  I started it in November 2015 with only one Odroid XU3 board and since then it grew to few more.
           p The goal is to ensure that Exynos based boards work fine with current mainline Linux kernel.  Additionally the system validates and tests all commits being added to my officially maintained Linux kernel trees.
           p This Buildbot first builds Linux kernel in different configurations, then boots target boards with built kernel and finally runs few Exynos-specific tests.  The boards take rootfs from NFS server.
@@ -59,9 +59,9 @@
 
           p
             b Source code:
-          p Source code for this Buildbot configuration can be found under 
+          p Source code for this Buildbot configuration can be found under
             a(href="https://github.com/krzk/tools/tree/master/buildbot") github.com/krzk / tools/buildbot
-          p Source code for tests run on targets can be found under 
+          p Source code for tests run on targets can be found under
             a(href="https://github.com/krzk/tools/tree/master/tests") github.com/krzk / tools/tests
           p
             b List of tested Linux kernel trees:
@@ -76,6 +76,8 @@
               a(href="https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git") Samsung Exynos maintainer tree
             li
               a(href="https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git") Samsung Exynos pinctrl maintainer tree
+            li
+              a(href="https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git") Memory Controller drivers maintainer tree
 
           p Current setup with six boards (Arndale Octa, HC1, U3, X, XU and XU3), NFS root and Meanwell power supply:
           img(src="/pub/krzk_testing_setup_-_april_2019.jpg", alt="Current setup with six boards (Arndale Octa, HC1, U3, X, XU and XU3), NFS root and Meanwell power supply", width="800")
