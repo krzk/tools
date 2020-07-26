@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2016-2019 Krzysztof Kozlowski
+# Copyright (c) 2016-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -24,23 +24,25 @@ START="$2"
 START="${START:=master}"
 OUT="pull-$(date +%Y.%m.%d)-${TAG}.txt"
 
-REMOTE="$(git rev-parse --abbrev-ref master@{upstream})"
+REMOTE="$(git rev-parse --abbrev-ref --symbolic-full-name master@{upstream})"
 REMOTE="${REMOTE%%/*}"
+REMOTE_URL="$(git remote get-url ${REMOTE})"
 
-case "$REMOTE" in
-	krzk-korg)
-		TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
-		CC="Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>"
-		SUBJECT="ARM: dts: exynos:"
-		;;
-	krzk-pinctrl)
-		TO="Linus Walleij <linus.walleij@linaro.org>"
-		CC="Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org"
-		SUBJECT="pinctrl: samsung:"
-		;;
-	*)
-		usage
-esac
+if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
+	TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
+	CC="Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>"
+	SUBJECT="ARM: dts: exynos:"
+elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
+	TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
+	CC="linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>"
+	SUBJECT="memory:"
+elif [[ $REMOTE_URL == *"/pinctrl/samsung.git"* ]]; then
+	TO="Linus Walleij <linus.walleij@linaro.org>"
+	CC="Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org"
+	SUBJECT="pinctrl: samsung:"
+else
+	usage
+fi
 
 git tag -v $TAG &> /dev/null || die "Wrong tag or signature"
 
