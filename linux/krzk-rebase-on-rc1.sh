@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Copyright (c) 2019-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
@@ -13,11 +13,15 @@ die() {
 }
 
 # Get branches
-REMOTE="$(git rev-parse --abbrev-ref master@{upstream})"
+REMOTE="$(git rev-parse --abbrev-ref --symbolic-full-name master@{upstream})"
 REMOTE="${REMOTE%%/*}"
-if [ "$REMOTE" = "krzk-korg" ]; then
+REMOTE_URL="$(git remote get-url ${REMOTE})"
+
+if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
 	BRANCHES="fixes for-next next/defconfig next/defconfig64 next/drivers next/dt next/dt64 next/soc next/soc64"
-elif [ "$REMOTE" = "krzk-pinctrl" ]; then
+elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
+	BRANCHES="for-next"
+elif [[ $REMOTE_URL == *"/pinctrl/samsung.git"* ]]; then
 	BRANCHES="for-next pinctrl-fixes pinctrl-next"
 else
 	die "Unknown upstream"
