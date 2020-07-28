@@ -1,0 +1,19 @@
+#!/bin/bash
+#
+# Copyright (c) 2020 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+#                             <krzk@kernel.org>
+#
+# SPDX-License-Identifier: GPL-2.0
+#
+
+while IFS= read -r line; do
+	if [[ "$line" == "Message-Id: "* ]]; then
+		echo "Applying ${line#Message-Id: }"
+		echo "b4 am --outdir - --add-link --cherry-pick _ ${line#Message-Id: } | git am --signoff"
+		b4 am --outdir - --add-link --cherry-pick _ "${line#Message-Id: }" | git am --signoff
+		exit $?
+	fi
+done
+
+echo "Message ID not found"
