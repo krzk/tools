@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015 Krzysztof Kozlowski
+# Copyright (c) 2015-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -8,7 +8,7 @@
 #
 
 CONFIGS="defconfig"
-CONFIGS_ARM="exynos multi_v7 s3c2410 s3c6400"
+CONFIGS_ARM="exynos mini2440 multi_v7 s3c2410 s3c6400 s5pv210 tct_hammer"
 ARCHS="arm arm64 i386 x86_64"
 #DTS="exynos4412-trats2 exynos5420-arndale-octa exynos/exynos7-espresso.dts"
 LOGS="logs"
