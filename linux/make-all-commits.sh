@@ -65,11 +65,11 @@ build_all_commits() {
 	for commit in $COMMITS
 	do
 		echo
-		echo ~/dev/tools/release.sh -A $_arch -c $_config
+		echo release.sh -A $_arch -c $_config
 		echo
 		checkout $commit
 		echo
-		nice ~/dev/tools/release.sh -A $_arch -c $_config -E "${DRIVERS_ADDON}" > /dev/null 2> "${LOGS}/${_arch}-${_config}-${commit}"
+		nice release.sh -A $_arch -c $_config -E "${DRIVERS_ADDON}" > /dev/null 2> "${LOGS}/${_arch}-${_config}-${commit}"
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed build: -A $_arch -c $_config on $commit"
 		fi
