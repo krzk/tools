@@ -16,7 +16,7 @@ LOGS="logs"
 START_COMMIT=""
 
 usage() {
-	echo "Usage: $(basename $0) [-c config] -s <start>"
+	echo "Usage: $(basename $0) [-c config] <-s start>"
 	echo
 	echo " Build configurations since <start> GIT revision."
 	echo " Currently built configs:"
