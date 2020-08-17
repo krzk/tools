@@ -7,12 +7,22 @@
 # SPDX-License-Identifier: GPL-2.0
 #
 
+apply_msg_id() {
+	local msg_id="$1"
+
+	test -n "$msg_id" || return 0
+
+	echo "Applying ${msg_id}"
+	echo "b4 am --outdir - --add-link --cherry-pick _ ${msg_id} | git am --signoff"
+	b4 am --outdir - --add-link --cherry-pick _ "${msg_id}" | git am --signoff
+	exit $?
+}
+
 while IFS= read -r line; do
 	if [[ "$line" == "Message-Id: "* ]]; then
-		echo "Applying ${line#Message-Id: }"
-		echo "b4 am --outdir - --add-link --cherry-pick _ ${line#Message-Id: } | git am --signoff"
-		b4 am --outdir - --add-link --cherry-pick _ "${line#Message-Id: }" | git am --signoff
-		exit $?
+		apply_msg_id "${line#Message-Id: }"
+	elif [[ "$line" == "Message-ID: "* ]]; then
+		apply_msg_id "${line#Message-ID: }"
 	fi
 done
 
