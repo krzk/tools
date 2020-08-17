@@ -342,16 +342,20 @@ def pexpect_boot_to_prompt(target, config):
     # On certain next kernels (next-20180924), this takes up to 100 seconds:
     child.expect_exact('systemd[1]: Detected architecture arm.', timeout=180)
     child.expect_exact('Set hostname to <""" + target + """>.')
-    child.expect_exact(['Reached target Swap',
-                        'Reached target """ + systemd_color('Swap') + """'])
-    child.expect_exact(['Started udev Kernel Device Manager',
-                        'Started """ + systemd_color('udev Kernel Device Manager') + """'])
-    # Detection of all devices (including storage) can take up to 15 seconds
-    # (Odroid HC1) on Pi3 Ethernet.
-    # On Pi3 Wireless this takes up to one minute
+    print('Target """ + target + """ reached: Started systemd')
+    # Wait for any early targets, before file systems to see if boot progresses
+    child.expect_exact(['Reached target Remote File Systems',
+                        'Reached target """ + systemd_color('Remote File Systems') + """',
+                        'Reached target Paths',
+                        'Reached target """ + systemd_color('Paths') + """',
+                        'Reached target Swap',
+                        'Reached target """ + systemd_color('Swap') + """'],
+                       timeout=30)
+    print('Target """ + target + """ reached: Intermediate system boot targets')
+    # Getting to local file systems can take a lot
     child.expect_exact(['Reached target Local File Systems',
                         'Reached target """ + systemd_color('Local File Systems') + """'],
-                       timeout=120)
+                       timeout=90)
 
     print('Target """ + target + """ reached: Mounted local file systems')
     child.expect_exact(['Reached target Login Prompts',
