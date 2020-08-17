@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2019 Krzysztof Kozlowski
+# Copyright (c) 2015-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -22,7 +22,7 @@ set -e -E
 set -x
 
 CROSS_COMPILE=""
-JOBS="$(grep -c processor /proc/cpuinfo)"
+JOBS="$(nproc)"
 # Non-linear scale of jobs
 if [ $JOBS -lt 4 ]; then
 	# <1,3>: n+1
