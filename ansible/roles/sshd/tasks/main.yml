@@ -6,6 +6,17 @@
   become: yes
   become_user: root
 
+- name: Add current user to group SSH logins
+  user:
+    name: '{{ ansible_user_id }}'
+    append: yes
+    force: no
+    generate_ssh_key: no
+    groups: ssh_allow
+    state: present
+  become: yes
+  become_user: root
+
 - name: Allow group SSH logins
   lineinfile:
     path: '/etc/ssh/sshd_config'
