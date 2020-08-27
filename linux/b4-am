@@ -13,7 +13,7 @@ apply_msg_id() {
 	test -n "$msg_id" || return 0
 
 	echo "Applying ${msg_id}"
-	echo "b4 am --outdir - --add-link --cherry-pick _ ${msg_id} | git am --signoff"
+	echo "b4 am --apply-cover-trailers --add-my-sob --outdir - --add-link --cherry-pick _ ${msg_id} | git am"
 	b4 am --outdir - --add-link --cherry-pick _ "${msg_id}" | git am --signoff
 	exit $?
 }
