@@ -27,8 +27,18 @@ fi
 while IFS= read -r line; do
 	if [[ "$line" == "Message-Id: "* ]]; then
 		apply_msg_id  "${line#Message-Id: }" "$SOB"
+	elif [[ "$line" == "Message-Id:" ]]; then
+		read -r line
+		if [[ "$line" == "<"* ]] || [[ "$line" == " <"* ]] || [[ "$line" == "	<"* ]]; then
+			apply_msg_id "$line" "$SOB"
+		fi
 	elif [[ "$line" == "Message-ID: "* ]]; then
 		apply_msg_id "${line#Message-ID: }" "$SOB"
+	elif [[ "$line" == "Message-ID:" ]]; then
+		read -r line
+		if [[ "$line" == "<"* ]] || [[ "$line" == " <"* ]] || [[ "$line" == "	<"* ]]; then
+			apply_msg_id "$line" "$SOB"
+		fi
 	fi
 done
 
