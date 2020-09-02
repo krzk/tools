@@ -9,20 +9,26 @@
 
 apply_msg_id() {
 	local msg_id="$1"
+	local options="$2"
 
 	test -n "$msg_id" || return 0
 
 	echo "Applying ${msg_id}"
-	echo "b4 am --apply-cover-trailers --add-my-sob --outdir - --add-link --cherry-pick _ ${msg_id} | git am"
-	b4 am --outdir - --add-link --cherry-pick _ "${msg_id}" | git am --signoff
+	echo "b4 am --apply-cover-trailers --outdir - --add-link --cherry-pick _ ${msg_id} | git am $options"
+	b4 am --apply-cover-trailers --outdir - --add-link --cherry-pick _ "${msg_id}" | git am $options
 	exit $?
 }
 
+SOB=""
+if [ "$1" == "--si" ]; then
+	SOB="--signoff"
+fi
+
 while IFS= read -r line; do
 	if [[ "$line" == "Message-Id: "* ]]; then
-		apply_msg_id "${line#Message-Id: }"
+		apply_msg_id  "${line#Message-Id: }" "$SOB"
 	elif [[ "$line" == "Message-ID: "* ]]; then
-		apply_msg_id "${line#Message-ID: }"
+		apply_msg_id "${line#Message-ID: }" "$SOB"
 	fi
 done
 
