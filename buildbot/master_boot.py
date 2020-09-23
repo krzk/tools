@@ -326,7 +326,8 @@ def pexpect_boot_to_prompt(target, config):
     child.expect_exact(':: running hook [net_nfs4]')
     child.expect_exact('IP-Config: eth0 complete (from 192.168.1.10):')
     child.expect_exact('NFS-Mount: 192.168.1.10:/srv/nfs/""" + target + """')
-    child.expect_exact('Waiting 10 seconds for device /dev/nfs ...')
+    child.expect_exact(['Waiting 10 seconds for device /dev/nfs ...',
+                        'mount.nfs4 -o vers=4,nolock 192.168.1.10:/srv/nfs/'])
 
     print('Target """ + target + """ reached: Mounted NFS root, start system')
     # NFS mount sometimes take a lot of time so add additional intermediate expects
