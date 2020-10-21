@@ -28,32 +28,26 @@ TIMEOUT_SSH = '30'
 
 TARGET_CONFIG = {
     'arndaleocta': {
-        'cpus': '4',
         'machine': 'Insignal Arndale Octa evaluation board based on EXYNOS5420',
         'serial': 'ttySAC3',
     },
     'odroidhc1': {
-        'cpus': '8',
         'machine': 'Hardkernel Odroid HC1',
         'serial': 'ttySAC2',
     },
     'odroidu3': {
-        'cpus': '4',
         'machine': 'Hardkernel ODROID-U3 board based on Exynos4412',
         'serial': 'ttySAC1',
     },
     'odroidx': {
-        'cpus': '4',
         'machine': 'Hardkernel ODROID-X board based on Exynos4412',
         'serial': 'ttySAC1',
     },
     'odroidxu': {
-        'cpus': '4',
         'machine': 'Hardkernel Odroid XU',
         'serial': 'ttySAC2',
     },
     'odroidmc1': {
-        'cpus': '8',
         'machine': 'Hardkernel Odroid HC1',
         'serial': 'ttySAC2',
     },
@@ -310,7 +304,6 @@ def pexpect_boot_to_prompt(target, config):
     # Older (e.g. v4.4) kernels: fdt: Machine model: Hardkernel Odroid XU3 Lite
     # New kernels: OF: fdt: Machine model: Hardkernel Odroid XU3 Lite
     child.expect_exact('Machine model: """ + TARGET_CONFIG[target]['machine'] + """')
-    child.expect_exact('SMP: Total of """ + TARGET_CONFIG[target]['cpus'] + """ processors activated')
     """
 
     if config == 'exynos':
