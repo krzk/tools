@@ -23,7 +23,7 @@ if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
 elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
 	BRANCHES="fixes for-next"
 elif [[ $REMOTE_URL == *"/pinctrl/samsung.git"* ]]; then
-	BRANCHES="for-next pinctrl-fixes pinctrl-next"
+	BRANCHES="fixes for-next"
 else
 	die "Unknown upstream"
 fi
