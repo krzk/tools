@@ -20,9 +20,9 @@ REMOTE_URL="$(git remote get-url ${REMOTE})"
 if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
 	BRANCHES="fixes next/defconfig next/drivers next/dt next/dt64 next/soc next/soc64"
 elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
-	BRANCHES="fixes"
+	BRANCHES="fixes mem-ctrl-next"
 elif [[ $REMOTE_URL == *"/pinctrl/samsung.git"* ]]; then
-	BRANCHES="fixes"
+	BRANCHES="fixes pinctrl-next"
 else
 	die "Unknown upstream"
 fi
