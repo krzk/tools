@@ -1,4 +1,4 @@
-# Copyright (c) 2015,2016 Krzysztof Kozlowski
+# Copyright (c) 2015-2020 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -15,6 +15,8 @@ ExecStart=/usr/local/bin/buildbot.sh start worker
 ExecStop=/usr/local/bin/buildbot.sh stop worker
 User=buildbot
 PIDFile=/home/buildbot/worker/twistd.pid
+Restart=on-abnormal
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target

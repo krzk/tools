@@ -16,6 +16,8 @@ ExecStop=/usr/local/bin/buildbot.sh stop master
 ExecReload=/usr/local/bin/buildbot.sh reload master
 User=buildbot
 PIDFile=/home/buildbot/master/twistd.pid
+Restart=on-abnormal
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
