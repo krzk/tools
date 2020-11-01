@@ -668,7 +668,7 @@ def steps_test_suite_slow(target, config):
 
 def steps_download(target):
     st = []
-    mastersrc_dir = u'bins-deploy/%(prop:trigger_builder)s/%(prop:revision)s'
+    mastersrc_dir = 'deploy-bin/%(prop:trigger_builder)s/%(prop:revision)s'
 
     # Everything going to /srv should be group-writeable so I can update it manually
     st.append(steps.FileDownload(
