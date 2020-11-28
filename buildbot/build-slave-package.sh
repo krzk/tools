@@ -7,7 +7,8 @@
 # SPDX-License-Identifier: GPL-2.0
 #
 
-. $(dirname ${BASH_SOURCE[0]})/inc-build-slave.sh
+SELF_DIR="$(dirname ${BASH_SOURCE[0]})"
+. "${SELF_DIR}/inc-build-slave.sh"
 
 set -e -E
 # Be verbose for Buildbot debugging
@@ -42,7 +43,7 @@ fi
 # Remove old modules-out
 rm -fr "${OUT_DIR}modules-out"
 # Install modules into modules-out
-build-slave.sh INSTALL_MOD_STRIP=1 INSTALL_MOD_PATH=modules-out modules_install
+"${SELF_DIR}/build-slave.sh" INSTALL_MOD_STRIP=1 INSTALL_MOD_PATH=modules-out modules_install
 # Delete symlinks from modules-out
 find "${OUT_DIR}modules-out/lib/modules/" -type l -delete
 # Tar the modules-out (download cannot transfer entire directories)
