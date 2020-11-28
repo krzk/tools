@@ -52,6 +52,11 @@ def steps_build_common(env, config=None):
                             haltOnFailure=True, env=env, name=step_name))
     return st
 
+def steps_build_linux_kernel(env, build_step_name='Build kernel'):
+    st = []
+    st.append(steps.Compile(command=[util.Interpolate(cmd_make)], haltOnFailure=True, env=env, name=build_step_name))
+    return st
+
 def steps_build_upload_artifacts(name, config, boot, out_dir, buildbot_url):
     st = []
     masterdest_pub_dir = 'deploy-pub/' + name + '/%(prop:revision)s/'
@@ -185,4 +190,15 @@ def steps_build_selected_folders(builder_name, env):
                                      'drivers/clk/samsung/', 'drivers/pinctrl/samsung/', 'drivers/memory/',
                                      'drivers/soc/samsung/'],
                             haltOnFailure=True, env=env, name='Build selected paths'))
+    return st
+
+def steps_checkdtbs(env, config=None, git_reset=True):
+    st = []
+    if git_reset:
+        st += steps_build_common(env, config)
+    step_name = str(config) + ' config' if config else 'defconfig'
+    step_name = 'make dtbs with warnings for ' + env['ARCH'] + '/' + step_name
+    st.append(steps.Compile(command=[util.Interpolate(cmd_make), 'dtbs', 'W=1'],
+                            haltOnFailure=True,
+                            env=env, name=step_name))
     return st
