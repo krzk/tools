@@ -143,6 +143,7 @@ def steps_build_boot_adjust_config(builder_name, env, slaves, config):
                  '-e', 'DEBUG_ATOMIC_SLEEP', '-e', 'DEBUG_LIST',
                  # Enable build-time debugging
                  '-e', 'DEBUG_SECTION_MISMATCH',
+                 '-d', 'SECTION_MISMATCH_WARN_ONLY',
                  # SECCOMP is required by newer Arch ARM systemd
                  '-e', 'SECCOMP',
                 ],
