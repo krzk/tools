@@ -76,10 +76,14 @@ test_board_name() {
 		grep -z 'hardkernel,odroid-xu4$' -q $of && echo "Odroid XU4" && found_board=1
 	esac
 
-	test -n "$soc_family" && test_cat /sys/bus/soc/devices/soc0/family "$soc_family"
-	test -n "$soc_id" && test_cat /sys/bus/soc/devices/soc0/soc_id "$soc_id"
-	test -n "$soc_machine" && test_cat /sys/bus/soc/devices/soc0/machine "$soc_machine"
-	test -n "$soc_revision" && test_cat /sys/bus/soc/devices/soc0/revision "$soc_revision"
+	if is_kernel_le 5 5; then
+		print_msg "Skipping soc0 revision checks, older kernel"
+	else
+		test -n "$soc_family" && test_cat /sys/bus/soc/devices/soc0/family "$soc_family"
+		test -n "$soc_id" && test_cat /sys/bus/soc/devices/soc0/soc_id "$soc_id"
+		test -n "$soc_machine" && test_cat /sys/bus/soc/devices/soc0/machine "$soc_machine"
+		test -n "$soc_revision" && test_cat /sys/bus/soc/devices/soc0/revision "$soc_revision"
+	fi
 
 	if [ $found_board -ne 1 ]; then
 		echo
