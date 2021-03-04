@@ -10,7 +10,7 @@
 # script directly from the git repository.
 
 # FIX ME: point at the actual location of pgpkeys.git clone
-PGPKEYS="$HOME/dev/3rdparty/korg-pgpkeys"
+PGPKEYS="$HOME/dev/korg-pgpkeys"
 
 # If you remove "--import-options merge-only", it will import keys
 # not already present on your keyring, which is not what you want!
