@@ -37,8 +37,6 @@
     # SSH logins not allowed
     append: no
     groups: ''
-  notify:
-    - Print public SSH key
   become: yes
   become_user: root
 
@@ -89,3 +87,16 @@
   become: yes
   become_user: root
   when: systemd_service.changed | default(False)
+
+- name: Get public SSH key
+  command: /bin/cat /home/{{ user_tunnel }}/.ssh/id_rsa.pub
+  register: ssh_public_key
+  check_mode: no
+  changed_when: no
+  become: yes
+  become_user: root
+
+- debug:
+    msg:
+      - 'SSH public key for user {{ user_tunnel }}:'
+      - '{{ ssh_public_key.stdout_lines }}'
