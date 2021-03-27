@@ -42,6 +42,13 @@
   become: yes
   become_user: root
 
+- name: Set chmod on user's home directory
+  file:
+    path: '/home/{{ user_tunnel }}'
+    mode: 0700
+  become: yes
+  become_user: root
+
 # TODO: after migrating to Ansible v2.6, use user:password_lock
 - name: Lock user password
   command: passwd -l {{ user_tunnel }}
