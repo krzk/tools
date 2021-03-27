@@ -1,0 +1,44 @@
+---
+- name: Check requirements for variables
+  assert:
+    that: '{{ item }} is defined'
+  with_items:
+    - buildbot_group
+    - buildbot_user
+
+- name: Create buildbot user
+  user:
+    name: '{{ buildbot_user }}'
+    shell: /bin/bash
+    home: '/home/{{ buildbot_user }}'
+    state: present
+    create_home: yes
+    force: no
+    remove: no
+  become: yes
+  become_user: root
+
+- name: Add admin to buildbot group
+  user:
+    name: '{{ ansible_user_id }}'
+    groups: '{{ buildbot_group }}'
+    append: yes
+  # become_user must be aparently set after usage of ansible_user_id
+  # so ansible_user_id will point to original invoker (not root)
+  become: yes
+  become_user: root
+
+- name: Set authorized SSH key for admin
+  authorized_key:
+    user: '{{ buildbot_user }}'
+    state: present
+    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+  become: yes
+  become_user: root
+
+- name: Set chmod on buildbot user's home directory
+  file:
+    path: '{{ buildbot_home }}'
+    mode: 0750
+  become: yes
+  become_user: root

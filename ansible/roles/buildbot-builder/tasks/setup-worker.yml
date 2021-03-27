@@ -1,0 +1,108 @@
+---
+- name: Check requirements for variables
+  assert:
+    that: '{{ item }} is defined'
+  with_items:
+    - buildbot_user
+    - buildbot_home
+    - buildbot_worker_dirname
+    - buildbot_basedir
+    - buildbot_sandbox
+    - buildbot_master_hostname
+    - buildbot_master_hostname
+    - buildbot_worker_name
+    - buildbot_worker_password
+    - buildbot_worker_admin
+    - buildbot_worker_description
+
+- name: Install PIP buildbot
+  pip:
+    name:
+      - buildbot-worker
+    state: latest
+    virtualenv: '{{ buildbot_sandbox }}'
+  register: pip_buildbot
+  remote_user: '{{ buildbot_user }}'
+
+- name: Create worker
+  shell: >
+    source {{ buildbot_sandbox }}/bin/activate ;
+    buildbot-worker create-worker --allow-shutdown=file --umask 0o022 {{ buildbot_worker_dirname }}
+    {{ buildbot_master_hostname }} {{ buildbot_worker_name }} {{ buildbot_worker_password }}
+  args:
+    executable: /bin/bash
+    creates: '{{ buildbot_basedir }}/buildbot.tac'
+  remote_user: '{{ buildbot_user }}'
+
+# Umask for worker was set for 0o022 so transferred files to master will be accessible by others.
+# However in such case be sure that the workers directory (its configuration) is private.
+- name: Set chmod on worker directory
+  file:
+    path: '{{ buildbot_basedir }}'
+    mode: 0700
+  remote_user: '{{ buildbot_user }}'
+
+- name: Print Buildbot worker name and password for registering in master
+  command: /bin/grep -e 'workername = ' -e 'passwd = ' {{ buildbot_basedir }}/buildbot.tac
+  register: details
+  # Command does not change system so run it always (even in --check)
+  check_mode: no
+  changed_when: no
+  remote_user: '{{ buildbot_user }}'
+
+- name: Set worker admin
+  copy:
+    content: '{{ buildbot_worker_admin }}'
+    dest: '{{ buildbot_basedir }}/info/admin'
+    mode: 0644
+  remote_user: '{{ buildbot_user }}'
+
+- name: Set worker description
+  copy:
+    content: '{{ buildbot_worker_description }}'
+    dest: '{{ buildbot_basedir }}/info/host'
+    mode: 0644
+  remote_user: '{{ buildbot_user }}'
+
+- name: Install SystemD unit file
+  template:
+    src: buildbot-slave.service.j2
+    dest: /etc/systemd/system/buildbot-slave.service
+    mode: 0644
+  become: yes
+  become_user: root
+
+- name: Install rc launcher script
+  template:
+    src: buildbot.sh.j2
+    dest: /usr/local/bin/buildbot.sh
+    mode: 0755
+  become: yes
+  become_user: root
+
+- name: Systemd reload
+  systemd:
+    daemon_reload: yes
+  become: yes
+  become_user: root
+
+- name: Systemd enable buildbot
+  systemd:
+    name: buildbot-slave
+    enabled: yes
+    masked: no
+  become: yes
+  become_user: root
+
+- name: Restart buildbot worker
+  service:
+    name: buildbot-slave
+    state: restarted
+  become: yes
+  become_user: root
+  when: pip_buildbot.changed | default(False)
+
+- debug:
+    msg:
+      - 'Buildbot worker name and password to register in master:'
+      - '{{ details.stdout_lines }}'

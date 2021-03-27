@@ -1,0 +1,4 @@
+buildbot_user: buildbot
+buildbot_group: buildbot
+buildbot_master_hostname: 'build.krzk.eu'
+buildbot_worker_admin: 'krzk'

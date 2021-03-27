@@ -1,0 +1,29 @@
+---
+- name: Update apt-cache
+  apt:
+    update_cache: yes
+  tags: packages
+  become: yes
+  become_user: root
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Install dependencies
+  apt:
+    name:
+      - bison
+      - build-essential
+      - ccache
+      - diffutils
+      - flex
+      - gcc-arm-linux-gnueabi
+      - gcc-aarch64-linux-gnu
+      - git
+      - libelf-dev
+      - libkeyutils-dev
+      - libssl-dev
+      - patch
+    state: present
+  tags: packages, python
+  become: yes
+  become_user: root
+  when: ansible_facts['os_family'] == 'Debian'

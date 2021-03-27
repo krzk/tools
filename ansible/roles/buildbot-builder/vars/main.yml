@@ -1,0 +1,7 @@
+---
+buildbot_worker_dirname: worker
+buildbot_home: '/home/{{ buildbot_user }}'
+buildbot_basedir: '{{ buildbot_home }}/{{ buildbot_worker_dirname }}'
+buildbot_sandbox: '{{ buildbot_home }}/sandbox'
+buildbot_worker_password: '{{ 99999 | random }}-{{ 99999 | random }}-{{ 99999 | random }}-{{ 99999 | random }}'
+buildbot_worker_description: '{{ ansible_hostname }}'
