@@ -71,17 +71,21 @@
     mode: 0644
   become: yes
   become_user: root
+  register: systemd_service
 
 - name: Systemd reload
   systemd:
     daemon_reload: yes
   become: yes
   become_user: root
+  when: systemd_service.changed | default(False)
 
 - name: Systemd enable service
   systemd:
     name: tunnel.service
     enabled: yes
     masked: no
+    state: restarted
   become: yes
   become_user: root
+  when: systemd_service.changed | default(False)
