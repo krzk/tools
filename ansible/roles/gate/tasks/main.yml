@@ -8,6 +8,7 @@
     that: '{{ item }} is defined'
   with_items:
   - authorized_keys_gate
+  - ssh_allow_group
   - user_gate
 
 - name: Create gateway unprivileged user
@@ -20,7 +21,7 @@
     force: no
     generate_ssh_key: no
     append: no
-    groups: ssh_allow
+    groups: '{{ ssh_allow_group }}'
   become: yes
   become_user: root
 

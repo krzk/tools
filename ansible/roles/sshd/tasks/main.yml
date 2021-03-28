@@ -1,7 +1,13 @@
 ---
+- name: Check requirements for variables
+  assert:
+    that: '{{ item }} is defined'
+  with_items:
+  - ssh_allow_group
+
 - name: Add group for SSH logins
   group:
-    name: ssh_allow
+    name: '{{ ssh_allow_group }}'
     state: present
   become: yes
   become_user: root
@@ -12,7 +18,7 @@
     append: yes
     force: no
     generate_ssh_key: no
-    groups: ssh_allow
+    groups: '{{ ssh_allow_group }}'
     state: present
   become: yes
   become_user: root
@@ -24,7 +30,7 @@
     insertafter: EOF
     line: '{{ item }}'
   with_items:
-    - 'AllowGroups ssh_allow'
+    - 'AllowGroups {{ ssh_allow_group }}'
   become: yes
   become_user: root
 
