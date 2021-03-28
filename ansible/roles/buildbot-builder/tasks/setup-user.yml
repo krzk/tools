@@ -15,6 +15,7 @@
     create_home: yes
     force: no
     remove: no
+    generate_ssh_key: yes
   become: yes
   become_user: root
 
@@ -42,3 +43,16 @@
     mode: 0750
   become: yes
   become_user: root
+
+- name: Get public SSH key
+  command: /bin/cat {{ buildbot_home }}/.ssh/id_rsa.pub
+  register: ssh_public_key
+  check_mode: no
+  changed_when: no
+  become: yes
+  become_user: root
+
+- debug:
+    msg:
+      - 'SSH public key for user {{ buildbot_user }}:'
+      - '{{ ssh_public_key.stdout_lines }}'
