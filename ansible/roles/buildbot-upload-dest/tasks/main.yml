@@ -3,6 +3,7 @@
   assert:
     that: '{{ item }} is defined'
   with_items:
+    - mail_foward_to
     - user_buildbot_upload
 
 - name: Create unprivileged user
@@ -87,4 +88,11 @@
   with_items:
     - '/home/{{ user_buildbot_upload }}/deploy-pub'
     - '/home/{{ user_buildbot_upload }}/deploy-bin'
+  remote_user: '{{ user_buildbot_upload }}'
+
+- name: Set up forward
+  ansible.builtin.copy:
+    content: |
+      {{ mail_foward_to }}
+    dest: '/home/{{ user_buildbot_upload }}/.forward'
   remote_user: '{{ user_buildbot_upload }}'
