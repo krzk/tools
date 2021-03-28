@@ -79,8 +79,8 @@ def steps_build_upload_artifacts(name, config, boot, out_dir, buildbot_url):
                                     'vmlinux']
         upload_files_src_objects = [(out_dir + i) for i in upload_files_src_objects]
         st.append(steps.ShellCommand(command=['xz', upload_files_src_objects],
-                                    haltOnFailure=True,
-                                    name='Compress compiled objects'))
+                                     haltOnFailure=True,
+                                     name='Compress compiled objects'))
         upload_files_src_objects = [(i + '.xz') for i in upload_files_src_objects]
 
         upload_files_src_mandatory = ['arch/arm/boot/zImage',
