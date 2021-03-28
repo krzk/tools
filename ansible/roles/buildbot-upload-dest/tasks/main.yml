@@ -1,0 +1,90 @@
+---
+- name: Check requirements for variables
+  assert:
+    that: '{{ item }} is defined'
+  with_items:
+    - user_buildbot_upload
+
+- name: Create unprivileged user
+  user:
+    name: '{{ user_buildbot_upload }}'
+    shell: /bin/bash
+    home: '/home/{{ user_buildbot_upload }}'
+    state: present
+    create_home: yes
+    force: no
+    generate_ssh_key: no
+    append: no
+    # see: sshd
+    groups: '{{ ssh_allow_group }}'
+  become: yes
+  become_user: root
+
+# TODO: after migrating to Ansible v2.6, use user:password_lock
+- name: Lock user password
+  command: passwd -l {{ user_buildbot_upload }}
+  become: yes
+  become_user: root
+
+- name: Add to authorized keys - current key
+  authorized_key:
+    user: '{{ user_buildbot_upload }}'
+    state: present
+    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+  become: yes
+  become_user: root
+
+- name: Set chmod on user's home directory
+  file:
+    path: '/home/{{ user_buildbot_upload }}'
+    mode: '0751'
+  remote_user: '{{ user_buildbot_upload }}'
+
+- name: Create upload dirs
+  file:
+    path: '{{ item }}'
+    state: directory
+    mode: '0755'
+  with_items:
+    - '/home/{{ user_buildbot_upload }}/deploy-pub'
+    - '/home/{{ user_buildbot_upload }}/deploy-bin'
+  remote_user: '{{ user_buildbot_upload }}'
+
+- name: Link pub upload to nginx
+  file:
+    src: '/home/{{ user_buildbot_upload }}/deploy-pub'
+    dest: '/usr/share/nginx/html/pub/deploy-pub'
+    owner: '{{ user_buildbot_upload }}'
+    group: '{{ user_buildbot_upload }}'
+    state: link
+  become: yes
+  become_user: root
+
+- name: Update permissions of files
+  command: "find {{ item }} -type f -exec chmod a+r '{}' \\;"
+  with_items:
+    - '/home/{{ user_buildbot_upload }}/deploy-pub'
+    - '/home/{{ user_buildbot_upload }}/deploy-bin'
+  remote_user: '{{ user_buildbot_upload }}'
+
+- name: Set up cron - cleanup files
+  ansible.builtin.cron:
+    name: 'cleanup files - {{ item }}'
+    minute: '5'
+    hour: '1'
+    job: 'find {{ item }} -mindepth 1 -mtime +14 -type f -print -delete'
+  with_items:
+    - '/home/{{ user_buildbot_upload }}/deploy-pub'
+    - '/home/{{ user_buildbot_upload }}/deploy-bin'
+  remote_user: '{{ user_buildbot_upload }}'
+
+- name: Set up cron - cleanup dirs
+  ansible.builtin.cron:
+    name: 'cleanup dirs - {{ item }}'
+    minute: '10'
+    hour: '1'
+    job: 'find {{ item }} -mindepth 1 -type d -empty -print -delete'
+  with_items:
+    - '/home/{{ user_buildbot_upload }}/deploy-pub'
+    - '/home/{{ user_buildbot_upload }}/deploy-bin'
+  remote_user: '{{ user_buildbot_upload }}'

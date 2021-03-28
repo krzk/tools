@@ -3,3 +3,7 @@
   roles:
     - tunnel
     - buildbot-builder
+
+- hosts: buildbot_masters
+  roles:
+    - buildbot-upload-dest
