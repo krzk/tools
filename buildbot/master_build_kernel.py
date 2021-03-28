@@ -9,8 +9,28 @@
 #
 
 from buildbot.plugins import steps, util
+import twisted
+
+upload_config = {
+        'host': 'build.krzk.eu',
+        'user': 'buildbot_upload',
+        'port': '443',
+}
 
 cmd_make = '%(prop:builddir:-~/)s/tools/buildbot/build-slave.sh'
+
+class ShellCmdWithLink(steps.ShellCommand):
+    renderables = ['url']
+
+    def __init__(self, url, **buildstep_kwargs):
+        super().__init__(**buildstep_kwargs)
+        self.url = url
+
+    @twisted.internet.defer.inlineCallbacks
+    def run(self):
+        yield self.addURL('files', self.url)
+        res = yield super().run()
+        return res
 
 def cmd_make_config(config=None):
     if config == None:
@@ -57,67 +77,95 @@ def steps_build_linux_kernel(env, build_step_name='Build kernel'):
     st.append(steps.Compile(command=[util.Interpolate(cmd_make)], haltOnFailure=True, env=env, name=build_step_name))
     return st
 
+def steps_build_upload_artifacts_binaries(name, config, out_dir):
+    st = []
+
+    masterdest_dir_bin = 'deploy-bin/' + name + '/%(prop:revision)s/'
+    st.append(steps.ShellCommand(command=['ssh', '-o', 'StrictHostKeyChecking=no', '-p', upload_config['port'],
+                                            '{}@{}'.format(upload_config['user'], upload_config['host']),
+                                            util.Interpolate('mkdir -p ' + masterdest_dir_bin),
+                                            ],
+                                haltOnFailure=True,
+                                name='Prepare upload directory: binaries'))
+
+    upload_files_compress = ['Module.symvers',
+                                'System.map',
+                                'modules.builtin',
+                                #'vmlinux.symvers', # Not in kernel v4.4
+                                'vmlinux',
+                                ]
+    upload_files_compress = [(out_dir + i) for i in upload_files_compress]
+    st.append(steps.ShellCommand(command=['xz', '--threads=0',
+                                            upload_files_compress],
+                                    haltOnFailure=True,
+                                    name='Compress compiled objects'))
+    upload_files_compress = [(i + '.xz') for i in upload_files_compress]
+
+    upload_files_bin = ['arch/arm/boot/zImage',
+                        'arch/arm/boot/dts/exynos4412-odroidu3.dtb',
+                        'arch/arm/boot/dts/exynos4412-odroidx.dtb',
+                        'arch/arm/boot/dts/exynos5420-arndale-octa.dtb',
+                        'arch/arm/boot/dts/exynos5422-odroidxu3-lite.dtb',
+                        'modules-out.tar.gz',
+                        ]
+    upload_files_bin = [(out_dir + i) for i in upload_files_bin]
+    upload_files_bin.extend(upload_files_compress)
+    st.append(steps.ShellCommand(command=['scp', '-p', '-o', 'StrictHostKeyChecking=no', '-P', upload_config['port'],
+                                            upload_files_bin,
+                                            util.Interpolate('{}@{}:{}'.format(upload_config['user'], upload_config['host'], masterdest_dir_bin)),
+                                            ],
+                                    haltOnFailure=True,
+                                    name='Upload kernel, modules and required DTBs'))
+
+    # XU, XU4 and HC1 might be missing for older kernels -  In case of failure do not halt,
+    # do not fail and mark build as warning. flunkOnFailure is by default True.
+    upload_files_bin = ['arch/arm/boot/dts/exynos5410-odroidxu.dtb',
+                        'arch/arm/boot/dts/exynos5422-odroidhc1.dtb',
+                        'arch/arm/boot/dts/exynos5422-odroidxu4.dtb',
+                        ]
+    upload_files_bin = [(out_dir + i) for i in upload_files_bin]
+    st.append(steps.ShellCommand(command=['scp', '-p', '-o', 'StrictHostKeyChecking=no', '-P', upload_config['port'],
+                                            upload_files_bin,
+                                            util.Interpolate('{}@{}:{}'.format(upload_config['user'], upload_config['host'], masterdest_dir_bin)),
+                                            ],
+                                    haltOnFailure=False, warnOnFailure=True, flunkOnFailure=False,
+                                    name='Upload optional DTBs'))
+
+    return st
+
 def steps_build_upload_artifacts(name, config, boot, out_dir, buildbot_url):
     st = []
-    masterdest_pub_dir = 'deploy-pub/' + name + '/%(prop:revision)s/'
-    masterdest_bin_dir = 'deploy-bin/' + name + '/%(prop:revision)s/'
-    st.append(steps.FileUpload(workersrc=out_dir + '.config',
-                               masterdest=util.Interpolate(masterdest_pub_dir + 'config'),
-                               mode=0o0644,
-                               url=util.Interpolate(buildbot_url + 'pub/' + masterdest_pub_dir),
-                               haltOnFailure=True, name='Upload config'))
-    st.append(steps.FileUpload(workersrc=out_dir + 'include/generated/autoconf.h',
-                               masterdest=util.Interpolate(masterdest_pub_dir + 'autoconf.h'),
-                               mode=0o0644,
-                               url=util.Interpolate(buildbot_url + 'pub/' + masterdest_pub_dir),
-                               haltOnFailure=True, name='Upload autoconf.h'))
+    masterdest_dir_pub = 'deploy-pub/' + name + '/%(prop:revision)s/'
+
+    st.append(steps.ShellCommand(command=['ssh', '-o', 'StrictHostKeyChecking=no', '-p', upload_config['port'],
+                                          '{}@{}'.format(upload_config['user'], upload_config['host']),
+                                          util.Interpolate('mkdir -p ' + masterdest_dir_pub),
+                                          ],
+                                 haltOnFailure=True,
+                                 name='Prepare upload directory: sources'))
+
+    cmd = 'echo "Source URL: %(prop:repository)s\nRevision: %(prop:revision)s" > ' + out_dir + 'sources.txt; '
+    cmd += 'cp -p ' + out_dir + '.config ' + out_dir + 'config; '
+    cmd += 'chmod a+r ' + out_dir + 'config; '
+    cmd += 'chmod a+r ' + out_dir + 'sources.txt; '
+    cmd += 'chmod a+r ' + out_dir + 'include/generated/autoconf.h'
+    st.append(steps.ShellCommand(command=util.Interpolate(cmd),
+                                 name='Prepare source files for uploading'))
+
+    upload_files_pub = ['config',
+                        'include/generated/autoconf.h',
+                        'sources.txt']
+    upload_files_pub = [(out_dir + i) for i in upload_files_pub]
+    st.append(ShellCmdWithLink(command=['scp', '-p', '-o', 'StrictHostKeyChecking=no', '-P', upload_config['port'],
+                                        upload_files_pub,
+                                        util.Interpolate('{}@{}:{}'.format(upload_config['user'], upload_config['host'], masterdest_dir_pub)),
+                                        ],
+                                 url=util.Interpolate(buildbot_url + 'pub/' + masterdest_dir_pub),
+                                 haltOnFailure=True,
+                                 name='Upload config and autoconf.h'))
+
     if boot and config:
-        upload_files_src_objects = ['Module.symvers',
-                                    'System.map',
-                                    'modules.builtin',
-                                    #'vmlinux.symvers', # Not in kernel v4.4
-                                    'vmlinux']
-        upload_files_src_objects = [(out_dir + i) for i in upload_files_src_objects]
-        st.append(steps.ShellCommand(command=['xz', '--threads=0',
-                                     upload_files_src_objects],
-                                     haltOnFailure=True,
-                                     name='Compress compiled objects'))
-        upload_files_src_objects = [(i + '.xz') for i in upload_files_src_objects]
-
-        upload_files_src_mandatory = ['arch/arm/boot/zImage',
-                                      'arch/arm/boot/dts/exynos4412-odroidu3.dtb',
-                                      'arch/arm/boot/dts/exynos4412-odroidx.dtb',
-                                      'arch/arm/boot/dts/exynos5420-arndale-octa.dtb',
-                                      'arch/arm/boot/dts/exynos5422-odroidxu3-lite.dtb',
-                                      'modules-out.tar.gz',
-                                      ]
-        upload_files_src_mandatory = [(out_dir + i) for i in upload_files_src_mandatory]
-        upload_files_src_mandatory.extend(upload_files_src_objects)
-        st.append(steps.MultipleFileUpload(workersrcs=upload_files_src_mandatory,
-                                           masterdest=util.Interpolate(masterdest_bin_dir),
-                                           mode=0o0644,
-                                           haltOnFailure=True,
-                                           name='Upload kernel, modules and required DTBs'))
-
-        # XU, XU4 and HC1 might be missing for older kernels -  In case of failure do not halt,
-        # do not fail and mark build as warning. flunkOnFailure is by default True.
-        upload_files_src_optional = ['arch/arm/boot/dts/exynos5410-odroidxu.dtb',
-                                     'arch/arm/boot/dts/exynos5422-odroidhc1.dtb',
-                                     'arch/arm/boot/dts/exynos5422-odroidxu4.dtb',
-                                     ]
-        upload_files_src_optional = [(out_dir + i) for i in upload_files_src_optional]
-        st.append(steps.MultipleFileUpload(workersrcs=upload_files_src_optional,
-                                           masterdest=util.Interpolate(masterdest_bin_dir),
-                                           mode=0o0644,
-                                           haltOnFailure=False, warnOnFailure=True, flunkOnFailure=False,
-                                           name='Upload optional DTBs'))
-    st.append(steps.MasterShellCommand(command=['chmod', 'a+rx', 'deploy-pub/' + name,
-                                                util.Interpolate(masterdest_pub_dir)],
-                                       name='Set world-readable permissions on uploaded files for web server'))
-    masterdest_src_doc_cmd = 'echo "Source URL: %(prop:repository)s\nRevision: %(prop:revision)s" > ' + masterdest_pub_dir + 'sources.txt; '
-    masterdest_src_doc_cmd += 'chmod a+r ' + masterdest_pub_dir + 'sources.txt'
-    st.append(steps.MasterShellCommand(command=util.Interpolate(masterdest_src_doc_cmd),
-                                       name='Document source location'))
+        st.extend(steps_build_upload_artifacts_binaries(name, config, out_dir))
 
     return st
 
