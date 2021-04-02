@@ -27,3 +27,12 @@
   become: yes
   become_user: root
   when: ansible_facts['os_family'] == 'Debian'
+
+- name: install Python dependencies
+  pip:
+    name:
+      - GitPython
+      - ply
+    state: latest
+    virtualenv: '{{ buildbot_sandbox }}'
+  remote_user: '{{ buildbot_user }}'
