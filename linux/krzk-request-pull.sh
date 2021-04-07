@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2016-2020 Krzysztof Kozlowski
+# Copyright (c) 2016-2021 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -28,17 +28,19 @@ REMOTE="$(git rev-parse --abbrev-ref --symbolic-full-name master@{upstream})"
 REMOTE="${REMOTE%%/*}"
 REMOTE_URL="$(git remote get-url ${REMOTE})"
 
+CC_KRZK="Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>"
+
 if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
 	TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
-	CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>"
+	CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, $CC_KRZK"
 	SUBJECT="ARM: dts: samsung:"
 elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
 	TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
-	CC="linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>"
+	CC="linux-kernel@vger.kernel.org, $CC_KRZK"
 	SUBJECT="memory:"
 elif [[ $REMOTE_URL == *"/pinctrl/samsung.git"* ]]; then
 	TO="Linus Walleij <linus.walleij@linaro.org>"
-	CC="Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org"
+	CC="Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, $CC_KRZK"
 	SUBJECT="pinctrl: samsung:"
 else
 	usage
@@ -48,7 +50,7 @@ git tag -v $TAG &> /dev/null || die "Wrong tag or signature"
 
 echo "Output to: $OUT"
 echo "Subject: [GIT PULL] $SUBJECT xxx for v5.x
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
 To: $TO
 Cc: $CC
 
