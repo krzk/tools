@@ -37,7 +37,11 @@
   remote_user: '{{ buildbot_user }}'
 
 - name: Check if sandbox is working
-  shell: source {{ buildbot_sandbox }}/bin/activate ; printenv | grep VIRTUAL
+  shell:
+    cmd: |
+      set -eE
+      source {{ buildbot_sandbox }}/bin/activate
+      printenv | grep VIRTUAL
   args:
     executable: /bin/bash
   # Command does not change system so run it always (even in --check)
