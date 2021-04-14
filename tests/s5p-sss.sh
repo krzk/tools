@@ -8,7 +8,7 @@
 #
 
 set -e -E -x
-. $(dirname ${BASH_SOURCE[0]})/inc-common.sh
+. $(dirname "${BASH_SOURCE[0]}")/inc-common.sh
 
 test_s5p_sss_selftests() {
 	local name="s5p-sss selftests"

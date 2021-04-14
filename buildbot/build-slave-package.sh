@@ -7,7 +7,7 @@
 # SPDX-License-Identifier: GPL-2.0
 #
 
-SELF_DIR="$(dirname ${BASH_SOURCE[0]})"
+SELF_DIR="$(dirname "${BASH_SOURCE[0]}")"
 . "${SELF_DIR}/inc-build-slave.sh"
 
 set -e -E

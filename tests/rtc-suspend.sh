@@ -8,7 +8,7 @@
 #
 
 set -e -E -x
-. $(dirname ${BASH_SOURCE[0]})/inc-common.sh
+. $(dirname "${BASH_SOURCE[0]}")/inc-common.sh
 
 # test_rtc_suspend_device device
 test_rtc_suspend_device() {

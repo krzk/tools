@@ -8,7 +8,7 @@
 #
 
 set -e -E -x
-. $(dirname ${BASH_SOURCE[0]})/inc-common.sh
+. $(dirname "${BASH_SOURCE[0]}")/inc-common.sh
 
 LOOPS=1
 if [ "$1" == "--intensive" ]; then

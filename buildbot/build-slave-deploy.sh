@@ -7,7 +7,7 @@
 # SPDX-License-Identifier: GPL-2.0
 #
 
-. $(dirname ${BASH_SOURCE[0]})/inc-build-slave.sh
+. $(dirname "${BASH_SOURCE[0]}")/inc-build-slave.sh
 
 set -e -E
 # Be verbose for Buildbot debugging
