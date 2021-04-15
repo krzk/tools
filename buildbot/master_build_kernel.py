@@ -41,6 +41,21 @@ def cmd_make_config(config=None):
         config = str(config) + '_defconfig'
     return [util.Interpolate(cmd_make), config]
 
+def step_touch_commit_files():
+    cmd = '''
+    if git rev-parse HEAD^2 ; then
+        # It's a merge, touch files changed by both parents
+        FILES="`git diff-tree --no-commit-id --name-only -r HEAD^1..HEAD` `git diff-tree --no-commit-id --name-only -r HEAD^2..HEAD`"
+    else
+        FILES="`git diff-tree --no-commit-id --name-only -r HEAD`"
+    fi
+    touch $FILES
+    echo $FILES
+    '''
+    return steps.ShellCommand(command=['/bin/sh', '-c', cmd],
+                              haltOnFailure=True,
+                              name='touch changed files')
+
 def steps_build_common(env, config=None):
     st = []
     step_name = str(config) + ' config' if config else 'defconfig'
@@ -246,8 +261,13 @@ def steps_checkdtbs(env, config=None, git_reset=True):
     st = []
     if git_reset:
         st += steps_build_common(env, config)
-    step_name = str(config) + ' config' if config else 'defconfig'
-    step_name = 'make dtbs with warnings for ' + env['ARCH'] + '/' + step_name
+    step_name_cfg = str(config) + ' config' if config else 'defconfig'
+    step_name = 'make dtbs baseline for ' + env['ARCH'] + '/' + step_name_cfg
+    st.append(steps.ShellCommand(command=[util.Interpolate(cmd_make), 'dtbs', 'W=1'],
+                                 haltOnFailure=True,
+                                 env=env, name=step_name))
+    st.append(step_touch_commit_files())
+    step_name = 'make dtbs warnings for ' + env['ARCH'] + '/' + step_name_cfg
     st.append(steps.Compile(command=[util.Interpolate(cmd_make), 'dtbs', 'W=1'],
                             haltOnFailure=True,
                             env=env, name=step_name))
