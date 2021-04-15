@@ -41,6 +41,12 @@ def cmd_make_config(config=None):
         config = str(config) + '_defconfig'
     return [util.Interpolate(cmd_make), config]
 
+def step_make_config(env, config=None):
+    step_name = str(config) + ' config' if config else 'defconfig'
+    step_name = 'make ' + step_name
+    return steps.Compile(command=cmd_make_config(config),
+                         haltOnFailure=True, env=env, name=step_name)
+
 def step_touch_commit_files():
     cmd = '''
     if git rev-parse HEAD^2 ; then
@@ -58,8 +64,6 @@ def step_touch_commit_files():
 
 def steps_build_common(env, config=None):
     st = []
-    step_name = str(config) + ' config' if config else 'defconfig'
-    step_name = 'make ' + step_name
     st.append(steps.Git(repourl='https://github.com/krzk/tools.git',
                         name='Clone krzk tools sources',
                         mode='incremental',
@@ -83,8 +87,8 @@ def steps_build_common(env, config=None):
     st.append(steps.SetPropertyFromCommand(command=[util.Interpolate(cmd_make), '-s', 'kernelversion'],
                                            property='kernel_version', haltOnFailure=True,
                                            env=env, name='Set property: kernel version'))
-    st.append(steps.Compile(command=cmd_make_config(config),
-                            haltOnFailure=True, env=env, name=step_name))
+    st.append(step_make_config(env, config))
+
     return st
 
 def steps_build_linux_kernel(env, build_step_name='Build kernel'):
@@ -261,6 +265,8 @@ def steps_checkdtbs(env, config=None, git_reset=True):
     st = []
     if git_reset:
         st += steps_build_common(env, config)
+    else:
+        st.append(step_make_config(env, config))
     step_name_cfg = str(config) + ' config' if config else 'defconfig'
     step_name = 'make dtbs baseline for ' + env['ARCH'] + '/' + step_name_cfg
     st.append(steps.ShellCommand(command=[util.Interpolate(cmd_make), 'dtbs', 'W=1'],
