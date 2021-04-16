@@ -91,9 +91,14 @@ def steps_build_common(env, config=None):
 
     return st
 
-def steps_build_linux_kernel(env, build_step_name='Build kernel'):
+def steps_build_linux_kernel(env, build_step_name='Build kernel', skip_warnings=False):
     st = []
-    st.append(steps.Compile(command=[util.Interpolate(cmd_make)], haltOnFailure=True, env=env, name=build_step_name))
+    if skip_warnings:
+        st.append(steps.ShellCommand(command=[util.Interpolate(cmd_make)], haltOnFailure=True,
+                                     env=env, name=build_step_name))
+    else:
+        st.append(steps.Compile(command=[util.Interpolate(cmd_make)], haltOnFailure=True,
+                                env=env, name=build_step_name))
     return st
 
 def steps_build_upload_artifacts_binaries(name, config, out_dir):
@@ -253,12 +258,19 @@ def steps_build_selected_folders(builder_name, env):
     st = []
     if not env['KBUILD_OUTPUT']:
         raise ValueError('Missing KBUILD_OUTPUT path in environment')
+    st.append(steps.ShellCommand(command=[util.Interpolate(cmd_make), 'arch/arm/',
+                                          # make won't build DTBs but include it for completeness
+                                          'arch/arm64/boot/dts/',
+                                          'drivers/clk/samsung/', 'drivers/pinctrl/samsung/', 'drivers/memory/',
+                                          'drivers/soc/samsung/'],
+                                 haltOnFailure=True, env=env, name='Build selected paths'))
+    st.append(step_touch_commit_files())
     st.append(steps.Compile(command=[util.Interpolate(cmd_make), 'arch/arm/',
                                      # make won't build DTBs but include it for completeness
                                      'arch/arm64/boot/dts/',
                                      'drivers/clk/samsung/', 'drivers/pinctrl/samsung/', 'drivers/memory/',
                                      'drivers/soc/samsung/'],
-                            haltOnFailure=True, env=env, name='Build selected paths'))
+                            haltOnFailure=True, env=env, name='Rebuild selected paths'))
     return st
 
 def steps_checkdtbs(env, config=None, git_reset=True):
@@ -277,4 +289,13 @@ def steps_checkdtbs(env, config=None, git_reset=True):
     st.append(steps.Compile(command=[util.Interpolate(cmd_make), 'dtbs', 'W=1'],
                             haltOnFailure=True,
                             env=env, name=step_name))
+    return st
+
+def steps_build_with_warnings_diff(builder_name, env):
+    st = []
+    if not env['KBUILD_OUTPUT']:
+        raise ValueError('Missing KBUILD_OUTPUT path in environment')
+    st.extend(steps_build_linux_kernel(env, skip_warnings=True))
+    st.append(step_touch_commit_files())
+    st.extend(steps_build_linux_kernel(env, build_step_name='Rebuild kernel', skip_warnings=False))
     return st
