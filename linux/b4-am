@@ -14,8 +14,8 @@ apply_msg_id() {
 	test -n "$msg_id" || return 0
 
 	echo "Applying ${msg_id}"
-	echo "b4 am --apply-cover-trailers --outdir - --add-link --cherry-pick _ ${msg_id} | git am $options"
-	b4 am --apply-cover-trailers --outdir - --add-link --cherry-pick _ "${msg_id}" | git am $options
+	echo "b4 am --check-newer-revisions --apply-cover-trailers --outdir - --add-link --cherry-pick _ ${msg_id} | git am $options"
+	b4 am --check-newer-revisions --apply-cover-trailers --outdir - --add-link --cherry-pick _ "${msg_id}" | git am $options
 	exit $?
 }
 
