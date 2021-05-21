@@ -26,7 +26,7 @@ for https://krzk.eu.
 
 ## /qemu
 
-Helpers to run and build QEMU.
+Helpers to run and build QEMU (including QEMU development).
 
 ## /tests-var
 
