@@ -1,0 +1,112 @@
+---
+# Copyright (c) 2021 Canonical Ltd.
+# Author: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+#                             <krzk@kernel.org>
+#
+# SPDX-License-Identifier: GPL-2.0
+
+- name: Check requirements for variables
+  assert:
+    that: '{{ item }} is defined'
+  with_items:
+    - locales_generated
+    - locales_default
+
+- name: Update apt-cache
+  apt:
+    update_cache: yes
+  tags: packages
+  become: yes
+  become_user: root
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Install unattended upgrades
+  apt:
+    name:
+      - unattended-upgrades
+    state: present
+  tags: packages
+  become: yes
+  become_user: root
+  when: ansible_facts['os_family'] == 'Debian'
+
+# FIXME: debconf does not work (does not set options persistently) or I fail to use it properly...
+# - name: Enable unattended upgrades - debconf
+#   ansible.builtin.debconf:
+#     name: unattended-upgrades
+#     question: unattended-upgrades/enable_auto_updates
+#     value: 'true'
+#     vtype: boolean
+#   become: yes
+#   become_user: root
+#   when: ansible_facts['os_family'] == 'Debian'
+
+- name: Enable unattended upgrades - debconf
+  lineinfile:
+    dest: '/etc/apt/apt.conf.d/20auto-upgrades'
+    state: present
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+  with_items:
+    - { regexp: 'APT::Periodic::Update-Package-Lists "0";', line: 'APT::Periodic::Update-Package-Lists "1";' }
+    - { regexp: 'APT::Periodic::Unattended-Upgrade "0";', line: 'APT::Periodic::Unattended-Upgrade "1";' }
+  become: yes
+  become_user: root
+  register: unattended
+
+- name: Enable unattended upgrades - dpkg-reconfigure
+  command: dpkg-reconfigure -f noninteractive unattended-upgrades
+  become: yes
+  become_user: root
+  when:
+    - ansible_facts['os_family'] == 'Debian'
+    - unattended.changed | default(False)
+
+# TODO: move to separate role, not really hardening:
+# FIXME: debconf does not work (does not set options persistently) or I fail to use it properly...
+# - name: Set default locale
+#   ansible.builtin.debconf:
+#     name: locales
+#     question: locales/default_environment_locale
+#     value: '{{ locales_default }} '
+#     vtype: select
+#   become: yes
+#   become_user: root
+#   when: ansible_facts['os_family'] == 'Debian'
+
+# - name: Generate locales
+#   ansible.builtin.debconf:
+#     name: locales
+#     question: locales/locales_to_be_generated
+#     value: en_GB.UTF-8 UTF-8, en_US.UTF-8 UTF-8, pl_PL.UTF-8 UTF-8
+#     vtype: multiselect
+#   become: yes
+#   become_user: root
+#   when: ansible_facts['os_family'] == 'Debian'
+
+- name: Choose locales
+  locale_gen:
+    name: '{{ item }}'
+    state: present
+  loop: '{{ locales_generated }}'
+  become: yes
+  become_user: root
+  register: locales
+
+- name: Set default locale
+  lineinfile:
+    dest: '/etc/default/locale'
+    state: present
+    regexp: '^LANG='
+    line: 'LANG={{ locales_default }}'
+  become: yes
+  become_user: root
+  register: locales
+
+- name: Configure locales - dpkg-reconfigure
+  command: dpkg-reconfigure -f noninteractive locales
+  become: yes
+  become_user: root
+  when:
+    - ansible_facts['os_family'] == 'Debian'
+    - locales.changed | default(False)
