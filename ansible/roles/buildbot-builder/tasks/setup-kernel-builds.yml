@@ -1,4 +1,11 @@
 ---
+- name: Check requirements for variables
+  assert:
+    that: '{{ item }} is defined'
+  with_items:
+    - buildbot_sandbox
+    - buildbot_user
+
 - name: Update apt-cache
   apt:
     update_cache: yes
