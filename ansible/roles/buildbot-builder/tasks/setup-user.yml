@@ -5,6 +5,7 @@
   with_items:
     - buildbot_group
     - buildbot_user
+    - ssh_allow_group
 
 - name: Create buildbot user
   user:
@@ -16,6 +17,9 @@
     force: no
     remove: no
     generate_ssh_key: yes
+    # see: sshd
+    append: yes
+    groups: '{{ ssh_allow_group }}'
   become: yes
   become_user: root
 
