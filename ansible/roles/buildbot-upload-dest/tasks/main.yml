@@ -16,8 +16,8 @@
     create_home: yes
     force: no
     generate_ssh_key: no
-    append: no
     # see: sshd
+    append: yes
     groups: '{{ ssh_allow_group }}'
   become: yes
   become_user: root
