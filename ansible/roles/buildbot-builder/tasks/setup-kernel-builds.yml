@@ -43,3 +43,7 @@
     state: latest
     virtualenv: '{{ buildbot_sandbox }}'
   remote_user: '{{ buildbot_user }}'
+
+- name: Set ccache limits
+  command: ccache -M 20G
+  remote_user: '{{ buildbot_user }}'
