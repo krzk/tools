@@ -35,7 +35,7 @@
   become_user: root
   when: ansible_facts['os_family'] == 'Debian'
 
-- name: install Python dependencies
+- name: Install Python dependencies
   pip:
     name:
       - GitPython
