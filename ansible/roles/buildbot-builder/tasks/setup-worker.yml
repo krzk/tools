@@ -25,11 +25,12 @@
   remote_user: '{{ buildbot_user }}'
 
 - name: Create worker
-  shell: >
-    set -eE
-    source {{ buildbot_sandbox }}/bin/activate
-    buildbot-worker create-worker --allow-shutdown=file --umask 0o022 {{ buildbot_worker_dirname }}
-    {{ buildbot_master_hostname }} {{ buildbot_worker_name }} {{ buildbot_worker_password }}
+  shell:
+    cmd: |
+      set -eE
+      source {{ buildbot_sandbox }}/bin/activate
+      buildbot-worker create-worker --allow-shutdown=file --umask 0o022 {{ buildbot_worker_dirname }} \
+        {{ buildbot_master_hostname }} {{ buildbot_worker_name }} {{ buildbot_worker_password }}
   args:
     executable: /bin/bash
     creates: '{{ buildbot_basedir }}/buildbot.tac'
