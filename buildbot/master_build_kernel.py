@@ -49,20 +49,21 @@ def step_make_config(env, config=None):
 
 def step_touch_commit_files():
     cmd = '''
+    DIFF_CMD="git diff-tree --diff-filter=ACM --no-commit-id --name-only -r"
     if git rev-parse HEAD^2 ; then
         # It's a merge
-        if [ "$(git rev-parse HEAD^2)" = "$(git rev-parse master)" ]; then
+        if [ "$(git rev-parse HEAD^2)" = "$(git rev-parse origin/master)" ]; then
             # Merge with master, so get only one parent
-            FILES="`git diff-tree --no-commit-id --name-only -r HEAD^2..HEAD`"
-        elif [ "$(git rev-parse HEAD^1)" = "$(git rev-parse master)" ]; then
+            FILES="`$DIFF_CMD HEAD^2..HEAD`"
+        elif [ "$(git rev-parse HEAD^1)" = "$(git rev-parse origin/master)" ]; then
             # Merge with master, so get only one parent
-            FILES="`git diff-tree --no-commit-id --name-only -r HEAD^1..HEAD`"
+            FILES="`$DIFF_CMD HEAD^1..HEAD`"
         else
             # Merge between my branches, touch files changed by both parents
-            FILES="`git diff-tree --no-commit-id --name-only -r HEAD^1..HEAD` `git diff-tree --no-commit-id --name-only -r HEAD^2..HEAD`"
+            FILES="`$DIFF_CMD HEAD^1..HEAD` `$DIFF_CMD HEAD^2..HEAD`"
         fi
     else
-        FILES="`git diff-tree --no-commit-id --name-only -r HEAD`"
+        FILES="`$DIFF_CMD HEAD`"
     fi
     touch $FILES
     echo $FILES
