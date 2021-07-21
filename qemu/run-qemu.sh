@@ -49,6 +49,9 @@ fi
 
 qemu-system-x86_64 -enable-kvm \
 	-drive "file=${IMG_FILE},format=${IMG_FILE_TYPE}" \
+	-cpu host \
 	-m "${QEMU_MEM}" -smp "cores=${QEMU_CPU}" \
 	-serial stdio \
+	-device virtio-scsi-pci,id=scsi \
+	-usb \
 	-nic user,hostfwd=tcp:127.0.0.1:60022-:22
