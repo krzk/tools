@@ -24,6 +24,10 @@
       - flex
       - gcc-arm-linux-gnueabi
       - gcc-aarch64-linux-gnu
+      - gcc-powerpc64-linux-gnu
+      - gcc-riscv64-linux-gnu
+      - gcc-s390x-linux-gnu
+      - gcc-sparc64-linux-gnu
       - git
       - libelf-dev
       - libkeyutils-dev
