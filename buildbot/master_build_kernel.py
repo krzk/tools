@@ -94,6 +94,9 @@ def steps_build_common(env, config=None):
                         method='fresh',
                         haltOnFailure=True,
                         env=util.Property('git_env')))
+    st.append(steps.SetPropertyFromCommand(command='${CROSS_COMPILE}gcc --version | head -n 1',
+                                           property='gcc_version', haltOnFailure=True,
+                                           env=env, name='Set property: gcc version'))
     st.append(steps.SetPropertyFromCommand(command=[util.Interpolate(cmd_make), '-s', 'kernelversion'],
                                            property='kernel_version', haltOnFailure=True,
                                            env=env, name='Set property: kernel version'))
