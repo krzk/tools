@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2020 Krzysztof Kozlowski
+# Copyright (c) 2015-2021 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -21,7 +21,6 @@ set -e -E
 # Be verbose for Buildbot debugging
 set -x
 
-CROSS_COMPILE=""
 JOBS="$(nproc)"
 # Non-linear scale of jobs
 if [ $JOBS -lt 4 ]; then
@@ -33,25 +32,11 @@ else
 fi
 JOBS="-j${JOBS}"
 
-case $ARCH in
-	arm)
-		# For ArchLinux on ARM:
-		test "$(uname -m)" == "armv7l" && CROSS_COMPILE=""
-		# For Ubuntu on x86:
-		test $(which arm-linux-gnueabi-gcc) && CROSS_COMPILE="arm-linux-gnueabi-"
-		;;
-	arm64)
-		CROSS_COMPILE="aarch64-linux-gnu-"
-		;;
-	*)
-		;;
-esac
-
 # Check and enable ccache:
 if [ "$(have_ccache)" == "0" ]; then
 	export CROSS_COMPILE="ccache $CROSS_COMPILE"
 fi
 
-CROSS_COMPILE="$CROSS_COMPILE" make $JOBS $*
+make $JOBS $*
 
 exit $?
