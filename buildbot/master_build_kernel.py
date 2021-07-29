@@ -104,13 +104,14 @@ def steps_build_common(env, config=None):
 
     return st
 
-def steps_build_linux_kernel(env, build_step_name='Build kernel', skip_warnings=False):
+def steps_build_linux_kernel(env, build_step_name='Build kernel', skip_warnings=True):
     st = []
     if skip_warnings:
         st.append(steps.ShellCommand(command=[util.Interpolate(cmd_make)], haltOnFailure=True,
                                      env=env, name=build_step_name))
     else:
         st.append(steps.Compile(command=[util.Interpolate(cmd_make)], haltOnFailure=True,
+                                warnOnWarnings=True,
                                 env=env, name=build_step_name))
     return st
 
@@ -284,7 +285,9 @@ def steps_build_selected_folders(builder_name, env):
                                      'arch/arm64/boot/dts/',
                                      'drivers/clk/samsung/', 'drivers/pinctrl/samsung/', 'drivers/memory/',
                                      'drivers/soc/samsung/'],
-                            haltOnFailure=True, env=env, name='Rebuild selected paths'))
+                            haltOnFailure=True,
+                            warnOnWarnings=True,
+                            env=env, name='Rebuild selected paths'))
     return st
 
 def steps_checkdtbs(env, config=None, git_reset=True):
@@ -302,6 +305,7 @@ def steps_checkdtbs(env, config=None, git_reset=True):
     step_name = 'make dtbs warnings for ' + env['ARCH'] + '/' + step_name_cfg
     st.append(steps.Compile(command=[util.Interpolate(cmd_make), 'dtbs', 'W=1'],
                             haltOnFailure=True,
+                            warnOnWarnings=True,
                             env=env, name=step_name))
     return st
 
