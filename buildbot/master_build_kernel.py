@@ -11,6 +11,9 @@
 from buildbot.plugins import steps, util
 import twisted
 
+BUILD_WARN_IGNORE = [ (None, '.*warning: #warning syscall .* not implemented.*', None, None),
+                    ]
+
 upload_config = {
         'host': 'build.krzk.eu',
         'user': 'buildbot_upload',
@@ -112,6 +115,7 @@ def steps_build_linux_kernel(env, build_step_name='Build kernel', skip_warnings=
     else:
         st.append(steps.Compile(command=[util.Interpolate(cmd_make)], haltOnFailure=True,
                                 warnOnWarnings=True,
+                                suppressionList=BUILD_WARN_IGNORE,
                                 env=env, name=build_step_name))
     return st
 
@@ -287,6 +291,7 @@ def steps_build_selected_folders(builder_name, env):
                                      'drivers/soc/samsung/'],
                             haltOnFailure=True,
                             warnOnWarnings=True,
+                            suppressionList=BUILD_WARN_IGNORE,
                             env=env, name='Rebuild selected paths'))
     return st
 
@@ -306,6 +311,7 @@ def steps_checkdtbs(env, config=None, git_reset=True):
     st.append(steps.Compile(command=[util.Interpolate(cmd_make), 'dtbs', 'W=1'],
                             haltOnFailure=True,
                             warnOnWarnings=True,
+                            suppressionList=BUILD_WARN_IGNORE,
                             env=env, name=step_name))
     return st
 
