@@ -14,13 +14,13 @@ import twisted
 BUILD_WARN_IGNORE = [ (None, '.*warning: #warning syscall .* not implemented.*', None, None),
                     ]
 
-upload_config = {
+UPLOAD_CONFIG = {
         'host': 'build.krzk.eu',
         'user': 'buildbot_upload',
         'port': '443',
 }
 
-cmd_make = '%(prop:builddir:-~/)s/tools/buildbot/build-slave.sh'
+CMD_MAKE = '%(prop:builddir:-~/)s/tools/buildbot/build-slave.sh'
 
 class ShellCmdWithLink(steps.ShellCommand):
     renderables = ['url']
@@ -42,7 +42,7 @@ def cmd_make_config(config=None):
         config = config + 'config'
     else:
         config = str(config) + '_defconfig'
-    return [util.Interpolate(cmd_make), config]
+    return [util.Interpolate(CMD_MAKE), config]
 
 def step_make_config(env, config=None):
     step_name = str(config) + ' config' if config else 'defconfig'
@@ -76,8 +76,8 @@ def step_touch_commit_files():
                               name='touch changed files')
 
 def step_prepare_upload_master(name, dest):
-    return steps.ShellCommand(command=['ssh', '-o', 'StrictHostKeyChecking=no', '-p', upload_config['port'],
-                                       '{}@{}'.format(upload_config['user'], upload_config['host']),
+    return steps.ShellCommand(command=['ssh', '-o', 'StrictHostKeyChecking=no', '-p', UPLOAD_CONFIG['port'],
+                                       '{}@{}'.format(UPLOAD_CONFIG['user'], UPLOAD_CONFIG['host']),
                                        util.Interpolate('mkdir -p ' + dest),
                                       ],
                               haltOnFailure=True,
@@ -92,9 +92,9 @@ def step_upload_files_to_master(name, src, dest, errors_fatal=False, url=''):
         halt_on_failure=False
         warn_on_failure=True
         flunk_on_failure=False
-    command=['scp', '-p', '-o', 'StrictHostKeyChecking=no', '-P', upload_config['port'],
+    command=['scp', '-p', '-o', 'StrictHostKeyChecking=no', '-P', UPLOAD_CONFIG['port'],
              src,
-             util.Interpolate('{}@{}:{}'.format(upload_config['user'], upload_config['host'], dest)),
+             util.Interpolate('{}@{}:{}'.format(UPLOAD_CONFIG['user'], UPLOAD_CONFIG['host'], dest)),
             ]
     if url:
         return ShellCmdWithLink(command=command,
@@ -135,7 +135,7 @@ def steps_build_common(env, config=None):
     st.append(steps.SetPropertyFromCommand(command='${CROSS_COMPILE}gcc --version | head -n 1',
                                            property='gcc_version', haltOnFailure=True,
                                            env=env, name='Set property: gcc version'))
-    st.append(steps.SetPropertyFromCommand(command=[util.Interpolate(cmd_make), '-s', 'kernelversion'],
+    st.append(steps.SetPropertyFromCommand(command=[util.Interpolate(CMD_MAKE), '-s', 'kernelversion'],
                                            property='kernel_version', haltOnFailure=True,
                                            env=env, name='Set property: kernel version'))
     st.append(step_make_config(env, config))
@@ -145,10 +145,10 @@ def steps_build_common(env, config=None):
 def steps_build_linux_kernel(env, build_step_name='Build kernel', skip_warnings=True):
     st = []
     if skip_warnings:
-        st.append(steps.ShellCommand(command=[util.Interpolate(cmd_make)], haltOnFailure=True,
+        st.append(steps.ShellCommand(command=[util.Interpolate(CMD_MAKE)], haltOnFailure=True,
                                      env=env, name=build_step_name))
     else:
-        st.append(steps.Compile(command=[util.Interpolate(cmd_make)], haltOnFailure=True,
+        st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE)], haltOnFailure=True,
                                 warnOnWarnings=True,
                                 suppressionList=BUILD_WARN_IGNORE,
                                 env=env, name=build_step_name))
@@ -255,7 +255,7 @@ def steps_build_boot_adjust_config(builder_name, env, slaves, config):
                 ],
         haltOnFailure=True,
         env=env, name='Toggle config options'))
-    st.append(steps.Compile(command=[util.Interpolate(cmd_make), 'olddefconfig'],
+    st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'olddefconfig'],
                             haltOnFailure=True,
                             env=env, name='Make olddefconfig'))
     return st
@@ -283,7 +283,7 @@ def steps_build_mem_ctrl_adjust_config(builder_name, env):
                 ],
         haltOnFailure=True,
         env=env, name='Toggle memory controller drivers compile test config options'))
-    st.append(steps.Compile(command=[util.Interpolate(cmd_make), 'olddefconfig'],
+    st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'olddefconfig'],
                             haltOnFailure=True,
                             env=env, name='Make olddefconfig'))
     return st
@@ -292,14 +292,14 @@ def steps_build_selected_folders(builder_name, env):
     st = []
     if not env['KBUILD_OUTPUT']:
         raise ValueError('Missing KBUILD_OUTPUT path in environment')
-    st.append(steps.ShellCommand(command=[util.Interpolate(cmd_make), 'arch/arm/',
+    st.append(steps.ShellCommand(command=[util.Interpolate(CMD_MAKE), 'arch/arm/',
                                           # make won't build DTBs but include it for completeness
                                           'arch/arm64/boot/dts/',
                                           'drivers/clk/samsung/', 'drivers/pinctrl/samsung/', 'drivers/memory/',
                                           'drivers/soc/samsung/'],
                                  haltOnFailure=True, env=env, name='Build selected paths'))
     st.append(step_touch_commit_files())
-    st.append(steps.Compile(command=[util.Interpolate(cmd_make), 'arch/arm/',
+    st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'arch/arm/',
                                      # make won't build DTBs but include it for completeness
                                      'arch/arm64/boot/dts/',
                                      'drivers/clk/samsung/', 'drivers/pinctrl/samsung/', 'drivers/memory/',
@@ -318,12 +318,12 @@ def steps_checkdtbs(env, config=None, git_reset=True):
         st.append(step_make_config(env, config))
     step_name_cfg = str(config) + ' config' if config else 'defconfig'
     step_name = 'make dtbs baseline for ' + env['ARCH'] + '/' + step_name_cfg
-    st.append(steps.ShellCommand(command=[util.Interpolate(cmd_make), 'dtbs', 'W=1'],
+    st.append(steps.ShellCommand(command=[util.Interpolate(CMD_MAKE), 'dtbs', 'W=1'],
                                  haltOnFailure=True,
                                  env=env, name=step_name))
     st.append(step_touch_commit_files())
     step_name = 'make dtbs warnings for ' + env['ARCH'] + '/' + step_name_cfg
-    st.append(steps.Compile(command=[util.Interpolate(cmd_make), 'dtbs', 'W=1'],
+    st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'dtbs', 'W=1'],
                             haltOnFailure=True,
                             warnOnWarnings=True,
                             suppressionList=BUILD_WARN_IGNORE,
