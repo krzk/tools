@@ -75,6 +75,41 @@ def step_touch_commit_files():
                               haltOnFailure=True,
                               name='touch changed files')
 
+def step_prepare_upload_master(name, dest):
+    return steps.ShellCommand(command=['ssh', '-o', 'StrictHostKeyChecking=no', '-p', upload_config['port'],
+                                       '{}@{}'.format(upload_config['user'], upload_config['host']),
+                                       util.Interpolate('mkdir -p ' + dest),
+                                      ],
+                              haltOnFailure=True,
+                              name=name)
+
+def step_upload_files_to_master(name, src, dest, errors_fatal=False, url=''):
+    if errors_fatal:
+        halt_on_failure=True
+        warn_on_failure=False
+        flunk_on_failure=True
+    else:
+        halt_on_failure=False
+        warn_on_failure=True
+        flunk_on_failure=False
+    command=['scp', '-p', '-o', 'StrictHostKeyChecking=no', '-P', upload_config['port'],
+             src,
+             util.Interpolate('{}@{}:{}'.format(upload_config['user'], upload_config['host'], dest)),
+            ]
+    if url:
+        return ShellCmdWithLink(command=command,
+                                url=url,
+                                haltOnFailure=halt_on_failure,
+                                warnOnFailure=warn_on_failure,
+                                flunkOnFailure=flunk_on_failure,
+                                name=name)
+    else:
+        return steps.ShellCommand(command=command,
+                                  haltOnFailure=halt_on_failure,
+                                  warnOnFailure=warn_on_failure,
+                                  flunkOnFailure=flunk_on_failure,
+                                  name=name)
+
 def steps_build_common(env, config=None):
     st = []
     st.append(steps.Git(repourl='https://github.com/krzk/tools.git',
@@ -123,12 +158,7 @@ def steps_build_upload_artifacts_binaries(name, config, out_dir):
     st = []
 
     masterdest_dir_bin = 'deploy-bin/' + name + '/%(prop:revision)s/'
-    st.append(steps.ShellCommand(command=['ssh', '-o', 'StrictHostKeyChecking=no', '-p', upload_config['port'],
-                                            '{}@{}'.format(upload_config['user'], upload_config['host']),
-                                            util.Interpolate('mkdir -p ' + masterdest_dir_bin),
-                                            ],
-                                haltOnFailure=True,
-                                name='Prepare upload directory: binaries'))
+    st.append(step_prepare_upload_master('Prepare upload directory: binaries', masterdest_dir_bin))
 
     upload_files_compress = ['Module.symvers',
                                 'System.map',
@@ -152,12 +182,9 @@ def steps_build_upload_artifacts_binaries(name, config, out_dir):
                         ]
     upload_files_bin = [(out_dir + i) for i in upload_files_bin]
     upload_files_bin.extend(upload_files_compress)
-    st.append(steps.ShellCommand(command=['scp', '-p', '-o', 'StrictHostKeyChecking=no', '-P', upload_config['port'],
-                                            upload_files_bin,
-                                            util.Interpolate('{}@{}:{}'.format(upload_config['user'], upload_config['host'], masterdest_dir_bin)),
-                                            ],
-                                    haltOnFailure=True,
-                                    name='Upload kernel, modules and required DTBs'))
+    st.append(step_upload_files_to_master('Upload kernel, modules and required DTBs',
+                                          upload_files_bin, masterdest_dir_bin,
+                                          errors_fatal=True))
 
     # XU, XU4 and HC1 might be missing for older kernels -  In case of failure do not halt,
     # do not fail and mark build as warning. flunkOnFailure is by default True.
@@ -166,12 +193,8 @@ def steps_build_upload_artifacts_binaries(name, config, out_dir):
                         'arch/arm/boot/dts/exynos5422-odroidxu4.dtb',
                         ]
     upload_files_bin = [(out_dir + i) for i in upload_files_bin]
-    st.append(steps.ShellCommand(command=['scp', '-p', '-o', 'StrictHostKeyChecking=no', '-P', upload_config['port'],
-                                            upload_files_bin,
-                                            util.Interpolate('{}@{}:{}'.format(upload_config['user'], upload_config['host'], masterdest_dir_bin)),
-                                            ],
-                                    haltOnFailure=False, warnOnFailure=True, flunkOnFailure=False,
-                                    name='Upload optional DTBs'))
+    st.append(step_upload_files_to_master('Upload optional DTBs',
+                                           upload_files_bin, masterdest_dir_bin))
 
     return st
 
@@ -179,12 +202,7 @@ def steps_build_upload_artifacts(name, config, boot, out_dir, buildbot_url):
     st = []
     masterdest_dir_pub = 'deploy-pub/' + name + '/%(prop:revision)s/'
 
-    st.append(steps.ShellCommand(command=['ssh', '-o', 'StrictHostKeyChecking=no', '-p', upload_config['port'],
-                                          '{}@{}'.format(upload_config['user'], upload_config['host']),
-                                          util.Interpolate('mkdir -p ' + masterdest_dir_pub),
-                                          ],
-                                 haltOnFailure=True,
-                                 name='Prepare upload directory: sources'))
+    st.append(step_prepare_upload_master('Prepare upload directory: sources', masterdest_dir_pub))
 
     cmd = 'echo "Source URL: %(prop:repository)s\nRevision: %(prop:revision)s" > ' + out_dir + 'sources.txt; '
     cmd += 'cp -p ' + out_dir + '.config ' + out_dir + 'config; '
@@ -198,13 +216,10 @@ def steps_build_upload_artifacts(name, config, boot, out_dir, buildbot_url):
                         'include/generated/autoconf.h',
                         'sources.txt']
     upload_files_pub = [(out_dir + i) for i in upload_files_pub]
-    st.append(ShellCmdWithLink(command=['scp', '-p', '-o', 'StrictHostKeyChecking=no', '-P', upload_config['port'],
-                                        upload_files_pub,
-                                        util.Interpolate('{}@{}:{}'.format(upload_config['user'], upload_config['host'], masterdest_dir_pub)),
-                                        ],
-                                 url=util.Interpolate(buildbot_url + 'pub/' + masterdest_dir_pub),
-                                 haltOnFailure=True,
-                                 name='Upload config and autoconf.h'))
+    st.append(step_upload_files_to_master('Upload config and autoconf.h',
+                                          upload_files_pub, masterdest_dir_pub,
+                                          errors_fatal=True,
+                                          url=util.Interpolate(buildbot_url + 'pub/' + masterdest_dir_pub)))
 
     if boot and config:
         st.extend(steps_build_upload_artifacts_binaries(name, config, out_dir))
