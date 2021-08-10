@@ -52,6 +52,11 @@
   changed_when: no
   remote_user: '{{ buildbot_user }}'
 
+- debug:
+    msg:
+      - 'Buildbot worker name and password to register in master:'
+      - '{{ details.stdout_lines }}'
+
 - name: Set worker admin
   copy:
     content: '{{ buildbot_worker_admin }}'
@@ -103,8 +108,3 @@
   become: yes
   become_user: root
   when: pip_buildbot.changed | default(False)
-
-- debug:
-    msg:
-      - 'Buildbot worker name and password to register in master:'
-      - '{{ details.stdout_lines }}'
