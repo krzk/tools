@@ -35,14 +35,6 @@
     creates: '{{ buildbot_basedir }}/buildbot.tac'
   remote_user: '{{ buildbot_user }}'
 
-# Umask for worker was set for 0o022 so transferred files to master will be accessible by others.
-# However in such case be sure that the workers directory (its configuration) is private.
-- name: Set chmod on worker directory
-  file:
-    path: '{{ buildbot_basedir }}'
-    mode: 0700
-  remote_user: '{{ buildbot_user }}'
-
 - name: Print Buildbot worker name and password for registering in master
   command: /bin/grep -e 'workername = ' -e 'passwd = ' {{ buildbot_basedir }}/buildbot.tac
   register: details
@@ -55,6 +47,14 @@
     msg:
       - 'Buildbot worker name and password to register in master:'
       - '{{ details.stdout_lines }}'
+
+# Umask for worker was set for 0o022 so transferred files to master will be accessible by others.
+# However in such case be sure that the workers directory (its configuration) is private.
+- name: Set chmod on worker directory
+  file:
+    path: '{{ buildbot_basedir }}'
+    mode: 0700
+  remote_user: '{{ buildbot_user }}'
 
 - name: Set worker admin
   copy:
