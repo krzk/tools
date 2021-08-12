@@ -107,3 +107,4 @@
   become: yes
   become_user: root
   when: pip_buildbot.changed | default(False)
+  ignore_errors: yes
