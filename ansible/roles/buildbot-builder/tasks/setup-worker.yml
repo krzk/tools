@@ -9,7 +9,6 @@
     - buildbot_basedir
     - buildbot_sandbox
     - buildbot_master_hostname
-    - buildbot_master_hostname
     - buildbot_worker_name
     - buildbot_worker_password
     - buildbot_worker_admin
