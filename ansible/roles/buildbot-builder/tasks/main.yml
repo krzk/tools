@@ -3,7 +3,7 @@
   import_tasks: setup-user.yml
 - name: Setup the Python sandbox
   import_tasks: setup-python-sandbox.yml
-- name: Setup the worker
-  import_tasks: setup-worker.yml
 - name: Setup the kernel builds environment
   import_tasks: setup-kernel-builds.yml
+- name: Setup the worker
+  import_tasks: setup-worker.yml
