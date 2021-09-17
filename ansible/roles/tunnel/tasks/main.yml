@@ -3,11 +3,19 @@
   include_vars:
     file: ~/etc/ansible/vars/tunnel.yml
 
+# Need to get required vars also for delegated hosts
+- name: Include vars
+  include_vars:
+    file: ~/etc/ansible/vars/tunnel.yml
+  delegate_to: '{{ host_gate_ssh }}'
+  delegate_facts: true
+
 - name: Check requirements for variables
   assert:
     that: '{{ item }} is defined'
   with_items:
   - host_gate
+  - host_gate_ssh
   - port_buildbot
   - port_gate
   - port_tunnel_on_gate
@@ -48,10 +56,26 @@
   become: yes
   become_user: root
 
+# Only for debug. No need to print it as registering at gate happens in playbook here.
 - debug:
     msg:
       - 'SSH public key for user {{ user_tunnel }}:'
       - '{{ ssh_public_key.stdout_lines }}'
+
+- name: Deploy key to gate
+  authorized_key:
+    user: '{{ user_gate }}'
+    key: '{{ ssh_public_key.stdout }}'
+  delegate_to: '{{ host_gate_ssh }}'
+  remote_user: '{{ user_gate }}'
+  # Ansible has trouble with concurrent steps on one machine -> gate,
+  # so only one key is being stored eventually (last step overwrites).
+  # Throttling solves the problem.
+  throttle: 1
+
+- debug:
+    msg:
+      - 'Manually remove old keys from any replaced hosts!'
 
 - name: Set chmod on user's home directory
   file:
