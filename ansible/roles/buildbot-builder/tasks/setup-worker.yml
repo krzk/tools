@@ -1,4 +1,15 @@
 ---
+- name: Include vars
+  include_vars:
+    file: ~/etc/ansible/vars/buildbot-builder.yml
+
+# Need to get required vars also for delegated hosts
+- name: Include vars
+  include_vars:
+    file: ~/etc/ansible/vars/buildbot-builder.yml
+  delegate_to: '{{ host_buildbot_master_ssh }}'
+  delegate_facts: true
+
 - name: Check requirements for variables
   assert:
     that: '{{ item }} is defined'
@@ -13,6 +24,8 @@
     - buildbot_worker_password
     - buildbot_worker_admin
     - buildbot_worker_description
+    - host_buildbot_master_ssh
+    - user_buildbot_master_ssh
 
 - name: Install PIP buildbot
   pip:
@@ -35,18 +48,31 @@
     creates: '{{ buildbot_basedir }}/buildbot.tac'
   remote_user: '{{ buildbot_user }}'
 
-- name: Print Buildbot worker name and password for registering in master
-  command: /bin/grep -e 'workername = ' -e 'passwd = ' {{ buildbot_basedir }}/buildbot.tac
+- name: Print Buildbot worker password for registering in master
+  command: sed -ne "s/^passwd = '\(.\+\)'$/\\1/p" {{ buildbot_basedir }}/buildbot.tac
   register: details
   # Command does not change system so run it always (even in --check)
   check_mode: no
   changed_when: no
   remote_user: '{{ buildbot_user }}'
 
+- name: Deploy worker auth to master
+  lineinfile:
+    path: 'master/master_auth.py'
+    state: present
+    insertafter: EOF
+    regexp: '^master_auth_config\["{{ buildbot_worker_name }}-worker-pass"\] '
+    line: 'master_auth_config["{{ buildbot_worker_name }}-worker-pass"] = "{{ details.stdout }}"'
+  delegate_to: '{{ host_buildbot_master_ssh }}'
+  remote_user: '{{ user_buildbot_master_ssh }}'
+  # Ansible has trouble with concurrent steps on one machine -> gate,
+  # so only one key is being stored eventually (last step overwrites).
+  # Throttling solves the problem.
+  throttle: 1
+
 - debug:
     msg:
-      - 'Buildbot worker name and password to register in master:'
-      - '{{ details.stdout_lines }}'
+      - 'Manually restart Buildbot master'
 
 # Umask for worker was set for 0o022 so transferred files to master will be accessible by others.
 # However in such case be sure that the workers directory (its configuration) is private.
