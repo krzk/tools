@@ -1,4 +1,8 @@
 ---
+- name: Include vars
+  include_vars:
+    file: ~/etc/ansible/vars/buildbot-upload.yml
+
 - name: Check requirements for variables
   assert:
     that: '{{ item }} is defined'
