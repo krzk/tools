@@ -16,6 +16,13 @@ def setup(dev_id, dev):
     os.system("modprobe null_blk shared_tags=1 nr_devices=0 queue_mode=2")
 
     print(f"Making: {dev}")
+
+    print("Number of CPUs: {}".format(os.cpu_count()))
+    affinity_mask = {int(dev_id)}
+    pid = 0
+    os.sched_setaffinity(0, affinity_mask)
+    print("CPU affinity mask is modified for process: {}".format(os.sched_getaffinity(pid)))
+
     os.mkdir(dev)
 
     os.system(f"echo 512 > {dev}/blocksize")
@@ -32,10 +39,10 @@ def setup(dev_id, dev):
 def run(dev_id, dev):
     while True:
         # print(f"On/off for {dev_id}")
-        on = f"echo 1 > {dev}/power"
-        off = f"echo 0 > {dev}/power"
-        os.system(on)
-        os.system(off)
+        with open(f"{dev}/power", "w") as f:
+            f.write("1\n")
+        with open(f"{dev}/power", "w") as f:
+            f.write("0\n")
 
 if __name__ == "__main__":
     dev_id = sys.argv[1]

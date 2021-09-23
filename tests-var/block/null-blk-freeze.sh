@@ -33,6 +33,8 @@ echo 1 > "$dev"/power
 
 echo mq-deadline > /sys/block/nullb${dev_id}/queue/scheduler
 
+# FIXME: missing taskset
+
 while true
 do
 	# echo "On/off for $dev_id"
