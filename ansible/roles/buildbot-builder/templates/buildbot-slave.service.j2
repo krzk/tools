@@ -11,6 +11,7 @@ Requires=network-online.target
 
 [Service]
 Type=forking
+ExecStartPre=find {{ buildbot_basedir }} -path '*/.git/index.lock' -delete
 ExecStart=/usr/local/bin/buildbot.sh start {{ buildbot_worker_dirname }}
 ExecStop=/usr/local/bin/buildbot.sh stop {{ buildbot_worker_dirname }}
 User={{ buildbot_user }}
