@@ -675,7 +675,8 @@ int main(void)
   mmap((void *)0x1ffff000ul, 0x1000ul, 0ul, 0x32ul, -1, 0ul);
   mmap((void *)0x20000000ul, 0x1000000ul, 7ul, 0x32ul, -1, 0ul);
   mmap((void *)0x21000000ul, 0x1000ul, 0ul, 0x32ul, -1, 0ul);
-  for (procid = 0; procid < 6; procid++) {
+  // Original concurrency: 6
+  for (procid = 0; procid < 1; procid++) {
     if (fork() == 0) {
       loop();
     }
