@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/mman.h>
 #include <sys/prctl.h>
 #include <sys/stat.h>
 #include <sys/syscall.h>
@@ -165,7 +166,7 @@ void execute_one(void)
 }
 int main(void)
 {
-  syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
+  mmap((void *)0x20000000, 0x1000000, 3, 0x32, -1, 0);
   for (procid = 0; procid < 6; procid++) {
     if (fork() == 0) {
       loop();
