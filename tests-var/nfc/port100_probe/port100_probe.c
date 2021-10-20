@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/mman.h>
 #include <sys/mount.h>
 #include <sys/prctl.h>
 #include <sys/stat.h>
@@ -661,7 +662,7 @@ void execute_one(void)
   res = syscall(__NR_openat, -1, 0x200002c0ul, 0ul, 0ul);
   if (res != -1)
     r[0] = res;
-  syscall(__NR_mmap, 0x20000000ul, 0x800000ul, 0x1800003ul, 0x12ul, r[0], 0ul);
+  mmap((void *)0x20000000ul, 0x800000ul, 0x1800003ul, 0x12ul, r[0], 0ul);
   memcpy((void*)0x20000140,
          "\x12\x01\x09\x00\x97\xe6\x1d\x08\x4c\x05\xc1\x06\x66\xd5\x00\x00\x00"
          "\x01\x09\x02\x81\x00\x01\x00\x00\x00\x00\x09\x04\x00\x00\x02\x18\xaf"
@@ -672,9 +673,9 @@ void execute_one(void)
 }
 int main(void)
 {
-  syscall(__NR_mmap, 0x1ffff000ul, 0x1000ul, 0ul, 0x32ul, -1, 0ul);
-  syscall(__NR_mmap, 0x20000000ul, 0x1000000ul, 7ul, 0x32ul, -1, 0ul);
-  syscall(__NR_mmap, 0x21000000ul, 0x1000ul, 0ul, 0x32ul, -1, 0ul);
+  mmap((void *)0x1ffff000ul, 0x1000ul, 0ul, 0x32ul, -1, 0ul);
+  mmap((void *)0x20000000ul, 0x1000000ul, 7ul, 0x32ul, -1, 0ul);
+  mmap((void *)0x21000000ul, 0x1000ul, 0ul, 0x32ul, -1, 0ul);
   for (procid = 0; procid < 6; procid++) {
     if (fork() == 0) {
       loop();
