@@ -657,7 +657,6 @@ void execute_one(void)
   intptr_t res = 0;
   memcpy((void*)0x200003c0, "/dev/snapshot\000", 14);
   syscall(__NR_openat, 0xffffffffffffff9cul, 0x200003c0ul, 0x20601ul, 0ul);
-  syscall(__NR_getpid);
   memcpy((void*)0x200002c0, "/proc/self/exe\000", 15);
   res = syscall(__NR_openat, -1, 0x200002c0ul, 0ul, 0ul);
   if (res != -1)
