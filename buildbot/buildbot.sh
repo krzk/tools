@@ -28,6 +28,10 @@ if [ -f /lib/init/vars.sh ]; then
 	. /lib/init/vars.sh
 fi
 
+# Source buildmaster configuration
+OPTIONS=""
+[[ -r /etc/default/buildmaster ]] && . /etc/default/buildmaster
+
 die() {
 	echo "Fail: $1"
 	exit 1
@@ -70,8 +74,8 @@ do_buildbot() {
 	cd $HOME
 	test -d "sandbox" && source sandbox/bin/activate
 	test -d "$2" || die "No buildbot: $2"
-	echo "Launching: $bot_cmd $1 $2"
-	$bot_cmd $1 $2
+	echo "Launching: $bot_cmd $1 $OPTIONS $2"
+	$bot_cmd $1 $OPTIONS $2
 }
 
 usage() {
@@ -84,7 +88,7 @@ launch_service() {
 	if [ $SYSTEMD -eq 1 ]; then
 		do_buildbot $1 $BOT
 	else
-		start-stop-daemon --start -c buildbot:buildbot --exec $SCRIPT -- $1 $BOT
+		start-stop-daemon --start -c buildbot:buildbot --exec $SCRIPT -- $1 $OPTIONS $BOT
 	fi
 }
 
