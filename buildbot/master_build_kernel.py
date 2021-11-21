@@ -112,6 +112,12 @@ def step_upload_files_to_master(name, src, dest, errors_fatal=False, url=''):
 
 def steps_build_common(env, config=None):
     st = []
+    # OpenStack machines have frequent github.com name resolution failures:
+    # fatal: unable to access 'https://github.com/krzk/tools.git/': Could not resolve host: github.com
+    # Cache the address first.
+    st.append(steps.ShellCommand(command=util.Interpolate('%(prop:builddir:-~/)s/tools/buildbot/name-resolve-fixup.sh'),
+                                 haltOnFailure=False, warnOnFailure=True, flunkOnFailure=False,
+                                 name='Cache DNS addresses (workaround)'))
     st.append(steps.Git(repourl='https://github.com/krzk/tools.git',
                         name='Clone krzk tools sources',
                         mode='incremental',
