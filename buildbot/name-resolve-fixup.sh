@@ -13,9 +13,11 @@ SELF_DIR="$(dirname "${BASH_SOURCE[0]}")"
 # Be verbose for Buildbot debugging
 set -x
 
+NAMES="github.com git.kernel.org"
+
 i=0
 while [ $i -le 50 ]; do
-	resolvectl query github.com
+	resolvectl query $NAMES
 	test $? -eq 0 && exit 0
 	i=$(( $i + 1 ))
 	sleep 0.5
