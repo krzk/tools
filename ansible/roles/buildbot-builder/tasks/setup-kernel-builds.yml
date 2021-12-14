@@ -21,6 +21,7 @@
       - build-essential
       - ccache
       - diffutils
+      - dwarves # For kernel configs enabling CONFIG_DEBUG_INFO_BTF
       - flex
       - gcc-arm-linux-gnueabi
       - gcc-aarch64-linux-gnu
