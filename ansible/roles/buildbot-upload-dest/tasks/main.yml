@@ -9,6 +9,7 @@
   with_items:
     - mail_foward_to
     - ssh_allow_group
+    - user_buildbot_master_ssh
     - user_buildbot_upload
 
 - name: Create unprivileged user
@@ -104,3 +105,10 @@
       {{ mail_foward_to }}
     dest: '/home/{{ user_buildbot_upload }}/.forward'
   remote_user: '{{ user_buildbot_upload }}'
+
+- name: Link deploy-bin for downloads within Buildbot
+  ansible.builtin.file:
+    src: '/home/{{ user_buildbot_upload }}/deploy-bin'
+    dest: '/home/{{ user_buildbot_master_ssh }}/master/deploy-bin'
+    state: link
+  remote_user: '{{ user_buildbot_master_ssh }}'
