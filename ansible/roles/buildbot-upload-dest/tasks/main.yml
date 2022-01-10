@@ -33,7 +33,7 @@
   become_user: root
 
 - name: Add to authorized keys - current key
-  authorized_key:
+  ansible.posix.authorized_key:
     user: '{{ user_buildbot_upload }}'
     state: present
     key: "{{ lookup('file', '{{ item }}') }}"

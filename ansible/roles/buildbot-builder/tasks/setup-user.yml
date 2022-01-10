@@ -46,7 +46,7 @@
   become_user: root
 
 - name: Set authorized SSH key for admin
-  authorized_key:
+  ansible.posix.authorized_key:
     user: '{{ buildbot_user }}'
     state: present
     key: "{{ lookup('file', '{{ item }}') }}"
@@ -78,7 +78,7 @@
       - '{{ ssh_public_key.stdout_lines }}'
 
 - name: Deploy key to master for uploads
-  authorized_key:
+  ansible.posix.authorized_key:
     user: '{{ user_buildbot_upload }}'
     key: '{{ ssh_public_key.stdout }}'
   delegate_to: '{{ host_buildbot_upload_ssh }}'
