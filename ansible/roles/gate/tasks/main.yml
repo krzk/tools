@@ -35,7 +35,10 @@
   authorized_key:
     user: '{{ user_gate }}'
     state: present
-    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+    key: "{{ lookup('file', '{{ item }}') }}"
+  with_fileglob:
+    - "{{ lookup('env','HOME') + '/.ssh/id_rsa.pub' }}"
+    - "{{ lookup('env','HOME') + '/.ssh/id_ed25519.pub' }}"
   become: yes
   become_user: root
 
