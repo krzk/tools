@@ -8,17 +8,13 @@
 # SPDX-License-Identifier: GPL-2.0
 #
 
+from master_auth import master_auth_config
+
 from buildbot.plugins import steps, util
 import twisted
 
 BUILD_WARN_IGNORE = [ (None, '.*warning: #warning syscall .* not implemented.*', None, None),
                     ]
-
-UPLOAD_CONFIG = {
-        'host': 'build.krzk.eu',
-        'user': 'buildbot_upload',
-        'port': '443',
-}
 
 CMD_MAKE = '%(prop:builddir:-~/)s/tools/buildbot/build-slave.sh'
 
@@ -76,8 +72,8 @@ def step_touch_commit_files():
                               name='touch changed files')
 
 def step_prepare_upload_master(name, dest):
-    return steps.ShellCommand(command=['ssh', '-o', 'StrictHostKeyChecking=no', '-p', UPLOAD_CONFIG['port'],
-                                       '{}@{}'.format(UPLOAD_CONFIG['user'], UPLOAD_CONFIG['host']),
+    return steps.ShellCommand(command=['ssh', '-o', 'StrictHostKeyChecking=no', '-p', master_auth_config['upload']['port'],
+                                       '{}@{}'.format(master_auth_config['upload']['user'], master_auth_config['upload']['host']),
                                        util.Interpolate('mkdir -p ' + dest),
                                       ],
                               haltOnFailure=True,
@@ -92,9 +88,9 @@ def step_upload_files_to_master(name, src, dest, errors_fatal=False, url=''):
         halt_on_failure=False
         warn_on_failure=True
         flunk_on_failure=False
-    command=['scp', '-p', '-o', 'StrictHostKeyChecking=no', '-P', UPLOAD_CONFIG['port'],
+    command=['scp', '-p', '-o', 'StrictHostKeyChecking=no', '-P', master_auth_config['upload']['port'],
              src,
-             util.Interpolate('{}@{}:{}'.format(UPLOAD_CONFIG['user'], UPLOAD_CONFIG['host'], dest)),
+             util.Interpolate('{}@{}:{}'.format(master_auth_config['upload']['user'], master_auth_config['upload']['host'], dest)),
             ]
     if url:
         return ShellCmdWithLink(command=command,
