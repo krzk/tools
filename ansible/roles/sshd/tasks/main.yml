@@ -44,7 +44,7 @@
   with_items:
     - { regexp: '^PermitRootLogin ', line: 'PermitRootLogin no' }
     - { regexp: '^PasswordAuthentication ', line: 'PasswordAuthentication no' }
-    - { regexp: '^ChallengeResponseAuthentication ', line: 'ChallengeResponseAuthentication no' }
+    - { regexp: '^KbdInteractiveAuthentication ', line: 'KbdInteractiveAuthentication no' }
     - { regexp: '^ClientAliveCountMax ', line: 'ClientAliveCountMax 3' }
     - { regexp: '^ClientAliveInterval ', line: 'ClientAliveInterval 30' }
   become: yes
