@@ -1,0 +1,28 @@
+# SPDX-License-Identifier: GPL-3.0
+#
+# Based on https://github.com/mricon/grokmirror/tree/b5ffa134cbee8913177ae3dc7d4db40a637c5cfa
+# See original repo for initial copyrights
+# Copyright (c) 2022 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+#                             <krzk@kernel.org>
+[Unit]
+Description=Grok-pull service for %I
+After=network.target
+Documentation=https://github.com/mricon/grokmirror
+
+[Service]
+Environment="EXTRA_PULL_OPTS="
+EnvironmentFile=-/etc/sysconfig/grokmirror.default
+EnvironmentFile=-/etc/sysconfig/grokmirror.%i
+ExecStart=/usr/bin/grok-pull -c /etc/grokmirror/%i.conf $EXTRA_PULL_OPTS
+Type=oneshot
+# To override these users, create a drop-in systemd conf file in
+# /etc/systemd/system/grok-pull@[foo].service.d/10-usergroup.conf:
+# [Service]
+# User=yourpreference
+# Group=yourpreference
+User={{ user_mirror }}
+Group={{ group_mirror }}
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,154 @@
+# SPDX-License-Identifier: GPL-2.0
+#
+# Copyright (c) 2022 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+#                             <krzk@kernel.org>
+---
+- name: Include vars
+  include_vars:
+    file: ~/etc/ansible/vars/buildbot-git-mirror.yml
+
+- name: Check requirements for variables
+  assert:
+    that: '{{ item }} is defined'
+  with_items:
+    - group_mirror
+    - path_mirror_lock
+    - path_mirror_log
+    - path_mirror_repos
+    - user_mirror
+
+- name: Update apt-cache
+  apt:
+    update_cache: yes
+  tags: packages
+  become: yes
+  become_user: root
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Install dependencies
+  apt:
+    name:
+      # python-pkg-resources are not pulled by grokmirror
+      - python-pkg-resources
+      - grokmirror
+    state: present
+  tags: packages, python
+  become: yes
+  become_user: root
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Create unprivileged user
+  user:
+    name: '{{ user_mirror }}'
+    shell: /bin/bash
+    home: '/home/{{ user_mirror }}'
+    state: present
+    create_home: yes
+    force: no
+    generate_ssh_key: no
+    password_lock: true
+    # see: sshd
+    append: yes
+    groups: '{{ ssh_allow_group }}'
+  become: yes
+  become_user: root
+
+- name: Add to authorized keys - current key
+  ansible.posix.authorized_key:
+    user: '{{ user_mirror }}'
+    state: present
+    key: "{{ lookup('file', '{{ item }}') }}"
+  with_fileglob:
+    - "{{ lookup('env','HOME') + '/.ssh/id_rsa.pub' }}"
+    - "{{ lookup('env','HOME') + '/.ssh/id_ed25519.pub' }}"
+  become: yes
+  become_user: root
+
+- name: Set chmod on user's home directory
+  file:
+    path: '/home/{{ user_mirror }}'
+    mode: '0755'
+  remote_user: '{{ user_mirror }}'
+
+- name: Set up forward
+  ansible.builtin.copy:
+    content: |
+      {{ mail_foward_to }}
+    dest: '/home/{{ user_mirror }}/.forward'
+  remote_user: '{{ user_mirror }}'
+
+- name: Create mirror dirs
+  file:
+    path: '{{ item }}'
+    state: directory
+    owner: '{{ user_mirror }}'
+    group: '{{ group_mirror }}'
+  with_items:
+    - '{{ path_mirror_lock }}'
+    - '{{ path_mirror_log }}'
+    - '{{ path_mirror_repos }}'
+  become: yes
+  become_user: root
+
+- name: Create config dirs
+  file:
+    path: /etc/grokmirror
+    state: directory
+  become: yes
+  become_user: root
+
+- name: Copy config
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    mode: '{{ item.mode }}'
+  with_items:
+    - {src: 'kernel-fsck.conf.j2', dest: '/etc/grokmirror/kernel-fsck.conf', mode: '0644'}
+    - {src: 'kernel-repos.conf.j2', dest: '/etc/grokmirror/kernel-repos.conf', mode: '0644'}
+  become: yes
+  become_user: root
+
+- name: Install service files
+  ansible.builtin.template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    mode: '{{ item.mode }}'
+  with_items:
+    - {src: 'grok-fsck@.service.j2', dest: '/etc/systemd/system/grok-fsck@.service', mode: '0644'}
+    - {src: 'grok-fsck@.timer.j2', dest: '/etc/systemd/system/grok-fsck@.timer', mode: '0644'}
+    - {src: 'grok-pull@.service.j2', dest: '/etc/systemd/system/grok-pull@.service', mode: '0644'}
+    - {src: 'grok-pull@.timer.j2', dest: '/etc/systemd/system/grok-pull@.timer', mode: '0644'}
+  become: yes
+  become_user: root
+
+- name: Link service files
+  ansible.builtin.file:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    state: link
+  with_items:
+    - {src: '/etc/systemd/system/grok-fsck@.service', dest: '/etc/systemd/system/grok-fsck@kernel-fsck.service', mode: '0644'}
+    - {src: '/etc/systemd/system/grok-fsck@.timer', dest: '/etc/systemd/system/grok-fsck@kernel-fsck.timer', mode: '0644'}
+    - {src: '/etc/systemd/system/grok-pull@.service', dest: '/etc/systemd/system/grok-pull@kernel-repos.service', mode: '0644'}
+    - {src: '/etc/systemd/system/grok-pull@.timer', dest: '/etc/systemd/system/grok-pull@kernel-repos.timer', mode: '0644'}
+  become: yes
+  become_user: root
+
+- name: Systemd reload
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  become: yes
+  become_user: root
+
+- name: Systemd enable service
+  ansible.builtin.systemd:
+    name: '{{ item }}'
+    enabled: yes
+    state: started
+    masked: no
+  with_items:
+    - grok-fsck@kernel-fsck.timer
+    - grok-pull@kernel-repos.timer
+  become: yes
+  become_user: root

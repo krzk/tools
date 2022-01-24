@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: GPL-3.0
+#
+# Based on https://github.com/mricon/grokmirror/tree/b5ffa134cbee8913177ae3dc7d4db40a637c5cfa
+# See original repo for initial copyrights
+[Unit]
+Description=Grok-fsck timer for %I
+Documentation=https://github.com/mricon/grokmirror
+
+[Timer]
+OnCalendar=Sat 04:00
+
+[Install]
+WantedBy=timers.target

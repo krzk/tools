@@ -8,4 +8,5 @@
 
 - hosts: buildbot_masters
   roles:
+    - buildbot-git-mirror
     - buildbot-upload-dest
