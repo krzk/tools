@@ -31,6 +31,11 @@ class ShellCmdWithLink(steps.ShellCommand):
         res = yield super().run()
         return res
 
+@util.renderer
+def repo_git_kernel_org(props):
+    repo = props.getProperty('repository')
+    return repo.replace('file:///var/lib/mirror', 'git://git.kernel.org')
+
 def cmd_make_config(config=None):
     if config == None:
         config = 'defconfig'
@@ -123,7 +128,7 @@ def steps_build_common(env, config=None):
                         workdir='tools',
                         haltOnFailure=True,
                         env=util.Property('git_env')))
-    st.append(steps.Git(repourl=util.Property('repository'),
+    st.append(steps.Git(repourl=repo_git_kernel_org,
                         name='Clone the sources',
                         # Run full/fresh checkout to get rid of any old DTBs or binaries from
                         # KBUILD_OUTPUT. For example when compiling stable kernel without
