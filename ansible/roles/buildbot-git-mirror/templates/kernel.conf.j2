@@ -57,6 +57,8 @@ objstore = ${toplevel}/objstore
 # enable the setting below, which will use internal git plumbing for much more
 # direct object copying between repos.
 #objstore_uses_plumbing = yes
+# It looks plumbing also helps for low-memory cases
+objstore_uses_plumbing = yes
 #
 # Due to the nature of git alternates, if two repositories share all their objects
 # with an "object storage" repo, any object from repoA can be retrieved from repoB
@@ -195,7 +197,7 @@ retries = 3
 
 include = /pub/scm/linux/kernel/git/torvalds/linux.git
           /pub/scm/linux/kernel/git/next/linux-next.git
-          /pub/scm/linux/kernel/git/stable/linux-stable.git
+          /pub/scm/linux/kernel/git/stable/linux.git
           /pub/scm/linux/kernel/git/krzk/linux.git
           /pub/scm/linux/kernel/git/pinctrl/samsung.git
           /pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git
@@ -215,7 +217,7 @@ exclude =
 # remote maniefest for new updates. See contrib for an example systemd
 # service you can set up to continuously update your local mirror.  The
 # value is in seconds.
-refresh = 900
+refresh = 30
 #
 # If you enable refresh, you can also enable the socket listener that
 # allows for rapid push notifications from your primary mirror. The
@@ -261,14 +263,15 @@ reclone_on_errors = fatal: bad tree object
 #
 # Should we repack the repositories? You almost always want this on,
 # unless you are doing something really odd.
-repack = no
+repack = yes
 #
 # We set proper flags for repacking depending if the repo is using
 # alternates or not, and whether this is a full repack or not. We will
 # also always build bitmaps (when it makes sense), to make cloning
 # faster.  You can add other flags (e.g. --threads and --window-memory)
 # via the following parameter:
-extra_repack_flags =
+#extra_repack_flags =
+extra_repack_flags = --threads=2 --window-memory=4m
 #
 # These flags are added *in addition* to extra_repack_flags
 #extra_repack_flags_full = --window=250 --depth=50
