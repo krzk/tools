@@ -5,6 +5,4 @@
 #                             <krzk@kernel.org>
 ---
 mail_foward_to: buildbot
-path_mirror_lock: /var/lock/mirror
-path_mirror_log: /var/log/mirror
 path_mirror_repos: /var/lib/mirror

@@ -14,8 +14,8 @@ Documentation=https://github.com/mricon/grokmirror
 Environment="EXTRA_PULL_OPTS="
 EnvironmentFile=-/etc/sysconfig/grokmirror.default
 EnvironmentFile=-/etc/sysconfig/grokmirror.%i
-ExecStart=/usr/bin/grok-pull -c /etc/grokmirror/%i.conf $EXTRA_PULL_OPTS
-Type=oneshot
+ExecStart=/usr/local/bin/grok-pull -o -c /etc/grokmirror/%i.conf $EXTRA_PULL_OPTS
+Type=simple
 # To override these users, create a drop-in systemd conf file in
 # /etc/systemd/system/grok-pull@[foo].service.d/10-usergroup.conf:
 # [Service]

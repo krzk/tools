@@ -13,8 +13,6 @@
     that: '{{ item }} is defined'
   with_items:
     - group_mirror
-    - path_mirror_lock
-    - path_mirror_log
     - path_mirror_repos
     - user_mirror
 
@@ -29,14 +27,21 @@
 - name: Install dependencies
   apt:
     name:
-      # python-pkg-resources are not pulled by grokmirror
-      - python-pkg-resources
-      - grokmirror
+      - python3-pip
     state: present
   tags: packages, python
   become: yes
   become_user: root
   when: ansible_facts['os_family'] == 'Debian'
+
+- name: Install grokmirror
+  pip:
+    name:
+      - grokmirror
+    state: latest
+    executable: pip3
+  become: yes
+  become_user: root
 
 - name: Create unprivileged user
   user:
@@ -85,8 +90,6 @@
     owner: '{{ user_mirror }}'
     group: '{{ group_mirror }}'
   with_items:
-    - '{{ path_mirror_lock }}'
-    - '{{ path_mirror_log }}'
     - '{{ path_mirror_repos }}'
   become: yes
   become_user: root
@@ -104,8 +107,7 @@
     dest: '{{ item.dest }}'
     mode: '{{ item.mode }}'
   with_items:
-    - {src: 'kernel-fsck.conf.j2', dest: '/etc/grokmirror/kernel-fsck.conf', mode: '0644'}
-    - {src: 'kernel-repos.conf.j2', dest: '/etc/grokmirror/kernel-repos.conf', mode: '0644'}
+    - {src: 'kernel.conf.j2', dest: '/etc/grokmirror/kernel.conf', mode: '0644'}
   become: yes
   become_user: root
 
@@ -118,7 +120,6 @@
     - {src: 'grok-fsck@.service.j2', dest: '/etc/systemd/system/grok-fsck@.service', mode: '0644'}
     - {src: 'grok-fsck@.timer.j2', dest: '/etc/systemd/system/grok-fsck@.timer', mode: '0644'}
     - {src: 'grok-pull@.service.j2', dest: '/etc/systemd/system/grok-pull@.service', mode: '0644'}
-    - {src: 'grok-pull@.timer.j2', dest: '/etc/systemd/system/grok-pull@.timer', mode: '0644'}
   become: yes
   become_user: root
 
@@ -128,10 +129,9 @@
     dest: '{{ item.dest }}'
     state: link
   with_items:
-    - {src: '/etc/systemd/system/grok-fsck@.service', dest: '/etc/systemd/system/grok-fsck@kernel-fsck.service', mode: '0644'}
-    - {src: '/etc/systemd/system/grok-fsck@.timer', dest: '/etc/systemd/system/grok-fsck@kernel-fsck.timer', mode: '0644'}
-    - {src: '/etc/systemd/system/grok-pull@.service', dest: '/etc/systemd/system/grok-pull@kernel-repos.service', mode: '0644'}
-    - {src: '/etc/systemd/system/grok-pull@.timer', dest: '/etc/systemd/system/grok-pull@kernel-repos.timer', mode: '0644'}
+    - {src: '/etc/systemd/system/grok-fsck@.service', dest: '/etc/systemd/system/grok-fsck@kernel.service', mode: '0644'}
+    - {src: '/etc/systemd/system/grok-fsck@.timer', dest: '/etc/systemd/system/grok-fsck@kernel.timer', mode: '0644'}
+    - {src: '/etc/systemd/system/grok-pull@.service', dest: '/etc/systemd/system/grok-pull@kernel.service', mode: '0644'}
   become: yes
   become_user: root
 
@@ -148,7 +148,7 @@
     state: started
     masked: no
   with_items:
-    - grok-fsck@kernel-fsck.timer
-    - grok-pull@kernel-repos.timer
+    - grok-fsck@kernel.timer
+    - grok-pull@kernel.service
   become: yes
   become_user: root
