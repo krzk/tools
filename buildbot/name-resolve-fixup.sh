@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2021 Krzysztof Kozlowski
+# Copyright (c) 2021-2022 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -13,7 +13,7 @@ SELF_DIR="$(dirname "${BASH_SOURCE[0]}")"
 # Be verbose for Buildbot debugging
 set -x
 
-NAMES="github.com git.kernel.org"
+NAMES="github.com git.kernel.org build.krzk.eu"
 
 i=0
 while [ $i -le 50 ]; do
