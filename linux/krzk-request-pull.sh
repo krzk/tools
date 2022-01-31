@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2016-2021 Krzysztof Kozlowski
+# Copyright (c) 2016-2022 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -32,7 +32,7 @@ CC_KRZK="Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <krzysztof.k
 
 if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
 	TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
-	CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, $CC_KRZK"
+	CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>, $CC_KRZK"
 	SUBJECT="ARM: dts: samsung:"
 elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
 	TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
