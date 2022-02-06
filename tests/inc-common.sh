@@ -30,6 +30,13 @@ test_cat_lt() {
 	return 0
 }
 
+#test_cat_le file expected
+test_cat_le() {
+	read -r val < "$1"
+	test $val -le $2 || { echo "ERROR: Wrong $1 ($val <= $2)"; return 1; }
+	return 0
+}
+
 #test_cat_gt file expected
 test_cat_gt() {
 	read -r val < "$1"

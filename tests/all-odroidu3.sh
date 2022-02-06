@@ -11,6 +11,7 @@ set -e -E -x
 
 . $(dirname "${BASH_SOURCE[0]}")/inc-common.sh
 . $(dirname "${BASH_SOURCE[0]}")/drm.sh
+. $(dirname "${BASH_SOURCE[0]}")/exynos5422-dmc.sh
 . $(dirname "${BASH_SOURCE[0]}")/pwm-fan.sh
 . $(dirname "${BASH_SOURCE[0]}")/cpu-online.sh
 . $(dirname "${BASH_SOURCE[0]}")/thermal.sh
