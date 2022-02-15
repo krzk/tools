@@ -40,7 +40,7 @@ elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
 	SUBJECT="memory:"
 elif [[ $REMOTE_URL == *"/pinctrl/samsung.git"* ]]; then
 	TO="Linus Walleij <linus.walleij@linaro.org>"
-	CC="Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, $CC_KRZK"
+	CC="Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, $CC_KRZK"
 	SUBJECT="pinctrl: samsung:"
 else
 	usage
