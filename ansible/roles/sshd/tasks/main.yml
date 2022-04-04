@@ -29,6 +29,7 @@
     state: present
     insertafter: EOF
     line: '{{ item }}'
+    validate: /usr/sbin/sshd -T -f %s
   with_items:
     - 'AllowGroups {{ ssh_allow_group }}'
   become: yes
@@ -41,6 +42,7 @@
     insertafter: EOF
     regexp: '{{ item.regexp }}'
     line: '{{ item.line }}'
+    validate: /usr/sbin/sshd -T -f %s
   with_items:
     - { regexp: '^PermitRootLogin ', line: 'PermitRootLogin no' }
     - { regexp: '^PasswordAuthentication ', line: 'PasswordAuthentication no' }
