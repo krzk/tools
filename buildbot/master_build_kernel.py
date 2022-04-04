@@ -220,7 +220,7 @@ def steps_build_upload_artifacts(name, config, boot, out_dir, buildbot_url):
 
     st.extend(steps_prepare_upload_master('Prepare upload directory: sources', masterdest_dir_pub))
 
-    cmd = 'echo "Source URL: %(prop:repository)s\nRevision: %(prop:revision)s" > ' + out_dir + 'sources.txt; '
+    cmd = 'echo "Source URL: %(prop:repository_src:-%(prop:repository)s)s\nRevision: %(prop:revision)s" > ' + out_dir + 'sources.txt; '
     cmd += 'cp -p ' + out_dir + '.config ' + out_dir + 'config; '
     cmd += 'chmod a+r ' + out_dir + 'config; '
     cmd += 'chmod a+r ' + out_dir + 'sources.txt; '
