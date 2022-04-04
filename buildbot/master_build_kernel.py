@@ -289,7 +289,7 @@ def steps_build_mem_ctrl_adjust_config(builder_name, env):
                  '-e', 'TEGRA210_EMC',
                 ],
         haltOnFailure=True,
-        env=env, name='Toggle memory controller drivers compile test config options'))
+        env=env, name='Toggle memory controller compile test config'))
     st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'olddefconfig'],
                             haltOnFailure=True,
                             env=env, name='Make olddefconfig'))
