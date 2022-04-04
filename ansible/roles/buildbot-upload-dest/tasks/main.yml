@@ -19,17 +19,12 @@
     home: '/home/{{ user_buildbot_upload }}'
     state: present
     create_home: yes
+    password_lock: yes
     force: no
     generate_ssh_key: no
     # see: sshd
     append: yes
     groups: '{{ ssh_allow_group }}'
-  become: yes
-  become_user: root
-
-# TODO: after migrating to Ansible v2.6, use user:password_lock
-- name: Lock user password
-  command: passwd -l {{ user_buildbot_upload }}
   become: yes
   become_user: root
 
