@@ -18,16 +18,11 @@
     home: '/home/{{ user_gate }}'
     state: present
     create_home: yes
+    password_lock: yes
     force: no
     generate_ssh_key: no
     append: no
     groups: '{{ ssh_allow_group }}'
-  become: yes
-  become_user: root
-
-# TODO: after migrating to Ansible v2.6, use user:password_lock
-- name: Lock user password
-  command: passwd -l {{ user_gate }}
   become: yes
   become_user: root
 
