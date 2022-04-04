@@ -14,7 +14,7 @@
 - name: Create gateway unprivileged user
   user:
     name: '{{ user_gate }}'
-    shell: /bin/bash
+    shell: /usr/sbin/nologin
     home: '/home/{{ user_gate }}'
     state: present
     create_home: yes
@@ -48,4 +48,5 @@
     state: present
     key: '{{ item }}'
   with_file: '{{ authorized_keys_gate }} '
-  remote_user: '{{ user_gate }}'
+  become: yes
+  become_user: root
