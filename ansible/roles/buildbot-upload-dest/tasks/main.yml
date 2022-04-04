@@ -15,7 +15,7 @@
 - name: Create unprivileged user
   user:
     name: '{{ user_buildbot_upload }}'
-    shell: /bin/bash
+    shell: /usr/sbin/nologin
     home: '/home/{{ user_buildbot_upload }}'
     state: present
     create_home: yes
@@ -27,6 +27,31 @@
     groups: '{{ ssh_allow_group }}'
   become: yes
   become_user: root
+
+- name: Configure SSH for uploads
+  blockinfile:
+    path: '/etc/ssh/sshd_config'
+    state: present
+    block: |
+      Match User {{ user_buildbot_upload }}
+        ChrootDirectory /home/{{ user_buildbot_upload }}
+        ForceCommand internal-sftp
+        PermitTunnel no
+        AllowAgentForwarding no
+        AllowTcpForwarding no
+        X11Forwarding no
+    validate: /usr/sbin/sshd -T -f %s
+  become: yes
+  become_user: root
+  register: sshd_config
+
+- name: SSH reload
+  systemd:
+    name: ssh.service
+    state: reloaded
+  become: yes
+  become_user: root
+  when: sshd_config.changed | default(False)
 
 - name: Add to authorized keys - current key
   ansible.posix.authorized_key:
@@ -43,17 +68,22 @@
   file:
     path: '/home/{{ user_buildbot_upload }}'
     mode: '0751'
-  remote_user: '{{ user_buildbot_upload }}'
+    # Necessary for SFTP chroot (plus og-w)
+    owner: root
+    group: root
+  become: yes
+  become_user: '{{ user_buildbot_upload }}'
 
 - name: Create upload dirs
   file:
     path: '{{ item }}'
     state: directory
-    mode: '0755'
+    mode: '0775'
   with_items:
     - '/home/{{ user_buildbot_upload }}/deploy-pub'
     - '/home/{{ user_buildbot_upload }}/deploy-bin'
-  remote_user: '{{ user_buildbot_upload }}'
+  become: yes
+  become_user: '{{ user_buildbot_upload }}'
 
 - name: Link pub upload to nginx
   file:
@@ -70,7 +100,8 @@
   with_items:
     - '/home/{{ user_buildbot_upload }}/deploy-pub'
     - '/home/{{ user_buildbot_upload }}/deploy-bin'
-  remote_user: '{{ user_buildbot_upload }}'
+  become: yes
+  become_user: root
 
 - name: Set up cron - cleanup files
   ansible.builtin.cron:
@@ -81,7 +112,8 @@
   with_items:
     - '/home/{{ user_buildbot_upload }}/deploy-pub'
     - '/home/{{ user_buildbot_upload }}/deploy-bin'
-  remote_user: '{{ user_buildbot_upload }}'
+  become: yes
+  become_user: '{{ user_buildbot_upload }}'
 
 - name: Set up cron - cleanup dirs
   ansible.builtin.cron:
@@ -92,18 +124,32 @@
   with_items:
     - '/home/{{ user_buildbot_upload }}/deploy-pub'
     - '/home/{{ user_buildbot_upload }}/deploy-bin'
-  remote_user: '{{ user_buildbot_upload }}'
+  become: yes
+  become_user: '{{ user_buildbot_upload }}'
 
 - name: Set up forward
   ansible.builtin.copy:
     content: |
       {{ mail_foward_to }}
     dest: '/home/{{ user_buildbot_upload }}/.forward'
-  remote_user: '{{ user_buildbot_upload }}'
+  become: yes
+  become_user: '{{ user_buildbot_upload }}'
 
-- name: Link deploy-bin for downloads within Buildbot
+- name: Link uploads within Buildbot
   ansible.builtin.file:
-    src: '/home/{{ user_buildbot_upload }}/deploy-bin'
-    dest: '/home/{{ user_buildbot_master_ssh }}/master/deploy-bin'
+    src: '/home/{{ user_buildbot_upload }}/{{ item }}'
+    dest: '/home/{{ user_buildbot_master_ssh }}/master/{{ item }}'
     state: link
-  remote_user: '{{ user_buildbot_master_ssh }}'
+  with_items:
+   - deploy-pub
+   - deploy-bin
+  become: yes
+  become_user: '{{ user_buildbot_master_ssh }}'
+
+- name: Allow Buildbot user to manage also uploads
+  user:
+    name: '{{ user_buildbot_master_ssh }}'
+    groups: '{{ user_buildbot_upload }}'
+    append: yes
+  become: yes
+  become_user: root

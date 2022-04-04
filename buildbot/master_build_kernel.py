@@ -76,14 +76,6 @@ def step_touch_commit_files():
                               haltOnFailure=True,
                               name='touch changed files')
 
-def step_prepare_upload_master(name, dest):
-    return steps.ShellCommand(command=['ssh', '-o', 'StrictHostKeyChecking=no', '-p', master_auth_config['upload']['port'],
-                                       '{}@{}'.format(master_auth_config['upload']['user'], master_auth_config['upload']['host']),
-                                       util.Interpolate('mkdir -p ' + dest),
-                                      ],
-                              haltOnFailure=True,
-                              name=name)
-
 def step_upload_files_to_master(name, src, dest, errors_fatal=False, url=''):
     if errors_fatal:
         halt_on_failure=True
@@ -93,23 +85,40 @@ def step_upload_files_to_master(name, src, dest, errors_fatal=False, url=''):
         halt_on_failure=False
         warn_on_failure=True
         flunk_on_failure=False
-    command=['scp', '-p', '-o', 'StrictHostKeyChecking=no', '-P', master_auth_config['upload']['port'],
-             src,
-             util.Interpolate('{}@{}:{}'.format(master_auth_config['upload']['user'], master_auth_config['upload']['host'], dest)),
-            ]
+    sftp_cmd = 'cd {}\n'.format(dest)
+    for out in src:
+        sftp_cmd += 'put {}\n'.format(out)
+    cmd = '''
+        echo "{}" | sftp -p -o StrictHostKeyChecking=no -P {} -b - {}@{}'''.format(sftp_cmd,
+        master_auth_config['upload']['port'],
+        master_auth_config['upload']['user'],
+        master_auth_config['upload']['host'])
     if url:
-        return ShellCmdWithLink(command=command,
+        return ShellCmdWithLink(command=util.Interpolate(cmd),
                                 url=url,
                                 haltOnFailure=halt_on_failure,
                                 warnOnFailure=warn_on_failure,
                                 flunkOnFailure=flunk_on_failure,
                                 name=name)
     else:
-        return steps.ShellCommand(command=command,
+        return steps.ShellCommand(command=util.Interpolate(cmd),
                                   haltOnFailure=halt_on_failure,
                                   warnOnFailure=warn_on_failure,
                                   flunkOnFailure=flunk_on_failure,
                                   name=name)
+
+def steps_prepare_upload_master(name, dest):
+    st = []
+    st.append(steps.MasterShellCommand(command=['mkdir', '-p', util.Interpolate(dest)],
+                                       haltOnFailure=True,
+                                       name=name))
+    st.append(steps.MasterShellCommand(command=['chgrp', master_auth_config['upload']['user'], util.Interpolate(dest)],
+                                       haltOnFailure=True,
+                                       name=name + ' (chgrp)'))
+    st.append(steps.MasterShellCommand(command=['chmod', 'g+rwx,o+rx', util.Interpolate(dest)],
+                                       haltOnFailure=True,
+                                       name=name + ' (chmod)'))
+    return st
 
 def steps_build_common(env, config=None):
     st = []
@@ -165,7 +174,7 @@ def steps_build_upload_artifacts_binaries(name, config, out_dir):
     st = []
 
     masterdest_dir_bin = 'deploy-bin/' + name + '/%(prop:revision)s/'
-    st.append(step_prepare_upload_master('Prepare upload directory: binaries', masterdest_dir_bin))
+    st.extend(steps_prepare_upload_master('Prepare upload directory: binaries', masterdest_dir_bin))
 
     upload_files_compress = ['Module.symvers',
                                 'System.map',
@@ -209,7 +218,7 @@ def steps_build_upload_artifacts(name, config, boot, out_dir, buildbot_url):
     st = []
     masterdest_dir_pub = 'deploy-pub/' + name + '/%(prop:revision)s/'
 
-    st.append(step_prepare_upload_master('Prepare upload directory: sources', masterdest_dir_pub))
+    st.extend(steps_prepare_upload_master('Prepare upload directory: sources', masterdest_dir_pub))
 
     cmd = 'echo "Source URL: %(prop:repository)s\nRevision: %(prop:revision)s" > ' + out_dir + 'sources.txt; '
     cmd += 'cp -p ' + out_dir + '.config ' + out_dir + 'config; '
