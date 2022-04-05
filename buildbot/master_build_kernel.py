@@ -112,10 +112,12 @@ def steps_prepare_upload_master(name, dest):
     st.append(steps.MasterShellCommand(command=['mkdir', '-p', util.Interpolate(dest)],
                                        haltOnFailure=True,
                                        name=name))
-    st.append(steps.MasterShellCommand(command=['chgrp', master_auth_config['upload']['user'], util.Interpolate(dest)],
+    cmd = 'chgrp {} {} $(dirname {})'.format(master_auth_config['upload']['user'], dest, dest)
+    st.append(steps.MasterShellCommand(command=util.Interpolate(cmd),
                                        haltOnFailure=True,
                                        name=name + ' (chgrp)'))
-    st.append(steps.MasterShellCommand(command=['chmod', 'g+rwx,o+rx', util.Interpolate(dest)],
+    cmd = 'chmod g+rwx,o+rx {} $(dirname {})'.format(dest, dest)
+    st.append(steps.MasterShellCommand(command=util.Interpolate(cmd),
                                        haltOnFailure=True,
                                        name=name + ' (chmod)'))
     return st
@@ -222,9 +224,9 @@ def steps_build_upload_artifacts(name, config, boot, out_dir, buildbot_url):
 
     cmd = 'echo "Source URL: %(prop:repository_src:-%(prop:repository)s)s\nRevision: %(prop:revision)s" > ' + out_dir + 'sources.txt; '
     cmd += 'cp -p ' + out_dir + '.config ' + out_dir + 'config; '
-    cmd += 'chmod a+r ' + out_dir + 'config; '
-    cmd += 'chmod a+r ' + out_dir + 'sources.txt; '
-    cmd += 'chmod a+r ' + out_dir + 'include/generated/autoconf.h'
+    cmd += 'chmod a+r,g+w ' + out_dir + 'config; '
+    cmd += 'chmod a+r,g+w ' + out_dir + 'sources.txt; '
+    cmd += 'chmod a+r,g+w ' + out_dir + 'include/generated/autoconf.h'
     st.append(steps.ShellCommand(command=util.Interpolate(cmd),
                                  name='Prepare source files for uploading'))
 

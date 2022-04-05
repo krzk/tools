@@ -79,17 +79,19 @@
     path: '{{ item }}'
     state: directory
     mode: '0775'
+    owner: '{{ user_buildbot_master_ssh }}'
+    group: '{{ user_buildbot_upload }}'
   with_items:
     - '/home/{{ user_buildbot_upload }}/deploy-pub'
     - '/home/{{ user_buildbot_upload }}/deploy-bin'
   become: yes
-  become_user: '{{ user_buildbot_upload }}'
+  become_user: root
 
 - name: Link pub upload to nginx
   file:
     src: '/home/{{ user_buildbot_upload }}/deploy-pub'
     dest: '/usr/share/nginx/html/pub/deploy-pub'
-    owner: '{{ user_buildbot_upload }}'
+    owner: '{{ user_buildbot_master_ssh }}'
     group: '{{ user_buildbot_upload }}'
     state: link
   become: yes
@@ -113,7 +115,7 @@
     - '/home/{{ user_buildbot_upload }}/deploy-pub'
     - '/home/{{ user_buildbot_upload }}/deploy-bin'
   become: yes
-  become_user: '{{ user_buildbot_upload }}'
+  become_user: '{{ user_buildbot_master_ssh }}'
 
 - name: Set up cron - cleanup dirs
   ansible.builtin.cron:
@@ -125,7 +127,7 @@
     - '/home/{{ user_buildbot_upload }}/deploy-pub'
     - '/home/{{ user_buildbot_upload }}/deploy-bin'
   become: yes
-  become_user: '{{ user_buildbot_upload }}'
+  become_user: '{{ user_buildbot_master_ssh }}'
 
 - name: Set up forward
   ansible.builtin.copy:
