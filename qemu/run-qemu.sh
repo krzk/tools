@@ -1,8 +1,7 @@
 #!/bin/bash
 #
 # Copyright (c) 2021 Canonical Ltd.
-# Author: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-#                             <krzk@kernel.org>
+# Author: Krzysztof Kozlowski <krzk@kernel.org>
 #
 # SPDX-License-Identifier: GPL-2.0
 #

@@ -3,8 +3,7 @@
 # SPDX-License-Identifier: GPL-2.0
 #
 # Copyright (c) 2021 Canonical Ltd.
-# Author: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-#                             <krzk@kernel.org>
+# Author: Krzysztof Kozlowski <krzk@kernel.org>
 #
 # Script based on Linux kernel commit 7996a8b5511a ("blk-mq: fix hang caused
 # by freeze/unfreeze sequence")

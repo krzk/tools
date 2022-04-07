@@ -28,7 +28,7 @@ REMOTE="$(git rev-parse --abbrev-ref --symbolic-full-name master@{upstream})"
 REMOTE="${REMOTE%%/*}"
 REMOTE_URL="$(git remote get-url ${REMOTE})"
 
-CC_KRZK="Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>"
+CC_KRZK="Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>"
 
 if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
 	TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
@@ -50,7 +50,7 @@ git tag -v $TAG &> /dev/null || die "Wrong tag or signature"
 
 echo "Output to: $OUT"
 echo "Subject: [GIT PULL] $SUBJECT xxx for v5.x
-From: Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: $TO
 Cc: $CC
 
