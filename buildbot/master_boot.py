@@ -626,6 +626,7 @@ def steps_test_suite_fast(target, config):
     st.append(step_test_case(target, config, 'arm-pmu', is_fast=True))
     st.append(step_test_case(target, config, 'audio', is_fast=True))
     st.append(step_test_case(target, config, 'board-name', is_fast=True))
+    st.append(step_test_case(target, config, 'board-led', is_fast=True))
     st.append(step_test_case(target, config, 'clk-s2mps11', is_fast=True))
     st.append(step_test_case(target, config, 'cpu-online', is_fast=True))
     st.append(step_test_case(target, config, 'drm', is_fast=True))
