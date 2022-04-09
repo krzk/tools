@@ -17,6 +17,7 @@ set -e -E -x
 . $(dirname "${BASH_SOURCE[0]}")/thermal.sh
 . $(dirname "${BASH_SOURCE[0]}")/thermal-cooling.sh
 . $(dirname "${BASH_SOURCE[0]}")/board-name.sh
+. $(dirname "${BASH_SOURCE[0]}")/board-led.sh
 #. $(dirname "${BASH_SOURCE[0]}")/cpu-mmc-stress.sh
 . $(dirname "${BASH_SOURCE[0]}")/s5p-sss.sh
 . $(dirname "${BASH_SOURCE[0]}")/s5p-sss-tcrypt.sh
