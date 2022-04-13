@@ -9,3 +9,8 @@
     - hardened
     - sshd
     - gate
+
+- hosts: intra_machines
+  roles:
+    - safe-env
+    - sshd

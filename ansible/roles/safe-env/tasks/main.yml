@@ -1,0 +1,41 @@
+---
+# Copyright (c) 2022 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <krzk@kernel.org>
+#
+# SPDX-License-Identifier: GPL-2.0
+
+- name: Check if GRUB_CMDLINE_LINUX_DEFAULT contains some entries
+  # Combining existing entries with mitigations=off is not supported
+  shell: "grep -E '^GRUB_CMDLINE_LINUX_DEFAULT=\".+\"' /etc/default/grub | grep -v 'GRUB_CMDLINE_LINUX_DEFAULT=\"mitigations=off kvm-intel.vmentry_l1d_flush=never\"'"
+  check_mode: no
+  changed_when: no
+  register: presence
+  failed_when: presence.rc == 0
+
+- name: Disable all Spectre/Meltdown/L1TF/MDS mitigations
+  # The machines do not execute untrusted code (e.g. JavaScript from web pages or 3rd party virtual machines)
+  lineinfile:
+    path: /etc/default/grub
+    state: present
+    insertafter: EOF
+    regexp: '^GRUB_CMDLINE_LINUX_DEFAULT=".*".*$'
+    line: 'GRUB_CMDLINE_LINUX_DEFAULT="mitigations=off kvm-intel.vmentry_l1d_flush=never"'
+  register: grub_configuration
+  become: yes
+  become_user: root
+
+- name: Update grub (Debian)
+  command: update-grub
+  become: yes
+  become_user: root
+  when:
+    - grub_configuration.changed | default(False)
+    - ansible_facts['os_family'] == 'Debian'
+
+- name: Update grub (CentOS)
+  command: grub2-mkconfig -o /boot/grub2/grub.cfg
+  become: yes
+  become_user: root
+  when:
+    - grub_configuration.changed | default(False)
+    - ansible_facts['os_family'] == 'RedHat'
