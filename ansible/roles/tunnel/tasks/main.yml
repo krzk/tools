@@ -14,14 +14,14 @@
   assert:
     that: '{{ item }} is defined'
   with_items:
-  - host_gate
-  - host_gate_ssh
-  - port_buildbot
-  - port_gate
-  - port_tunnel_on_gate
-  - pubkey_gate
-  - user_gate
-  - user_tunnel
+    - host_gate
+    - host_gate_ssh
+    - port_buildbot
+    - port_gate
+    - port_tunnel_on_gate
+    - pubkey_gate
+    - user_gate
+    - user_tunnel
 
 - name: Set environment for Debian
   set_fact:

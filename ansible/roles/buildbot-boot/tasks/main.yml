@@ -7,8 +7,8 @@
   assert:
     that: '{{ item }} is defined'
   with_items:
-  - group_buildbot
-  - user_buildbot
+    - group_buildbot
+    - user_buildbot
 
 - name: Add admin to Buildbot group
   user:

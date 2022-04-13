@@ -1,11 +1,11 @@
 ---
 - hosts: servers
   roles:
-  - hardened
-  - sshd
+    - hardened
+    - sshd
 
 - hosts: gates
   roles:
-  - hardened
-  - sshd
-  - gate
+    - hardened
+    - sshd
+    - gate

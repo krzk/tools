@@ -3,7 +3,7 @@
   assert:
     that: '{{ item }} is defined'
   with_items:
-  - ssh_allow_group
+    - ssh_allow_group
 
 - name: Add group for SSH logins
   group:

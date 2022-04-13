@@ -143,8 +143,8 @@
     dest: '/home/{{ user_buildbot_master_ssh }}/master/{{ item }}'
     state: link
   with_items:
-   - deploy-pub
-   - deploy-bin
+    - deploy-pub
+    - deploy-bin
   become: yes
   become_user: '{{ user_buildbot_master_ssh }}'
 
