@@ -22,17 +22,12 @@
     name: '{{ user_buildbot }}'
     state: present
     create_home: no
+    password_lock: yes
     force: no
     generate_ssh_key: no
     append: no
     groups: uucp
     #password_lock: yes
-  become: yes
-  become_user: root
-
-# TODO: after migrating to Ansible v2.6, use user:password_lock
-- name: Lock user password
-  command: passwd -l {{ user_buildbot }}
   become: yes
   become_user: root
 
