@@ -26,6 +26,7 @@
     home: '/home/{{ buildbot_user }}'
     state: present
     create_home: yes
+    password_lock: yes
     force: no
     remove: no
     generate_ssh_key: yes
