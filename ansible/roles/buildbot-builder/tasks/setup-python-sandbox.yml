@@ -19,8 +19,6 @@
   apt:
     name:
       - virtualenv
-      # On some machines Buildbot runs with Python 2, on some with Python 3
-      - python-dev
       - python3-dev
       # Setuptools needed for ansible pip
       - python-setuptools
