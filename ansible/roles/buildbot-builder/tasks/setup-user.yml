@@ -83,7 +83,8 @@
     user: '{{ user_buildbot_upload }}'
     key: '{{ ssh_public_key.stdout }}'
   delegate_to: '{{ host_buildbot_upload_ssh }}'
-  remote_user: '{{ user_buildbot_upload }}'
+  become: yes
+  become_user: root
   # Ansible has trouble with concurrent steps on one machine -> gate,
   # so only one key is being stored eventually (last step overwrites).
   # Throttling solves the problem.
