@@ -13,6 +13,7 @@
 
 - hosts: intra_machines
   roles:
+    - hardened
     - mail-forward
     - safe-env
     - sshd
