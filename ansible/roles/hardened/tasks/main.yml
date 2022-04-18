@@ -1,5 +1,5 @@
 ---
-# Copyright (c) 2021 Canonical Ltd.
+# Copyright (c) 2022 Canonical Ltd.
 # Author: Krzysztof Kozlowski <krzk@kernel.org>
 #
 # SPDX-License-Identifier: GPL-2.0
@@ -8,6 +8,13 @@
   assert:
     that: '{{ item }} is defined'
   with_items:
+    - hardened_iptables_local_net
+    - hardened_iptables_trusted_net
+    - hardened_iptables_ssh_port
+    - hardened_iptables_public_services
+    - hardened_iptables_trusted_services
+    - hardened_iptables_local_services
+    - hardened_iptables_public_port_redir
     - locales_generated
     - locales_default
 
@@ -109,3 +116,36 @@
   when:
     - ansible_facts['os_family'] == 'Debian'
     - locales.changed | default(False)
+
+- name: Install iptables
+  apt:
+    name:
+      - iptables-persistent
+    state: present
+  tags: packages
+  become: yes
+  become_user: root
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Install iptables
+  community.general.pacman:
+    name:
+      - iptables
+    state: present
+  tags: packages
+  become: yes
+  become_user: root
+  when: ansible_facts['os_family'] == 'ArchLinux'
+
+- name: Install iptables script
+  template:
+    src: iptables.sh.j2
+    dest: /etc/iptables/iptables.sh
+    mode: 0755
+  become: yes
+  become_user: root
+
+- name: Configure iptables
+  ansible.builtin.command: /etc/iptables/iptables.sh
+  become: yes
+  become_user: root
