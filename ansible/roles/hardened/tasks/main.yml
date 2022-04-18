@@ -151,3 +151,14 @@
   ansible.builtin.command: /etc/iptables/iptables.sh
   become: yes
   become_user: root
+
+- name: Enable iptables persistency
+  # On Debian: by default via iptables-persistent
+  ansible.builtin.systemd:
+    name: iptables
+    state: started
+    enabled: yes
+    masked: no
+  become: yes
+  become_user: root
+  when: ansible_facts['os_family'] == 'ArchLinux'
