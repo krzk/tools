@@ -58,6 +58,7 @@
     - { regexp: 'APT::Periodic::Unattended-Upgrade "0";', line: 'APT::Periodic::Unattended-Upgrade "1";' }
   become: yes
   become_user: root
+  when: ansible_facts['os_family'] == 'Debian'
   register: unattended
 
 - name: Enable unattended upgrades - dpkg-reconfigure
@@ -107,6 +108,7 @@
     line: 'LANG={{ locales_default }}'
   become: yes
   become_user: root
+  when: ansible_facts['os_family'] == 'Debian'
   register: locales
 
 - name: Configure locales - dpkg-reconfigure
