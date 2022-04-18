@@ -80,3 +80,16 @@ WHERE buildbot.changes.changeid IS NULL;
 OPTIMIZE TABLE buildbot.changes, buildbot.sourcestamps, buildbot.change_files;
 
 SELECT COUNT(*),project FROM buildbot.changes GROUP BY project;
+
+# Select pending build requests for specific project:
+SELECT buildbot.buildrequests.*, buildbot.buildset_sourcestamps.buildsetid, buildbot.sourcestamps.id, buildbot.sourcestamps.project FROM buildbot.buildrequests
+INNER JOIN buildbot.buildset_sourcestamps ON buildbot.buildrequests.buildsetid = buildbot.buildset_sourcestamps.buildsetid
+INNER JOIN buildbot.sourcestamps ON buildbot.buildset_sourcestamps.sourcestampid = buildbot.sourcestamps.id
+WHERE buildbot.buildrequests.complete = 0
+	AND buildbot.sourcestamps.project = "krzk-github";
+# And remove them:
+DELETE buildbot.buildrequests FROM buildbot.buildrequests
+INNER JOIN buildbot.buildset_sourcestamps ON buildbot.buildrequests.buildsetid = buildbot.buildset_sourcestamps.buildsetid
+INNER JOIN buildbot.sourcestamps ON buildbot.buildset_sourcestamps.sourcestampid = buildbot.sourcestamps.id
+WHERE buildbot.buildrequests.complete = 0
+	AND buildbot.sourcestamps.project = "krzk-github";
