@@ -3,14 +3,19 @@
 # Author: Krzysztof Kozlowski <krzk@kernel.org>
 #
 # SPDX-License-Identifier: GPL-2.0
+- name: Check if grub is installed
+  stat:
+    path: /etc/default/grub
+  register: grub_install
 
 - name: Check if GRUB_CMDLINE_LINUX_DEFAULT contains some entries
   # Combining existing entries with mitigations=off is not supported
   shell: "grep -E '^GRUB_CMDLINE_LINUX_DEFAULT=\".+\"' /etc/default/grub | grep -v 'GRUB_CMDLINE_LINUX_DEFAULT=\"mitigations=off kvm-intel.vmentry_l1d_flush=never\"'"
   check_mode: no
   changed_when: no
-  register: presence
-  failed_when: presence.rc == 0
+  register: grub_cmdline_presence
+  failed_when: grub_cmdline_presence.rc == 0
+  when: grub_install.stat.exists | default(False)
 
 - name: Disable all Spectre/Meltdown/L1TF/MDS mitigations
   # The machines do not execute untrusted code (e.g. JavaScript from web pages or 3rd party virtual machines)
@@ -23,6 +28,7 @@
   register: grub_configuration
   become: yes
   become_user: root
+  when: grub_install.stat.exists | default(False)
 
 - name: Update grub (Debian)
   command: update-grub
