@@ -2,6 +2,7 @@
 - hosts: servers
   roles:
     - hardened
+    - mail-forward
     - sshd
 
 - hosts: gates
@@ -12,5 +13,6 @@
 
 - hosts: intra_machines
   roles:
+    - mail-forward
     - safe-env
     - sshd

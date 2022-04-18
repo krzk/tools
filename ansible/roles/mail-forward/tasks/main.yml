@@ -1,0 +1,122 @@
+---
+# Copyright (c) 2022 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <krzk@kernel.org>
+#
+# SPDX-License-Identifier: GPL-2.0
+- name: Check requirements for variables
+  assert:
+    that: '{{ item }} is defined'
+  with_items:
+    - postfix_my_domain
+    - postfix_my_hostname
+    - postfix_relay_host
+
+- name: Update apt-cache
+  apt:
+    update_cache: yes
+  tags: packages
+  become: yes
+  become_user: root
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Install Postfix
+  apt:
+    name:
+      - bsd-mailx
+      - libsasl2-modules
+      - postfix
+    state: present
+  tags: packages, python
+  become: yes
+  become_user: root
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Check if Postfix auth is set
+  stat:
+    path: /etc/postfix/sasl/passwd
+  register: postfix_sasl_auth_file
+  become: yes
+  become_user: root
+
+- name: Create Postfix auth directory
+  ansible.builtin.file:
+    path: /etc/postfix/sasl
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+  become: yes
+  become_user: root
+
+- name: Set Postfix auth plaintext file
+  ansible.builtin.lineinfile:
+    path: /etc/postfix/sasl/passwd
+    regexp: '^\\[{{ postfix_relay_host }}\\]:587\s*kozik.server:'
+    line: '[{{ postfix_relay_host }}]:587 kozik.server:{{ postfix_sasl_relay_gmail_password }}'
+    owner: root
+    group: root
+    mode: '0600'
+    create: yes
+  become: yes
+  become_user: root
+  when: postfix_sasl_auth_file.stat.exists == False
+
+- name: Set Postfix auth map
+  command: postmap /etc/postfix/sasl/passwd
+  become: yes
+  become_user: root
+  when: postfix_sasl_auth_file.stat.exists == False
+
+- name: Configure Postfix
+  lineinfile:
+    dest: /etc/postfix/main.cf
+    state: present
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+  with_items:
+    - { regexp: '^mydomain\s*=', line: 'mydomain = {{ postfix_my_domain }}' }
+    - { regexp: '^myhostname\s*=', line: 'myhostname = {{ postfix_my_hostname }}' }
+    # mynetworks configured later
+    - { regexp: '^mynetworks_style\s*=', line: 'mynetworks_style = host' }
+    - { regexp: '^relayhost\s*=', line: 'relayhost = [{{ postfix_relay_host }}]:587' }
+    - { regexp: '^alias_database\s*=', line: 'alias_database = $alias_maps' }
+    - { regexp: '^alias_maps\s*=', line: 'alias_maps = hash:/etc/aliases' }
+    # It is easier to disable IPv6 for Google than set up SPF for it
+    - { regexp: '^inet_protocols\s*=', line: 'inet_protocols = ipv4' }
+    - { regexp: '^inet_interfaces\s*=', line: 'inet_interfaces = loopback-only' }
+    - { regexp: '^smtpd_use_tls\s*=', line: 'smtpd_use_tls = yes' }
+    - { regexp: '^smtp_use_tls\s*=', line: 'smtp_use_tls = yes' }
+    - { regexp: '^smtp_sasl_auth_enable\s*=', line: 'smtp_sasl_auth_enable = yes' }
+    - { regexp: '^smtp_sasl_password_maps\s*=', line: 'smtp_sasl_password_maps = hash:/etc/postfix/sasl/passwd' }
+    - { regexp: '^smtp_sasl_security_options\s*=', line: 'smtp_sasl_security_options = noanonymous, noplaintext' }
+    - { regexp: '^smtp_sasl_mechanism_filter\s*=', line: 'smtp_sasl_mechanism_filter = plain' }
+    - { regexp: '^smtp_sasl_tls_security_options\s*=', line: 'smtp_sasl_tls_security_options = noanonymous' }
+  become: yes
+  become_user: root
+
+- name: Configure Postfix - continued
+  lineinfile:
+    dest: /etc/postfix/main.cf
+    state: present
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+    backrefs: yes
+  with_items:
+    - { regexp: '^mynetworks\s*=(.*)$', line: '#mynetworks = \1' }
+  become: yes
+  become_user: root
+
+- name: Check Postfix configuration
+  command: postfix check
+  check_mode: yes
+  become: yes
+  become_user: root
+
+- name: Enable and start Postfix
+  ansible.builtin.systemd:
+    name: postfix
+    state: started
+    enabled: yes
+    masked: no
+  become: yes
+  become_user: root
