@@ -3,6 +3,7 @@
   assert:
     that: '{{ item }} is defined'
   with_items:
+    - buildbot_builder_ccache_limit
     - buildbot_sandbox
     - buildbot_user
 
@@ -50,5 +51,5 @@
   remote_user: '{{ buildbot_user }}'
 
 - name: Set ccache limits
-  command: ccache -M 20G
+  command: ccache -M {{ buildbot_builder_ccache_limit }}
   remote_user: '{{ buildbot_user }}'
