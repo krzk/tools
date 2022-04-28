@@ -113,6 +113,7 @@ echo "       defconfig: $DEFCONFIG"
 echo "       arch: $ARCH"
 echo "       cc: $CROSS_COMPILE"
 echo "  starting build in $HOSTNAME:$WORKDIR ..."
+echo "  build log: $HOSTNAME:$LOG"
 JOBS="-j$(nproc)"
 
 function show_elapsed
