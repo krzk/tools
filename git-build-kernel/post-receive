@@ -2,6 +2,7 @@
 # .git/hooks/post-receive --> git-build-kernel automatic push builder
 # Kamal Mostafa <kamal@canonical.com>
 # Copyright 2022 Canonical Ltd.
+# Copyright (c) 2022 Krzysztof Kozlowski <krzk@kernel.org>
 #
 # SPDX-License-Identifier: GPL-3.0-only
 
@@ -16,9 +17,9 @@ option_only_build_predefined_refs=0
 
 while read old_object new_object ref_name
 do
-	echo "old_object=$old_object"
-	echo "new_object=$new_object"
-	echo "ref_name=$ref_name"
+	#echo "old_object=$old_object"
+	#echo "new_object=$new_object"
+	#echo "ref_name=$ref_name"
 
 	### do not trigger on ref/branch deletions
 	[ "$new_object" = "0000000000000000000000000000000000000000" ] && \

@@ -3,6 +3,7 @@ git push kernel package builder thing
 April 2013
 Kamal Mostafa <kamal@canonical.com>
 Copyright 2022 Canonical Ltd.
+Copyright (c) 2022 Krzysztof Kozlowski <krzk@kernel.org>
 
 SPDX-License-Identifier: GPL-3.0-only
 
@@ -115,9 +116,6 @@ given any commit-ish.  You can run this directly on dchroot build servers
 using the git push auto-builder method described above.  This script could
 be useful as a low-level component for an auto-bisector.
 
-	usage: git-build-kernel {branch|tag|ref|commit} [fdr_targets]
-	    Default fdr_targets: binary-generic
-	      (Use 'binary' for a full binary package build, or
-	       any subset of 'binary-headers binary-arch binary-indep')
+	usage: git-build-kernel {branch|tag|ref|commit} <arch> [config]
 
 ------------------------------------------------------------
