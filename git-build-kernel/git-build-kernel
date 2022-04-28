@@ -3,6 +3,7 @@
 # git-build-kernel
 # Kamal Mostafa <kamal@canonical.com>
 # Copyright 2022 Canonical Ltd.
+# Copyright (c) 2022 Krzysztof Kozlowski <krzk@kernel.org>
 #
 # SPDX-License-Identifier: GPL-3.0-only
 #
@@ -17,15 +18,15 @@ DEFAULT_FDR_TARGET="binary-generic"
 
 function usage
 {
-    {
-    echo "usage: git-build-kernel {branch|tag|ref|commit} amd64|i386 [fdr_target]"
-    echo "       git-build-kernel {branch|tag|ref|commit} source"
-    echo
-    echo "    Default fdr_target: $DEFAULT_FDR_TARGET"
-    echo "      (Use 'binary' for a full binary package build, or"
-    echo "       any one of e.g. 'binary-headers binary-arch binary-indep')"
-    } 1>&2
-    exit 1
+	{
+	echo "usage: git-build-kernel {branch|tag|ref|commit} amd64|i386 [fdr_target]"
+	echo "       git-build-kernel {branch|tag|ref|commit} source"
+	echo
+	echo "	Default fdr_target: $DEFAULT_FDR_TARGET"
+	echo "    (Use 'binary' for a full binary package build, or"
+	echo "     any one of e.g. 'binary-headers binary-arch binary-indep')"
+	} 1>&2
+	exit 1
 }
 
 
@@ -43,12 +44,12 @@ shift
 do_source_pkg=0
 if [ "$ARCH" = "source" ]
 then
-    TARGET="[source package]"
-    ARCH=amd64
-    do_source_pkg=1
+	TARGET="[source package]"
+	ARCH=amd64
+	do_source_pkg=1
 else
-    TARGET="$1"		# optional
-    [ -z "$TARGET" ] && TARGET="$DEFAULT_FDR_TARGET"
+	TARGET="$1"		# optional
+	[ -z "$TARGET" ] && TARGET="$DEFAULT_FDR_TARGET"
 fi
 
 
@@ -59,14 +60,14 @@ GITREPO="`git rev-parse --git-dir`"
 [ "$GITREPO" = "." ] && GITREPO="$PWD"
 GITREPO="${GITREPO%/.git}"
 [ -z "$GITREPO" ] && {
-    echo "fatal: Not a git repository (or any of the parent directories)" 1>&2
-    exit 1
+	echo "fatal: Not a git repository (or any of the parent directories)" 1>&2
+	exit 1
 }
 
 GITSHASHORT="`git log -1 --pretty=%h ${GITBRANCH%%refs/heads/} --`"
 [ -z "$GITSHASHORT" ] && {	# (this can probably never happen)
-    echo "warning: Can't determine GITSHASHORT from GITBRANCH=$GITBRANCH" 1>&2
-    GITSHASHORT="UNKNOWN-XXXX"
+	echo "warning: Can't determine GITSHASHORT from GITBRANCH=$GITBRANCH" 1>&2
+	GITSHASHORT="UNKNOWN-XXXX"
 }
 
 ### Get the var "DEBIAN=debian.master" from debian/debian.env
@@ -78,23 +79,23 @@ eval `git show $GITBRANCH:debian/debian.env 2>/dev/null | grep DEBIAN=`
 ### debian.master/changelog, and use it as the basis of the chroot.
 ### If it isn't useful, try to use the git repo directory name.
 DISTRO=$(
-    git show $GITBRANCH:$DEBIAN/changelog | grep '^[a-z]' | head -2 | sed -n -e 's/^.* \(.*\);.*$/\1/p'  | while read DISTRO
-    do [ "$DISTRO" != "UNRELEASED" ] && { echo $DISTRO; break; }
-    done
-    )
+	git show $GITBRANCH:$DEBIAN/changelog | grep '^[a-z]' | head -2 | sed -n -e 's/^.* \(.*\);.*$/\1/p'  | while read DISTRO
+	do [ "$DISTRO" != "UNRELEASED" ] && { echo $DISTRO; break; }
+	done
+	)
 SRCPKG=$(git show $GITBRANCH:$DEBIAN/changelog | sed 's/^\(.*\) (.*/\1/;q')
 CHROOT="$DISTRO"
 CHROOT="${CHROOT%-proposed}"
 [ $do_source_pkg = 1 ] && {
-    eval `git show $GITBRANCH:debian/debian.env 2>/dev/null | grep SOURCE_PACKAGE_CHROOT=`
-    [ -z "$SOURCE_PACKAGE_CHROOT" ] || CHROOT="$SOURCE_PACKAGE_CHROOT"
+	eval `git show $GITBRANCH:debian/debian.env 2>/dev/null | grep SOURCE_PACKAGE_CHROOT=`
+	[ -z "$SOURCE_PACKAGE_CHROOT" ] || CHROOT="$SOURCE_PACKAGE_CHROOT"
 }
 if [ "$CHROOT" = "UNRELEASED" -o -z "$CHROOT" ]
 then
-    GITREPOBASE="${GITREPO%/*}"	# e.g. /home/kamal/src/linux
-    GITREPODIR="${GITREPO##*/}"	# e.g. "ubuntu-raring[.git]"
-    CHROOT="${GITREPODIR##ubuntu-}"
-    CHROOT="${CHROOT%.git}"
+	GITREPOBASE="${GITREPO%/*}"	# e.g. /home/kamal/src/linux
+	GITREPODIR="${GITREPO##*/}"	# e.g. "ubuntu-raring[.git]"
+	CHROOT="${GITREPODIR##ubuntu-}"
+	CHROOT="${CHROOT%.git}"
 fi
 
 ### Get the source package version number
@@ -103,23 +104,23 @@ VERSION=`echo "$chg" | sed -n -e '1s/^.*(\([^)]*\)).*$/\1/p'`
 
 ### Find the appropriate -v{version} value for dpkg-genchanges
 [ $do_source_pkg = 1 ] && {
-    updates_version=$(rmadison -s ${DISTRO}-updates $SRCPKG | grep 'source$' | awk '{print $3}')
-    if [ -n "$updates_version" ]
-    then
-	dpkg --compare-versions "$updates_version" ge $VERSION && {
-	    echo "WARNING: ${DISTRO}-updates version ($updates_version) >= this version; skipping -v!" 1>&2
-	    updates_version=""
-	}
-    else
-	echo "WARNING: cannot determine ${DISTRO}-updates version for $SRCPKG" 1>&2
-    fi
-    if [ -n "$updates_version" ]
-    then
-	### Special case for backport kernel versions: strip the e.g. "~16.04.1"
-	### suffix from the updates_version
-	updates_version="${updates_version%~*}"
-	srcpkg_debopts="-v$updates_version $srcpkg_debopts"
-    fi
+	updates_version=$(rmadison -s ${DISTRO}-updates $SRCPKG | grep 'source$' | awk '{print $3}')
+	if [ -n "$updates_version" ]
+	then
+		dpkg --compare-versions "$updates_version" ge $VERSION && {
+			echo "WARNING: ${DISTRO}-updates version ($updates_version) >= this version; skipping -v!" 1>&2
+			updates_version=""
+		}
+	else
+		echo "WARNING: cannot determine ${DISTRO}-updates version for $SRCPKG" 1>&2
+	fi
+	if [ -n "$updates_version" ]
+	then
+		### Special case for backport kernel versions: strip the e.g. "~16.04.1"
+		### suffix from the updates_version
+		updates_version="${updates_version%~*}"
+		srcpkg_debopts="-v$updates_version $srcpkg_debopts"
+	fi
 }
 
 ### Compile amd64 and i386 in a native chroot.
@@ -144,22 +145,22 @@ touch "$WORKDIR/building"
 trap "rm -rf $WORKDIR/building $BUILDDIR" 0
 
 [ $do_source_pkg = 1 ] && {
-    deb_format="$(git show $GITBRANCH:debian/source/format 2>/dev/null)"
-    [ -z "$deb_format" ] && no_orig_tarball=1
-    [ "${deb_format/native/}" != "$deb_format" ] && no_orig_tarball=1
-    if [ "$no_orig_tarball" == 1 ]
-    then
-	srcpkg_debopts="--no-tgz-check $srcpkg_debopts"
-    else
-	orig_tarball="${SRCPKG}_${VERSION%%-*}.orig.tar.gz"
-	# Careful: $ORIG_TARBALLS_DIR must be accessible from within the chroot.
-	# (Alternately, use "cp -p" instead of "ln -s" if that's not an option)
-	[ -e "$ORIG_TARBALLS_DIR/$orig_tarball" ] || {
-	    echo "fatal: missing $ORIG_TARBALLS_DIR/$orig_tarball" 1>&2
-	    exit 1
-	}
-	ln -s $ORIG_TARBALLS_DIR/$orig_tarball $WORKDIR/
-    fi
+	deb_format="$(git show $GITBRANCH:debian/source/format 2>/dev/null)"
+	[ -z "$deb_format" ] && no_orig_tarball=1
+	[ "${deb_format/native/}" != "$deb_format" ] && no_orig_tarball=1
+	if [ "$no_orig_tarball" == 1 ]
+	then
+		srcpkg_debopts="--no-tgz-check $srcpkg_debopts"
+	else
+		orig_tarball="${SRCPKG}_${VERSION%%-*}.orig.tar.gz"
+		# Careful: $ORIG_TARBALLS_DIR must be accessible from within the chroot.
+		# (Alternately, use "cp -p" instead of "ln -s" if that's not an option)
+		[ -e "$ORIG_TARBALLS_DIR/$orig_tarball" ] || {
+			echo "fatal: missing $ORIG_TARBALLS_DIR/$orig_tarball" 1>&2
+			exit 1
+		}
+		ln -s $ORIG_TARBALLS_DIR/$orig_tarball $WORKDIR/
+	fi
 }
 
 ###
@@ -175,9 +176,9 @@ echo "      package: $SRCPKG ($VERSION) $DISTRO"
 echo "       target: $TARGET"
 if [ $do_source_pkg = 1 ]
 then
-    echo "    changes-v: $updates_version"
+	echo "    changes-v: $updates_version"
 else
-    echo "         arch: $ARCH"
+	echo "         arch: $ARCH"
 fi
 echo "       chroot: $CHROOT"
 echo "  starting build in $HOSTNAME:$WORKDIR ..."
@@ -186,11 +187,11 @@ function show_elapsed
 {
 	while [ -f $WORKDIR/building ]
 	do
-	    loadavg="`uptime`"
-	    loadavg="load${loadavg##*load}"
-	    elapsed=`date --utc --date="@$SECONDS" +%H:%M:%S`
-	    echo -n -e "\r  elapsed: $elapsed   $loadavg"
-	    sleep 11
+		loadavg="`uptime`"
+		loadavg="load${loadavg##*load}"
+		elapsed=`date --utc --date="@$SECONDS" +%H:%M:%S`
+		echo -n -e "\r  elapsed: $elapsed   $loadavg"
+		sleep 11
 	done
 }
 show_elapsed &
@@ -218,13 +219,13 @@ show_elapsed &
 		fakeroot debian/rules clean
 		if [ $do_source_pkg = 1 ]
 		then
-		    debuild $srcpkg_debopts -S -I -i -uc -us
+			debuild $srcpkg_debopts -S -I -i -uc -us
 		else
-		    # the selftests targets don't have a build target
-		    if [ -n "${TARGET##*selftests}" ]; then
-		        $BUILD_FAKEROOT debian/rules $BUILD_TARGET
-		    fi
-		    fakeroot debian/rules $TARGET
+			# the selftests targets don't have a build target
+			if [ -n "${TARGET##*selftests}" ]; then
+				$BUILD_FAKEROOT debian/rules $BUILD_TARGET
+			fi
+			fakeroot debian/rules $TARGET
 		fi
 XXEOFXX
 	STATUS=$?
@@ -250,13 +251,13 @@ echo "      $HOSTNAME:$LOG"
 
 if [ $do_source_pkg = 1 ]
 then
-    changesfile=$(ls "$WORKDIR"/*_source.changes)
-    echo "  source package files:"
-    echo "      $HOSTNAME:${WORKDIR}"
-    echo "  ready for debsign and upload:"
-    echo "      debsign -r $HOSTNAME ${changesfile}"
+	changesfile=$(ls "$WORKDIR"/*_source.changes)
+	echo "  source package files:"
+	echo "      $HOSTNAME:${WORKDIR}"
+	echo "  ready for debsign and upload:"
+	echo "      debsign -r $HOSTNAME ${changesfile}"
 else
-    echo "  binary packages:"
-    echo "      $HOSTNAME:$WORKDIR/"
+	echo "  binary packages:"
+	echo "      $HOSTNAME:$WORKDIR/"
 fi
 
