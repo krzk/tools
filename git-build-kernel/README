@@ -14,56 +14,34 @@ to a special "branch name" on the build server.  Example:
 
                                      (this makes it go!) ----vvvvvvvvvvvvvv
 
-    kamal@laptop:~/ubuntu-raring$  git push tangerine master:binary-generic
+    kamal@laptop:~/ubuntu-raring$ git push tangerine master:build-x86_64
 
     Total 0 (delta 0), reused 0 (delta 0)
     remote: building ... (ok to interrupt, build will continue) ...
-    remote: git-build-kernel (raring-amd64)
-    remote:       version: raring (3.8.0-17.27)
-    remote:       targets: binary-generic
+    remote: git-build-kernel
+    remote:        defconfig: defconfig
+    remote:        arch: x86_64
+    remote:        cc: ccache
     remote:   starting build in tangerine:/tmp/kernel-kamal-Um4LxEzU ...
+    remote:   build log: tangerine:/tmp/kernel-kamal-Um4LxEzU/build.log
+    remote:   elapsed: 00:00:11   load average: 0.30, 0.71, 1.32
     remote:   build completed OK. build log:
     remote:       tangerine:/tmp/kernel-kamal-Um4LxEzU/build.log
-    remote:   binary packages:
-    remote:       tangerine:/tmp/kernel-kamal-Um4LxEzU/
     To ssh://kamal@tangerine/home/kamal/src/linux/ubuntu-raring
-     * [new branch]      master -> binary-generic
+     * [new branch]      master -> build-x86_64
 
+The destination branch is optional. If present, it has format:
+build-ARCH-CONFIG
 
-If you want the full binary package set instead of just binary-generic, then
-push "yourbranch:binary" or likewise "yourbranch:binary-server".
-
-If you want the source package (.dsc file set), then push "yourbranch:source".
-
-If you run to compile/run the kernel selftests, then push
-"yourbranch:compileselftests" or "yourbranch:runselftests". These targets must
-be implemented by the package debian/rules.
+where by default ARCH=x86_64 and CONFIG=defconfig.
 
 Any local branch will work, so all of these are valid:
 
-	git push tangerine master:binary-generic	# a branch
-	git push tangerine master:source		# a branch, source pkg
-
-	git push tangerine master-next:binary-generic	# another branch
-
-	git push tangerine mybranch:binary-generic	# another branch
-	git push tangerine mybranch:binary-server	# server pkgs
-	git push tangerine mybranch:binary		# all binary pkgs
-	git push tangerine mybranch:compileselftests	# compile selftests
-
-	git push tangerine Ubuntu-3.8.0-1.5:binary	# a tag, all pkgs
-
-	git push tangerine HEAD:binary-generic		# HEAD
-
-You can push more exotic references as well, but must use a slightly
-longer syntax to satisfy git...  Insert "refs/build/", as follows:
-
-	git push tangerine HEAD~17:refs/build/source		# HEAD~17
-	git push tangerine 1564df2:refs/build/binary-generic	# a SHA
-
-By default, the system builds amd64 binary packages.  To build i386 binary
-packages, push to e.g. "i386-binary-generic" instead.
-
+	git push tangerine master:build-x86_64
+	git push tangerine master
+	git push tangerine master-next:build-arm64-allyesconfig
+	git push tangerine HEAD:build-arm-multi_v7
+	git push tangerine HEAD:build-arm-multi_v7_defconfig
 
 Features:
  - Ridiculously easy to use.
@@ -74,11 +52,10 @@ Features:
  - Can build multiple branches from the same repo simultaneously.
 
 Notes:
- - The 'binary-whatever' branch you push to will get removed after the build
+ - The 'build-.*' branch you push to will get removed after the build
    so as to not junk up your remote repo.  Its always okay to just delete
    those branches manually too (i.e. if the build server reboots and leaves
-   them).  If you prefer not to create those remote branches at all, an
-   alternate syntax is available: "yourbranch:refs/build/binary-generic".
+   them).
 
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
