@@ -15,7 +15,7 @@ ExecStart=/usr/local/bin/buildbot.sh start worker
 ExecStop=/usr/local/bin/buildbot.sh stop worker
 User=buildbot
 PIDFile=/home/buildbot/worker/twistd.pid
-Restart=on-abnormal
+Restart=on-failure
 RestartSec=5
 
 [Install]
