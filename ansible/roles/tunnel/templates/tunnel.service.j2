@@ -1,6 +1,5 @@
-# Copyright (c) 2018-2019 Krzysztof Kozlowski
-# Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-#                             <krzk@kernel.org>
+# Copyright (c) 2018-2022 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <krzk@kernel.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 2 as
@@ -11,13 +10,15 @@ After=network.target network-online.target
 Requires=network-online.target
 
 [Service]
-Type=simple
+Type=forking
 Restart=always
 RestartSec=10
-# -N - Just forward ports - but keep it still in foreground, needed for "simple" systemd service.
+# -N - just forward ports - but keep it still in foreground, needed for "simple" and "forking" systemd service
+# -f - run in background, for a forking service type, this needs logging to syslog
+# -y - logging to syslog
 # Run in batch mode (no password prompt) with fast connection failure detection.
 # Use default ServerAliveCountMax (3) so connection will retry after 3*30 seconds.
-ExecStart={{ ssh_cmd }} -o "BatchMode yes" -o "ServerAliveInterval 30" -o "ExitOnForwardFailure yes" -R {{ port_tunnel_on_gate }}:localhost:22 -L {{ port_buildbot }}:localhost:{{ port_buildbot }} -N -p {{ port_gate }} {{ user_gate }}@{{ host_gate }}
+ExecStart={{ ssh_cmd }} -o "BatchMode yes" -o "ServerAliveInterval 30" -o "ExitOnForwardFailure yes" -R {{ port_tunnel_on_gate }}:localhost:22 -L {{ port_buildbot }}:localhost:{{ port_buildbot }} -N -f -y -p {{ port_gate }} {{ user_gate }}@{{ host_gate }}
 User={{ user_tunnel }}
 
 [Install]
