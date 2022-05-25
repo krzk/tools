@@ -1,0 +1,72 @@
+#!/bin/bash
+# .git/hooks/post-receive --> git-build-kernel automatic push builder
+# Kamal Mostafa <kamal@canonical.com>
+
+### directory containing the git-build-kernel script (the same directory where
+### the post-receive hook is located)
+GBK_DIR="$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")"
+
+option_only_build_refs_build=0
+option_only_build_predefined_refs=0
+
+# echo "pwd is:" ; pwd		# Nb. we will be run from inside ".git/"
+
+while read old_object new_object ref_name
+do
+	echo "old_object=$old_object"
+	echo "new_object=$new_object"
+	echo "ref_name=$ref_name"
+
+	### do not trigger on ref/branch deletions
+	[ "$new_object" = "0000000000000000000000000000000000000000" ] && \
+			continue
+
+	ref_p1="${ref_name#refs/}"
+	ref_p2="${ref_p1#*/}"
+	ref_p1="${ref_p1%%/*}"
+
+	### trigger only on refs named "refs/build/*"
+	if [ $option_only_build_refs_build = 1 ]
+	then
+		[ "$ref_p1" = "build" ] || continue
+	fi
+
+	### handle e.g. "i386-binary-generic"
+	arch=x86_64
+	[ "${ref_p2%%-*}" = "x86_64" ] && { arch=x86_64; ref_p2="${ref_p2#*-}"; }
+	[ "${ref_p2%%-*}" = "i386" ] && { arch=i386; ref_p2="${ref_p2#*-}"; }
+	[ "${ref_p2%%-*}" = "alpha" ] && { arch=alpha; ref_p2="${ref_p2#*-}"; }
+	[ "${ref_p2%%-*}" = "arm" ] && { arch=arm; ref_p2="${ref_p2#*-}"; }
+	[ "${ref_p2%%-*}" = "arm64" ] && { arch=arm64; ref_p2="${ref_p2#*-}"; }
+	[ "${ref_p2%%-*}" = "m68k" ] && { arch=m68k; ref_p2="${ref_p2#*-}"; }
+	[ "${ref_p2%%-*}" = "mips" ] && { arch=mips; ref_p2="${ref_p2#*-}"; }
+	[ "${ref_p2%%-*}" = "powerpc" ] && { arch=powerpc; ref_p2="${ref_p2#*-}"; }
+	[ "${ref_p2%%-*}" = "riscv64" ] && { arch=riscv64; ref_p2="${ref_p2#*-}"; }
+	[ "${ref_p2%%-*}" = "s390" ] && { arch=s390; ref_p2="${ref_p2#*-}"; }
+	[ "${ref_p2%%-*}" = "sparc" ] && { arch=sparc; ref_p2="${ref_p2#*-}"; }
+
+	echo "ref_p1=$ref_p1"
+	echo "ref_p2=$ref_p2"
+
+	### handle predefined branch or refs targets
+	### e.g. refs/heads/binary  (an actual branch named "binary")
+	### e.g. refs/whatever/binary-server  (an arbitrary reference name)
+	delete_ref_after_build=1
+	case "$ref_p2" in
+	    source)		arch="source"; fdr_targets=""; ;;
+	    binary*|*selftests)	fdr_targets="$ref_p2" ;;
+	    *)
+				### trigger only on predefined names
+				[ $option_only_build_predefined_refs = 1 ] && \
+						continue
+				delete_ref_after_build=0
+				;;
+	esac
+
+	echo "building ... (ok to interrupt, build will continue) ..."
+
+	$GBK_DIR/git-build-kernel "$ref_name" $arch $fdr_targets
+
+	### dispose of the "refs/build/*" refname file
+	[ $delete_ref_after_build = 1 ] && rm "$ref_name"
+done

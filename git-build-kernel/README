@@ -1,0 +1,120 @@
+git push kernel package builder thing
+
+April 2013
+Kamal Mostafa <kamal@canonical.com>
+
+-------------------------------------
+
+Automatic kernel build, just by pushing any branch (or tag or sha or ref)
+to a special "branch name" on the build server.  Example:
+
+                                     (this makes it go!) ----vvvvvvvvvvvvvv
+
+    kamal@laptop:~/ubuntu-raring$  git push tangerine master:binary-generic
+
+    Total 0 (delta 0), reused 0 (delta 0)
+    remote: building ... (ok to interrupt, build will continue) ...
+    remote: git-build-kernel (raring-amd64)
+    remote:       version: raring (3.8.0-17.27)
+    remote:       targets: binary-generic
+    remote:   starting build in tangerine:/tmp/kernel-kamal-Um4LxEzU ...
+    remote:   build completed OK. build log:
+    remote:       tangerine:/tmp/kernel-kamal-Um4LxEzU/build.log
+    remote:   binary packages:
+    remote:       tangerine:/tmp/kernel-kamal-Um4LxEzU/
+    To ssh://kamal@tangerine/home/kamal/src/linux/ubuntu-raring
+     * [new branch]      master -> binary-generic
+
+
+If you want the full binary package set instead of just binary-generic, then
+push "yourbranch:binary" or likewise "yourbranch:binary-server".
+
+If you want the source package (.dsc file set), then push "yourbranch:source".
+
+If you run to compile/run the kernel selftests, then push
+"yourbranch:compileselftests" or "yourbranch:runselftests". These targets must
+be implemented by the package debian/rules.
+
+Any local branch will work, so all of these are valid:
+
+	git push tangerine master:binary-generic	# a branch
+	git push tangerine master:source		# a branch, source pkg
+
+	git push tangerine master-next:binary-generic	# another branch
+
+	git push tangerine mybranch:binary-generic	# another branch
+	git push tangerine mybranch:binary-server	# server pkgs
+	git push tangerine mybranch:binary		# all binary pkgs
+	git push tangerine mybranch:compileselftests	# compile selftests
+
+	git push tangerine Ubuntu-3.8.0-1.5:binary	# a tag, all pkgs
+
+	git push tangerine HEAD:binary-generic		# HEAD
+
+You can push more exotic references as well, but must use a slightly
+longer syntax to satisfy git...  Insert "refs/build/", as follows:
+
+	git push tangerine HEAD~17:refs/build/source		# HEAD~17
+	git push tangerine 1564df2:refs/build/binary-generic	# a SHA
+
+By default, the system builds amd64 binary packages.  To build i386 binary
+packages, push to e.g. "i386-binary-generic" instead.
+
+
+Features:
+ - Ridiculously easy to use.
+ - No locally installed tools required other than 'git'.
+ - Works with a bare or a populated remote git repo.
+ - Implements the standard proper fdr clean/build/binary-something sequence.
+ - Constructs source packages in a chroot for improved reproducibility.
+ - Can build multiple branches from the same repo simultaneously.
+
+Notes:
+ - The 'binary-whatever' branch you push to will get removed after the build
+   so as to not junk up your remote repo.  Its always okay to just delete
+   those branches manually too (i.e. if the build server reboots and leaves
+   them).  If you prefer not to create those remote branches at all, an
+   alternate syntax is available: "yourbranch:refs/build/binary-generic".
+
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+To set up your git push auto-builder
+
+1. On the build server, cd into your own ubuntu-* repo .git/hooks/ directory,
+   and create a symlink to the builder's post-receive script.  This
+   post-receive MUST be created as a symlink (not a copy):
+
+	cd .../ubuntu-something/.git/hooks/
+	ln -s /usr3/ubuntu/kteam-tools/git-build-kernel/post-receive .
+
+   (Do that for each ubuntu-* repo that you'll want to push to).
+   (Works fine for repo dir's named "ubuntu-something.git" also).
+
+   For the small repos like -meta or -signed, you need not bother setting
+   up a specific builder repo at all.  For each of those, just add a remote
+   (as below) to the main kernel repo on your build server.
+
+2. On your local machine, if you haven't already, set up a git remote
+   to point to your repo on the build server, e.g:
+
+	git remote add tangerine \
+		ssh://YOURUSERNAME@tangerine/path/to/your/ubuntu-something
+
+3. Try a push to one of the special branch names (above).  Enjoy!
+
+------------------------------------------------------------
+
+git-build-kernel
+
+git-build-kernel is a shell script that builds Ubuntu kernel binary packages
+given any commit-ish.  You can run this directly on dchroot build servers 
+(tangerine, gomeisa) but there's no need to fuss with it directly if you're
+using the git push auto-builder method described above.  This script could
+be useful as a low-level component for an auto-bisector.
+
+	usage: git-build-kernel {branch|tag|ref|commit} [fdr_targets]
+	    Default fdr_targets: binary-generic
+	      (Use 'binary' for a full binary package build, or
+	       any subset of 'binary-headers binary-arch binary-indep')
+
+------------------------------------------------------------
