@@ -1,6 +1,9 @@
 #!/bin/bash
 # .git/hooks/post-receive --> git-build-kernel automatic push builder
 # Kamal Mostafa <kamal@canonical.com>
+# Copyright 2022 Canonical Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-only
 
 ### directory containing the git-build-kernel script (the same directory where
 ### the post-receive hook is located)

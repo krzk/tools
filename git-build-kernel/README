@@ -2,6 +2,9 @@ git push kernel package builder thing
 
 April 2013
 Kamal Mostafa <kamal@canonical.com>
+Copyright 2022 Canonical Ltd.
+
+SPDX-License-Identifier: GPL-3.0-only
 
 -------------------------------------
 

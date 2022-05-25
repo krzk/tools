@@ -2,6 +2,10 @@
 #
 # git-build-kernel cleanup script
 #
+# Copyright 2022 Canonical Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-only
+#
 # Removes gbk working directories (/tmp/kernel-<user>-<hash>-<random>) that are
 # older than x days.
 #
