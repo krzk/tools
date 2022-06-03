@@ -1,0 +1,95 @@
+#!/bin/sh
+# Copyright (c) 2015-2022 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+#                             <krzk@kernel.org>
+#
+# SPDX-License-Identifier: GPL-2.0
+#
+
+# Rules for: {{ inventory_hostname }}
+LOCAL_NET="{{ hardened_iptables_local_net }}"
+# Trusted network, comma separated
+TRUSTED_NET="{{ hardened_iptables_trusted_net }}"
+# SSH is special: public restricted by number of connections, unrestricted for trusted
+SSH_PORT="{{ hardened_iptables_ssh_port }}"
+# Public services except ssh, space separated
+PUBLIC_SERVICES="{{ hardened_iptables_public_services }}"
+# Trusted services except ssh, space separated
+TRUSTED_SERVICES="{{ hardened_iptables_trusted_services }}"
+# Local services (proto:port)
+LOCAL_SERVICES="{{ hardened_iptables_local_services }}"
+# Port redirecting, space separated list of from:to
+PUBLIC_PORT_REDIR="{{ hardened_iptables_public_port_redir }}"
+
+set -e -E
+
+iptables -F
+iptables -X
+iptables -t nat -F
+iptables -P FORWARD DROP
+iptables -P INPUT DROP
+iptables -P OUTPUT ACCEPT
+
+iptables -N TCP
+iptables -N UDP
+iptables -N IN_SSH
+
+iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A INPUT -m conntrack --ctstate INVALID -j DROP
+
+# Ping:
+iptables -A INPUT -p icmp --icmp-type 8 -m conntrack --ctstate NEW -j ACCEPT
+
+# Services local, trusted and public:
+if [ "$SSH_PORT" != "" ]; then
+	iptables -A INPUT -p tcp --dport ${SSH_PORT} -m conntrack --ctstate NEW -j IN_SSH
+fi
+for port in $PUBLIC_SERVICES; do
+	iptables -A INPUT -p tcp --dport $port -m conntrack --ctstate NEW -j ACCEPT
+done
+for port in $PUBLIC_PORT_REDIR; do
+	port_from=${port%%:*}
+	port_to=${port##*:}
+	iptables -A PREROUTING -t nat -p tcp --dport $port_from -j REDIRECT --to-port $port_to
+done
+for port in $TRUSTED_SERVICES; do
+	test -n "$TRUSTED_NET" || break
+	iptables -A INPUT -p tcp --source $TRUSTED_NET --dport $port -m conntrack --ctstate NEW -j ACCEPT
+	# Log all other (not accepted) packets
+	iptables -A INPUT -p tcp --dport $port -m limit --limit 1/second -j LOG --log-prefix "iptables: " --log-level warning
+done
+if [ -n "$LOCAL_NET" ]; then
+	for port in $LOCAL_SERVICES; do
+		port_proto=${port%%:*}
+		port_num=${port##*:}
+		iptables -A INPUT -p $port_proto --source $LOCAL_NET --dport $port_num -m conntrack --ctstate NEW -j ACCEPT
+	done
+fi
+
+iptables -A INPUT -p udp -m conntrack --ctstate NEW -j UDP
+# NEW but not SYN is the only invalid TCP flag not covered by the INVALID state.
+# The reason is because they are rarely malicious packets, and they should
+# not just be dropped. Instead, we simply do not accept them, so they are
+# rejected with a TCP RST by the next rule.
+iptables -A INPUT -p tcp --syn -m conntrack --ctstate NEW -j TCP
+
+# Reject:
+iptables -A INPUT -p udp -j REJECT --reject-with icmp-port-unreachable
+iptables -A INPUT -p tcp -j REJECT --reject-with tcp-rst
+iptables -A INPUT -j REJECT --reject-with icmp-proto-unreachable
+
+# SSH:
+# cat /proc/net/xt_recent/sshbf
+# Clear it by: echo / > /proc/net/xt_recent/sshbf
+if [ -n "$TRUSTED_NET" ]; then
+	iptables -A IN_SSH -p tcp --source ${TRUSTED_NET} -j ACCEPT
+fi
+iptables -A IN_SSH -m recent --name sshbf --rttl --rcheck --hitcount 12 --seconds 7200 -j DROP
+iptables -A IN_SSH -m recent --name sshbf --set -j ACCEPT
+
+echo "Saving iptables..."
+test -f /etc/iptables/iptables.rules && iptables-save > /etc/iptables/iptables.rules
+test -f /etc/iptables/rules.v4 && iptables-save > /etc/iptables/rules.v4
+
+exit 0
