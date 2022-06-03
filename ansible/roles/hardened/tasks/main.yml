@@ -9,6 +9,7 @@
   assert:
     that: '{{ item }} is defined'
   with_items:
+    - hardened_iptables_blocked_net
     - hardened_iptables_local_net
     - hardened_iptables_trusted_net
     - hardened_iptables_ssh_port

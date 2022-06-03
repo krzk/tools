@@ -20,6 +20,8 @@ TRUSTED_SERVICES="{{ hardened_iptables_trusted_services }}"
 LOCAL_SERVICES="{{ hardened_iptables_local_services }}"
 # Port redirecting, space separated list of from:to
 PUBLIC_PORT_REDIR="{{ hardened_iptables_public_port_redir }}"
+# Space separated, suitable for iptables -s
+BLOCKED_NET="{{ hardened_iptables_blocked_net }}"
 
 set -e -E
 
@@ -33,6 +35,10 @@ iptables -P OUTPUT ACCEPT
 iptables -N TCP
 iptables -N UDP
 iptables -N IN_SSH
+
+for ip in $BLOCKED_NET; do
+	iptables -A INPUT --source $ip -j DROP
+done
 
 iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
 iptables -A INPUT -i lo -j ACCEPT
