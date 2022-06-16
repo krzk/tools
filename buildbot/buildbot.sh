@@ -74,6 +74,9 @@ do_buildbot() {
 	cd $HOME
 	test -d "sandbox" && source sandbox/bin/activate
 	test -d "$2" || die "No buildbot: $2"
+	if [ "$1" != "start" ]; then
+		OPTIONS=""
+	fi
 	echo "Launching: $bot_cmd $1 $OPTIONS $2"
 	$bot_cmd $1 $OPTIONS $2
 }
