@@ -1,0 +1,60 @@
+# Copyright (C) 2021-2022 Linaro Ltd
+# Author: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+#                             <krzk@kernel.org>
+#
+# SPDX-License-Identifier: GPL-2.0
+
+version: 1
+name: work
+description: Work in Progress - krzk
+jobs:
+  - name: ARMv7 - boot
+    builds:
+      - {target_arch: arm,       toolchain: gcc-10,   kconfig: multi_v7_defconfig}
+    test: {device: qemu-armv7,   tests: [kunit, kselftest-gpio, kselftest-ipc, kselftest-rtc, ltp-smoke]}
+
+  - name: ARMv8 - boot
+    builds:
+      - {target_arch: arm64,     toolchain: gcc-10,   kconfig: defconfig}
+    test: {device: qemu-arm64,   tests: [kunit, kselftest-gpio, kselftest-ipc, kselftest-rtc, ltp-smoke]}
+
+  - name: MIPS - boot
+    builds:
+      - {target_arch: mips,      toolchain: gcc-10,   kconfig: malta_defconfig}
+    test: {device: qemu-mips64,  tests: [kunit, kselftest-gpio, kselftest-ipc, kselftest-rtc, ltp-smoke]}
+
+  - name: RISCV - boot
+    builds:
+      - {target_arch: riscv,     toolchain: gcc-10,   kconfig: defconfig}
+    test: {device: qemu-riscv64, tests: [kunit, kselftest-gpio, kselftest-ipc, kselftest-rtc, ltp-smoke]}
+
+  - name: x86_64 - boot
+    builds:
+      - {target_arch: riscv,     toolchain: gcc-10,   kconfig: defconfig}
+    test: {device: qemu-x86_64,  tests: [kunit, kselftest-gpio, kselftest-ipc, kselftest-rtc, ltp-smoke]}
+
+  - name: Rest - build
+    builds:
+      - {target_arch: arc,       toolchain: gcc-10,   kconfig: hsdk_defconfig}
+      - {target_arch: arm,       toolchain: gcc-10,   kconfig: allyesconfig}
+      - {target_arch: arm,       toolchain: gcc-10,   kconfig: exynos_defconfig}
+      - {target_arch: arm,       toolchain: gcc-10,   kconfig: mini2440_defconfig}
+      - {target_arch: arm,       toolchain: gcc-10,   kconfig: multi_v7_defconfig}
+      - {target_arch: arm,       toolchain: clang-11, kconfig: multi_v7_defconfig}
+      - {target_arch: arm,       toolchain: gcc-10,   kconfig: qcom_defconfig}
+      - {target_arch: arm,       toolchain: gcc-10,   kconfig: s3c2410_defconfig}
+      - {target_arch: arm,       toolchain: gcc-10,   kconfig: s3c6400_defconfig}
+      - {target_arch: arm,       toolchain: gcc-10,   kconfig: s5pv210_defconfig}
+      - {target_arch: arm,       toolchain: gcc-10,   kconfig: tct_hammer_defconfig}
+      - {target_arch: arm64,     toolchain: clang-11, kconfig: defconfig}
+      - {target_arch: arm64,     toolchain: gcc-10,   kconfig: allyesconfig}
+      - {target_arch: arm64,     toolchain: gcc-10,   kconfig: allmodconfig}
+      - {target_arch: i386,      toolchain: gcc-10,   kconfig: defconfig}
+      - {target_arch: mips,      toolchain: gcc-10,   kconfig: ci20_defconfig}
+      - {target_arch: mips,      toolchain: gcc-10,   kconfig: allyesconfig}
+      - {target_arch: mips,      toolchain: gcc-10,   kconfig: allmodconfig}
+      - {target_arch: riscv,     toolchain: gcc-10,   kconfig: allyesconfig}
+      - {target_arch: riscv,     toolchain: gcc-10,   kconfig: allmodconfig}
+      - {target_arch: x86_64,    toolchain: clang-11, kconfig: defconfig}
+      - {target_arch: x86_64,    toolchain: gcc-10,   kconfig: allyesconfig}
+      - {target_arch: x86_64,    toolchain: gcc-10,   kconfig: allmodconfig}
