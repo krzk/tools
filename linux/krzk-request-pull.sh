@@ -34,6 +34,22 @@ if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
 	TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
 	CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>, $CC_KRZK"
 	SUBJECT="ARM: dts: samsung:"
+elif [[ $REMOTE_URL == *"/krzk/linux-dt.git"* ]]; then
+	if [[ $TAG == *"dt-bindings-"* ]]; then
+		TO="Rob Herring <robh@kernel.org>"
+		CC="devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, $CC_KRZK"
+		SUBJECT="dt-bindings:"
+	elif [[ $TAG == *"dt-"* ]]; then
+		TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
+		CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, $CC_KRZK"
+		SUBJECT="ARM: dts: "
+	elif [[ $TAG == *"dt64-"* ]]; then
+		TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
+		CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, $CC_KRZK"
+		SUBJECT="arm64: dts: "
+	else
+		die "Unknown tag format"
+	fi
 elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
 	TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
 	CC="linux-kernel@vger.kernel.org, $CC_KRZK"
