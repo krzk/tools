@@ -98,7 +98,6 @@ jobs:
   - name: Defconfig mips
     builds:
       - {target_arch: mips,      toolchain: gcc-10,   kconfig: defconfig}
-      - {target_arch: mips,      toolchain: gcc-10,   kconfig: malta_defconfig}
         #- {target_arch: mips,    toolchain: clang-11, kconfig: defconfig}
       - {target_arch: mips,      toolchain: gcc-10,   kconfig: [defconfig,
          "CONFIG_COMPILE_TEST=y", "CONFIG_OF=y", "CONFIG_SRAM=y", "CONFIG_MEMORY=y",
