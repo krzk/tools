@@ -25,7 +25,7 @@ jobs:
          "CONFIG_EXYNOS5422_DMC=y", "CONFIG_EXYNOS_SROM=y", "CONFIG_TEGRA_MC=y",
          "CONFIG_TEGRA20_EMC=y", "CONFIG_TEGRA30_EMC=y", "CONFIG_TEGRA124_EMC=y",
          "CONFIG_TEGRA210_EMC_TABLE=y", "CONFIG_TEGRA210_EMC=y"]}
-    test: {device: qemu-armv7,   tests: [kunit, kselftest-gpio, kselftest-ipc, kselftest-rtc, ltp-smoke]}
+    test: {device: qemu-armv7,   tests: [kunit, ltp-smoke]}
 
   - name: Defconfig arm64
     builds:
@@ -59,7 +59,7 @@ jobs:
          "CONFIG_EXYNOS5422_DMC=y", "CONFIG_EXYNOS_SROM=y", "CONFIG_TEGRA_MC=y",
          "CONFIG_TEGRA20_EMC=y", "CONFIG_TEGRA30_EMC=y", "CONFIG_TEGRA124_EMC=y",
          "CONFIG_TEGRA210_EMC_TABLE=y", "CONFIG_TEGRA210_EMC=y"]}
-    test: {device: qemu-arm64,   tests: [kunit, kselftest-gpio, kselftest-ipc, kselftest-rtc, ltp-smoke]}
+    test: {device: qemu-arm64,   tests: [kunit, ltp-smoke]}
 
   - name: Defconfig i386
     builds:
@@ -93,7 +93,7 @@ jobs:
          "CONFIG_EXYNOS5422_DMC=y", "CONFIG_EXYNOS_SROM=y", "CONFIG_TEGRA_MC=y",
          "CONFIG_TEGRA20_EMC=y", "CONFIG_TEGRA30_EMC=y", "CONFIG_TEGRA124_EMC=y",
          "CONFIG_TEGRA210_EMC_TABLE=y", "CONFIG_TEGRA210_EMC=y"]}
-    test: {device: qemu-i386, tests: [kunit, kselftest-gpio, kselftest-ipc, kselftest-rtc, ltp-smoke]}
+    test: {device: qemu-i386, tests: [kunit, ltp-smoke]}
 
   - name: Defconfig mips
     builds:
@@ -114,7 +114,7 @@ jobs:
          "CONFIG_EXYNOS5422_DMC=y", "CONFIG_EXYNOS_SROM=y", "CONFIG_TEGRA_MC=y",
          "CONFIG_TEGRA20_EMC=y", "CONFIG_TEGRA30_EMC=y", "CONFIG_TEGRA124_EMC=y",
          "CONFIG_TEGRA210_EMC_TABLE=y", "CONFIG_TEGRA210_EMC=y"]}
-    test: {device: qemu-mips64,  tests: [kunit, kselftest-gpio, kselftest-ipc, kselftest-rtc, ltp-smoke]}
+    test: {device: qemu-mips64,  tests: [kunit, ltp-smoke]}
 
   - name: Defconfig powerpc
     builds:
@@ -153,7 +153,7 @@ jobs:
          "CONFIG_EXYNOS5422_DMC=y", "CONFIG_EXYNOS_SROM=y", "CONFIG_TEGRA_MC=y",
          "CONFIG_TEGRA20_EMC=y", "CONFIG_TEGRA30_EMC=y", "CONFIG_TEGRA124_EMC=y",
          "CONFIG_TEGRA210_EMC_TABLE=y", "CONFIG_TEGRA210_EMC=y"]}
-    test: {device: qemu-riscv64, tests: [kunit, kselftest-gpio, kselftest-ipc, kselftest-rtc, ltp-smoke]}
+    test: {device: qemu-riscv64, tests: [kunit, ltp-smoke]}
 
   - name: Defconfig s390
     builds:
@@ -241,4 +241,4 @@ jobs:
          "CONFIG_EXYNOS5422_DMC=y", "CONFIG_EXYNOS_SROM=y", "CONFIG_TEGRA_MC=y",
          "CONFIG_TEGRA20_EMC=y", "CONFIG_TEGRA30_EMC=y", "CONFIG_TEGRA124_EMC=y",
          "CONFIG_TEGRA210_EMC_TABLE=y", "CONFIG_TEGRA210_EMC=y"]}
-    test: {device: qemu-x86_64, tests: [kunit, kselftest-gpio, kselftest-ipc, kselftest-rtc, ltp-smoke]}
+    test: {device: qemu-x86_64, tests: [kunit, ltp-smoke]}
