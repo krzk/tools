@@ -286,16 +286,24 @@ def steps_build_mem_ctrl_adjust_config(builder_name, env):
         command=['scripts/config', '--file', env['KBUILD_OUTPUT'] + '.config',
                  '-e', 'COMPILE_TEST', '-e', 'OF',
                  '-e', 'SRAM', '-e', 'MEMORY', '-e', 'PM_DEVFREQ',
+                 # drivers/memory/Kconfig
                  '-e', 'ARM_PL172_MPMC',
                  '-e', 'ATMEL_SDRAMC', '-e', 'ATMEL_EBI',
                  '-e', 'BRCMSTB_DPFE', '-e', 'BT1_L2_CTL',
                  '-e', 'TI_AEMIF', '-e', 'TI_EMIF', '-e', 'OMAP_GPMC',
-                 '-e', 'TI_EMIF_SRAM', '-e', 'FPGA_DFL_EMIF',
+                 '-e', 'TI_EMIF_SRAM',
+                 # FPGA_DFL_EMIF + dependencies:
+                 '-e', 'FPGA', '-e', 'FPGA_DFL', '-e', 'FPGA_DFL_EMIF',
+                 # drivers/memory/Kconfig
                  '-e', 'MVEBU_DEVBUS', '-e', 'FSL_CORENET_CF',
                  '-e', 'FSL_IFC', '-e', 'JZ4780_NEMC', '-e', 'MTK_SMI',
                  '-e', 'DA8XX_DDRCTL', '-e', 'PL353_SMC', '-e', 'RENESAS_RPCIF',
-                 '-e', 'STM32_FMC2_EBI', '-e', 'SAMSUNG_MC', '-e', 'EXYNOS5422_DMC',
-                 '-e', 'EXYNOS_SROM', '-e', 'TEGRA_MC', '-e', 'TEGRA20_EMC',
+                 '-e', 'STM32_FMC2_EBI',
+                 # drivers/memory/samsung/Kconfig
+                 '-e', 'SAMSUNG_MC', '-e', 'EXYNOS5422_DMC',
+                 '-e', 'EXYNOS_SROM',
+                 # drivers/memory/tegra/Kconfig
+                 '-e', 'TEGRA_MC', '-e', 'TEGRA20_EMC',
                  '-e', 'TEGRA30_EMC', '-e', 'TEGRA124_EMC', '-e', 'TEGRA210_EMC_TABLE',
                  '-e', 'TEGRA210_EMC',
                 ],
