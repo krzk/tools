@@ -289,7 +289,8 @@ def steps_build_mem_ctrl_adjust_config(builder_name, env):
                  # drivers/memory/Kconfig
                  '-e', 'ARM_PL172_MPMC',
                  '-e', 'ATMEL_SDRAMC', '-e', 'ATMEL_EBI',
-                 '-e', 'BRCMSTB_DPFE', '-e', 'BT1_L2_CTL',
+                 '-e', 'BRCMSTB_DPFE', '-e', 'BRCMSTB_MEMC',
+                 '-e', 'BT1_L2_CTL',
                  '-e', 'TI_AEMIF', '-e', 'TI_EMIF', '-e', 'OMAP_GPMC',
                  '-e', 'TI_EMIF_SRAM',
                  # FPGA_DFL_EMIF + dependencies:
