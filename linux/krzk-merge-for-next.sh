@@ -18,7 +18,7 @@ REMOTE="${REMOTE%%/*}"
 REMOTE_URL="$(git remote get-url ${REMOTE})"
 
 if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
-	BRANCHES="fixes next/defconfig next/drivers next/dt next/dt64 next/soc next/soc64"
+	BRANCHES="fixes next/clk next/defconfig next/drivers next/dt next/dt64 next/soc next/soc64"
 elif [[ $REMOTE_URL == *"/krzk/linux-dt.git"* ]]; then
 	BRANCHES="fixes next/dt next/dt64 next/dt-bindings"
 elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
