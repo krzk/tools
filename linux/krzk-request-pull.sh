@@ -33,7 +33,12 @@ CC_KRZK="Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <krzysztof.k
 if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
 	TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
 	CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>, $CC_KRZK"
-	if [[ $TAG == *"-dt-"* ]]; then
+	if [[ $TAG == *"-clk-"* ]]; then
+		SUBJECT="clk: samsung:"
+		TO="Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>"
+		CC="Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, $CC"
+		CC="Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, $CC"
+	elif [[ $TAG == *"-dt-"* ]]; then
 		SUBJECT="ARM: dts: samsung:"
 	elif [[ $TAG == *"-dt64-"* ]]; then
 		SUBJECT="arm64: dts: samsung:"
