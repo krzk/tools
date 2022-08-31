@@ -21,6 +21,8 @@ function usage() {
 	echo " Options:"
 	echo " -c <config_name>   - Optional name of config to use."
 	echo "                      Default config: $DEFAULT_CONFIG"
+	echo " -t <target>        - Optional make target"
+	echo "                      Default target: empty, so same as Makefile's default"
 
 	} 1>&2
 	exit 1
@@ -37,8 +39,9 @@ have_ccache() {
 ARCH=""
 DEFCONFIG="$DEFAULT_CONFIG"
 GITBRANCH=""
+TARGET=""
 
-while getopts "a:c:r:h" flag
+while getopts "a:c:r:t:h" flag
 do
 	case "$flag" in
 		a)
@@ -49,6 +52,9 @@ do
 			;;
 		r)
 			GITBRANCH="$OPTARG"
+			;;
+		t)
+			TARGET="$OPTARG"
 			;;
 		h)
 			usage
@@ -138,6 +144,7 @@ echo "git-build-kernel"
 echo "       defconfig: $DEFCONFIG"
 echo "       arch: $ARCH"
 echo "       cc: $CROSS_COMPILE"
+[ -n "$TARGET" ] && echo "       target: $TARGET"
 echo "  starting build in $HOSTNAME:$WORKDIR ..."
 echo "  build log: $HOSTNAME:$LOG"
 JOBS="-j$(nproc)"
@@ -170,8 +177,8 @@ show_elapsed &
 	echo "+++gbk++++ make $JOBS $DEFCONFIG"
 	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" make $JOBS $DEFCONFIG
 
-	echo "+++gbk++++ make $JOBS"
-	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" make $JOBS
+	echo "+++gbk++++ make $JOBS $TARGET"
+	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" make $JOBS $TARGET
 
 	STATUS=$?
 	echo "+++gbk++++ build exit status was $STATUS"
