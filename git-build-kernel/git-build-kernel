@@ -12,9 +12,16 @@ DEFAULT_CONFIG="defconfig"
 
 function usage() {
 	{
-	echo "usage: git-build-kernel {branch|tag|ref|commit} <arch> [config]"
+	echo "usage: git-build-kernel -r {ref} -a <arch> [options]"
 	echo
-	echo "	Default config: $DEFAULT_CONFIG"
+	echo " Mandatory options:"
+	echo " -a <arch>          - Architecture ARCH"
+	echo " -r <ref>           - branch|tag|ref|commit to build"
+	echo
+	echo " Options:"
+	echo " -c <config_name>   - Optional name of config to use."
+	echo "                      Default config: $DEFAULT_CONFIG"
+
 	} 1>&2
 	exit 1
 }
@@ -27,10 +34,32 @@ have_ccache() {
 ###
 ### Process cmdline arguments
 
-GITBRANCH="$1"		# branch, tag, ref, commit-ish
-[ -z "$GITBRANCH" ] && usage
+ARCH=""
+DEFCONFIG="$DEFAULT_CONFIG"
+GITBRANCH=""
 
-ARCH="$2"
+while getopts "a:c:r:h" flag
+do
+	case "$flag" in
+		a)
+			ARCH="$OPTARG"
+			;;
+		c)
+			DEFCONFIG="$OPTARG"
+			;;
+		r)
+			GITBRANCH="$OPTARG"
+			;;
+		h)
+			usage
+			;;
+		*)
+			usage
+			;;
+	esac
+done
+
+[ -z "$GITBRANCH" ] && usage
 [ -z "$ARCH" ] && usage
 
 CROSS_COMPILE=""
@@ -67,12 +96,6 @@ else
 	echo "fatal: unsupported arch $ARCH" 1>&2
 	exit 1
 fi
-
-shift
-shift
-
-DEFCONFIG="$1"		# optional
-[ -z "$DEFCONFIG" ] && DEFCONFIG="$DEFAULT_CONFIG"
 
 ###
 ### System and repo checks
