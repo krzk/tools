@@ -38,6 +38,8 @@ if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
 		TO="Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>"
 		CC="Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, $CC"
 		CC="Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, $CC"
+	elif [[ $TAG == *"-drivers-"* ]]; then
+		SUBJECT="samsung: drivers"
 	elif [[ $TAG == *"-dt-"* ]]; then
 		SUBJECT="ARM: dts: samsung:"
 	elif [[ $TAG == *"-dt64-"* ]]; then
