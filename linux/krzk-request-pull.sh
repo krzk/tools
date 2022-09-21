@@ -84,7 +84,7 @@ fi
 git tag -v $TAG &> /dev/null || die "Wrong tag or signature"
 
 echo "Output to: $OUT"
-echo "Subject: [GIT PULL] $SUBJECT xxx for v5.x
+echo "Subject: [GIT PULL] $SUBJECT xxx for v6.x
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: $TO
 Cc: $CC
