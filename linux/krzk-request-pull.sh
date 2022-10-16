@@ -50,7 +50,11 @@ if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
 		SUBJECT="ARM: samsung:"
 	fi
 elif [[ $REMOTE_URL == *"/krzk/linux-dt.git"* ]]; then
-	if [[ $TAG == *"dt-bindings-"* ]]; then
+	if [[ $TAG == *"qcom-pinctrl"* ]]; then
+		TO="Linus Walleij <linus.walleij@linaro.org>"
+		CC="Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@somainline.org>, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, $CC_KRZK"
+		SUBJECT="pinctrl: dt-bindings: qcom:"
+	elif [[ $TAG == *"dt-bindings-"* ]]; then
 		TO="Rob Herring <robh@kernel.org>"
 		CC="devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, $CC_KRZK"
 		SUBJECT="dt-bindings:"
