@@ -8,8 +8,8 @@
 set -e -E -x
 
 # Speakers:
-amixer -c 0 cset name='SpkrLeft PA Volume', 20
-amixer -c 0 cset name='SpkrRight PA Volume', 20
+amixer -c 0 cset name='SpkrLeft PA Volume' 20
+amixer -c 0 cset name='SpkrRight PA Volume' 20
 amixer -c 0 cset name='WSA RX0 MUX' AIF1_PB
 amixer -c 0 cset name='WSA RX1 MUX' AIF1_PB
 amixer -c 0 cset name='WSA_RX0 INP0' RX0
