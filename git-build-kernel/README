@@ -61,38 +61,18 @@ Notes:
 
 To set up your git push auto-builder
 
-1. On the build server, cd into your own ubuntu-* repo .git/hooks/ directory,
+1. On the build server, clone Linux kernel repo, go to .git/hooks/ directory,
    and create a symlink to the builder's post-receive script.  This
    post-receive MUST be created as a symlink (not a copy):
 
-	cd .../ubuntu-something/.git/hooks/
-	ln -s /usr3/ubuntu/kteam-tools/git-build-kernel/post-receive .
+        git clone https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+        cd linux/.git/hooks/
+	ln -s ~/git-build-kernel/post-receive .
 
-   (Do that for each ubuntu-* repo that you'll want to push to).
-   (Works fine for repo dir's named "ubuntu-something.git" also).
-
-   For the small repos like -meta or -signed, you need not bother setting
-   up a specific builder repo at all.  For each of those, just add a remote
-   (as below) to the main kernel repo on your build server.
-
-2. On your local machine, if you haven't already, set up a git remote
-   to point to your repo on the build server, e.g:
+2. On your local machine, set up a git remote to point to your repo on the
+   build server, e.g:
 
 	git remote add tangerine \
-		ssh://YOURUSERNAME@tangerine/path/to/your/ubuntu-something
+		ssh://YOURUSERNAME@tangerine:~/linux
 
 3. Try a push to one of the special branch names (above).  Enjoy!
-
-------------------------------------------------------------
-
-git-build-kernel
-
-git-build-kernel is a shell script that builds Ubuntu kernel binary packages
-given any commit-ish.  You can run this directly on dchroot build servers 
-(tangerine, gomeisa) but there's no need to fuss with it directly if you're
-using the git push auto-builder method described above.  This script could
-be useful as a low-level component for an auto-bisector.
-
-	usage: git-build-kernel {branch|tag|ref|commit} <arch> [config]
-
-------------------------------------------------------------
