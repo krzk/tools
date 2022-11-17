@@ -30,15 +30,20 @@ to a special "branch name" on the build server.  Example:
     To ssh://kamal@tangerine/home/kamal/src/linux/ubuntu-raring
      * [new branch]      master -> build-x86_64
 
-The destination branch is optional. If present, it has format:
-build-ARCH-CONFIG
+The destination branch should be of format:
+TARGET[-ARCH[-CONFIG]]
 
-where by default ARCH=x86_64 and CONFIG=defconfig.
+where:
+ - TARGET, required, valid options: build|dt_binding_check|dtbs_check
+ - ARCH, optional, default: x86_64
+ - CONFIG, optional, default: defconfig
 
 Any local branch will work, so all of these are valid:
 
-	git push tangerine master:build-x86_64
-	git push tangerine master
+	git push tangerine master:build
+	git push tangerine master:build-arm64
+	git push tangerine master:dt_binding_check-arm64
+	git push tangerine master:dtbs_check-arm64
 	git push tangerine master-next:build-arm64-allyesconfig
 	git push tangerine HEAD:build-arm-multi_v7
 	git push tangerine HEAD:build-arm-multi_v7_defconfig

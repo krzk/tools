@@ -125,6 +125,10 @@ GITSHASHORT="`git log -1 --pretty=%h ${GITBRANCH%%refs/heads/} --`"
 	GITSHASHORT="UNKNOWN-XXXX"
 }
 
+# For local dtschema (pip install dtschema)
+PATH="${HOME}/.local/bin:$PATH"
+export PATH
+
 ###
 ### Set up the /tmp work directory
 

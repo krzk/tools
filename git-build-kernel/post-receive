@@ -38,6 +38,9 @@ do
 	case "$ref_p2_prefix" in
 		build)
 			;;
+		dt_binding_check|dtbs_check)
+			target="-t $ref_p2_prefix"
+			;;
 		*)
 			echo "skipping unmatched target $ref_p2_prefix"
 			exit 0
@@ -71,7 +74,7 @@ do
 
 	echo "building ... (ok to interrupt, build will continue) ..."
 
-	$GBK_DIR/git-build-kernel -r "$ref_name" -a $arch -c $config
+	$GBK_DIR/git-build-kernel -r "$ref_name" -a $arch -c $config $target
 
 	### dispose of the "refs/build/*" refname file
 	rm "$ref_name"
