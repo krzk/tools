@@ -10,9 +10,6 @@
 ### the post-receive hook is located)
 GBK_DIR="$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")"
 
-option_only_build_refs_build=0
-option_only_build_predefined_refs=0
-
 # echo "pwd is:" ; pwd		# Nb. we will be run from inside ".git/"
 
 while read old_object new_object ref_name
@@ -28,12 +25,6 @@ do
 	ref_p1="${ref_name#refs/}"
 	ref_p2="${ref_p1#*/}"
 	ref_p1="${ref_p1%%/*}"
-
-	### trigger only on refs named "refs/build/*"
-	if [ $option_only_build_refs_build = 1 ]
-	then
-		[ "$ref_p1" = "build" ] || continue
-	fi
 
 	#echo "ref_p1=$ref_p1"
 	#echo "ref_p2=$ref_p2"
@@ -77,9 +68,6 @@ do
 	build-*)
 		;;
 	*)
-		### trigger only on predefined names
-		[ $option_only_build_predefined_refs = 1 ] && \
-			continue
 		delete_ref_after_build=0
 		;;
 	esac
