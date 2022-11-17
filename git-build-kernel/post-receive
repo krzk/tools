@@ -86,7 +86,7 @@ do
 
 	echo "building ... (ok to interrupt, build will continue) ..."
 
-	$GBK_DIR/git-build-kernel "$ref_name" $arch $config
+	$GBK_DIR/git-build-kernel -r "$ref_name" -a $arch -c $config
 
 	### dispose of the "refs/build/*" refname file
 	[ $delete_ref_after_build = 1 ] && rm "$ref_name"
