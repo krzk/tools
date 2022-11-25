@@ -1,0 +1,30 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0
+
+set -e -x
+
+manufacturer="Linux"
+model="Embedded device"
+serial="123456789ABCDEF"
+
+[ -d /sys/kernel/config/usb_gadget ] || modprobe libcomposite
+
+cd /sys/kernel/config/usb_gadget
+
+[ -d g2 ] && /usr/bin/usb-gadget-cleanup || true
+
+mkdir g2
+cd g2
+
+echo 0x1d6b > idVendor
+echo 0x0104 > idProduct
+mkdir strings/0x409
+echo "$serial" > strings/0x409/serialnumber
+echo "$manufacturer" > strings/0x409/manufacturer
+echo "$model" > strings/0x409/product
+mkdir configs/c.1
+mkdir configs/c.1/strings/0x409
+echo "USB CDC Ethernet config" > configs/c.1/strings/0x409/configuration
+mkdir functions/ecm.usb0
+ln -s functions/ecm.usb0 configs/c.1
+ls /sys/class/udc/ | xargs echo -n > /sys/kernel/config/usb_gadget/g2/UDC

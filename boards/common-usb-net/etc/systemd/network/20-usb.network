@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: GPL-2.0
+
+[Match]
+Name=usb0
+
+[Network]
+DHCP=yes

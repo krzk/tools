@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: GPL-2.0
+
+[Unit]
+Description=USB gadget net
+
+[Service]
+Type=oneshot
+# No daemon after starting
+RemainAfterExit=true
+Restart=on-failure
+ExecStart=/usr/bin/usb-gadget-setup
+ExecStop=/usr/bin/usb-gadget-cleanup
+
+[Install]
+WantedBy=multi-user.target
