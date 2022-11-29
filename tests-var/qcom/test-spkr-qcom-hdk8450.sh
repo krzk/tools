@@ -30,7 +30,7 @@ amixer -c 0 cset name='WSA_RX0 Digital Volume' 85
 amixer -c 0 cset name='WSA_RX1 Digital Volume' 85
 amixer -c 0 cset name='WSA_CODEC_DMA_RX_0 Audio Mixer MultiMedia2' 1
 
-aplay -D plughw:0,4 /usr/share/sounds/alsa/Front_Center.wav
+aplay -D plughw:0,5 /usr/share/sounds/alsa/Front_Center.wav
 
 # Headset:
 amixer -c 0 cset name='RX_RX0 Digital Volume' 65
@@ -55,4 +55,4 @@ amixer -c 0 cset name='CLSH Switch' 1
 amixer -c 0 cset name='LO Switch' 1
 amixer -c 0 cset name='RX_CODEC_DMA_RX_0 Audio Mixer MultiMedia1' 1
 
-aplay -D plughw:0,3 /usr/share/sounds/alsa/Front_Center.wav
+aplay -D plughw:0,4 /usr/share/sounds/alsa/Front_Center.wav
