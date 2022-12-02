@@ -7,30 +7,48 @@
 
 set -e -E -x
 
-# Speakers:
-amixer -c 0 cset name='SpkrLeft PA Volume' 20
-amixer -c 0 cset name='SpkrRight PA Volume' 20
-amixer -c 0 cset name='WSA RX0 MUX' AIF1_PB
-amixer -c 0 cset name='WSA RX1 MUX' AIF1_PB
-amixer -c 0 cset name='WSA_RX0 INP0' RX0
-amixer -c 0 cset name='WSA_RX1 INP0' RX1
-amixer -c 0 cset name='WSA_COMP1 Switch' 1
-amixer -c 0 cset name='WSA_COMP2 Switch' 1
-amixer -c 0 cset name='SpkrLeft WSA MODE' 0
-amixer -c 0 cset name='SpkrRight WSA MODE' 0
-amixer -c 0 cset name='SpkrLeft COMP Switch' 1
-amixer -c 0 cset name='SpkrLeft BOOST Switch' 1
-amixer -c 0 cset name='SpkrLeft DAC Switch' 1
-amixer -c 0 cset name='SpkrLeft VISENSE Switch' 0
-amixer -c 0 cset name='SpkrRight COMP Switch' 1
-amixer -c 0 cset name='SpkrRight BOOST Switch' 1
-amixer -c 0 cset name='SpkrRight DAC Switch' 1
-amixer -c 0 cset name='SpkrRight VISENSE Switch' 0
-amixer -c 0 cset name='WSA_RX0 Digital Volume' 85
-amixer -c 0 cset name='WSA_RX1 Digital Volume' 85
-amixer -c 0 cset name='WSA_CODEC_DMA_RX_0 Audio Mixer MultiMedia2' 1
+speakers_on() {
+	amixer -c 0 cset name='SpkrLeft PA Volume' 20
+	amixer -c 0 cset name='SpkrRight PA Volume' 20
+	amixer -c 0 cset name='WSA RX0 MUX' AIF1_PB
+	amixer -c 0 cset name='WSA RX1 MUX' AIF1_PB
+	amixer -c 0 cset name='WSA_RX0 INP0' RX0
+	amixer -c 0 cset name='WSA_RX1 INP0' RX1
+	amixer -c 0 cset name='WSA_COMP1 Switch' 1
+	amixer -c 0 cset name='WSA_COMP2 Switch' 1
+	amixer -c 0 cset name='SpkrLeft WSA MODE' 0
+	amixer -c 0 cset name='SpkrRight WSA MODE' 0
+	amixer -c 0 cset name='SpkrLeft COMP Switch' 1
+	amixer -c 0 cset name='SpkrLeft BOOST Switch' 1
+	amixer -c 0 cset name='SpkrLeft DAC Switch' 1
+	amixer -c 0 cset name='SpkrLeft VISENSE Switch' 0
+	amixer -c 0 cset name='SpkrRight COMP Switch' 1
+	amixer -c 0 cset name='SpkrRight BOOST Switch' 1
+	amixer -c 0 cset name='SpkrRight DAC Switch' 1
+	amixer -c 0 cset name='SpkrRight VISENSE Switch' 0
+	amixer -c 0 cset name='WSA_RX0 Digital Volume' 85
+	amixer -c 0 cset name='WSA_RX1 Digital Volume' 85
+	amixer -c 0 cset name='WSA_CODEC_DMA_RX_0 Audio Mixer MultiMedia2' 1
+}
 
+speakers_off() {
+	amixer -c 0 cset name="WSA RX0 MUX" ZERO
+	amixer -c 0 cset name="WSA RX1 MUX" ZERO
+	amixer -c 0 cset name='WSA_COMP1 Switch' 0
+	amixer -c 0 cset name='WSA_COMP2 Switch' 0
+	amixer -c 0 cset name="WSA_RX0 INP0" ZERO
+	amixer -c 0 cset name="WSA_RX1 INP0" ZERO
+	amixer -c 0 cset name='SpkrLeft COMP Switch' 0
+	amixer -c 0 cset name='SpkrLeft VISENSE Switch' 0
+	amixer -c 0 cset name='SpkrLeft DAC Switch' 0
+	amixer -c 0 cset name='SpkrRight COMP Switch' 0
+	amixer -c 0 cset name='SpkrRight VISENSE Switch' 0
+	amixer -c 0 cset name='SpkrRight DAC Switch' 0
+}
+
+speakers_on
 aplay -D plughw:0,5 /usr/share/sounds/alsa/Front_Center.wav
+speakers_off
 
 # Headset:
 amixer -c 0 cset name='RX_RX0 Digital Volume' 65
