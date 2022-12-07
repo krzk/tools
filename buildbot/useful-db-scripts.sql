@@ -45,14 +45,14 @@ SELECT COUNT(*) FROM buildbot.changes
 LEFT JOIN buildbot.sourcestamps ON buildbot.changes.sourcestampid = buildbot.sourcestamps.id
 LEFT JOIN buildbot.change_files ON buildbot.changes.changeid = buildbot.change_files.changeid
 WHERE
-  buildbot.changes.when_timestamp < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 30 DAY))
+  buildbot.changes.when_timestamp < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 180 DAY))
   AND buildbot.changes.project = 'krzk-github';
 
 DELETE buildbot.changes, buildbot.sourcestamps, buildbot.change_files FROM buildbot.changes
 LEFT JOIN buildbot.sourcestamps ON buildbot.changes.sourcestampid = buildbot.sourcestamps.id
 LEFT JOIN buildbot.change_files ON buildbot.changes.changeid = buildbot.change_files.changeid
 WHERE
-  buildbot.changes.when_timestamp < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 30 DAY))
+  buildbot.changes.when_timestamp < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 180 DAY))
   AND buildbot.changes.project = 'krzk-github';
 
 # All (so also krzk and mainline):
