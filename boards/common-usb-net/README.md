@@ -7,5 +7,6 @@
     sudo systemctl enable systemd-networkd
     sudo systemctl start systemd-networkd
     # Resolved is needed for networkd
+    sudo apt-get install systemd-resolved
     sudo systemctl enable systemd-resolved
     sudo systemctl start systemd-resolved
