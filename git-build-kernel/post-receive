@@ -38,7 +38,7 @@ do
 	case "$ref_p2_prefix" in
 		build)
 			;;
-		dt_binding_check|dtbs_check)
+		dt_binding_check|dt_compatible_check|dtbs_check)
 			target="-t $ref_p2_prefix"
 			;;
 		*)
