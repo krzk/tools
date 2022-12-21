@@ -178,6 +178,10 @@ show_elapsed &
 	echo "+++gbk++++ builddir size: $(du -sh $BUILDDIR | cut -f 1)"
 
 	cd "$BUILDDIR"
+
+	export CCACHE_NOHASHDIR=""
+	export CCACHE_BASEDIR="$PWD"
+
 	echo "+++gbk++++ make $JOBS $DEFCONFIG"
 	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" make $JOBS $DEFCONFIG
 
