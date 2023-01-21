@@ -44,8 +44,10 @@
 - name: Install Python dependencies
   pip:
     name:
+      - dtschema
       - GitPython
       - ply
+      - yamllint
     state: latest
     virtualenv: '{{ buildbot_sandbox }}'
   remote_user: '{{ buildbot_user }}'

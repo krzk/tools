@@ -337,7 +337,40 @@ def steps_build_selected_folders(builder_name, env):
                             env=env, name='Rebuild selected paths'))
     return st
 
-def steps_checkdtbs(env, config=None, git_reset=True):
+def steps_dtbs_check(env, config=None, git_reset=True):
+    st = []
+    if git_reset:
+        st += steps_build_common(env, config)
+    else:
+        st.append(step_make_config(env, config))
+    if not config:
+        # Disable all other platforms than Exynos and Tesla FSD
+        st.append(steps.ShellCommand(command=[util.Interpolate('%(prop:builddir:-~/)s/tools/buildbot/build-worker-strip-config.sh'),
+                                     env['KBUILD_OUTPUT']],
+                                     haltOnFailure=True,
+                                     env=env,
+                                     name='Strip unneeded platforms from config'))
+        st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'olddefconfig'],
+                                haltOnFailure=True,
+                                env=env,
+                                name='Make olddefconfig'))
+
+    step_name_cfg = str(config) + ' config' if config else 'defconfig'
+    step_name = 'make dtbs_check baseline for ' + env['ARCH'] + '/' + step_name_cfg
+    st.append(steps.ShellCommand(command=[util.Interpolate(CMD_MAKE), 'dtbs_check'],
+                                 haltOnFailure=True,
+                                 env=env, name=step_name))
+    st.append(step_touch_commit_files())
+    step_name = 'make dtbs_check warnings for ' + env['ARCH'] + '/' + step_name_cfg
+    st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'dtbs_check'],
+                            haltOnFailure=True,
+                            warnOnWarnings=True,
+                            suppressionList=BUILD_WARN_IGNORE,
+                            warningPattern="^.*\.dtb: ",
+                            env=env, name=step_name))
+    return st
+
+def steps_dtbs_warnings(env, config=None, git_reset=True):
     st = []
     if git_reset:
         st += steps_build_common(env, config)
