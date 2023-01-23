@@ -16,12 +16,9 @@ jobs:
   - name: Exynos, S3C, S5P ARMv7 - build
     builds:
       - {target_arch: arm,       toolchain: gcc-10,   kconfig: exynos_defconfig}
-      - {target_arch: arm,       toolchain: gcc-10,   kconfig: mini2440_defconfig}
       - {target_arch: arm,       toolchain: gcc-10,   kconfig: multi_v7_defconfig}
-      - {target_arch: arm,       toolchain: gcc-10,   kconfig: s3c2410_defconfig}
       - {target_arch: arm,       toolchain: gcc-10,   kconfig: s3c6400_defconfig}
       - {target_arch: arm,       toolchain: gcc-10,   kconfig: s5pv210_defconfig}
-      - {target_arch: arm,       toolchain: gcc-10,   kconfig: tct_hammer_defconfig}
 
   - name: Exynos ARMv8 - boot
     builds:

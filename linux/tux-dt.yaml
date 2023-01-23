@@ -32,13 +32,10 @@ jobs:
     builds:
       - {target_arch: arm,       toolchain: gcc-10,   kconfig: allyesconfig}
       - {target_arch: arm,       toolchain: gcc-10,   kconfig: exynos_defconfig}
-      - {target_arch: arm,       toolchain: gcc-10,   kconfig: mini2440_defconfig}
       - {target_arch: arm,       toolchain: gcc-10,   kconfig: multi_v7_defconfig}
       - {target_arch: arm,       toolchain: gcc-10,   kconfig: qcom_defconfig}
-      - {target_arch: arm,       toolchain: gcc-10,   kconfig: s3c2410_defconfig}
       - {target_arch: arm,       toolchain: gcc-10,   kconfig: s3c6400_defconfig}
       - {target_arch: arm,       toolchain: gcc-10,   kconfig: s5pv210_defconfig}
-      - {target_arch: arm,       toolchain: gcc-10,   kconfig: tct_hammer_defconfig}
       - {target_arch: arm64,     toolchain: gcc-10,   kconfig: allyesconfig}
       - {target_arch: mips,      toolchain: gcc-10,   kconfig: allyesconfig}
       - {target_arch: riscv,     toolchain: gcc-10,   kconfig: allyesconfig}
