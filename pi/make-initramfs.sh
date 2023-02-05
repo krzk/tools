@@ -32,7 +32,7 @@ MODULES_DIR="$(readlink -f """$2""")"
 ADDONS_DIR="$(readlink -f """$3""")"
 OUTPUT_FILE="$4"
 
-MODULES_WANTED="phy-exynos-usb2 ohci-exynos dwc2 r8152 rtl8150 lan78xx s2mpa01 s2mps11 s5m8767 clk-s2mps11 sec-irq sec-core rtc-s5m"
+MODULES_WANTED="phy-exynos-usb2 ehci-exynos ohci-exynos dwc2 r8152 rtl8150 lan78xx s2mpa01 s2mps11 s5m8767 clk-s2mps11 sec-irq sec-core rtc-s5m"
 
 test -f "$BASE_CPIO" || die "Missing base_cpio file"
 test -d "$MODULES_DIR" || die "Missing modules directory"
