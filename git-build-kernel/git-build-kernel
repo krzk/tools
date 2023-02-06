@@ -174,7 +174,7 @@ show_elapsed &
 
 	echo "+++gbk++++ git archive $GITREPO ($GITBRANCH)"
 	mkdir "$BUILDDIR"
-	git archive --format=tar "$GITBRANCH" | tar -x -C "$BUILDDIR"
+	nice git archive --format=tar "$GITBRANCH" | tar -x -C "$BUILDDIR"
 	echo "+++gbk++++ builddir size: $(du -sh $BUILDDIR | cut -f 1)"
 
 	cd "$BUILDDIR"
@@ -183,10 +183,10 @@ show_elapsed &
 	export CCACHE_BASEDIR="$PWD"
 
 	echo "+++gbk++++ make $JOBS $DEFCONFIG"
-	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" make $JOBS $DEFCONFIG
+	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" nice make $JOBS $DEFCONFIG
 
 	echo "+++gbk++++ make $JOBS $TARGET"
-	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" make $JOBS $TARGET
+	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" nice make $JOBS $TARGET
 
 	STATUS=$?
 	echo "+++gbk++++ build exit status was $STATUS"
