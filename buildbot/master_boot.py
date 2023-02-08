@@ -333,7 +333,8 @@ def pexpect_boot_to_prompt(target, config):
                        timeout=60)
     # On certain next kernels (next-20180924), this takes up to 100 seconds:
     child.expect_exact('systemd[1]: Detected architecture arm.', timeout=180)
-    child.expect_exact('Set hostname to <""" + target + """>.')
+    child.expect_exact(['Set hostname to <""" + target + """>',
+                        'Hostname set to <""" + target + """>'])
     print('Target """ + target + """ reached: Started systemd')
     # Wait for any early targets, before file systems to see if boot progresses
     child.expect_exact(['Reached target Remote File Systems',
