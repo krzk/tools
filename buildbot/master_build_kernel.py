@@ -270,6 +270,10 @@ def steps_build_boot_adjust_config(builder_name, env, slaves, config):
                  '-d', 'SECTION_MISMATCH_WARN_ONLY',
                  # SECCOMP is required by newer Arch ARM systemd
                  '-e', 'SECCOMP',
+                 # Broken commit d3b00a802c84 ("NFS: Replace the READ_PLUS decoding code")
+                 # No schedule for a fix...
+                 # https://lore.kernel.org/all/2add1769-1458-b185-bc78-6d573f61b6fc@linaro.org/
+                 '-d', 'NFS_V4_2_READ_PLUS',
                 ],
         haltOnFailure=True,
         env=env, name='Toggle config options'))
