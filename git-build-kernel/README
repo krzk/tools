@@ -1,4 +1,4 @@
-git push kernel package builder thing
+git push build kernel
 
 April 2013
 Kamal Mostafa <kamal@canonical.com>

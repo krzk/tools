@@ -6,14 +6,25 @@ Ansible playbooks and roles for configuring services and servers.  Just some
 basic automation stuff.  More advanced usage is incoming - I just need to
 clean it up.
 
+## /boards
+
+Scripts and tools running on my development boards, e.g. USB Ethernet gadget
+networking.
+
 ## /buildbot
 
 Buildbot master configuration and scripts executed by workers for building
 and booting ARM embedded targets at https://krzk.eu.
 
+## /git-build-kernel
+
+Awesome and easy to use **git push build kernel** scripts which I use on my
+build server for building kernel and running DT binding checks during daily
+work.
+
 ## /linux
 
-Helpers in maintaining Linux kernel (specific to my maintainer area).
+Helpers in maintaining Linux kernel (specific to my maintainer areas).
 
 ## /odroid
 
