@@ -42,8 +42,10 @@ Any local branch will work, so all of these are valid:
 
 	git push tangerine master:build
 	git push tangerine master:build-arm64
+	git push tangerine master:build-riscv
 	git push tangerine master:dt_binding_check-arm64
-	git push tangerine master:dtbs_check-arm64
+	git push tangerine master:dtbs_check-arm-qcom
+
 	git push tangerine master-next:build-arm64-allyesconfig
 	git push tangerine HEAD:build-arm-multi_v7
 	git push tangerine HEAD:build-arm-multi_v7_defconfig
@@ -55,6 +57,11 @@ Features:
  - Implements the standard proper fdr clean/build/binary-something sequence.
  - Constructs source packages in a chroot for improved reproducibility.
  - Can build multiple branches from the same repo simultaneously.
+ - Builds are done on /tmp, so be sure it is tmpfs and you have a lot of RAM,
+   for best experience.
+ - Recognized cross-compile architectures:
+   x86_64, i386, alpha, arm, arm64, m68k, mips, powerpc, powerpc64, riscv,
+   s390, sparc
 
 Notes:
  - The 'build-.*' branch you push to will get removed after the build
@@ -74,10 +81,13 @@ To set up your git push auto-builder
         cd linux/.git/hooks/
 	ln -s ~/git-build-kernel/post-receive .
 
-2. On your local machine, set up a git remote to point to your repo on the
+2. On the build server, install necessary cross-compilers and tools (e.g.
+   dtschema, yamllint).
+
+3. On your local machine, set up a git remote to point to your repo on the
    build server, e.g:
 
 	git remote add tangerine \
 		ssh://YOURUSERNAME@tangerine:~/linux
 
-3. Try a push to one of the special branch names (above).  Enjoy!
+4. Try a push to one of the special branch names (above).  Enjoy!
