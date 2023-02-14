@@ -7,21 +7,28 @@
 - name: Include vars
   include_vars:
     file: ~/etc/ansible/vars/tunnel.yml
-  delegate_to: '{{ host_gate_ssh }}'
+  with_flattened: '{{ tunnels }}'
+  delegate_to: '{{ item.host_gate_ssh }}'
   delegate_facts: true
 
 - name: Check requirements for variables
   assert:
     that: '{{ item }} is defined'
   with_items:
-    - host_gate
-    - host_gate_ssh
-    - port_forward
-    - port_gate
-    - port_tunnel_on_gate
-    - pubkey_gate
-    - user_gate
+    - tunnels
     - user_tunnel
+
+- name: Check requirements for variables
+  assert:
+    that:
+      - 'item.host_gate is defined'
+      - 'item.host_gate_ssh is defined'
+      - 'item.port_forward is defined'
+      - 'item.port_gate is defined'
+      - 'item.port_tunnel_on_gate is defined'
+      - 'item.pubkey_gate is defined'
+      - 'item.user_gate is defined'
+  with_flattened: '{{ tunnels }}'
 
 - name: Set environment for Debian
   set_fact:
@@ -65,9 +72,13 @@
 
 - name: Deploy key to gate
   ansible.posix.authorized_key:
-    user: '{{ user_gate }}'
+    user: '{{ item.user_gate }}'
     key: '{{ ssh_public_key.stdout }}'
-  delegate_to: '{{ host_gate_ssh }}'
+  delegate_to: '{{ item.host_gate_ssh }}'
+  # Delegate to multiple hosts thus become sudo password might not match.
+  # In such case ignore the error and expect key is deployed manually.
+  ignore_errors: true
+  with_flattened: '{{ tunnels }}'
   become: yes
   become_user: root
   # Ansible has trouble with concurrent steps on one machine -> gate,
@@ -86,20 +97,23 @@
   become: yes
   become_user: root
 
-# Pubkey retrieved with: ssh-keyscan -H -p PORT HOSTNAME IP
+# Public key of server to add to known hosts of local user
+# Pubkey retrieved with: ssh-keyscan -H HOSTNAME IP
 - name: Add server to known hosts
   known_hosts:
-    name: '{{ host_gate }}'
+    name: '{{ item.host_gate }}'
     state: present
-    key: "{{ lookup('file', pubkey_gate) }}"
+    key: "{{ lookup('file', item.pubkey_gate) }}"
+  with_flattened: '{{ tunnels }}'
   become: yes
   become_user: '{{ user_tunnel }}'
 
 - name: Install SystemD unit file
   template:
     src: tunnel.service.j2
-    dest: /etc/systemd/system/tunnel.service
+    dest: '/etc/systemd/system/tunnel@{{ item.host_gate }}.service'
     mode: 0644
+  with_flattened: '{{ tunnels }}'
   become: yes
   become_user: root
   register: systemd_service
@@ -113,10 +127,11 @@
 
 - name: Systemd enable service
   systemd:
-    name: tunnel.service
+    name: 'tunnel@{{ item.host_gate }}.service'
     enabled: yes
     masked: no
     state: restarted
+  with_flattened: '{{ tunnels }}'
   become: yes
   become_user: root
   when: systemd_service.changed | default(False)
