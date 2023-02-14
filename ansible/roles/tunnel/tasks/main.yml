@@ -16,7 +16,7 @@
   with_items:
     - host_gate
     - host_gate_ssh
-    - port_buildbot
+    - port_forward
     - port_gate
     - port_tunnel_on_gate
     - pubkey_gate
