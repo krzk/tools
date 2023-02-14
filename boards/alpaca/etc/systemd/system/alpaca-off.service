@@ -1,0 +1,18 @@
+# Copyright (c) 2023 Linaro Ltd
+# Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+#                             <krzk@kernel.org>
+#
+# SPDX-License-Identifier: GPL-2.0
+
+[Unit]
+Description=Alpaca Off on boot
+
+[Service]
+Type=oneshot
+# No daemon after starting
+RemainAfterExit=true
+Restart=on-failure
+ExecStart=/usr/bin/alpaca-off.sh
+
+[Install]
+WantedBy=multi-user.target
