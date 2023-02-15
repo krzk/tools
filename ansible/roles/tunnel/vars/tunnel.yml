@@ -1,0 +1,17 @@
+---
+# Expected variables - in my setup moved to inventory to separate repo:
+# tunnels:
+#   - host_gate: 'my-gate.example.com'
+#     # Hostname for proper SSH connections (from ssh_config):
+#     host_gate_ssh: 'my-gate'
+#     # User on the host_gate to connect to:
+#     user_gate: 'user'
+#     # SSH port on the host_gate to connect to:
+#     port_gate: 'port'
+#     # Forwarding port for reverse tunnel on host_gate:
+#     port_tunnel_on_gate:
+#     # Additional forwarding for SSH - can be empty string
+#     port_forward: '-L 9989:localhost:9989'
+#     # Public key of server to add to known hosts of local user
+#     # Pubkey retrieved with: ssh-keyscan -H PORT HOSTNAME IP
+#     pubkey_gate: '~/etc/ansible/pubkeys/my-gate'
