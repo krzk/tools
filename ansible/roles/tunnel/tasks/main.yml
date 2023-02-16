@@ -97,7 +97,7 @@
   become: yes
   become_user: root
 
-# Public key of server to add to known hosts of local user
+# Public SSH key of host_gate to add to known hosts of user_tunnel.
 # Pubkey retrieved with: ssh-keyscan -H HOSTNAME IP
 - name: Add server to known hosts
   known_hosts:
