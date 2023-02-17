@@ -70,6 +70,10 @@ headset_on() {
 	amixer -c 0 cset name='RX_CODEC_DMA_RX_0 Audio Mixer MultiMedia1' 1
 }
 
+hdmi_on() {
+	amixer -c 0 cset iface=MIXER,name='PRIMARY_MI2S_RX Audio Mixer MultiMedia1' 1
+}
+
 dmic0_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' MSM_DMIC
 	#amixer -c 0 cset name='TX DEC1 MUX' MSM_DMIC
@@ -113,13 +117,29 @@ headset_record_off() {
 	amixer -c 0 cset name='TX1 MODE' ADC_INVALID
 }
 
+if [ -c /dev/snd/pcmC0D4p ]; then
+	# Pre HDMI - no hdmi-playback-dai-link
+	HEADSET=4
+	SPEAKER=5
+elif [ -c /dev/snd/pcmC0D5p ]; then
+	HEADSET=5
+	SPEAKER=6
+else
+	echo "Missing /dev/snd/pcmC0D4p and /dev/snd/pcmC0D5p"
+	exit 1
+fi
+
 speakers_on
-aplay -D plughw:0,5 /usr/share/sounds/alsa/Front_Center.wav
+aplay -D plughw:0,${SPEAKER} /usr/share/sounds/alsa/Front_Center.wav
 #speakers_off
 
 # Headset:
 headset_on
-aplay -D plughw:0,4 /usr/share/sounds/alsa/Front_Center.wav
+aplay -D plughw:0,${HEADSET} /usr/share/sounds/alsa/Front_Center.wav
+
+# HDMI
+#hdmi_on
+#aplay -D plughw:0,8 /usr/share/sounds/alsa/Front_Center.wav
 
 # Record:
 echo "Recording for 5 seconds - DMIC"
