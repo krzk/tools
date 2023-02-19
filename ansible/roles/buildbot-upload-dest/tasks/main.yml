@@ -64,16 +64,6 @@
   become: yes
   become_user: root
 
-- name: Set chmod on user's home directory
-  file:
-    path: '/home/{{ user_buildbot_upload }}'
-    mode: '0751'
-    # Necessary for SFTP chroot (plus og-w)
-    owner: root
-    group: root
-  become: yes
-  become_user: '{{ user_buildbot_upload }}'
-
 - name: Create upload dirs
   file:
     path: '{{ item }}'
@@ -153,5 +143,15 @@
     name: '{{ user_buildbot_master_ssh }}'
     groups: '{{ user_buildbot_upload }}'
     append: yes
+  become: yes
+  become_user: root
+
+- name: Set chmod on user's home directory
+  file:
+    path: '/home/{{ user_buildbot_upload }}'
+    mode: '0751'
+    # Necessary for SFTP chroot (plus og-w)
+    owner: root
+    group: root
   become: yes
   become_user: root
