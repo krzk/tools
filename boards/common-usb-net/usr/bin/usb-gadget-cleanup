@@ -11,12 +11,13 @@ cd g2
 
 echo -n "" > UDC || true
 
-rm configs/c.1/ecm.usb0
+rm -f configs/c.1/ecm.usb0 functions/rndis.rn0
 
 rmdir configs/c.1/strings/0x409
 rmdir configs/c.1
 
-rmdir functions/ecm.usb0
+test -d functions/ecm.usb0 && rmdir functions/ecm.usb0
+test -d functions/rndis.rn0 && rmdir functions/rndis.rn0
 rmdir strings/0x409
 
 cd ..

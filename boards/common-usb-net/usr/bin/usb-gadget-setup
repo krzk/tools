@@ -6,6 +6,7 @@ set -e -x
 manufacturer="Linux"
 model="Embedded device"
 serial="123456789ABCDEF"
+mode="ecm"
 
 [ -d /sys/kernel/config/usb_gadget ] || modprobe libcomposite
 
@@ -22,9 +23,18 @@ mkdir strings/0x409
 echo "$serial" > strings/0x409/serialnumber
 echo "$manufacturer" > strings/0x409/manufacturer
 echo "$model" > strings/0x409/product
+
 mkdir configs/c.1
 mkdir configs/c.1/strings/0x409
-echo "USB CDC Ethernet config" > configs/c.1/strings/0x409/configuration
-mkdir functions/ecm.usb0
-ln -s functions/ecm.usb0 configs/c.1
-ls /sys/class/udc/ | xargs echo -n > /sys/kernel/config/usb_gadget/g2/UDC
+
+if [ "$mode" = "ecm" ]; then
+	echo "USB CDC Ethernet config" > configs/c.1/strings/0x409/configuration
+	mkdir functions/ecm.usb0
+	ln -s functions/ecm.usb0 configs/c.1
+else
+	echo "RNDIS Ethernet config" > configs/c.1/strings/0x409/configuration
+	mkdir functions/rndis.rn0
+	ln -s functions/rndis.rn0 configs/c.1
+fi
+
+ls /sys/class/udc/ | xargs echo -n > UDC
