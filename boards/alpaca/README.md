@@ -1,5 +1,5 @@
-Copyright (c) 2023 Linaro Ltd
-Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+Copyright (c) 2023 Linaro Ltd  
+Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>  
                             <krzk@kernel.org>
 
 SPDX-License-Identifier: GPL-2.0
