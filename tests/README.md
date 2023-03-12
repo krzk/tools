@@ -8,7 +8,7 @@ kernel development.
 Just run each script independently or entire test suite as root:
 
 	sudo ./all-odroidhc1.sh
-	sudo ./audio.sh`
+	sudo ./audio.sh
 
 # Requirements
 
