@@ -1,0 +1,179 @@
+#!/bin/bash
+#
+# Copyright (c) 2023 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+#                             <krzk@kernel.org>
+#
+# SPDX-License-Identifier: GPL-2.0
+#
+
+alias crosc="CROSS_COMPILE=\"ccache arm-linux-gnueabi-\" ARCH=arm KBUILD_OUTPUT=out/"
+alias crosc64="CROSS_COMPILE=\"ccache aarch64-linux-gnu-\" ARCH=arm64 KBUILD_OUTPUT=out/"
+alias crosc_riscv="CROSS_COMPILE=\"ccache riscv64-linux-gnu-\" ARCH=riscv KBUILD_OUTPUT=out/"
+
+alias git_bisect_fixed="git bisect start --term-new fixed --term-old broken; echo \"Use terms fixed or broken\""
+
+# Faster tig
+tigl() {
+	local head="${1:-HEAD}"
+	tig ${head}~1000..${head}
+}
+
+# Apply one patch
+b4_am_patch() {
+	local msg_id="$1"
+	local am_options="$2"
+
+	test -n "$msg_id" || return 1
+
+	#b4 am --check-newer-revisions --apply-cover-trailers --outdir - --add-link --cherry-pick _ "${msg_id}" | git am $am_options
+	b4 shazam --apply-cover-trailers --add-link --cherry-pick _ $am_options "${msg_id}"
+}
+
+# Apply series
+b4_am_series() {
+	local msg_id="$1"
+	local am_options="$2"
+
+	test -n "$msg_id" || return 1
+
+	#b4 am --check-newer-revisions --apply-cover-trailers --outdir - --add-link "${msg_id}" | git am $am_options
+	b4 shazam --apply-cover-trailers --add-link $am_options "${msg_id}"
+}
+
+# Download series
+b4_get() {
+	local msg_id="$1"
+	local out_dir="${2:-$HOME/tmp/}"
+
+	test -n "$msg_id" || return 1
+
+	b4 mbox -f -o "$out_dir" "${msg_id}"
+}
+
+# Sync track/next and master branches with remotes
+git_sync_mainline() {
+	local branch="$(git rev-parse --abbrev-ref HEAD)"
+	if [ "$branch" == "track/next" ]; then
+		echo "On next branch ($branch), use git reset --hard manually to update it"
+	else
+		local upstream="$(git rev-parse --abbrev-ref track/next@{upstream})"
+		if [ $? -ne 0 ]; then
+			echo "No upstream configured for track/next"
+		else
+			echo "Updating track/next to upstream: $upstream"
+			# For non-fast-forward:
+			git update-ref refs/heads/track/next refs/remotes/${upstream}
+		fi
+	fi
+	if [ "$branch" == "master" ]; then
+		echo "On master branch ($branch), use git pull manually to update it"
+	else
+		local upstream="$(git rev-parse --abbrev-ref master@{upstream})"
+		if [ $? -ne 0 ]; then
+			echo "No upstream configured for master"
+		else
+			echo "Updating master to upstream: $upstream"
+			# For fast-forward
+			git fetch ${upstream%%/*} ${upstream##*/}:master
+		fi
+	fi
+}
+
+# Get maintainers for git send-email
+get_maint() {
+	local maintainers="$(scripts/get_maintainer.pl --s --no-multiline --interactive --separator=\'' --to '\' $*)"
+	echo "--to '$maintainers'"
+}
+
+# Improved git send-email to CC all maintainers/lists on all patches.
+# git_send_email [--cc=ARG] files
+git_send_email() {
+	local files
+	local cc=""
+
+	if [[ "$1" == --cc* ]] || [[ "$1" == --to* ]]; then
+		cc="$1"
+		shift
+	fi
+
+	files="$*"
+	test -n "$files" || return 1
+
+	# Do not use --to-cmd because it collects addresses per each email.
+	# Instead need to collect addressesonce and use them for entire set.
+	if [ "$cc" == "" ]; then
+		git send-email --to="$(scripts/get_maintainer.pl --no-multiline --separator=, --no-git --no-roles --no-rolestats --no-git-fallback $files)" \
+			--cc linux-kernel@vger.kernel.org $files
+	else
+		git send-email "$cc" --to="$(scripts/get_maintainer.pl --no-multiline --separator=, --no-git --no-roles --no-rolestats --no-git-fallback $files)" \
+			--cc linux-kernel@vger.kernel.org $files
+	fi
+}
+
+# cros_build cross_arch arch command
+# e.g.:
+# cross_build arm-linux-gnueabi arm
+# cross_build aarch64-linux arm64
+# Assuming cross compilers are /opt/CROSS_ARCH
+cross_build() {
+	if [ -z "$1" ] || [ -z "$2" ]; then
+		echo "Usage: cross_build cross_arch arch ... "
+		echo "       cross_build arm-linux-gnueabi arm"
+		return 1
+	fi
+	local cross="$1"
+	local arch="$2"
+	shift 2
+	ARCH="$arch" CROSS_COMPILE="ccache /opt/${cross}/bin/${cross}-" KBUILD_OUTPUT=out/ $*
+}
+
+# dt_check target schema
+# e.g.:
+# crosc dt_check dt_binding_check Documentation/devicetree/bindings/sound/samsung,aries-wm8994.yaml
+# DT_CHECKER_FLAGS=-g crosc dt_check dt_binding_check Documentation/devicetree/bindings/sound/samsung,aries-wm8994.yam
+# DT_CHECKER_FLAGS=-v crosc dt_check dt_binding_check Documentation/devicetree/bindings/sound/samsung,aries-wm8994.yam
+dt_check() {
+	local target="$1"
+	local schema="$2"
+	shift
+	shift
+
+	if [ -z "$target" ] || [ -z "$schema" ]; then
+		echo "Usage: dt_check <target> <schema>"
+		return 1
+	fi
+
+	make -j$(nproc) $target DT_SCHEMA_FILES="${schema}" $*
+}
+
+crosc_dt_binding_check() {
+	crosc dt_check dt_binding_check $*
+}
+crosc_dtbs_all_check() {
+	crosc dt_check dtbs_check $*
+}
+crosc64_dt_binding_check() {
+	crosc64 dt_check dt_binding_check $*
+}
+crosc64_dtbs_all_check() {
+	crosc64 dt_check dtbs_check $*
+}
+
+# dtb_check <target> [schema]
+dtb_check() {
+	local target="$1"
+	local schema="$2"
+
+	if [ -z "$target" ]; then
+		echo "Usage: dtbs_check <target> [schema]"
+		echo "       target - DTB target (e.g. renesas/r9a07g043u11-smarc.dtb)"
+		return 1
+	fi
+
+	if [ -n "$schema" ]; then
+		make -j$(nproc) DT_SCHEMA_FILES="${schema}" CHECK_DTBS=y "$target"
+	else
+		make -j$(nproc) CHECK_DTBS=y "$target"
+	fi
+}
