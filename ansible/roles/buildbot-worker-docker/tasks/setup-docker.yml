@@ -1,0 +1,102 @@
+---
+- name: Check requirements for variables
+  assert:
+    that: '{{ item }} is defined'
+  with_items:
+    - buildbot_docker_conf_dir
+    - buildbot_group
+    - buildbot_home
+    - buildbot_master_hostname
+    - buildbot_user
+    - buildbot_worker_name
+    - docker_buildbot_home
+
+# TODO
+# - name: Update apt-cache
+#   apt:
+#     update_cache: yes
+#   tags: packages
+#   become: yes
+#   become_user: root
+#   when: ansible_facts['os_family'] == 'Debian'
+
+# - name: Install Docker dependencies
+#   apt:
+#     name:
+#       - docker.io
+#       - python-docker
+#       - python3-docker
+#     state: present
+#   tags: packages
+#   become: yes
+#   become_user: root
+#   register: docker_dependencies
+#   when: ansible_facts['os_family'] == 'Debian'
+
+# - name: Add buildbot to docker group
+#   user:
+#     name: '{{ buildbot_user }}'
+#     groups: 'docker'
+#     append: yes
+#   become: yes
+#   become_user: root
+
+# - name: Systemd enable Docker
+#   systemd:
+#     name: docker
+#     enabled: yes
+#     masked: no
+#   become: yes
+#   become_user: root
+
+# - name: Restart Docker
+#   service:
+#     name: docker
+#     state: restarted
+#   become: yes
+#   become_user: root
+#   when: docker_dependencies.changed | default(False)
+
+- name: Create Docker build context
+  file:
+    path: '{{ buildbot_docker_conf_dir }}'
+    state: directory
+    mode: '0755'
+  remote_user: '{{ buildbot_user }}'
+
+- name: Install Dockerfile
+  template:
+    src: Dockerfile.j2
+    dest: '{{ buildbot_docker_conf_dir }}/Dockerfile'
+    mode: 0644
+  remote_user: '{{ buildbot_user }}'
+
+- name: Copy Buildbot SSH private key to Docker build context
+  copy:
+    src: '{{ buildbot_home }}/{{ item }}'
+    dest: '{{ buildbot_docker_conf_dir }}/.ssh/'
+    mode: 0600
+    remote_src: yes
+  with_items:
+    - .ssh/id_rsa
+    - .ssh/id_rsa.pub
+  remote_user: '{{ buildbot_user }}'
+
+- name: Pull buildbot-worker Docker image
+  community.general.docker_image:
+    name: buildbot/buildbot-worker
+    source: pull
+  remote_user: '{{ buildbot_user }}'
+
+- name: Build buildbot-worker Docker image
+  community.general.docker_image:
+    name: buildbot-worker-docker
+    build:
+      path: '{{ buildbot_docker_conf_dir }}/'
+      pull: yes
+    source: build
+    # Once built, docker would never rebuild the image
+    force_source: yes
+    state: present
+  register: docker_image_build
+  remote_user: '{{ buildbot_user }}'

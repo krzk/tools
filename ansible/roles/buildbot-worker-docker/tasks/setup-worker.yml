@@ -1,0 +1,23 @@
+---
+- name: Check requirements for variables
+  assert:
+    that: '{{ item }} is defined'
+  with_items:
+    - buildbot_master_hostname
+    - buildbot_user
+    - buildbot_worker_name
+
+- name: Restart buildbot-worker container
+  community.general.docker_container:
+    name: bb-worker-dock
+    image: buildbot-worker-docker
+    state: started
+    restart: yes
+    restart_policy: unless-stopped
+    env:
+      BUILDMASTER: '{{ buildbot_master_hostname }}'
+      BUILDMASTER_PORT: '9989'
+      WORKERNAME: '{{ buildbot_worker_name }}'
+      WORKERPASS: '{{ buildbot_worker_name }}-not-so-secret-pass'
+  remote_user: '{{ buildbot_user }}'
+  when: docker_image_build.changed | default(False)

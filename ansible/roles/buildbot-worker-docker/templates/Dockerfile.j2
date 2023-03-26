@@ -1,0 +1,30 @@
+# buildbot-worker-docker
+
+# please follow docker best practices
+# https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/
+
+# Provides a base Ubuntu (20.04) image with latest buildbot worker installed
+# the worker image is not optimized for size, but rather uses ubuntu for wider package availability
+
+# See: https://hub.docker.com/r/buildbot/buildbot-worker/dockerfile
+# 2020.12.01: tag latest uses Ubuntu 18.04 (built three months ago)
+#             tag master uses Ubuntu 20.04
+FROM        buildbot/buildbot-worker:master
+MAINTAINER  Krzysztof Kozlowski
+
+# For some reason, Buildbot-worker runs as root
+USER        root
+WORKDIR     /{{ buildbot_user }}
+
+RUN         mkdir {{ docker_buildbot_home }}/.ssh && \
+            ssh-keyscan -H {{ buildbot_master_hostname }} >> {{ docker_buildbot_home }}/.ssh/known_hosts
+
+COPY        --chown={{ buildbot_user }}:{{ buildbot_group }} .ssh/id_rsa {{ docker_buildbot_home }}/.ssh/
+COPY        --chown={{ buildbot_user }}:{{ buildbot_group }} .ssh/id_rsa.pub {{ docker_buildbot_home }}/.ssh/
+
+RUN         chmod -R og-rwx {{ docker_buildbot_home }}/.ssh
+
+USER        root
+RUN         apt-get update && apt-get -y install -q \
+            python3
+            python3-virtualenv

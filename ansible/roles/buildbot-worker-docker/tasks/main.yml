@@ -1,0 +1,7 @@
+---
+- name: Setup the docker
+  import_tasks: setup-docker.yml
+- name: Setup the kernel builds environment
+  import_tasks: setup-kernel-builds.yml
+- name: Setup the worker
+  import_tasks: setup-worker.yml

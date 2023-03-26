@@ -1,0 +1,35 @@
+---
+- name: Update apt-cache
+  community.docker.docker_container_exec:
+    container: bb-worker-dock
+    command: apt-get update -y
+  tags: packages
+
+- name: Install dependencies
+  community.docker.docker_container_exec:
+    container: bb-worker-dock
+    command: apt-get install -y {{ item }}
+  with_items:
+    - bison
+    - build-essential
+    - ccache
+    - diffutils
+    - dwarves # For kernel configs enabling CONFIG_DEBUG_INFO_BTF
+    - flex
+    - gcc-arm-linux-gnueabi
+    - gcc-aarch64-linux-gnu
+    - gcc-powerpc64-linux-gnu
+    - gcc-riscv64-linux-gnu
+    - gcc-s390x-linux-gnu
+    - gcc-sparc64-linux-gnu
+    - git
+    - libelf-dev
+    - libkeyutils-dev
+    - libssl-dev
+    - patch
+  tags: packages
+
+- name: Set ccache limits
+  community.docker.docker_container_exec:
+    container: bb-worker-dock
+    command: ccache -M 20G

@@ -1,0 +1,8 @@
+---
+buildbot_home: '/home/{{ buildbot_user }}'
+buildbot_docker_conf_dir: '{{ buildbot_home }}/buildbot-docker-build'
+#buildbot_master_hostname: 'build01.proceq.com'
+# Buildbot's directory inside docker:
+docker_buildbot_home: '/root'
+#buildbot_sandbox: '{{ buildbot_home }}/sandbox'
+#buildbot_worker_password: '{{ 99999 | random }}-{{ 99999 | random }}-{{ 99999 | random }}-{{ 99999 | random }}'
