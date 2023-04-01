@@ -1,0 +1,27 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0
+#
+# Copy to .git/hooks/post-commit
+
+TOOLS_DIR="$HOME/dev/tools/"
+VANILA_LINUS_DIR="../vanilla/"
+
+echo -n "[Checking commit] "
+git --no-pager log --format="%C(auto) %h %s" -n1
+echo "[Checkpatch] "
+
+git show --format=email HEAD | ./scripts/checkpatch.pl --strict --quiet
+test $? -eq 0 && echo "OK"
+echo
+
+echo "[Signed-off-by] "
+${TOOLS_DIR}linux/verify_signedoff.sh HEAD^..HEAD
+test $? -eq 0 && echo "OK"
+echo
+
+echo "[Fixes] "
+${TOOLS_DIR}linux/verify_fixes.sh "$VANILA_LINUS_DIR" HEAD^..HEAD
+test $? -eq 0 && echo "OK"
+echo
+
+exit 0
