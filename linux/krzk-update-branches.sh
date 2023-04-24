@@ -34,6 +34,12 @@ fi
 
 for br in $BRANCHES; do
 	echo -n "${br}: "
+	revs=$(git rev-list --count origin/${br}..origin/${br} 2> /dev/null)
+	if [ $? -ne 0 ]; then
+		echo "creating remote"
+		git push origin master:refs/heads/${br}
+	fi
+
 	revs=$(git rev-list --count ${br}..${br}@{u} 2> /dev/null)
 	if [ $? -ne 0 ]; then
 		echo "creating"
