@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2016-2022 Krzysztof Kozlowski
+# Copyright (c) 2016-2023 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -76,6 +76,14 @@ elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
 		SUBJECT="memory: fixes:"
 	else
 		SUBJECT="memory:"
+	fi
+elif [[ $REMOTE_URL == *"/krzk/linux-w1.git"* ]]; then
+	TO=""
+	CC="linux-kernel@vger.kernel.org, $CC_KRZK"
+	if [[ $TAG == *"-fixes-"* ]]; then
+		SUBJECT="w1: fixes:"
+	else
+		SUBJECT="w1:"
 	fi
 elif [[ $REMOTE_URL == *"/pinctrl/samsung.git"* ]]; then
 	TO="Linus Walleij <linus.walleij@linaro.org>"

@@ -23,6 +23,8 @@ elif [[ $REMOTE_URL == *"/krzk/linux-dt.git"* ]]; then
 	BRANCHES="fixes for-next next/dt next/dt64 next/dt-bindings next/qcom-pinctrl"
 elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
 	BRANCHES="fixes for-next mem-ctrl-next"
+elif [[ $REMOTE_URL == *"/krzk/linux-w1.git"* ]]; then
+	BRANCHES="fixes for-next w1-next"
 elif [[ $REMOTE_URL == *"/pinctrl/samsung.git"* ]]; then
 	BRANCHES="fixes for-next pinctrl-next"
 else

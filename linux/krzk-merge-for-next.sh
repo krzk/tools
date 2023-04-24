@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (c) 2015-2022 Krzysztof Kozlowski
+# Copyright (c) 2015-2023 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -23,6 +23,8 @@ elif [[ $REMOTE_URL == *"/krzk/linux-dt.git"* ]]; then
 	BRANCHES="fixes next/dt next/dt64 next/dt-bindings next/qcom-pinctrl"
 elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
 	BRANCHES="fixes mem-ctrl-next"
+elif [[ $REMOTE_URL == *"/krzk/linux-w1.git"* ]]; then
+	BRANCHES="fixes w1-next"
 elif [[ $REMOTE_URL == *"/pinctrl/samsung.git"* ]]; then
 	BRANCHES="fixes pinctrl-next"
 else

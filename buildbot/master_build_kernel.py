@@ -282,7 +282,7 @@ def steps_build_boot_adjust_config(builder_name, env, slaves, config):
                             env=env, name='Make olddefconfig'))
     return st
 
-def steps_build_mem_ctrl_adjust_config(builder_name, env):
+def steps_build_mem_ctrl_adjust_config(builder_name, env, make_olddefconfig=True):
     st = []
     if not env['KBUILD_OUTPUT']:
         raise ValueError('Missing KBUILD_OUTPUT path in environment')
@@ -314,10 +314,50 @@ def steps_build_mem_ctrl_adjust_config(builder_name, env):
                 ],
         haltOnFailure=True,
         env=env, name='Toggle memory controller compile test config'))
-    st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'olddefconfig'],
-                            haltOnFailure=True,
-                            env=env, name='Make olddefconfig'))
+    if make_olddefconfig:
+        st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'olddefconfig'],
+                                haltOnFailure=True,
+                                env=env, name='Make olddefconfig'))
     return st
+
+def steps_build_w1_adjust_config(builder_name, env, make_olddefconfig=True):
+    st = []
+    if not env['KBUILD_OUTPUT']:
+        raise ValueError('Missing KBUILD_OUTPUT path in environment')
+    st.append(steps.ShellCommand(
+        command=['scripts/config', '--file', env['KBUILD_OUTPUT'] + '.config',
+                 '-e', 'COMPILE_TEST', '-e', 'OF',
+                 '-e', 'w1', '-e', 'CONNECTOR', '-e', 'W1_CON',
+                 # drivers/w1/masters/Kconfig
+                 '-e', 'W1_MASTER_MATROX',
+                 '-e', 'W1_MASTER_DS2490', '-e', 'W1_MASTER_DS2482',
+                 '-e', 'W1_MASTER_MXC', '-e', 'W1_MASTER_GPIO',
+                 '-e', 'HDQ_MASTER_OMAP', '-e', 'W1_MASTER_SGI',
+                 # drivers/w1/slaves/Kconfig
+                 '-e', 'W1_SLAVE_THERM', '-e', 'W1_SLAVE_SMEM',
+                 '-e', 'W1_SLAVE_DS2405', '-e', 'W1_SLAVE_DS2408',
+                 '-e', 'W1_SLAVE_DS2408_READBACK', '-e', 'W1_SLAVE_DS2413',
+                 '-e', 'W1_SLAVE_DS2406', '-e', 'W1_SLAVE_DS2423',
+                 '-e', 'W1_SLAVE_DS2805', '-e', 'W1_SLAVE_DS2430',
+                 '-e', 'W1_SLAVE_DS2431', '-e', 'W1_SLAVE_DS2433',
+                 '-e', 'W1_SLAVE_DS2433_CRC', '-e', 'W1_SLAVE_DS2438',
+                 '-e', 'W1_SLAVE_DS250X', '-e', 'W1_SLAVE_DS2780',
+                 '-e', 'W1_SLAVE_DS2781', '-e', 'W1_SLAVE_DS28E04',
+                 '-e', 'W1_SLAVE_DS28E17',
+                ],
+        haltOnFailure=True,
+        env=env, name='Toggle w1 compile test config'))
+    if make_olddefconfig:
+        st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'olddefconfig'],
+                                haltOnFailure=True,
+                                env=env, name='Make olddefconfig'))
+    return st
+
+def steps_build_all_drivers_adjust_config(builder_name, env):
+     st = []
+     st.extend(steps_build_mem_ctrl_adjust_config(builder_name, env, make_olddefconfig=False))
+     st.extend(steps_build_w1_adjust_config(builder_name, env, make_olddefconfig=True))
+     return st
 
 def steps_build_selected_folders(builder_name, env):
     st = []
@@ -327,14 +367,14 @@ def steps_build_selected_folders(builder_name, env):
                                           # make won't build DTBs but include it for completeness
                                           'arch/arm64/boot/dts/',
                                           'drivers/clk/samsung/', 'drivers/pinctrl/samsung/', 'drivers/memory/',
-                                          'drivers/soc/samsung/'],
+                                          'drivers/soc/samsung/', 'drivers/w1/'],
                                  haltOnFailure=True, env=env, name='Build selected paths'))
     st.append(step_touch_commit_files())
     st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'arch/arm/',
                                      # make won't build DTBs but include it for completeness
                                      'arch/arm64/boot/dts/',
                                      'drivers/clk/samsung/', 'drivers/pinctrl/samsung/', 'drivers/memory/',
-                                     'drivers/soc/samsung/'],
+                                     'drivers/soc/samsung/', 'drivers/w1/'],
                             haltOnFailure=True,
                             warnOnWarnings=True,
                             suppressionList=BUILD_WARN_IGNORE,
