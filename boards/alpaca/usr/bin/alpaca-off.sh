@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Copyright (c) 2023 Linaro Ltd
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
