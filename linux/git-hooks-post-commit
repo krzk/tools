@@ -4,7 +4,7 @@
 # Copy to .git/hooks/post-commit
 
 TOOLS_DIR="$HOME/dev/tools/"
-VANILA_LINUS_DIR="../vanilla/"
+VANILLA_LINUS_DIR="../vanilla/"
 
 echo -n "[Checking commit] "
 git --no-pager log --format="%C(auto) %h %s" -n1
@@ -20,7 +20,7 @@ test $? -eq 0 && echo "OK"
 echo
 
 echo "[Fixes] "
-${TOOLS_DIR}linux/verify_fixes.sh "$VANILA_LINUS_DIR" HEAD^..HEAD
+${TOOLS_DIR}linux/verify_fixes.sh "$VANILLA_LINUS_DIR" HEAD^..HEAD
 test $? -eq 0 && echo "OK"
 echo
 
