@@ -3,7 +3,7 @@
 #
 # Copy to .git/hooks/post-commit
 
-TOOLS_DIR="$HOME/dev/tools/"
+TOOLS_DIR="$HOME/dev/tools/linux/"
 VANILLA_LINUS_DIR="../vanilla/"
 
 echo -n "[Checking commit] "
@@ -15,12 +15,12 @@ test $? -eq 0 && echo "OK"
 echo
 
 echo "[Signed-off-by] "
-${TOOLS_DIR}linux/verify_signedoff.sh HEAD^..HEAD
+${TOOLS_DIR}verify_signedoff.sh HEAD^..HEAD
 test $? -eq 0 && echo "OK"
 echo
 
 echo "[Fixes] "
-${TOOLS_DIR}linux/verify_fixes.sh "$VANILLA_LINUS_DIR" HEAD^..HEAD
+${TOOLS_DIR}verify_fixes.sh "$VANILLA_LINUS_DIR" HEAD^..HEAD
 test $? -eq 0 && echo "OK"
 echo
 
