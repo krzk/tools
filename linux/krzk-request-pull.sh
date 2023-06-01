@@ -78,7 +78,7 @@ elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
 		SUBJECT="memory:"
 	fi
 elif [[ $REMOTE_URL == *"/krzk/linux-w1.git"* ]]; then
-	TO=""
+	TO="Greg Kroah-Hartman <gregkh@linuxfoundation.org>"
 	CC="linux-kernel@vger.kernel.org, $CC_KRZK"
 	if [[ $TAG == *"-fixes-"* ]]; then
 		SUBJECT="w1: fixes:"
