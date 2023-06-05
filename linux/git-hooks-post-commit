@@ -1,7 +1,15 @@
 #!/bin/bash
+#
+# Copyright (c) 2023 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+#                             <krzk@kernel.org>
+#
 # SPDX-License-Identifier: GPL-2.0
 #
-# Copy to .git/hooks/post-commit
+# Installation:
+# 1. Copy to .git/hooks/post-commit and .git/hooks/post-applypatch
+# 2. Adjust paths to vanilla (pure Linus' tree) and tools directory
+#
 
 TOOLS_DIR="$HOME/dev/tools/linux/"
 VANILLA_LINUS_DIR="../vanilla/"
