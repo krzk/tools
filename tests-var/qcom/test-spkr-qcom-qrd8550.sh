@@ -52,6 +52,30 @@ speakers_off() {
 	amixer -c 0 cset name='SpkrRight VISENSE Switch' 0
 }
 
+headset_on() {
+	amixer -c 0 cset name='RX_RX0 Digital Volume' 65
+	amixer -c 0 cset name='RX_RX1 Digital Volume' 65
+	amixer -c 0 cset name='HPHR Volume' 20
+	amixer -c 0 cset name='HPHL Volume' 20
+	amixer -c 0 cset name='RX_HPH PWR Mode' LOHIFI
+	amixer -c 0 cset name='RX HPH Mode' CLS_H_ULP
+	amixer -c 0 cset name='RX_MACRO RX0 MUX' AIF1_PB
+	amixer -c 0 cset name='RX_MACRO RX1 MUX' AIF1_PB
+	amixer -c 0 cset name='RX INT0_1 MIX1 INP0' RX0
+	amixer -c 0 cset name='RX INT1_1 MIX1 INP0' RX1
+	amixer -c 0 cset name='RX INT0 DEM MUX' CLSH_DSM_OUT
+	amixer -c 0 cset name='RX INT1 DEM MUX' CLSH_DSM_OUT
+	amixer -c 0 cset name='RX_COMP1 Switch' 1
+	amixer -c 0 cset name='RX_COMP2 Switch' 1
+	amixer -c 0 cset name='HPHL_RDAC Switch' 1
+	amixer -c 0 cset name='HPHR_RDAC Switch' 1
+	amixer -c 0 cset name='HPHL Switch' 1
+	amixer -c 0 cset name='HPHR Switch' 1
+	amixer -c 0 cset name='CLSH Switch' 1
+	amixer -c 0 cset name='LO Switch' 1
+	amixer -c 0 cset name='RX_CODEC_DMA_RX_0 Audio Mixer MultiMedia1' 1
+}
+
 if [ -c /dev/snd/pcmC0D4p ]; then
 	HEADSET=4
 	SPEAKER=5
@@ -63,3 +87,6 @@ fi
 speakers_on
 aplay -D plughw:0,${SPEAKER} /usr/share/sounds/alsa/Front_Center.wav
 speakers_off
+
+headset_on
+aplay -D plughw:0,${HEADSET} /usr/share/sounds/alsa/Front_Center.wav
