@@ -121,9 +121,11 @@ if [ -c /dev/snd/pcmC0D4p ]; then
 	# Pre HDMI - no hdmi-playback-dai-link
 	HEADSET=4
 	SPEAKER=5
+	MIC=6
 elif [ -c /dev/snd/pcmC0D5p ]; then
 	HEADSET=5
 	SPEAKER=6
+	MIC=7
 else
 	echo "Missing /dev/snd/pcmC0D4p and /dev/snd/pcmC0D5p"
 	exit 1
@@ -144,11 +146,11 @@ aplay -D plughw:0,${HEADSET} /usr/share/sounds/alsa/Front_Center.wav
 # Record:
 echo "Recording for 5 seconds - DMIC"
 dmic0_record_on
-arecord -D plughw:0,6 -f S16_LE -c 1 -r 48000 -d 5 out.waw
+arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out.wav
 dmic0_record_off
-aplay -D plughw:0,5 out.waw
+aplay -D plughw:0,${SPEAKER} out.wav
 
 headset_record_on
-arecord -D plughw:0,6 -f S16_LE -c 1 -r 48000 -d 5 out.waw
+arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out.wav
 headset_record_off
-aplay -D plughw:0,5 out.waw
+aplay -D plughw:0,${SPEAKER} out.wav
