@@ -76,6 +76,7 @@ def step_touch_commit_files():
                               haltOnFailure=True,
                               name='touch changed files')
 
+# src is for util.Interpolate
 def step_upload_files_to_master(name, src, dest, errors_fatal=False, url=''):
     if errors_fatal:
         halt_on_failure=True
@@ -122,7 +123,15 @@ def steps_prepare_upload_master(name, dest):
                                        name=name + ' (chmod)'))
     return st
 
-def steps_build_common(env, config=None):
+def steps_build_clean(env, always_run=False):
+    st = []
+    st.append(steps.ShellCommand(command=['rm', '-fr', env['KBUILD_OUTPUT']],
+                                 haltOnFailure=True,
+                                 alwaysRun=always_run,
+                                 name='Remove kbuild output directory'))
+    return st
+
+def steps_build_common(env, kbuild_output, config=None):
     st = []
     # OpenStack machines have frequent github.com name resolution failures:
     # fatal: unable to access 'https://github.com/krzk/tools.git/': Could not resolve host: github.com
@@ -130,6 +139,7 @@ def steps_build_common(env, config=None):
     st.append(steps.ShellCommand(command=util.Interpolate('%(prop:builddir:-~/)s/tools/buildbot/name-resolve-fixup.sh'),
                                  haltOnFailure=False, warnOnFailure=True, flunkOnFailure=False,
                                  name='Cache DNS addresses (workaround)'))
+    st.extend(steps_build_clean(env))
     st.append(steps.Git(repourl='https://github.com/krzk/tools.git',
                         name='Clone krzk tools sources',
                         mode='incremental',
@@ -184,12 +194,12 @@ def steps_build_upload_artifacts_binaries(name, config, out_dir):
                                 #'vmlinux.symvers', # Not in kernel v4.4
                                 'vmlinux',
                                 ]
-    upload_files_compress = [(out_dir + i) for i in upload_files_compress]
+    upload_files_compress_path = [util.Interpolate(out_dir + i) for i in upload_files_compress]
     st.append(steps.ShellCommand(command=['xz', '--threads=0',
-                                            upload_files_compress],
+                                          upload_files_compress_path],
                                     haltOnFailure=True,
                                     name='Compress compiled objects'))
-    upload_files_compress = [(i + '.xz') for i in upload_files_compress]
+    upload_files_compress = [(out_dir + i + '.xz') for i in upload_files_compress]
 
     upload_files_bin = ['arch/arm/boot/zImage',
                         'arch/arm/boot/dts/exynos4412-odroidu3.dtb',
@@ -244,14 +254,14 @@ def steps_build_upload_artifacts(name, config, boot, out_dir, buildbot_url):
 
     return st
 
-def steps_build_boot_adjust_config(builder_name, env, slaves, config):
+def steps_build_boot_adjust_config(builder_name, env, kbuild_output, slaves, config):
     st = []
     if not config:
         raise ValueError('Missing config for booting')
     if not env['KBUILD_OUTPUT']:
         raise ValueError('Missing KBUILD_OUTPUT path in environment')
     st.append(steps.ShellCommand(
-        command=['scripts/config', '--file', env['KBUILD_OUTPUT'] + '.config',
+        command=['scripts/config', '--file', util.Interpolate(kbuild_output + '.config'),
                  # Enable IPV6 for Odroid systemd, AUTOFS4_FS/NFS_V4 will be in exynos_defconfig around v4.5
                  '-e', 'IPV6', '-e', 'NFS_V4', '-e', 'AUTOFS4_FS',
                  # Enable fan so it won't be spinning on full speed on multi_v7
@@ -282,12 +292,12 @@ def steps_build_boot_adjust_config(builder_name, env, slaves, config):
                             env=env, name='Make olddefconfig'))
     return st
 
-def steps_build_mem_ctrl_adjust_config(builder_name, env, make_olddefconfig=True):
+def steps_build_mem_ctrl_adjust_config(builder_name, env, kbuild_output, make_olddefconfig=True):
     st = []
     if not env['KBUILD_OUTPUT']:
         raise ValueError('Missing KBUILD_OUTPUT path in environment')
     st.append(steps.ShellCommand(
-        command=['scripts/config', '--file', env['KBUILD_OUTPUT'] + '.config',
+        command=['scripts/config', '--file', util.Interpolate(kbuild_output + '.config'),
                  '-e', 'COMPILE_TEST', '-e', 'OF',
                  '-e', 'SRAM', '-e', 'MEMORY', '-e', 'PM_DEVFREQ',
                  # drivers/memory/Kconfig
@@ -320,12 +330,12 @@ def steps_build_mem_ctrl_adjust_config(builder_name, env, make_olddefconfig=True
                                 env=env, name='Make olddefconfig'))
     return st
 
-def steps_build_w1_adjust_config(builder_name, env, make_olddefconfig=True):
+def steps_build_w1_adjust_config(builder_name, env, kbuild_output, make_olddefconfig=True):
     st = []
     if not env['KBUILD_OUTPUT']:
         raise ValueError('Missing KBUILD_OUTPUT path in environment')
     st.append(steps.ShellCommand(
-        command=['scripts/config', '--file', env['KBUILD_OUTPUT'] + '.config',
+        command=['scripts/config', '--file', util.Interpolate(kbuild_output + '.config'),
                  '-e', 'COMPILE_TEST', '-e', 'OF',
                  '-e', 'w1', '-e', 'CONNECTOR', '-e', 'W1_CON',
                  # drivers/w1/masters/Kconfig
@@ -353,10 +363,10 @@ def steps_build_w1_adjust_config(builder_name, env, make_olddefconfig=True):
                                 env=env, name='Make olddefconfig'))
     return st
 
-def steps_build_all_drivers_adjust_config(builder_name, env):
+def steps_build_all_drivers_adjust_config(builder_name, env, kbuild_output):
      st = []
-     st.extend(steps_build_mem_ctrl_adjust_config(builder_name, env, make_olddefconfig=False))
-     st.extend(steps_build_w1_adjust_config(builder_name, env, make_olddefconfig=True))
+     st.extend(steps_build_mem_ctrl_adjust_config(builder_name, env, kbuild_output, make_olddefconfig=False))
+     st.extend(steps_build_w1_adjust_config(builder_name, env, kbuild_output, make_olddefconfig=True))
      return st
 
 def steps_build_selected_folders(builder_name, env):
@@ -381,10 +391,10 @@ def steps_build_selected_folders(builder_name, env):
                             env=env, name='Rebuild selected paths'))
     return st
 
-def steps_dtbs_check(env, config=None, git_reset=True, only_changed_files=True):
+def steps_dtbs_check(env, kbuild_output, config=None, git_reset=True, only_changed_files=True):
     st = []
     if git_reset:
-        st += steps_build_common(env, config)
+        st += steps_build_common(env, kbuild_output, config)
     else:
         st.append(step_make_config(env, config))
     if not config:
@@ -416,10 +426,10 @@ def steps_dtbs_check(env, config=None, git_reset=True, only_changed_files=True):
                             env=env, name=step_name))
     return st
 
-def steps_dtbs_warnings(env, config=None, git_reset=True):
+def steps_dtbs_warnings(env, kbuild_output, config=None, git_reset=True):
     st = []
     if git_reset:
-        st += steps_build_common(env, config)
+        st += steps_build_common(env, kbuild_output, config)
     else:
         st.append(step_make_config(env, config))
     step_name_cfg = str(config) + ' config' if config else 'defconfig'
