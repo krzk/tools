@@ -57,6 +57,7 @@ do
 	[ "$opts_arch" = "arm64" ] && arch=arm64
 	[ "$opts_arch" = "m68k" ] && arch=m68k
 	[ "$opts_arch" = "mips" ] && arch=mips
+	[ "$opts_arch" = "mips64" ] && arch=mips64
 	[ "$opts_arch" = "powerpc" ] && arch=powerpc
 	[ "$opts_arch" = "powerpc64" ] && arch=powerpc64
 	[ "$opts_arch" = "riscv" ] && arch=riscv
