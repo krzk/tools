@@ -400,7 +400,7 @@ def steps_dtbs_check(env, kbuild_output, config=None, git_reset=True, only_chang
     if not config:
         # Disable all other platforms than Exynos and Tesla FSD
         st.append(steps.ShellCommand(command=[util.Interpolate('%(prop:builddir:-~/)s/tools/buildbot/build-worker-strip-config.sh'),
-                                     env['KBUILD_OUTPUT']],
+                                              env['KBUILD_OUTPUT'], 'samsung'],
                                      haltOnFailure=True,
                                      env=env,
                                      name='Strip unneeded platforms from config'))
