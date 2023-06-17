@@ -311,8 +311,54 @@ def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, 
         st += steps_build_common(env, kbuild_output, config)
     else:
         st.append(step_make_config(env, config))
+    schema_dirs = []
+    if platform == 'samsung':
+        schema_dirs = ['']
+    elif platform == 'qcom':
+        schema_dirs = ['bus/',
+                       'cache/',
+                       'crypto/',
+                       'dma/',
+                       'display/connector/',
+                       'eeprom/',
+                       'extcon/',
+                       'firmware/',
+                       'gpio/',
+                       'gpu/',
+                       'hwlock/',
+                       'hwmon/',
+                       'i2c/',
+                       'input/gpio',
+                       'interconnect/',
+                       'interrupt-controller/',
+                       'iio/',
+                       'ipmi/',
+                       'media/',
+                       'memory-controllers/',
+                       'misc/',
+                       'mmc/',
+                       'mtd/',
+                       'net/',
+                       'nvmem/',
+                       'pinctrl/',
+                       'pwm/',
+                       'power/',
+                       'regulator/',
+                       'reset/',
+                       'rng/',
+                       'rtc/',
+                       'serial/',
+                       'slimbus/',
+                       'soundwire/',
+                       'spi/',
+                       'sram/',
+                       'w1/',
+                       'watchdog/',
+                       'trivial-devices.yaml',
+                       'vendor-prefixes.yaml',
+                       ]
+
     if not config:
-        # Disable all other platforms than Exynos and Tesla FSD
         st.append(steps.ShellCommand(command=[util.Interpolate('%(prop:builddir:-~/)s/tools/buildbot/build-worker-strip-config.sh'),
                                               env['KBUILD_OUTPUT'], platform],
                                      haltOnFailure=True,
@@ -325,19 +371,23 @@ def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, 
 
     step_name_cfg = str(config) + ' config' if config else 'defconfig'
     if only_changed_files:
-        step_name = 'make dtbs_check baseline for ' + env['ARCH'] + '/' + step_name_cfg
-        st.append(steps.ShellCommand(command=[util.Interpolate(CMD_MAKE), 'dtbs_check', 'DT_SCHEMA_FILES=Documentation/devicetree/bindings/'],
-                                     haltOnFailure=True,
-                                     env=env, name=step_name))
+        for schema in schema_dirs:
+            step_name = 'make dtbs_check baseline: ' + env['ARCH'] + '/' + step_name_cfg + '/' + schema.strip('/')
+            st.append(steps.ShellCommand(command=[util.Interpolate(CMD_MAKE), 'dtbs_check',
+                                                  'DT_SCHEMA_FILES=Documentation/devicetree/bindings/' + schema],
+                                         haltOnFailure=True,
+                                         env=env, name=step_name[:50]))
         st.append(step_touch_commit_files())
 
-    step_name = 'make dtbs_check warnings for ' + env['ARCH'] + '/' + step_name_cfg
-    st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'dtbs_check', 'DT_SCHEMA_FILES=Documentation/devicetree/bindings/'],
-                            haltOnFailure=True,
-                            warnOnWarnings=True,
-                            suppressionList=BUILD_WARN_IGNORE,
-                            warningPattern="^.*\.dtb: ",
-                            env=env, name=step_name))
+    for schema in schema_dirs:
+        step_name = 'make dtbs_check warnings: ' + env['ARCH'] + '/' + step_name_cfg + '/' + schema.strip('/')
+        st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'dtbs_check',
+                                         'DT_SCHEMA_FILES=Documentation/devicetree/bindings/' + schema],
+                                haltOnFailure=True,
+                                warnOnWarnings=True,
+                                suppressionList=BUILD_WARN_IGNORE,
+                                warningPattern="^.*\.dtb: ",
+                                env=env, name=step_name[:50]))
     return st
 
 def steps_dtbs_warnings(env, kbuild_output, config=None, git_reset=True):
