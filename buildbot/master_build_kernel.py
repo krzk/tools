@@ -226,7 +226,7 @@ def steps_build_upload_artifacts_binaries(name, config, out_dir):
 
     return st
 
-def steps_build_upload_artifacts(name, config, boot, out_dir, buildbot_url):
+def steps_build_upload_artifacts(name, config, out_dir, buildbot_url):
     st = []
     masterdest_dir_pub = 'deploy-pub/' + name + '/%(prop:revision)s/'
 
@@ -248,9 +248,6 @@ def steps_build_upload_artifacts(name, config, boot, out_dir, buildbot_url):
                                           upload_files_pub, masterdest_dir_pub,
                                           errors_fatal=True,
                                           url=util.Interpolate(buildbot_url + 'pub/' + masterdest_dir_pub)))
-
-    if boot and config:
-        st.extend(steps_build_upload_artifacts_binaries(name, config, out_dir))
 
     return st
 
