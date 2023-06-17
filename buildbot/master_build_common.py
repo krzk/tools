@@ -305,7 +305,7 @@ def steps_build_selected_folders(builder_name, env):
                             env=env, name='Rebuild selected paths'))
     return st
 
-def steps_dtbs_check(env, kbuild_output, config=None, git_reset=True, only_changed_files=True):
+def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, only_changed_files=True):
     st = []
     if git_reset:
         st += steps_build_common(env, kbuild_output, config)
@@ -314,7 +314,7 @@ def steps_dtbs_check(env, kbuild_output, config=None, git_reset=True, only_chang
     if not config:
         # Disable all other platforms than Exynos and Tesla FSD
         st.append(steps.ShellCommand(command=[util.Interpolate('%(prop:builddir:-~/)s/tools/buildbot/build-worker-strip-config.sh'),
-                                              env['KBUILD_OUTPUT'], 'samsung'],
+                                              env['KBUILD_OUTPUT'], platform],
                                      haltOnFailure=True,
                                      env=env,
                                      name='Strip unneeded platforms from config'))
