@@ -397,12 +397,12 @@ def steps_dtbs_warnings(env, kbuild_output, config=None, git_reset=True):
     else:
         st.append(step_make_config(env, config))
     step_name_cfg = str(config) + ' config' if config else 'defconfig'
-    step_name = 'make dtbs baseline for ' + env['ARCH'] + '/' + step_name_cfg
+    step_name = 'make dtbs baseline: ' + env['ARCH'] + '/' + step_name_cfg
     st.append(steps.ShellCommand(command=[util.Interpolate(CMD_MAKE), 'dtbs', 'W=1'],
                                  haltOnFailure=True,
                                  env=env, name=step_name))
     st.append(step_touch_commit_files())
-    step_name = 'make dtbs warnings for ' + env['ARCH'] + '/' + step_name_cfg
+    step_name = 'make dtbs warnings: ' + env['ARCH'] + '/' + step_name_cfg
     st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'dtbs', 'W=1'],
                             haltOnFailure=True,
                             warnOnWarnings=True,
