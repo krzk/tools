@@ -21,7 +21,11 @@ test_drm() {
 
 	case "$(get_board_compatible)" in
 	hardkernel,odroid-u3|hardkernel,odroid-x|hardkernel,odroid-xu3|hardkernel,odroid-xu3-lite|hardkernel,odroid-xu4)
-		expected_outputs="card0/card0-HDMI-A-1 card0-HDMI-A-1"
+		if is_kernel_le 5 10; then
+			expected_outputs="card0/card0-HDMI-A-1 card0-HDMI-A-1"
+		else
+			expected_outputs="card1/card1-HDMI-A-1 card1-HDMI-A-1"
+		fi
 		;;
 	hardkernel,odroid-hc1|hardkernel,odroid-xu)
 		if is_kernel_le 5 5; then
