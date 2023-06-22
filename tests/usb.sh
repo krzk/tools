@@ -21,7 +21,11 @@ test_usb() {
 		;;
 	hardkernel,odroid-u3)
 		# Format: NUMBER_VENDOR:PRODUCT
-		expected_usb="1_1d6b:0002 1_0424:3503 1_0424:9730"
+		if is_kernel_le 5 10; then
+			expected_usb="1_1d6b:0002 1_0424:3503 1_0424:9730"
+		else
+			expected_usb="2_1d6b:0002 1_0424:3503 1_0424:9730"
+		fi
 		;;
 	hardkernel,odroid-x)
 		# Format: NUMBER_VENDOR:PRODUCT
