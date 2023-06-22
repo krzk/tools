@@ -76,6 +76,21 @@ headset_on() {
 	amixer -c 0 cset name='RX_CODEC_DMA_RX_0 Audio Mixer MultiMedia1' 1
 }
 
+headset_off() {
+	amixer -c 0 cset name='RX_MACRO RX0 MUX' ZERO
+	amixer -c 0 cset name='RX_MACRO RX1 MUX' ZERO
+	amixer -c 0 cset name='RX INT0_1 MIX1 INP0' ZERO
+	amixer -c 0 cset name='RX INT1_1 MIX1 INP0' ZERO
+	amixer -c 0 cset name='RX INT0 DEM MUX' NORMAL_DSM_OUT
+	amixer -c 0 cset name='RX INT1 DEM MUX' NORMAL_DSM_OUT
+	amixer -c 0 cset name='RX_COMP1 Switch' 0
+	amixer -c 0 cset name='RX_COMP2 Switch' 0
+	amixer -c 0 cset name='HPHL_RDAC Switch' 0
+	amixer -c 0 cset name='HPHR_RDAC Switch' 0
+	amixer -c 0 cset name='HPHL Switch' 0
+	amixer -c 0 cset name='HPHR Switch' 0
+}
+
 if [ -c /dev/snd/pcmC0D4p ]; then
 	HEADSET=4
 	SPEAKER=5
@@ -90,3 +105,4 @@ speakers_off
 
 headset_on
 aplay -D plughw:0,${HEADSET} /usr/share/sounds/alsa/Front_Center.wav
+headset_off
