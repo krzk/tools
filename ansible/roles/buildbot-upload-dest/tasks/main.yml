@@ -100,7 +100,7 @@
     name: 'cleanup files - {{ item }}'
     minute: '5'
     hour: '1'
-    job: 'find {{ item }} -mindepth 1 -mtime +14 -type f -print -delete'
+    job: 'find {{ item }} -mindepth 1 -mtime +50 -type f -print -delete'
   with_items:
     - '/home/{{ user_buildbot_upload }}/deploy-pub'
     - '/home/{{ user_buildbot_upload }}/deploy-bin'
@@ -112,7 +112,7 @@
     name: 'cleanup dirs - {{ item }}'
     minute: '10'
     hour: '1'
-    job: 'find {{ item }} -mindepth 1 -mtime +14 -type d -empty -print -delete'
+    job: 'find {{ item }} -mindepth 1 -mtime +50 -type d -empty -print -delete'
   with_items:
     - '/home/{{ user_buildbot_upload }}/deploy-pub'
     - '/home/{{ user_buildbot_upload }}/deploy-bin'
