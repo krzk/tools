@@ -13,21 +13,46 @@ set -e -E -x
 test_board_led() {
 	local name="Board LED"
 	local leds=""
+	local max_brightness=255
 	local sysfs="/sys/class/leds"
 	print_msg "Testing..."
 
 	case "$(get_board_compatible)" in
 	hardkernel,odroid-hc1|hardkernel,odroid-xu4)
 		leds="blue:heartbeat"
+		# PWM
+		max_brightness=255
 		;;
 	hardkernel,odroid-xu3|hardkernel,odroid-xu3-lite|hardkernel,odroid-xu)
 		leds="blue:heartbeat green:mmc0 red:microSD"
+		# PWM
+		max_brightness=255
 		;;
 	hardkernel,odroid-u3)
-		leds="led1:heart"
+		if is_kernel_le 5 19; then
+			leds="led1:heart"
+		else
+			leds="blue:heartbeat"
+		fi
+		if is_kernel_le 5 10; then
+			# GPIO
+			max_brightness=255
+		else
+			max_brightness=1
+		fi
 		;;
 	hardkernel,odroid-x)
-		leds="led1:heart led2:mmc0"
+		if is_kernel_le 5 19; then
+			leds="led1:heart led2:mmc0"
+		else
+			leds="blue:heartbeat led2:mmc0"
+		fi
+		if is_kernel_le 5 10; then
+			# GPIO
+			max_brightness=255
+		else
+			max_brightness=1
+		fi
 		;;
 	*)
 		print_msg "No LEDs on board, skipping"
@@ -37,18 +62,20 @@ test_board_led() {
 	for led in $leds; do
 		echo $led
 		test -d "${sysfs}/${led}"
-		test_cat "${sysfs}/${led}/max_brightness" 255
+		test_cat "${sysfs}/${led}/max_brightness" $max_brightness
 
 		echo "none" > "${sysfs}/${led}/trigger"
 		grep "\[none\]" "${sysfs}/${led}/trigger"
 		echo "0" > "${sysfs}/${led}/brightness"
 		test_cat "${sysfs}/${led}/brightness" 0
 
-		echo "127" > "${sysfs}/${led}/brightness"
-		test_cat "${sysfs}/${led}/brightness" 127
+		if [ $max_brightness != 1 ]; then
+			echo "127" > "${sysfs}/${led}/brightness"
+			test_cat "${sysfs}/${led}/brightness" 127
+		fi
 
-		echo "255" > "${sysfs}/${led}/brightness"
-		test_cat "${sysfs}/${led}/brightness" 255
+		echo "$max_brightness" > "${sysfs}/${led}/brightness"
+		test_cat "${sysfs}/${led}/brightness" $max_brightness
 
 		echo "heartbeat" > "${sysfs}/${led}/trigger"
 		grep "\[heartbeat\]" "${sysfs}/${led}/trigger"
