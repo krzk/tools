@@ -151,24 +151,30 @@ fi
 
 speakers_on
 aplay -D plughw:0,${SPEAKER} /usr/share/sounds/alsa/Front_Center.wav
-#speakers_off
+speakers_off
 
 # Headset:
 headset_on
 aplay -D plughw:0,${HEADSET} /usr/share/sounds/alsa/Front_Center.wav
+headset_off
 
 # HDMI
 #hdmi_on
 #aplay -D plughw:0,8 /usr/share/sounds/alsa/Front_Center.wav
 
 # Record:
+echo "Recording for 5 seconds - headphones"
+headset_record_on
+arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+headset_record_off
+speakers_on
+aplay -D plughw:0,${SPEAKER} out_h.wav
+speakers_off
+
 echo "Recording for 5 seconds - DMIC"
 dmic0_record_on
-arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out.wav
+arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_d.wav
 dmic0_record_off
-aplay -D plughw:0,${SPEAKER} out.wav
-
-headset_record_on
-arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out.wav
-headset_record_off
-aplay -D plughw:0,${SPEAKER} out.wav
+speakers_on
+aplay -D plughw:0,${SPEAKER} out_d.wav
+speakers_off
