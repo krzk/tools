@@ -37,8 +37,11 @@ def steps_build_upload_artifacts_binaries(name, config, out_dir):
     upload_files_bin = ['arch/arm/boot/zImage',
                         'arch/arm/boot/dts/exynos4412-odroidu3.dtb',
                         'arch/arm/boot/dts/exynos4412-odroidx.dtb',
+                        'arch/arm/boot/dts/exynos5410-odroidxu.dtb',
                         'arch/arm/boot/dts/exynos5420-arndale-octa.dtb',
+                        'arch/arm/boot/dts/exynos5422-odroidhc1.dtb',
                         'arch/arm/boot/dts/exynos5422-odroidxu3-lite.dtb',
+                        'arch/arm/boot/dts/exynos5422-odroidxu4.dtb',
                         'modules-out.tar.gz',
                         ]
     upload_files_bin = [(out_dir + i) for i in upload_files_bin]
@@ -51,8 +54,11 @@ def steps_build_upload_artifacts_binaries(name, config, out_dir):
     upload_files_bin = ['arch/arm/boot/zImage',
                         'arch/arm/boot/dts/samsung/exynos4412-odroidu3.dtb',
                         'arch/arm/boot/dts/samsung/exynos4412-odroidx.dtb',
+                        'arch/arm/boot/dts/samsung/exynos5410-odroidxu.dtb',
                         'arch/arm/boot/dts/samsung/exynos5420-arndale-octa.dtb',
+                        'arch/arm/boot/dts/samsung/exynos5422-odroidhc1.dtb',
                         'arch/arm/boot/dts/samsung/exynos5422-odroidxu3-lite.dtb',
+                        'arch/arm/boot/dts/samsung/exynos5422-odroidxu4.dtb',
                         'modules-out.tar.gz',
                         ]
     upload_files_bin = [(out_dir + i) for i in upload_files_bin]
@@ -61,27 +67,6 @@ def steps_build_upload_artifacts_binaries(name, config, out_dir):
                                           upload_files_bin, masterdest_dir_bin,
                                           errors_fatal=True,
                                           do_step_if=is_set_arm_boot_dts_vendor_subdirs))
-
-    # XU, XU4 and HC1 might be missing for older kernels -  In case of failure do not halt,
-    # do not fail and mark build as warning. flunkOnFailure is by default True.
-    upload_files_bin = ['arch/arm/boot/dts/exynos5410-odroidxu.dtb',
-                        'arch/arm/boot/dts/exynos5422-odroidhc1.dtb',
-                        'arch/arm/boot/dts/exynos5422-odroidxu4.dtb',
-                        ]
-    upload_files_bin = [(out_dir + i) for i in upload_files_bin]
-    st.append(step_upload_files_to_master('Upload optional DTBs',
-                                          upload_files_bin, masterdest_dir_bin,
-                                          do_step_if=lambda step: not is_set_arm_boot_dts_vendor_subdirs(step)))
-
-    upload_files_bin = ['arch/arm/boot/dts/samsung/exynos5410-odroidxu.dtb',
-                        'arch/arm/boot/dts/samsung/exynos5422-odroidhc1.dtb',
-                        'arch/arm/boot/dts/samsung/exynos5422-odroidxu4.dtb',
-                        ]
-    upload_files_bin = [(out_dir + i) for i in upload_files_bin]
-    st.append(step_upload_files_to_master('Upload optional DTBs',
-                                          upload_files_bin, masterdest_dir_bin,
-                                          do_step_if=is_set_arm_boot_dts_vendor_subdirs))
-
     return st
 
 def steps_build_boot_adjust_config(builder_name, env, kbuild_output, slaves, config):
