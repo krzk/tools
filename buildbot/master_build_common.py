@@ -11,6 +11,7 @@
 from master_auth import master_auth_config
 
 from buildbot.plugins import steps, util
+from buildbot import process
 import twisted
 
 BUILD_WARN_IGNORE = [ (None, '.*warning: #warning syscall .* not implemented.*', None, None),
@@ -45,6 +46,32 @@ def cmd_make_config(config=None):
         config = str(config) + '_defconfig'
     return [util.Interpolate(CMD_MAKE), config]
 
+def step_set_prop_if_file_exists(name, prop, files):
+    """ Return step for setting a property if given file exists. The file will be used
+    as value of property. Otherwise (if file does not exist) it sets empty property.
+    Does not fail the test.
+
+    Arguments:
+        name - name for the step
+        prop - name of property to set
+        files - list of files to check, strings suitable for util.Interpolate()
+    Returns:
+        step
+    """
+    cmd = ''
+    for file in files:
+        cmd += '[ -f "%s" ] && ls -1 "%s" && exit 0\n' % (file, file)
+    cmd += 'exit 0'
+    return steps.SetPropertyFromCommand(command=util.Interpolate(cmd),
+                                        property=prop,
+                                        haltOnFailure=True,
+                                        name=name)
+
+def is_set_arm_boot_dts_vendor_subdirs(step):
+    if step.getProperty('arm_boot_dts_vendor_subdirs') and (len(str(step.getProperty('arm_boot_dts_vendor_subdirs'))) > 0):
+        return True
+    return False
+
 def step_make_config(env, config=None):
     step_name = str(config) + ' config' if config else 'defconfig'
     step_name = 'make ' + step_name
@@ -77,7 +104,7 @@ def step_touch_commit_files():
                               name='touch changed files')
 
 # src is for util.Interpolate
-def step_upload_files_to_master(name, src, dest, errors_fatal=False, url=''):
+def step_upload_files_to_master(name, src, dest, errors_fatal=False, url='', do_step_if=True):
     if errors_fatal:
         halt_on_failure=True
         warn_on_failure=False
@@ -97,12 +124,16 @@ def step_upload_files_to_master(name, src, dest, errors_fatal=False, url=''):
     if url:
         return ShellCmdWithLink(command=util.Interpolate(cmd),
                                 url=url,
+                                doStepIf=do_step_if,
+                                hideStepIf=lambda results, s: results==process.results.SKIPPED,
                                 haltOnFailure=halt_on_failure,
                                 warnOnFailure=warn_on_failure,
                                 flunkOnFailure=flunk_on_failure,
                                 name=name)
     else:
         return steps.ShellCommand(command=util.Interpolate(cmd),
+                                  doStepIf=do_step_if,
+                                  hideStepIf=lambda results, s: results==process.results.SKIPPED,
                                   haltOnFailure=halt_on_failure,
                                   warnOnFailure=warn_on_failure,
                                   flunkOnFailure=flunk_on_failure,
@@ -166,6 +197,9 @@ def steps_build_common(env, kbuild_output, config=None):
     st.append(steps.SetPropertyFromCommand(command=[util.Interpolate(CMD_MAKE), '-s', 'kernelversion'],
                                            property='kernel_version', haltOnFailure=True,
                                            env=env, name='Set property: kernel version'))
+    st.append(step_set_prop_if_file_exists('Set property: ARM DTS vendor subdirs',
+                                           'arm_boot_dts_vendor_subdirs',
+                                           ['arch/arm/boot/dts/samsung/Makefile']))
     st.append(step_make_config(env, config))
 
     return st
