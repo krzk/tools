@@ -116,6 +116,33 @@ dmic0_record_off() {
 	amixer -c 0 cset name='TX DEC0 MUX' ZERO
 }
 
+amic1_record_on() {
+	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
+	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC0
+	# DEC1 must be set before DEC0 for the latter to be changeable
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
+	amixer -c 0 cset name='TX1 MODE' ADC_NORMAL
+	amixer -c 0 cset name='ADC1_MIXER Switch' 1
+	amixer -c 0 cset name='ADC1 Switch' 1
+	amixer -c 0 cset name='ADC1 Volume' 18
+	amixer -c 0 cset name='DEC0 MODE' ADC_DEFAULT
+	amixer -c 0 cset name='TX_DEC0 Volume' 100
+	amixer -c 0 cset name='MultiMedia3 Mixer TX_CODEC_DMA_TX_3' 1
+	# Not really needed
+	amixer -c 0 cset name='TX DMIC MUX0' ZERO
+}
+
+amic1_record_off() {
+	amixer -c 0 cset name='MultiMedia3 Mixer TX_CODEC_DMA_TX_3' 0
+	amixer -c 0 cset name='ADC1_MIXER Switch' 0
+	amixer -c 0 cset name='ADC1 Switch' 0
+	amixer -c 0 cset name='TX SMIC MUX0' 'ZERO'
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 0
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 0
+	amixer -c 0 cset name='TX1 MODE' ADC_INVALID
+}
+
 headset_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
 	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC1
@@ -171,6 +198,14 @@ headset_off
 #aplay -D plughw:0,8 /usr/share/sounds/alsa/Front_Center.wav
 
 # Record:
+echo "Recording for 5 seconds - amic1 (board)"
+amic1_record_on
+arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+amic1_record_off
+speakers_on
+aplay -D plughw:0,${SPEAKER} out_h.wav
+speakers_off
+
 echo "Recording for 5 seconds - headphones"
 headset_record_on
 arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
