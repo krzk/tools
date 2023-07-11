@@ -99,8 +99,9 @@ dmic0_record_on() {
 	#amixer -c 0 cset name='TX DMIC MUX1' DMIC3
 	amixer -c 0 cset name='TX DMIC MUX0' DMIC0
 	amixer -c 0 cset name='TX DMIC MUX1' DMIC1
-	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
+	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
 	amixer -c 0 cset name='TX_DEC0 Volume' 85
 	amixer -c 0 cset name='TX_DEC1 Volume' 85
 	amixer -c 0 cset name='MultiMedia3 Mixer TX_CODEC_DMA_TX_3' 1
@@ -109,6 +110,7 @@ dmic0_record_on() {
 dmic0_record_off() {
 	amixer -c 0 cset name='MultiMedia3 Mixer TX_CODEC_DMA_TX_3' 0
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 0
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 0
 	amixer -c 0 cset name='TX DMIC MUX0' ZERO
 	amixer -c 0 cset name='TX DMIC MUX1' ZERO
 	amixer -c 0 cset name='TX DEC0 MUX' ZERO
@@ -117,6 +119,8 @@ dmic0_record_off() {
 headset_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
 	amixer -c 0 cset name='TX SMIC MUX0' ADC1
+	# DEC1 must be set before DEC0 for the latter to be changeable
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
 	amixer -c 0 cset name='TX1 MODE' ADC_NORMAL
 	amixer -c 0 cset name='ADC2_MIXER Switch' 1
@@ -135,6 +139,7 @@ headset_record_off() {
 	amixer -c 0 cset name='ADC2 Switch' 0
 	amixer -c 0 cset name='TX SMIC MUX0' 'ZERO'
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 0
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 0
 	amixer -c 0 cset name='TX1 MODE' ADC_INVALID
 }
 
