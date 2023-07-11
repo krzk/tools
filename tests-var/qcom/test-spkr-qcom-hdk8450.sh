@@ -68,6 +68,9 @@ headset_on() {
 	amixer -c 0 cset name='CLSH Switch' 1
 	amixer -c 0 cset name='LO Switch' 1
 	amixer -c 0 cset name='RX_CODEC_DMA_RX_0 Audio Mixer MultiMedia1' 1
+	# Must stay off:
+	amixer -c 0 cset name='HPHL_COMP Switch' 0
+	amixer -c 0 cset name='HPHR_COMP Switch' 0
 }
 
 headset_off() {
