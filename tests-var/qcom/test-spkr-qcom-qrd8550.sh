@@ -17,12 +17,12 @@ speakers_on() {
 	amixer -c 0 cset name='WSA_COMP1 Switch' 1
 	amixer -c 0 cset name='WSA_COMP2 Switch' 1
 	amixer -c 0 cset name='SpkrLeft WSA MODE' 0
-	amixer -c 0 cset name='SpkrRight WSA MODE' 0
 	amixer -c 0 cset name='SpkrLeft COMP Switch' 1
 	amixer -c 0 cset name='SpkrLeft PBR Switch' 1
 	amixer -c 0 cset name='SpkrLeft BOOST Switch' 1
 	amixer -c 0 cset name='SpkrLeft DAC Switch' 1
 	amixer -c 0 cset name='SpkrLeft VISENSE Switch' 1
+	amixer -c 0 cset name='SpkrRight WSA MODE' 0
 	amixer -c 0 cset name='SpkrRight COMP Switch' 1
 	amixer -c 0 cset name='SpkrRight PBR Switch' 1
 	amixer -c 0 cset name='SpkrRight BOOST Switch' 1
