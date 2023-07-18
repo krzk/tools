@@ -128,7 +128,8 @@ amic1_record_on() {
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
-	amixer -c 0 cset name='TX1 MODE' ADC_NORMAL
+	# TX0 matches ADC1
+	amixer -c 0 cset name='TX0 MODE' ADC_NORMAL
 	amixer -c 0 cset name='ADC1_MIXER Switch' 1
 	amixer -c 0 cset name='ADC1 Switch' 1
 	amixer -c 0 cset name='ADC1 Volume' 18
