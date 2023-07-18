@@ -117,16 +117,20 @@ dmic0_record_off() {
 headset_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
 	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC1
+	# DEC1 must be set before DEC0 for the latter to be changeable
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
 	amixer -c 0 cset name='TX1 MODE' ADC_NORMAL
 	amixer -c 0 cset name='ADC2_MIXER Switch' 1
 	amixer -c 0 cset name='HDR12 MUX' NO_HDR12
 	amixer -c 0 cset name='ADC2 MUX' INP2
 	amixer -c 0 cset name='ADC2 Switch' 1
-	amixer -c 0 cset name='ADC2 Volume' 12
+	amixer -c 0 cset name='ADC2 Volume' 18
 	amixer -c 0 cset name='DEC0 MODE' ADC_DEFAULT
 	amixer -c 0 cset name='TX_DEC0 Volume' 100
 	amixer -c 0 cset name='MultiMedia3 Mixer TX_CODEC_DMA_TX_3' 1
+	# Not really needed
+	amixer -c 0 cset name='TX DMIC MUX0' ZERO
 }
 
 headset_record_off() {
@@ -135,6 +139,7 @@ headset_record_off() {
 	amixer -c 0 cset name='ADC2 Switch' 0
 	amixer -c 0 cset name='TX SMIC MUX0' 'ZERO'
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 0
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 0
 	amixer -c 0 cset name='TX1 MODE' ADC_INVALID
 }
 
