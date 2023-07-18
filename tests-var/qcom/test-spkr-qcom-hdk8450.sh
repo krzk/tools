@@ -148,7 +148,7 @@ amic1_record_off() {
 	amixer -c 0 cset name='TX SMIC MUX0' 'ZERO'
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 0
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 0
-	amixer -c 0 cset name='TX1 MODE' ADC_INVALID
+	amixer -c 0 cset name='TX0 MODE' ADC_INVALID
 }
 
 headset_record_on() {
