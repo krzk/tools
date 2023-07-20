@@ -130,9 +130,9 @@ cross_build() {
 
 # dt_check target schema
 # e.g.:
-# crosc dt_check dt_binding_check Documentation/devicetree/bindings/sound/samsung,aries-wm8994.yaml
-# DT_CHECKER_FLAGS=-g crosc dt_check dt_binding_check Documentation/devicetree/bindings/sound/samsung,aries-wm8994.yam
-# DT_CHECKER_FLAGS=-v crosc dt_check dt_binding_check Documentation/devicetree/bindings/sound/samsung,aries-wm8994.yam
+# crosc dt_check dt_binding_check sound/samsung,aries-wm8994.yaml
+# DT_CHECKER_FLAGS=-g crosc dt_check dt_binding_check sound/samsung,aries-wm8994.yam
+# DT_CHECKER_FLAGS=-v crosc dt_check dt_binding_check sound/samsung,aries-wm8994.yam
 dt_check() {
 	local target="$1"
 	local schema="$2"
