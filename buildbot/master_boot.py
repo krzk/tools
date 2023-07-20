@@ -676,41 +676,9 @@ def steps_download(target):
         workerdest=u'/srv/tftp/zImage',
         haltOnFailure=True, mode=0o0664, name='Download zImage'))
     st.append(steps.FileDownload(
-        mastersrc=util.Interpolate(mastersrc_dir + '/exynos5420-arndale-octa.dtb'),
-        workerdest=u'/srv/tftp/exynos5420-arndale-octa.dtb',
-        haltOnFailure=True, mode=0o0664, name='Download Arndale Octa DTB'))
-    st.append(steps.FileDownload(
-        mastersrc=util.Interpolate(mastersrc_dir + '/exynos5422-odroidxu3-lite.dtb'),
-        workerdest=u'/srv/tftp/exynos5422-odroidxu3-lite.dtb',
-        haltOnFailure=True, mode=0o0664, name='Download Odroid XU3 DTB'))
-    st.append(steps.FileDownload(
-        mastersrc=util.Interpolate(mastersrc_dir + '/exynos4412-odroidu3.dtb'),
-        workerdest=u'/srv/tftp/exynos4412-odroidu3.dtb',
-        haltOnFailure=True, mode=0o0664, name='Download Odroid U3 DTB'))
-    st.append(steps.FileDownload(
-        mastersrc=util.Interpolate(mastersrc_dir + '/exynos4412-odroidx.dtb'),
-        workerdest=u'/srv/tftp/exynos4412-odroidx.dtb',
-        haltOnFailure=True, mode=0o0664, name='Download Odroid X DTB'))
-
-    # XU, XU4 and HC1 might be missing for older kernels
-    st.append(steps.FileDownload(
-        mastersrc=util.Interpolate(mastersrc_dir + '/exynos5410-odroidxu.dtb'),
-        workerdest=u'/srv/tftp/exynos5410-odroidxu.dtb',
-        haltOnFailure=False, warnOnFailure=True, flunkOnFailure=False,
-        mode=0o0664, name='Download Odroid XU DTB'))
-    st.append(steps.FileDownload(
-        mastersrc=util.Interpolate(mastersrc_dir + '/exynos5422-odroidxu4.dtb'),
-        workerdest=u'/srv/tftp/exynos5422-odroidxu4.dtb',
-        # In case of failure do not halt, do not fail and mark build as warning.
-        # flunkOnFailure is by default True.
-        haltOnFailure=False, warnOnFailure=True, flunkOnFailure=False,
-        mode=0o0664, name='Download Odroid XU4 DTB'))
-    st.append(steps.FileDownload(
-        mastersrc=util.Interpolate(mastersrc_dir + '/exynos5422-odroidhc1.dtb'),
-        workerdest=u'/srv/tftp/exynos5422-odroidhc1.dtb',
-        haltOnFailure=False, warnOnFailure=True, flunkOnFailure=False,
-        mode=0o0664, name='Download Odroid HC1 DTB'))
-
+        mastersrc=util.Interpolate(mastersrc_dir + '/dtb-out.tar.gz'),
+        workerdest='deploy-dtb-out.tar.gz',
+        haltOnFailure=True, mode=0o0644, name='Download dtb'))
     st.append(steps.FileDownload(
         mastersrc=util.Interpolate(mastersrc_dir + '/modules-out.tar.gz'),
         workerdest='deploy-modules-out.tar.gz',
@@ -738,7 +706,8 @@ def steps_boot(builder_name, target, config, run_pm_tests=False):
                         env=util.Property('git_env')))
 
     st.append(steps.ShellCommand(command=['rm', '-fr', 'lib',
-                                          'deploy-modules-out.tar.gz', 'initramfs-odroidxu3.img'],
+                                          'deploy-modules-out.tar.gz', 'deploy-dtb-out.tar.gz',
+                                          'initramfs-odroidxu3.img'],
                                  name='Remove old binaries'))
     st = st + steps_download(target)
 

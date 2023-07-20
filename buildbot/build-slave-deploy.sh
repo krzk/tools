@@ -65,12 +65,28 @@ ${SELF_DIR}/../pi/make-initramfs.sh "${SELF_DIR}/initramfs/initramfs-odroid-armv
 chown -R buildbot:buildbot /srv/tftp
 chmod -R g+rw,a+r /srv/tftp
 
-MODULES_DEST_DIR="/srv/nfs/${TARGET}/lib/modules/"
+MODULES_DEST_DIR="/srv/nfs/${TARGET}/lib/modules"
 echo "Installing modules to $MODULES_DEST_DIR"
 test -d "$MODULES_DEST_DIR" || die "Destination modules dir '$MODULES_DEST_DIR' does not exist"
 rm -fr "${MODULES_DEST_DIR}/${KERNEL_NAME}"
-cp -r "${DEPLOY_TMP}/lib/modules/${KERNEL_NAME}" "$MODULES_DEST_DIR"
+cp -r "${DEPLOY_TMP}/lib/modules/${KERNEL_NAME}" "${MODULES_DEST_DIR}/"
 chown -R buildbot:buildbot "${MODULES_DEST_DIR}/${KERNEL_NAME}"
 chmod -R g+rw,a+r "${MODULES_DEST_DIR}/${KERNEL_NAME}"
+
+# Unpack downloaded dtbs:
+echo "Unpacking dtbs..."
+mkdir -p "${DEPLOY_TMP}/dtb"
+tar -xzf deploy-dtb-out.tar.gz -C "${DEPLOY_TMP}/dtb"
+chmod -R a+r "${DEPLOY_TMP}/dtb"
+
+DTB_DEST_DIR="/srv/tftp"
+echo "Installing dtbs to $DTB_DEST_DIR"
+test -d "$DTB_DEST_DIR" || die "Destination modules dir '$DTB_DEST_DIR' does not exist"
+rm -fr ${DTB_DEST_DIR}/*dtb
+cp -r ${DEPLOY_TMP}/dtb/*dtb "${DTB_DEST_DIR}/"
+chown -R buildbot:buildbot ${DTB_DEST_DIR}/*dtb
+chmod -R g+rw,a+r,a-x ${DTB_DEST_DIR}/*dtb
+
+# Leave DEPLOY_TMP directory for next steps
 
 exit $?
