@@ -48,9 +48,9 @@ echo "Got kernel name: $KERNEL_NAME"
 
 echo "Making initramfs and image"
 ${SELF_DIR}/../pi/make-initramfs.sh "${SELF_DIR}/initramfs/initramfs-odroid-armv7hf-base.cpio" \
-		  "$DEPLOY_TMP" \
-		  "${SELF_DIR}/initramfs/initramfs-odroid-armv7hf-addons" \
-		  /srv/tftp/uboot-initramfs-odroidxu3.img
+	"$DEPLOY_TMP" \
+	"${SELF_DIR}/initramfs/initramfs-odroid-armv7hf-addons" \
+	/srv/tftp/uboot-initramfs-odroidxu3.img
 #mkinitcpio --moduleroot . --kernel "${KERNEL_NAME}" \
 #	--generate initramfs-odroidxu3.img \
 #	--config ${SELF_DIR}/${NAME}/mkinitcpio.conf
