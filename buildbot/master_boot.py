@@ -1,7 +1,7 @@
 # -*- python -*-
 # ex: set filetype=python:
 #
-# Copyright (c) 2016-2020 Krzysztof Kozlowski
+# Copyright (c) 2016-2023 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -676,12 +676,12 @@ def steps_download(target):
         workerdest=u'/srv/tftp/zImage',
         haltOnFailure=True, mode=0o0664, name='Download zImage'))
     st.append(steps.FileDownload(
-        mastersrc=util.Interpolate(mastersrc_dir + '/dtb-out.tar.gz'),
-        workerdest='deploy-dtb-out.tar.gz',
+        mastersrc=util.Interpolate(mastersrc_dir + '/dtb-out.tar.xz'),
+        workerdest='deploy-dtb-out.tar.xz',
         haltOnFailure=True, mode=0o0644, name='Download dtb'))
     st.append(steps.FileDownload(
-        mastersrc=util.Interpolate(mastersrc_dir + '/modules-out.tar.gz'),
-        workerdest='deploy-modules-out.tar.gz',
+        mastersrc=util.Interpolate(mastersrc_dir + '/modules-out.tar.xz'),
+        workerdest='deploy-modules-out.tar.xz',
         haltOnFailure=True, mode=0o0644, name='Download modules'))
 
     return st
@@ -706,7 +706,7 @@ def steps_boot(builder_name, target, config, run_pm_tests=False):
                         env=util.Property('git_env')))
 
     st.append(steps.ShellCommand(command=['rm', '-fr', 'lib',
-                                          'deploy-modules-out.tar.gz', 'deploy-dtb-out.tar.gz',
+                                          'deploy-modules-out.tar.xz', 'deploy-dtb-out.tar.xz',
                                           'initramfs-odroidxu3.img'],
                                  name='Remove old binaries'))
     st = st + steps_download(target)

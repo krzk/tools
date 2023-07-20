@@ -35,7 +35,7 @@ umask 022
 echo "Unpacking modules..."
 rm -fr "$DEPLOY_TMP"
 mkdir -p "$DEPLOY_TMP"
-tar -xzf deploy-modules-out.tar.gz -C "$DEPLOY_TMP"
+tar -xJf deploy-modules-out.tar.xz -C "$DEPLOY_TMP"
 # Be sure that there are no symlinks
 find "${DEPLOY_TMP}/lib/modules/" -type 'l' -delete
 chmod -R a+r "${DEPLOY_TMP}/"
@@ -76,7 +76,7 @@ chmod -R g+rw,a+r "${MODULES_DEST_DIR}/${KERNEL_NAME}"
 # Unpack downloaded dtbs:
 echo "Unpacking dtbs..."
 mkdir -p "${DEPLOY_TMP}/dtb"
-tar -xzf deploy-dtb-out.tar.gz -C "${DEPLOY_TMP}/dtb"
+tar -xJf deploy-dtb-out.tar.xz -C "${DEPLOY_TMP}/dtb"
 chmod -R a+r "${DEPLOY_TMP}/dtb"
 
 DTB_DEST_DIR="/srv/tftp"

@@ -35,8 +35,8 @@ def steps_build_upload_artifacts_binaries(name, config, out_dir):
     upload_files_compress = [(out_dir + i + '.xz') for i in upload_files_compress]
 
     upload_files_bin = ['arch/arm/boot/zImage',
-                        'dtb-out.tar.gz',
-                        'modules-out.tar.gz',
+                        'dtb-out.tar.xz',
+                        'modules-out.tar.xz',
                         ]
     upload_files_bin = [(out_dir + i) for i in upload_files_bin]
     upload_files_bin.extend(upload_files_compress)

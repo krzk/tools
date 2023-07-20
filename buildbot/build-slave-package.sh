@@ -27,9 +27,10 @@ rm -fr "${OUT_DIR}modules-out" "${OUT_DIR}dtb-out"
 # Delete symlinks from modules-out
 find "${OUT_DIR}modules-out/lib/modules/" -type l -delete
 # Tar the modules and dtbs (download cannot transfer entire directories)
-tar -czf "${OUT_DIR}modules-out.tar.gz" -C "${OUT_DIR}modules-out" lib/modules
+tar -cf - -C "${OUT_DIR}modules-out" lib/modules | xz --threads=0 > "${OUT_DIR}modules-out.tar.xz"
 find "${OUT_DIR}dtb-out" -name "*.dtb" -printf "%f\n" | \
-	tar -czf "${OUT_DIR}dtb-out.tar.gz" -C "${OUT_DIR}dtb-out" --verbatim-files-from --files-from -
+	tar -cf - -C "${OUT_DIR}dtb-out" --verbatim-files-from --files-from - | \
+	xz --threads=0 > "${OUT_DIR}dtb-out.tar.xz"
 
 # Show the sizes:
-cd "${OUT_DIR}" && ls -lh modules-out.tar.gz dtb-out.tar.gz
+cd "${OUT_DIR}" && ls -lh modules-out.tar.xz dtb-out.tar.xz
