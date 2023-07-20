@@ -33,13 +33,13 @@ umask 022
 
 # Unpack downloaded modules:
 echo "Unpacking modules..."
-rm -fr $DEPLOY_TMP
-mkdir -p $DEPLOY_TMP
-tar -xzf deploy-modules-out.tar.gz -C $DEPLOY_TMP
+rm -fr "$DEPLOY_TMP"
+mkdir -p "$DEPLOY_TMP"
+tar -xzf deploy-modules-out.tar.gz -C "$DEPLOY_TMP"
 # Be sure that there are no symlinks
-find ${DEPLOY_TMP}/lib/modules/ -type 'l' -delete
-chmod -R a+r ${DEPLOY_TMP}/
-find ${DEPLOY_TMP}/lib/modules/ -type 'd' -exec chmod a+x '{}' \;
+find "${DEPLOY_TMP}/lib/modules/" -type 'l' -delete
+chmod -R a+r "${DEPLOY_TMP}/"
+find "${DEPLOY_TMP}/lib/modules/" -type 'd' -exec chmod a+x '{}' \;
 
 # Prepare initrd:
 KERNEL_NAME=$(ls ${DEPLOY_TMP}/lib/modules)
@@ -47,9 +47,9 @@ test -d "${DEPLOY_TMP}/lib/modules/${KERNEL_NAME}" || die "Cannot get kernel nam
 echo "Got kernel name: $KERNEL_NAME"
 
 echo "Making initramfs and image"
-${SELF_DIR}/../pi/make-initramfs.sh ${SELF_DIR}/initramfs/initramfs-odroid-armv7hf-base.cpio \
-		  $DEPLOY_TMP \
-		  ${SELF_DIR}/initramfs/initramfs-odroid-armv7hf-addons \
+${SELF_DIR}/../pi/make-initramfs.sh "${SELF_DIR}/initramfs/initramfs-odroid-armv7hf-base.cpio" \
+		  "$DEPLOY_TMP" \
+		  "${SELF_DIR}/initramfs/initramfs-odroid-armv7hf-addons" \
 		  /srv/tftp/uboot-initramfs-odroidxu3.img
 #mkinitcpio --moduleroot . --kernel "${KERNEL_NAME}" \
 #	--generate initramfs-odroidxu3.img \
