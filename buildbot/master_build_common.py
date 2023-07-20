@@ -409,7 +409,7 @@ def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, 
         for schema in schema_dirs:
             step_name = 'make dtbs_check baseline: ' + env['ARCH'] + '/' + step_name_cfg + '/' + schema.strip('/')
             st.append(steps.ShellCommand(command=[util.Interpolate(CMD_MAKE), 'dtbs_check',
-                                                  'DT_SCHEMA_FILES=Documentation/devicetree/bindings/' + schema],
+                                                  'DT_SCHEMA_FILES=' + schema if schema else ''],
                                          haltOnFailure=True,
                                          env=env, name=step_name[:50]))
         st.append(step_touch_commit_files())
@@ -417,7 +417,7 @@ def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, 
     for schema in schema_dirs:
         step_name = 'make dtbs_check warnings: ' + env['ARCH'] + '/' + step_name_cfg + '/' + schema.strip('/')
         st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'dtbs_check',
-                                         'DT_SCHEMA_FILES=Documentation/devicetree/bindings/' + schema],
+                                         'DT_SCHEMA_FILES=' + schema if schema else ''],
                                 haltOnFailure=True,
                                 warnOnWarnings=True,
                                 suppressionList=BUILD_WARN_IGNORE,
