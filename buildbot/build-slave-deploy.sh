@@ -18,7 +18,7 @@ test $# -eq 4 || die "Wrong number of parameters"
 TARGET="$1"
 NAME="$2"
 REVISION="$3"
-MODULES_TMP="$4"
+DEPLOY_TMP="$4"
 TOOLS_DIR="/opt/tools"
 
 echo "Deploying ${NAME}/${REVISION} to $TARGET"
@@ -33,22 +33,22 @@ umask 022
 
 # Unpack downloaded modules:
 echo "Unpacking modules..."
-rm -fr $MODULES_TMP
-mkdir -p $MODULES_TMP
-tar -xzf deploy-modules-out.tar.gz -C $MODULES_TMP
+rm -fr $DEPLOY_TMP
+mkdir -p $DEPLOY_TMP
+tar -xzf deploy-modules-out.tar.gz -C $DEPLOY_TMP
 # Be sure that there are no symlinks
-find ${MODULES_TMP}/lib/modules/ -type 'l' -delete
-chmod -R a+r ${MODULES_TMP}/
-find ${MODULES_TMP}/lib/modules/ -type 'd' -exec chmod a+x '{}' \;
+find ${DEPLOY_TMP}/lib/modules/ -type 'l' -delete
+chmod -R a+r ${DEPLOY_TMP}/
+find ${DEPLOY_TMP}/lib/modules/ -type 'd' -exec chmod a+x '{}' \;
 
 # Prepare initrd:
-KERNEL_NAME=$(ls ${MODULES_TMP}/lib/modules)
-test -d "${MODULES_TMP}/lib/modules/${KERNEL_NAME}" || die "Cannot get kernel name. Got: $KERNEL_NAME"
+KERNEL_NAME=$(ls ${DEPLOY_TMP}/lib/modules)
+test -d "${DEPLOY_TMP}/lib/modules/${KERNEL_NAME}" || die "Cannot get kernel name. Got: $KERNEL_NAME"
 echo "Got kernel name: $KERNEL_NAME"
 
 echo "Making initramfs and image"
 make-initramfs.sh ${TOOLS_DIR}/buildbot/initramfs/initramfs-odroid-armv7hf-base.cpio \
-		  $MODULES_TMP \
+		  $DEPLOY_TMP \
 		  ${TOOLS_DIR}/buildbot/initramfs/initramfs-odroid-armv7hf-addons \
 		  /srv/tftp/uboot-initramfs-odroidxu3.img
 #mkinitcpio --moduleroot . --kernel "${KERNEL_NAME}" \
@@ -69,7 +69,7 @@ MODULES_DEST_DIR="/srv/nfs/${TARGET}/lib/modules/"
 echo "Installing modules to $MODULES_DEST_DIR"
 test -d "$MODULES_DEST_DIR" || die "Destination modules dir '$MODULES_DEST_DIR' does not exist"
 rm -fr "${MODULES_DEST_DIR}/${KERNEL_NAME}"
-cp -r "${MODULES_TMP}/lib/modules/${KERNEL_NAME}" "$MODULES_DEST_DIR"
+cp -r "${DEPLOY_TMP}/lib/modules/${KERNEL_NAME}" "$MODULES_DEST_DIR"
 chown -R buildbot:buildbot "${MODULES_DEST_DIR}/${KERNEL_NAME}"
 chmod -R g+rw,a+r "${MODULES_DEST_DIR}/${KERNEL_NAME}"
 

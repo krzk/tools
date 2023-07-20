@@ -727,10 +727,10 @@ def steps_boot(builder_name, target, config, run_pm_tests=False):
     st = st + steps_download(target)
 
     st.append(steps.ShellCommand(command=['/opt/tools/buildbot/build-slave-deploy.sh',
-                                          target, config, util.Property('revision'), 'modules-tmp'],
+                                          target, config, util.Property('revision'), 'deploy-tmp'],
                                  haltOnFailure=True,
                                  name='Deploy on server binaries for booting'))
-    st.append(steps.SetPropertyFromCommand(command='ls modules-tmp/lib/modules',
+    st.append(steps.SetPropertyFromCommand(command='ls deploy-tmp/lib/modules',
                                            property='kernel_version', haltOnFailure=True))
 
     st.append(step_serial_open(target))
