@@ -7,7 +7,8 @@
 # SPDX-License-Identifier: GPL-2.0
 #
 
-. $(dirname "${BASH_SOURCE[0]}")/inc-build-slave.sh
+SELF_DIR="$(dirname "${BASH_SOURCE[0]}")"
+. "${SELF_DIR}/inc-build-slave.sh"
 
 set -e -E
 # Be verbose for Buildbot debugging
@@ -19,7 +20,6 @@ TARGET="$1"
 NAME="$2"
 REVISION="$3"
 DEPLOY_TMP="$4"
-TOOLS_DIR="/opt/tools"
 
 echo "Deploying ${NAME}/${REVISION} to $TARGET"
 
@@ -47,13 +47,13 @@ test -d "${DEPLOY_TMP}/lib/modules/${KERNEL_NAME}" || die "Cannot get kernel nam
 echo "Got kernel name: $KERNEL_NAME"
 
 echo "Making initramfs and image"
-make-initramfs.sh ${TOOLS_DIR}/buildbot/initramfs/initramfs-odroid-armv7hf-base.cpio \
+${SELF_DIR}/../pi/make-initramfs.sh ${SELF_DIR}/initramfs/initramfs-odroid-armv7hf-base.cpio \
 		  $DEPLOY_TMP \
-		  ${TOOLS_DIR}/buildbot/initramfs/initramfs-odroid-armv7hf-addons \
+		  ${SELF_DIR}/initramfs/initramfs-odroid-armv7hf-addons \
 		  /srv/tftp/uboot-initramfs-odroidxu3.img
 #mkinitcpio --moduleroot . --kernel "${KERNEL_NAME}" \
 #	--generate initramfs-odroidxu3.img \
-#	--config ${TOOLS_DIR}/buildbot/${NAME}/mkinitcpio.conf
+#	--config ${SELF_DIR}/${NAME}/mkinitcpio.conf
 #
 #mkimage -n "U-boot Odroid XU3 ramdisk" -A arm -O linux -T ramdisk -C gzip \
 #	-d initramfs-odroidxu3.img /srv/tftp/uboot-initramfs-odroidxu3.img

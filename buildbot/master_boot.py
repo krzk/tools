@@ -721,12 +721,28 @@ def steps_download(target):
 def steps_boot(builder_name, target, config, run_pm_tests=False):
     st = []
 
+    # OpenStack machines have frequent github.com name resolution failures:
+    # fatal: unable to access 'https://github.com/krzk/tools.git/': Could not resolve host: github.com
+    # Cache the address first.
+    st.append(steps.ShellCommand(command=util.Interpolate('%(prop:builddir:-~/)s/tools/buildbot/name-resolve-fixup.sh'),
+                                 haltOnFailure=False, warnOnFailure=True, flunkOnFailure=False,
+                                 name='Cache DNS addresses (workaround)'))
+    st.append(steps.Git(repourl='https://github.com/krzk/tools.git',
+                        name='Clone krzk tools sources',
+                        mode='incremental',
+                        alwaysUseLatest=True,
+                        branch='master',
+                        getDescription=False,
+                        workdir='tools',
+                        haltOnFailure=True,
+                        env=util.Property('git_env')))
+
     st.append(steps.ShellCommand(command=['rm', '-fr', 'lib',
                                           'deploy-modules-out.tar.gz', 'initramfs-odroidxu3.img'],
                                  name='Remove old binaries'))
     st = st + steps_download(target)
 
-    st.append(steps.ShellCommand(command=['/opt/tools/buildbot/build-slave-deploy.sh',
+    st.append(steps.ShellCommand(command=[util.Interpolate('%(prop:builddir:-~/)s/tools/buildbot/build-slave-deploy.sh'),
                                           target, config, util.Property('revision'), 'deploy-tmp'],
                                  haltOnFailure=True,
                                  name='Deploy on server binaries for booting'))
