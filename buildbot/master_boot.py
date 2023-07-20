@@ -181,7 +181,7 @@ def pexpect_hard_reset(target, config):
         string with Python code
     """
     pexpect_cmd = """
-    process = subprocess.run(['sudo', 'gpio-pi.py', '""" + target + """', 'restart'])
+    process = subprocess.run(['sudo', '/opt/tools/pi/gpio-pi.py', '""" + target + """', 'restart'])
     if process.returncode:
         raise Exception('Cannot restart target (rc: %d)' % process.returncode)
     """
@@ -562,7 +562,7 @@ def steps_shutdown(target, config):
 
     st.append(step_gracefull_shutdown(target, config, always_run=True, halt_on_failure=False))
     st.append(step_serial_close(target))
-    st.append(steps.ShellCommand(command=['sudo', 'gpio-pi.py', target, 'off'],
+    st.append(steps.ShellCommand(command=['sudo', '/opt/tools/pi/gpio-pi.py', target, 'off'],
                                  name='Cut the power: ' + target,
                                  alwaysRun=True,
                                  haltOnFailure=True))
