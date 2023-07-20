@@ -443,6 +443,13 @@ def steps_dtbs_warnings(env, kbuild_output, config=None, git_reset=True):
                             warnOnWarnings=True,
                             suppressionList=BUILD_WARN_IGNORE,
                             env=env, name=step_name))
+    step_name = 'make dtbs_install: ' + env['ARCH'] + '/' + step_name_cfg
+    st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'dtbs_install',
+                                     util.Interpolate('INSTALL_DTBS_PATH=' + kbuild_output + 'dtbs-install')],
+                            haltOnFailure=True,
+                            warnOnWarnings=True,
+                            suppressionList=BUILD_WARN_IGNORE,
+                            env=env, name=step_name))
     return st
 
 def steps_build_with_warnings_diff(builder_name, env):
