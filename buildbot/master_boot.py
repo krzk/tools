@@ -19,8 +19,6 @@ TARGET_SERIAL_DEV = {
     'odroidmc1': 'by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0',
 }
 
-ENV_PATH = {'PATH': '/opt/tools/buildbot:/opt/tools/pi:/usr/local/bin:${PATH}'}
-
 TARGET_SSH_USER = 'buildbot'
 SERIAL_LOG = 'serial.log'
 TIMEOUT_PING = '20'
