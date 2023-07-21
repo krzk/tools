@@ -117,7 +117,7 @@ dmic0_record_off() {
 amic1_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
 	# SWR_MIC0 (so TX SWR_INPUT0) should match audio-route in DTS to ADC1
-	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC0
+	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC4
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
@@ -145,7 +145,7 @@ amic1_record_off() {
 
 headset_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
-	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC1
+	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC5
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
@@ -176,7 +176,7 @@ headset_record_off() {
 # Does not work
 amic3_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
-	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC1
+	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC4
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
@@ -196,7 +196,7 @@ amic3_record_on() {
 # Does not work
 amic4_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
-	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC2
+	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC4
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
@@ -216,7 +216,7 @@ amic4_record_on() {
 # Does not work
 amic5_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
-	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC3
+	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC4
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
