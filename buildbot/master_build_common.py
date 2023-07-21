@@ -1,7 +1,7 @@
 # -*- python -*-
 # ex: set filetype=python:
 #
-# Copyright (c) 2016-2020 Krzysztof Kozlowski
+# Copyright (c) 2016-2023 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -13,11 +13,75 @@ from master_auth import master_auth_config
 from buildbot.plugins import steps, util
 from buildbot import process
 import twisted
+import re
 
 BUILD_WARN_IGNORE = [ (None, '.*warning: #warning syscall .* not implemented.*', None, None),
                     ]
 
 CMD_MAKE = '%(prop:builddir:-~/)s/tools/buildbot/build-slave.sh'
+
+DTBS_CHECK_KNOWN_WARNINGS = {
+    'arm': {
+        'exynos': [
+            ('.*exynos4210-universal_c210.dtb', re.escape("/soc/i2c@138b0000/pmic@66: failed to match any schema with compatible: ['national,lp3974']"), None, None),
+            ('.*exynos4412-p4note-n8010.dtb$', re.escape("/i2c-gpio-3/adc@41: failed to match any schema with compatible: ['st,stmpe811']"), None, None),
+            # Three matches, send patches for v6.6:
+            ('.*exynos4212-tab3.*.dtb', "touchscreen@48: 'linux,keycodes' does not match any of the regexes:.*", None, None),
+            ('.*exynos5250-snow.dtb$', re.escape("/i2c-arbitrator: failed to match any schema with compatible: ['i2c-arb-gpio-challenge']"), None, None),
+            ('.*exynos5250-snow.dtb$', re.escape("/i2c-arbitrator/i2c@0/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
+            ('.*exynos5250-snow-rev5.dtb$', re.escape("/i2c-arbitrator: failed to match any schema with compatible: ['i2c-arb-gpio-challenge']"), None, None),
+            ('.*exynos5250-snow-rev5.dtb$', re.escape("/i2c-arbitrator/i2c@0/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
+            ('.*exynos5420-peach-pit.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
+            # Three matches, send patches for v6.6:
+            ('.*exynos5422-samsung-k3g.dtb$', re.escape("/soc/i2c@12c60000/touchscreen@20: failed to match any schema with compatible: ['syna,rmi4-i2c']"), None, None),
+            ('.*exynos5800-peach-pi.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
+        ],
+        's3c6400': [
+            # Fixed in v6.6:
+            ('.*s3c6410-mini6410.dtb', re.escape("/srom-cs1-bus@18000000/ethernet@18000000: failed to match any schema with compatible: ['davicom,dm9000']"), None, None),
+        ],
+        's5pv210': [
+            ('.*s5pv210-aquila.dtb$', re.escape("/i2c-pmic/pmic@66: failed to match any schema with compatible: ['national,lp3974']"), None, None),
+            ('.*s5pv210-aquila.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-aquila.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-aquila.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-fascinate4g.dtb$', re.escape("/i2c-gpio-2/pmic@66: failed to match any schema with compatible: ['maxim,max8998']"), None, None),
+            ('.*s5pv210-fascinate4g.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-fascinate4g.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-fascinate4g.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-galaxys.dtb$', re.escape("/i2c-gpio-2/pmic@66: failed to match any schema with compatible: ['maxim,max8998']"), None, None),
+            ('.*s5pv210-galaxys.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-galaxys.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-galaxys.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-goni.dtb$', re.escape("/soc/i2c@e1800000/sensor@30: failed to match any schema with compatible: ['siliconfile,noon010pc30']"), None, None),
+            ('.*s5pv210-goni.dtb$', re.escape("/i2c-pmic/pmic@66: failed to match any schema with compatible: ['national,lp3974']"), None, None),
+            ('.*s5pv210-goni.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-goni.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-goni.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-smdkc110.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-smdkc110.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-smdkc110.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            # Fixed in v6.6:
+            ('.*s5pv210-smdkv210.dtb$', re.escape("/ethernet@a8000000: failed to match any schema with compatible: ['davicom,dm9000']"), None, None),
+            ('.*s5pv210-smdkv210.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-smdkv210.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-smdkv210.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-torbreck.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-torbreck.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ('.*s5pv210-torbreck.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
+        ],
+    },
+}
+
+DTBS_CHECK_WARNING_PATTERN = "^(.*?\.dtb): (.*)$"
+
+def warnExtractFromRegexpGroups(self, line, match):
+    """
+    Extract file name and warning text as groups (1,2)
+    of warningPattern match."""
+    file = match.group(1)
+    text = match.group(2)
+    return (file, None, text)
 
 class ShellCmdWithLink(steps.ShellCommand):
     renderables = ['url']
@@ -416,12 +480,17 @@ def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, 
 
     for schema in schema_dirs:
         step_name = 'make dtbs_check warnings: ' + env['ARCH'] + '/' + step_name_cfg + '/' + schema.strip('/')
+        suppression_list = []
+        if env['ARCH'] in DTBS_CHECK_KNOWN_WARNINGS:
+            if config in DTBS_CHECK_KNOWN_WARNINGS[env['ARCH']]:
+                suppression_list = DTBS_CHECK_KNOWN_WARNINGS[env['ARCH']][config]
         st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'dtbs_check',
                                          'DT_SCHEMA_FILES=' + schema if schema else ''],
                                 haltOnFailure=True,
                                 warnOnWarnings=True,
-                                suppressionList=BUILD_WARN_IGNORE,
-                                warningPattern="^.*\.dtb: ",
+                                suppressionList=suppression_list,
+                                warningPattern=DTBS_CHECK_WARNING_PATTERN,
+                                warningExtractor=warnExtractFromRegexpGroups,
                                 env=env, name=step_name[:50]))
     return st
 
