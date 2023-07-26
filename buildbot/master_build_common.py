@@ -23,16 +23,19 @@ CMD_MAKE = '%(prop:builddir:-~/)s/tools/buildbot/build-slave.sh'
 DTBS_CHECK_KNOWN_WARNINGS = {
     'arm': {
         'exynos': [
+            # Sent patches for v6.6:
             ('.*exynos4210-universal_c210.dtb', re.escape("/soc/i2c@138b0000/pmic@66: failed to match any schema with compatible: ['national,lp3974']"), None, None),
             ('.*exynos4412-p4note-n8010.dtb$', re.escape("/i2c-gpio-3/adc@41: failed to match any schema with compatible: ['st,stmpe811']"), None, None),
-            # Three matches, send patches for v6.6:
+            # Three matches, sent patches for v6.6:
             ('.*exynos4212-tab3.*.dtb', "touchscreen@48: 'linux,keycodes' does not match any of the regexes:.*", None, None),
+            # Sent patches for v6.6:
             ('.*exynos5250-snow.dtb$', re.escape("/i2c-arbitrator: failed to match any schema with compatible: ['i2c-arb-gpio-challenge']"), None, None),
             ('.*exynos5250-snow.dtb$', re.escape("/i2c-arbitrator/i2c@0/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
+            # Sent patches for v6.6:
             ('.*exynos5250-snow-rev5.dtb$', re.escape("/i2c-arbitrator: failed to match any schema with compatible: ['i2c-arb-gpio-challenge']"), None, None),
             ('.*exynos5250-snow-rev5.dtb$', re.escape("/i2c-arbitrator/i2c@0/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
             ('.*exynos5420-peach-pit.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
-            # Three matches, send patches for v6.6:
+            # Three matches, sent patches for v6.6:
             ('.*exynos5422-samsung-k3g.dtb$', re.escape("/soc/i2c@12c60000/touchscreen@20: failed to match any schema with compatible: ['syna,rmi4-i2c']"), None, None),
             ('.*exynos5800-peach-pi.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
         ],
@@ -41,19 +44,23 @@ DTBS_CHECK_KNOWN_WARNINGS = {
             ('.*s3c6410-mini6410.dtb', re.escape("/srom-cs1-bus@18000000/ethernet@18000000: failed to match any schema with compatible: ['davicom,dm9000']"), None, None),
         ],
         's5pv210': [
+            # Sent patches for v6.6:
             ('.*s5pv210-aquila.dtb$', re.escape("/i2c-pmic/pmic@66: failed to match any schema with compatible: ['national,lp3974']"), None, None),
             ('.*s5pv210-aquila.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-aquila.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-aquila.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            # Sent patches for v6.6:
             ('.*s5pv210-fascinate4g.dtb$', re.escape("/i2c-gpio-2/pmic@66: failed to match any schema with compatible: ['maxim,max8998']"), None, None),
             ('.*s5pv210-fascinate4g.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-fascinate4g.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-fascinate4g.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            # Sent patches for v6.6:
             ('.*s5pv210-galaxys.dtb$', re.escape("/i2c-gpio-2/pmic@66: failed to match any schema with compatible: ['maxim,max8998']"), None, None),
             ('.*s5pv210-galaxys.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-galaxys.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-galaxys.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-goni.dtb$', re.escape("/soc/i2c@e1800000/sensor@30: failed to match any schema with compatible: ['siliconfile,noon010pc30']"), None, None),
+            # Sent patches for v6.6:
             ('.*s5pv210-goni.dtb$', re.escape("/i2c-pmic/pmic@66: failed to match any schema with compatible: ['national,lp3974']"), None, None),
             ('.*s5pv210-goni.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-goni.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
