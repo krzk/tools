@@ -116,7 +116,7 @@ dmic0_record_off() {
 
 amic1_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
-	# SWR_MIC0 (so TX SWR_INPUT0) should match audio-route in DTS to ADC1
+	# SWR_MIC4 (so TX SWR_INPUT4) should match audio-route in DTS to ADC1
 	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC4
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
