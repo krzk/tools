@@ -493,7 +493,6 @@ make_image_qcom() {
 		echo "Using existing ramdisk $RAMDISK ..."
 	fi
 
-	set -x
 	cmdline="$cmdline $CMDLINE"
 	echo "Making kernel image with cmdline: $cmdline"
 	mkbootimg --kernel ${IMAGE_OUT_PATH} \
@@ -503,7 +502,6 @@ make_image_qcom() {
 		--pagesize 4096 \
 		--output ${KBUILD_OUTPUT}boot.img \
 		|| die "mkbootimg failure"
-	set +x
 }
 
 ls_image_qcom() {
