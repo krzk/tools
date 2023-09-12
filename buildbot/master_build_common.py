@@ -507,6 +507,7 @@ def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, 
                                 name='Make olddefconfig'))
 
     step_name_cfg = str(config) + ' config' if config else 'defconfig'
+    real_config = config if config else 'defconfig'
     if only_changed_files:
         for schema in schema_dirs:
             step_name = 'make dtbs_check baseline: ' + env['ARCH'] + '/' + step_name_cfg + '/' + schema.strip('/')
@@ -520,8 +521,8 @@ def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, 
         step_name = 'make dtbs_check warnings: ' + env['ARCH'] + '/' + step_name_cfg + '/' + schema.strip('/')
         suppression_list = []
         if env['ARCH'] in DTBS_CHECK_KNOWN_WARNINGS:
-            if config in DTBS_CHECK_KNOWN_WARNINGS[env['ARCH']]:
-                suppression_list = DTBS_CHECK_KNOWN_WARNINGS[env['ARCH']][config]
+            if real_config in DTBS_CHECK_KNOWN_WARNINGS[env['ARCH']]:
+                suppression_list = DTBS_CHECK_KNOWN_WARNINGS[env['ARCH']][real_config]
         st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'dtbs_check',
                                          'DT_SCHEMA_FILES=' + schema if schema else ''],
                                 haltOnFailure=True,
