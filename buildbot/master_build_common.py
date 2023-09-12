@@ -26,8 +26,8 @@ DTBS_CHECK_KNOWN_WARNINGS = {
             # Sent patches for v6.6:
             ('.*exynos4210-universal_c210.dtb', re.escape("/soc/i2c@138b0000/pmic@66: failed to match any schema with compatible: ['national,lp3974']"), None, None),
             # Pending on mailing list (old patchset)
-            ('.*exynos5250-snow.dtb$', re.escape("/i2c-arbitrator/i2c@0/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
-            ('.*exynos5250-snow-rev5.dtb$', re.escape("/i2c-arbitrator/i2c@0/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
+            ('.*exynos5250-snow.dtb$', re.escape("/i2c-arbitrator/i2c-arb/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
+            ('.*exynos5250-snow-rev5.dtb$', re.escape("/i2c-arbitrator/i2c-arb/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
             ('.*exynos5420-peach-pit.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
             ('.*exynos5800-peach-pi.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
         ],
