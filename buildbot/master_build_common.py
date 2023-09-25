@@ -23,6 +23,10 @@ CMD_MAKE = '%(prop:builddir:-~/)s/tools/buildbot/build-slave.sh'
 DTBS_CHECK_KNOWN_WARNINGS = {
     'arm': {
         'exynos': [
+            # Patches on LKML for v6.8-rc1, waiting on dependency to be merged in v6.7-rc1
+            ('.*exynos4[24]12.*.dtb$', re.escape("camera@11800000: fimc-is@12000000: 'samsung,pmu-syscon' is a required property"), None, None),
+            # Patches on LKML for v6.8-rc1, waiting on dependency to be merged in v6.7-rc1
+            ('.*exynos4[24]12.*.dtb$', re.escape("fimc-is@12000000: 'samsung,pmu-syscon' is a required property"), None, None),
             # Sent patches for v6.6:
             ('.*exynos4210-universal_c210.dtb', re.escape("/soc/i2c@138b0000/pmic@66: failed to match any schema with compatible: ['national,lp3974']"), None, None),
             # Pending on mailing list (old patchset)
