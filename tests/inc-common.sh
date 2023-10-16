@@ -94,6 +94,24 @@ is_kernel_le() {
 	return 1
 }
 
+# is_kernel_ge major minor
+# returns 0 if current kernel is greater or equal to major.minor
+is_kernel_ge() {
+	local exp_major="$1"
+	local exp_minor="$2"
+	local kver="$(uname -r)"
+	local kmajor="${kver%%.*}"
+	local kminor="${kver#*.}"
+	kminor="${kminor%%.*}"
+
+	test $kmajor -gt $exp_major && return 0
+	if [ $kmajor -eq $exp_major ]; then
+		test $kminor -ge $exp_minor && return 0
+	fi
+
+	return 1
+}
+
 # run_as_nonroot cmd
 run_as_nonroot() {
 	if [ "$SUDO_USER" != "" ]; then
