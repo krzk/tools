@@ -8,9 +8,8 @@
 #
 
 SERIAL_u3="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D45567-if00-port0"
-SERIAL_x="/dev/serial/by-path/platform-3f980000.usb-usb-0:1.1.2.1:1.0-port0"
 SERIAL_mc1="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0"
-SERIAL_xu="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00521AAE-if00-port0"
+SERIAL_x="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00521AAE-if00-port0"
 SERIAL_hc1="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D4562A-if00-port0"
 SERIAL_arndaleocta="/dev/serial/by-path/platform-3f980000.usb-usb-0:1.1.3:1.0-port0"
 
@@ -22,8 +21,6 @@ if [ $# -gt 0 ]; then
 		SERIAL="$SERIAL_x"
 	elif [ "$1" = "mc1" ]; then
 		SERIAL="$SERIAL_mc1"
-	elif [ "$1" = "xu" ]; then
-		SERIAL="$SERIAL_xu"
 	elif [ "$1" = "hc1" ]; then
 		SERIAL="$SERIAL_hc1"
 	elif [ "$1" = "arndaleocta" ] || [ "$1" = "octa" ]; then

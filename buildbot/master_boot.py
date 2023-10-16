@@ -14,8 +14,7 @@ TARGET_SERIAL_DEV = {
     'arndaleocta': 'by-path/platform-3f980000.usb-usb-0:1.1.3:1.0-port0',
     'odroidhc1': 'by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D4562A-if00-port0',
     'odroidu3': 'by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D45567-if00-port0',
-    'odroidx': 'by-path/platform-3f980000.usb-usb-0:1.1.2.1:1.0-port0',
-    'odroidxu': 'by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00521AAE-if00-port0',
+    'odroidx': 'by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00521AAE-if00-port0',
     'odroidmc1': 'by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0',
 }
 
@@ -40,10 +39,6 @@ TARGET_CONFIG = {
     'odroidx': {
         'machine': 'Hardkernel ODROID-X board based on Exynos4412',
         'serial': 'ttySAC1',
-    },
-    'odroidxu': {
-        'machine': 'Hardkernel Odroid XU',
-        'serial': 'ttySAC2',
     },
     'odroidmc1': {
         'machine': 'Hardkernel Odroid HC1',
