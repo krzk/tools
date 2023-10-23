@@ -238,12 +238,11 @@ amic5_record_on() {
 	amixer -c 0 cset name='TX DMIC MUX0' ZERO
 }
 
-if [ -c /dev/snd/pcmC0D4p ]; then
-	HEADSET=4
-	SPEAKER=5
-	MIC=6
-else
-	echo "Missing /dev/snd/pcmC0D4p and /dev/snd/pcmC0D5p"
+HEADSET=1
+SPEAKER=2
+MIC=3
+if ! [ -c /dev/snd/pcmC0D${HEADSET}p ]; then
+	echo "Missing /dev/snd/pcmC0D${HEADSET}p"
 	exit 1
 fi
 
