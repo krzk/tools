@@ -100,6 +100,7 @@ dmic0_record_on() {
 	#amixer -c 0 cset name='TX DMIC MUX0' DMIC0
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
 	amixer -c 0 cset name='TX_DEC0 Volume' 85
+	# FIXME: amixer -c 0 cset name='DMIC0_MIXER Switch' 1
 	amixer -c 0 cset name='DMIC1 Switch' 1 # Not sure if needed
 	amixer -c 0 cset name='DMIC1_MIXER Switch' 1 # Not sure if needed
 	amixer -c 0 cset name='MultiMedia3 Mixer TX_CODEC_DMA_TX_3' 1
@@ -120,6 +121,7 @@ amic1_record_on() {
 	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC4
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
+	# TODO: mixer_paths say DEC2! Test it
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
 	# TX0 matches ADC1
 	amixer -c 0 cset name='TX0 MODE' ADC_NORMAL
@@ -143,6 +145,7 @@ amic1_record_off() {
 	amixer -c 0 cset name='TX0 MODE' ADC_INVALID
 }
 
+# AMIC2
 headset_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
 	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC5
@@ -176,9 +179,11 @@ headset_record_off() {
 # Does not work
 amic3_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
-	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC4
+	# TODO: mixer_paths say SWR_MIC5! Test it
+	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC5
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
+	# TODO: mixer_paths say DEC2! Test it
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
 	amixer -c 0 cset name='TX1 MODE' ADC_NORMAL
 	amixer -c 0 cset name='ADC2_MIXER Switch' 1
