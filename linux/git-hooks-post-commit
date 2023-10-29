@@ -12,7 +12,7 @@
 #
 
 TOOLS_DIR="$HOME/dev/tools/linux/"
-VANILLA_LINUS_DIR="../vanilla/"
+LINUS_MASTER_REF="linus/master"
 
 echo -n "[Checking commit] "
 git --no-pager log --format="%C(auto) %h %s" -n1
@@ -28,7 +28,7 @@ test $? -eq 0 && echo "OK"
 echo
 
 echo "[Fixes] "
-${TOOLS_DIR}verify_fixes.sh "$VANILLA_LINUS_DIR" HEAD^..HEAD
+${TOOLS_DIR}verify_fixes.sh "$LINUS_MASTER_REF" HEAD^..HEAD
 test $? -eq 0 && echo "OK"
 echo
 

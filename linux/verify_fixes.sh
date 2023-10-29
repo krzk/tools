@@ -3,18 +3,19 @@
 #
 # Copyright (C) 2019 Stephen Rothwell <sfr@canb.auug.org.au>
 # Copyright (C) 2019 Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-# Copyright (c) 2019 Krzysztof Kozlowski <krzk@kernel.org>
+# Copyright (c) 2019-2023 Krzysztof Kozlowski <krzk@kernel.org>
 #
 # Verify that the "Fixes:" tag is correct in a kernel commit
 #
 # usage:
-#	verify_fixes.sh GIT_RANGE
+#	verify_fixes.sh Linus_master_ref GIT_RANGE
 #
 # To test just the HEAD commit do:
-#	verify_fixes.sh HEAD^..HEAD
+#	verify_fixes.sh origin/master HEAD^..HEAD
 #
 #
-# Thanks to Stephen Rothwell <sfr@canb.auug.org.au> for the majority of this code
+# Thanks to Stephen Rothwell <sfr@canb.auug.org.au> for the majority of this code.
+# Thanks to Uwe Kleine-König <u.kleine-koenig@pengutronix.de> for newer ancestor ideas.
 #
 
 ##########################################
@@ -28,7 +29,7 @@ help()
 {
 	echo "error, git range not found"
 	echo "usage:"
-	echo "	$0 LINUS_REPO GIT_RANGE"
+	echo "	$0 LINUS_MASTER_BRANCH GIT_RANGE"
 	exit 1
 }
 
@@ -100,6 +101,13 @@ verify_fixes()
 				continue
 			fi
 
+			if ! git merge-base --is-ancestor "$sha" "$Linus_master_ref"; then
+				# Not being an ancestor of Linus' tree is not
+				# fatal. It still should be ancestor of your
+				# tree. Just message this.
+				msg="${msg:+${msg}${nl}}${tab}${tab}- Inspect: Target SHA is not ancestor of Linus' master branch"
+			fi
+
 			if ! git merge-base --is-ancestor "$sha" "$c"; then
 				printf '%s%s\t\t- %s\n' "$commit_msg" "$fixes_msg" 'Target SHA should be an ancestor of your tree'
 				commit_msg=''
@@ -164,13 +172,6 @@ verify_fixes()
 			if [ "$subject" != "${target_subject:0:${#subject}}" ]; then
 				msg="${msg:+${msg}${nl}}${tab}${tab}- Subject does not match target commit subject${nl}${tab}${tab}  Just use${nl}${tab}${tab}${tab}git log -1 --format='Fixes: %h (\"%s\")'"
 			fi
-			lsha=$(cd "$Linus_tree" && git rev-parse -q --verify "$sha")
-			if [ -z "$lsha" ]; then
-				count=$(git rev-list --count "$sha".."$c")
-				if [ "$count" -eq 0 ]; then
-					msg="${msg:+${msg}${nl}}${tab}${tab}- Target is not an ancestor of this commit"
-				fi
-			fi
 
 			if [ "$msg" ]; then
 				printf '%s%s%s\n' "$commit_msg" "$fixes_msg" "$msg"
@@ -185,10 +186,10 @@ verify_fixes()
 	fi
 }
 
-Linus_tree="$1"
+Linus_master_ref="$1"
 git_range=$2
 
-if [ "${git_range}" == "" ] || [ "${Linus_tree}" == "" ] ; then
+if [ "${git_range}" == "" ] || [ "${Linus_master_ref}" == "" ] ; then
 	help
 fi
 
