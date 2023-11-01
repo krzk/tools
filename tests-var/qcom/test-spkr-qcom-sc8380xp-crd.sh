@@ -69,12 +69,18 @@ speakers_on() {
 }
 
 speakers_off() {
-	amixer -c 0 cset name="WSA RX0 MUX" ZERO
-	amixer -c 0 cset name="WSA RX1 MUX" ZERO
-	amixer -c 0 cset name='WSA_COMP1 Switch' 0
-	amixer -c 0 cset name='WSA_COMP2 Switch' 0
-	amixer -c 0 cset name="WSA_RX0 INP0" ZERO
-	amixer -c 0 cset name="WSA_RX1 INP0" ZERO
+	amixer -c 0 cset name="WSA WSA RX0 MUX" ZERO
+	amixer -c 0 cset name="WSA WSA RX1 MUX" ZERO
+	amixer -c 0 cset name='WSA WSA_COMP1 Switch' 0
+	amixer -c 0 cset name='WSA WSA_COMP2 Switch' 0
+	amixer -c 0 cset name="WSA WSA_RX0 INP0" ZERO
+	amixer -c 0 cset name="WSA WSA_RX1 INP0" ZERO
+	amixer -c 0 cset name="WSA2 WSA RX0 MUX" ZERO
+	amixer -c 0 cset name="WSA2 WSA RX1 MUX" ZERO
+	amixer -c 0 cset name='WSA2 WSA_COMP1 Switch' 0
+	amixer -c 0 cset name='WSA2 WSA_COMP2 Switch' 0
+	amixer -c 0 cset name="WSA2 WSA_RX0 INP0" ZERO
+	amixer -c 0 cset name="WSA2 WSA_RX1 INP0" ZERO
 	amixer -c 0 cset name='WooferLeft COMP Switch' 0
 	amixer -c 0 cset name='WooferLeft PBR Switch' 0
 	amixer -c 0 cset name='WooferLeft BOOST Switch' 0
