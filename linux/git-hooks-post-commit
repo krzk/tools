@@ -8,7 +8,7 @@
 #
 # Installation:
 # 1. Copy to .git/hooks/post-commit and .git/hooks/post-applypatch
-# 2. Adjust paths to vanilla (pure Linus' tree) and tools directory
+# 2. Adjust paths and LINUS_MASTER_REF
 #
 
 TOOLS_DIR="$HOME/dev/tools/linux/"
