@@ -345,8 +345,8 @@ def pexpect_boot_to_prompt(target, config):
 
     print('Target """ + target + """ reached: Mounted local file systems')
     child.expect_exact(['Reached target Login Prompts',
-                        'Reached target """ + systemd_color('Login Prompts') + """'])
-    child.expect_exact(['Reached target Graphical Interface',
+                        'Reached target """ + systemd_color('Login Prompts') + """',
+                        'Reached target Graphical Interface',
                         'Reached target """ + systemd_color('Graphical Interface') + """'])
 
     print('Target """ + target + """ reached: Reached login interface')
