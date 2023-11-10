@@ -480,7 +480,7 @@ make_image_qcom() {
 			local modules_src_path="${workdir}/${KBUILD_OUTPUT}${MODULES_INSTALL_PATH}/lib/modules"
 
 			cd "$RAMDISK_TMP"
-			cat "${workdir}/${RAMDISK_SRC}" | cpio -idm --quiet
+			cpio -idm --quiet < "${RAMDISK_SRC}"
 			echo "Installing modules to ramdisk ($(du -sh ${modules_src_path} | awk '{print $1}'))"
 			cp -r ${modules_src_path} ./lib/
 			echo "Packing ramdisk ($(du -sh . | awk '{print $1}'))"
