@@ -27,8 +27,6 @@ DTBS_CHECK_KNOWN_WARNINGS = {
             ('.*exynos4[24]12.*.dtb$', re.escape("camera@11800000: fimc-is@12000000: 'samsung,pmu-syscon' is a required property"), None, None),
             # Patches on LKML for v6.8-rc1, waiting on dependency to be merged in v6.7-rc1
             ('.*exynos4[24]12.*.dtb$', re.escape("fimc-is@12000000: 'samsung,pmu-syscon' is a required property"), None, None),
-            # Sent patches for v6.6:
-            ('.*exynos4210-universal_c210.dtb', re.escape("/soc/i2c@138b0000/pmic@66: failed to match any schema with compatible: ['national,lp3974']"), None, None),
             # Pending on mailing list (old patchset)
             ('.*exynos5250-snow.dtb$', re.escape("/i2c-arbitrator/i2c-arb/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
             ('.*exynos5250-snow-rev5.dtb$', re.escape("/i2c-arbitrator/i2c-arb/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
@@ -40,24 +38,16 @@ DTBS_CHECK_KNOWN_WARNINGS = {
         's3c6400': [
         ],
         's5pv210': [
-            # Sent patches for v6.6:
-            ('.*s5pv210-aquila.dtb$', re.escape("/i2c-pmic/pmic@66: failed to match any schema with compatible: ['national,lp3974']"), None, None),
             ('.*s5pv210-aquila.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-aquila.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-aquila.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            # Sent patches for v6.6:
-            ('.*s5pv210-fascinate4g.dtb$', re.escape("/i2c-gpio-2/pmic@66: failed to match any schema with compatible: ['maxim,max8998']"), None, None),
             ('.*s5pv210-fascinate4g.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-fascinate4g.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-fascinate4g.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            # Sent patches for v6.6:
-            ('.*s5pv210-galaxys.dtb$', re.escape("/i2c-gpio-2/pmic@66: failed to match any schema with compatible: ['maxim,max8998']"), None, None),
             ('.*s5pv210-galaxys.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-galaxys.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-galaxys.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-goni.dtb$', re.escape("/soc/i2c@e1800000/sensor@30: failed to match any schema with compatible: ['siliconfile,noon010pc30']"), None, None),
-            # Sent patches for v6.6:
-            ('.*s5pv210-goni.dtb$', re.escape("/i2c-pmic/pmic@66: failed to match any schema with compatible: ['national,lp3974']"), None, None),
             ('.*s5pv210-goni.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-goni.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-goni.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
