@@ -72,6 +72,35 @@ DTBS_CHECK_KNOWN_WARNINGS = {
     },
 }
 
+DTBS_CHECK_BOARDS = {
+    'arm64': {
+        'qcom': [
+            'qcom/ipq5332-rdp468',
+            'qcom/ipq9574-rdp418',
+            'qcom/qdu1000-idp',
+            'qcom/qrb2210-rb1',
+            'qcom/qrb4210-rb2',
+            'qcom/sa8540p-ride',
+            'qcom/sa8775p-ride',
+            'qcom/sc7280-herobrine-evoker',
+            'qcom/sc8280xp-lenovo-thinkpad-x13s',
+            'qcom/sdm630-sony-xperia-nile-discovery',
+            'qcom/sdm670-google-sargo',
+            'qcom/sdx75-idp',
+            'qcom/sm4250-oneplus-billie2',
+            'qcom/sm4450-qrd',
+            'qcom/sm6115p-lenovo-j606f',
+            'qcom/sm6125-xiaomi-laurel-sprout',
+            'qcom/sm8250-hdk',
+            'qcom/sm8350-hdk',
+            'qcom/sm8450-hdk',
+            'qcom/sm8450-qrd',
+            'qcom/sm8550-mtp',
+            'qcom/sm8550-qrd',
+        ],
+    },
+}
+
 DTBS_CHECK_WARNING_PATTERN = "^(.*?\.dtb): (.*)$"
 
 def warnExtractFromRegexpGroups(self, line, match):
@@ -520,6 +549,25 @@ def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, 
                                 haltOnFailure=True,
                                 warnOnWarnings=True,
                                 suppressionList=suppression_list,
+                                warningPattern=DTBS_CHECK_WARNING_PATTERN,
+                                warningExtractor=warnExtractFromRegexpGroups,
+                                env=env, name=step_name[:50]))
+    return st
+
+def steps_dtbs_check_boards(env, kbuild_output, boards, config=None, git_reset=True):
+    st = []
+    if git_reset:
+        st += steps_build_common(env, kbuild_output, config)
+    else:
+        st.append(step_make_config(env, config))
+
+    for board in boards:
+        step_name = 'make dtbs_check for {}'.format(board)
+
+        st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'CHECK_DTBS=y',
+                                         '{}.dtb'.format(board)],
+                                haltOnFailure=True,
+                                warnOnWarnings=True,
                                 warningPattern=DTBS_CHECK_WARNING_PATTERN,
                                 warningExtractor=warnExtractFromRegexpGroups,
                                 env=env, name=step_name[:50]))
