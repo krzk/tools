@@ -158,6 +158,7 @@ echo "       defconfig: $DEFCONFIG"
 echo "       arch: $ARCH"
 echo "       cc: $CROSS_COMPILE"
 [ -n "$TARGET" ] && echo "       target: $TARGET"
+[ -n "$FLAGS" ] && echo "       build flags: $FLAGS"
 echo "  starting build in $HOSTNAME:$WORKDIR ..."
 echo "  build log: $HOSTNAME:$LOG"
 JOBS="-j$(nproc)"
@@ -179,7 +180,8 @@ show_elapsed &
 	set -e
 	echo "+++gbk++++ git-build-kernel"
 	echo "+++gbk++++   ($HOSTNAME:$WORKDIR)"
-	echo "+++gbk++++   ARCH=\"$ARCH\" CROSS_COMPILE=\"$CROSS_COMPILE\""
+	echo "+++gbk++++   ARCH=\"$ARCH\" CROSS_COMPILE=\"$CROSS_COMPILE\" $FLAGS"
+	echo "+++gbk++++   TARGET: $TARGET"
 
 	echo "+++gbk++++ git archive $GITREPO ($GITBRANCH)"
 	mkdir "$BUILDDIR"
