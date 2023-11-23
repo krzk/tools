@@ -40,6 +40,7 @@ ARCH=""
 DEFCONFIG="$DEFAULT_CONFIG"
 GITBRANCH=""
 TARGET=""
+FLAGS=""
 
 while getopts "a:c:r:t:h" flag
 do
@@ -104,6 +105,11 @@ elif [ "$ARCH" = "x86_64" ]; then
 else
 	echo "fatal: unsupported arch $ARCH" 1>&2
 	exit 1
+fi
+
+if [ "$TARGET" = "dtbs_check_w1" ]; then
+	TARGET="dtbs_check"
+	FLAGS="W=1"
 fi
 
 ###
@@ -188,8 +194,8 @@ show_elapsed &
 	echo "+++gbk++++ make $JOBS $DEFCONFIG"
 	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" nice make $JOBS $DEFCONFIG
 
-	echo "+++gbk++++ make $JOBS $TARGET"
-	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" nice make $JOBS $TARGET
+	echo "+++gbk++++ make $JOBS $TARGET $FLAGS"
+	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" nice make $JOBS $TARGET $FLAGS
 
 	STATUS=$?
 	echo "+++gbk++++ build exit status was $STATUS"
