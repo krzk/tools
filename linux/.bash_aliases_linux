@@ -172,8 +172,8 @@ dtb_check() {
 	fi
 
 	if [ -n "$schema" ]; then
-		make -j$(nproc) DT_SCHEMA_FILES="${schema}" CHECK_DTBS=y "$target"
+		make -j$(nproc) DT_SCHEMA_FILES="${schema}" CHECK_DTBS=y W=1 "$target"
 	else
-		make -j$(nproc) CHECK_DTBS=y "$target"
+		make -j$(nproc) CHECK_DTBS=y W=1 "$target"
 	fi
 }
