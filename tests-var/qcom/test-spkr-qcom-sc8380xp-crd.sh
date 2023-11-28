@@ -154,10 +154,10 @@ if ! [ -c /dev/snd/pcmC0D${HEADSET}p ]; then
 fi
 
 speakers_on
-aplay -D plughw:0,$SPEAKER /usr/share/sounds/alsa/Front_Center.wav
+#aplay -D plughw:0,$SPEAKER /usr/share/sounds/alsa/Front_Center.wav
 #aplay -D plughw:0,$SPEAKER /root/stereo.wav
 #aplay -D plughw:0,$SPEAKER /root/4channels.wav
-#aplay -D plughw:0,$SPEAKER /root/4-side-channels.wav
+aplay -D plughw:0,$SPEAKER /root/4-side-channels.wav
 speakers_off
 
 headset_on
