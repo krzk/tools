@@ -41,7 +41,7 @@ usage() {
 	echo " -C               - Run standard kernel checks (checkstack,"
 	echo "                    namespacecheck, includecheck, headers_check,"
 	echo "                    coccicheck)"
-	echo " -I <image_type>  - Make image type for: all, arch, arndale, qcom"
+	echo " -I <image_type>  - Make image type for: all, arch, arndale, e850, qcom"
 	echo "                    qcom - creates boot image with ramdisk including the modules"
 	echo "                           and ramdisk source (${RAMDISK_SRC}), see also -b"
 	echo "                    By default images are not created, only build is performed."
@@ -274,6 +274,7 @@ test -z "$CHOSEN_IMAGE" -o "$CHOSEN_IMAGE" = "arch" \
 	-o "$CHOSEN_IMAGE" = "all" \
 	-o "$CHOSEN_IMAGE" = "arndale" \
 	-o "$CHOSEN_IMAGE" = "qcom" \
+	-o "$CHOSEN_IMAGE" = "e850" \
 	|| die "Wrong image to create '$CHOSEN_IMAGE'"
 test -n "$CHOSEN_IMAGE" && CREATE_IMAGES=1
 
@@ -294,7 +295,7 @@ if [ -n "$DTS_NAME" ]; then
 		|| die "File 'arch/${ARCH_DIR}/boot/dts/${DTS_NAME}.dts' does not exist"
 else
 	# Certain images require DTS
-	test "$CHOSEN_IMAGE" = "qcom" \
+	test "$CHOSEN_IMAGE" = "qcom" -o "$CHOSEN_IMAGE" = "e850" \
 		&& die "Image '$CHOSEN_IMAGE' requires dts_name"
 	echo "Missing dts_name parameter, ignoring DTS"
 fi
@@ -445,7 +446,11 @@ ls_image_arch() {
 }
 
 make_image_arndale() {
+	local _dts_name="$1"
+
 	test "$CHOSEN_IMAGE" = "arndale" || return 0
+
+	append_dtb "$_dts_name"
 	mkimage -A $ARCH_MKIMAGE -O linux -C none -T kernel -a 0x20008000 -e 0x20008000 \
 	       -d ${IMAGE_OUT_PATH} ${KBUILD_OUTPUT}uImage
 }
@@ -455,15 +460,11 @@ ls_image_arndale() {
 	echo "Arndale U-Boot image:	$(ls -lh ${KBUILD_OUTPUT}uImage)"
 }
 
-make_image_qcom() {
+make_ramdisk() {
 	local ramdisk_out="${KBUILD_OUTPUT}ramdisk-modules.cpio"
 	local ramdisk_compress_fmt="gz"
 	local ramdisk_compress_cmd="gzip"
 	local workdir="$(pwd)"
-	# copy_modules requires rw mount (no "ro")
-	local cmdline="earlycon console=ttyMSM0,115200n8 root=PARTLABEL=rootfs rootwait init=/sbin/init copy_modules"
-
-	test "$CHOSEN_IMAGE" = "qcom" || return 0
 
 	if [ -z "$RAMDISK" ]; then
 		echo "Making ramdisk based on ${RAMDISK_SRC} ..."
@@ -492,6 +493,17 @@ make_image_qcom() {
 	else
 		echo "Using existing ramdisk $RAMDISK ..."
 	fi
+}
+
+make_image_qcom() {
+	local _dts_name="$1"
+	# copy_modules requires rw mount (no "ro")
+	local cmdline="earlycon console=ttyMSM0,115200n8 root=PARTLABEL=rootfs rootwait=2 init=/sbin/init copy_modules"
+
+	test "$CHOSEN_IMAGE" = "qcom" || return 0
+
+	append_dtb "$_dts_name"
+	make_ramdisk
 
 	cmdline="$cmdline $CMDLINE"
 	echo "Making kernel image with cmdline: $cmdline"
@@ -512,6 +524,39 @@ ls_image_qcom() {
        echo "fastboot set_active a && fastboot flash boot ${KBUILD_OUTPUT}boot.img && fastboot reboot"
 }
 
+make_image_e850() {
+	local _dts_name="$1"
+	# copy_modules requires rw mount (no "ro")
+	local cmdline="earlycon root=PARTLABEL=super rootwait=2 init=/sbin/init copy_modules"
+	# E850 bootloader expects uncompressed Image
+	local image_path=${IMAGE_PATH%.gz}
+
+	test "$CHOSEN_IMAGE" = "e850" || return 0
+
+	append_dtb
+	make_ramdisk
+
+	cmdline="$cmdline $CMDLINE"
+	echo "Making kernel image with cmdline: $cmdline"
+	mkbootimg --kernel ${image_path} \
+		--ramdisk ${RAMDISK_PATH} \
+		--ramdisk_offset 0 \
+		--cmdline "$cmdline" \
+		--dtb "${KBUILD_OUTPUT}arch/${ARCH_DIR}/boot/dts/${_dts_name}.dtb" \
+		--dtb_offset 0 \
+		--header_version 2 \
+		--output ${KBUILD_OUTPUT}boot.img \
+		|| die "mkbootimg failure"
+}
+
+ls_image_e850() {
+       local _release_image="$1"
+       test "$CHOSEN_IMAGE" = "e850" || return 0
+
+       echo "Boot:                $(ls -lh ${KBUILD_OUTPUT}boot.img)"
+       echo "fastboot flash boot ${KBUILD_OUTPUT}boot.img && fastboot reboot"
+}
+
 # Clean all output artifacts. If any of these will remain then next build
 # may fail because intermediate steps won't be produced.
 # Example: if we won't clean "Image.gz" on ARM64, the "Image" won't be
@@ -519,7 +564,8 @@ ls_image_qcom() {
 make_clean() {
 	rm -f ${KBUILD_OUTPUT}uImage \
 		$IMAGE_PATH $IMAGE_OUT_PATH
-	test "$CHOSEN_IMAGE" = "qcom" && rm -f ${KBUILD_OUTPUT}boot.img
+	test "$CHOSEN_IMAGE" = "qcom" -o "$CHOSEN_IMAGE" = "e850" \
+		&& rm -f ${KBUILD_OUTPUT}boot.img
 }
 
 # Usage: make_image dts_name
@@ -527,8 +573,9 @@ make_images() {
 	local _dts_name="$1"
 
 	make_image_arch
-	make_image_arndale
-	make_image_qcom
+	make_image_arndale "$_dts_name"
+	make_image_qcom "$_dts_name"
+	make_image_e850 "$_dts_name"
 
 	echo
 	echo "#################################"
@@ -537,6 +584,7 @@ make_images() {
 	ls_image_arch
 	ls_image_arndale
 	ls_image_qcom
+	ls_image_e850
 }
 
 # make_modules_img() {
@@ -606,7 +654,6 @@ build_kernel() {
 	fi
 
 	build_dts "$_dts_name"
-	append_dtb "$_dts_name"
 
 	test $STD_CHECKS -eq 1 && run_standard_checks
 
