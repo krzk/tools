@@ -149,7 +149,7 @@ do
 			ARCH="$OPTARG"
 			;;
 		b)
-			RAMDISK_SRC="$OPTARG"
+			RAMDISK_SRC=`realpath "$OPTARG"`
 			;;
 		C)
 			STD_CHECKS=1
