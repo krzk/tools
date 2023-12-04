@@ -527,7 +527,7 @@ ls_image_qcom() {
 make_image_e850() {
 	local _dts_name="$1"
 	# copy_modules requires rw mount (no "ro")
-	local cmdline="earlycon root=PARTLABEL=super rootwait=2 init=/sbin/init copy_modules"
+	local cmdline="earlycon root=PARTLABEL=userdata rootwait=2 init=/sbin/init copy_modules"
 	# E850 bootloader expects uncompressed Image
 	local image_path=${IMAGE_PATH%.gz}
 
