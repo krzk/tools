@@ -109,7 +109,7 @@ verify_fixes()
 				# Not being an ancestor of Linus' tree is not
 				# fatal. It still should be ancestor of your
 				# tree. Just message this.
-				msg="${msg:+${msg}${nl}}${tab}${tab}- Inspect: Target SHA is not ancestor of Linus' master branch"
+				msg="${msg:+${msg}${nl}}${tab}${tab}- Inspect: Target SHA is not ancestor of Linus' master branch, which means it is fixing commit in your branch"
 			fi
 
 			if ! git merge-base --is-ancestor "$sha" "$c"; then
