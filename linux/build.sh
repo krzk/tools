@@ -41,7 +41,7 @@ usage() {
 	echo " -C               - Run standard kernel checks (checkstack,"
 	echo "                    namespacecheck, includecheck, headers_check,"
 	echo "                    coccicheck)"
-	echo " -I <image_type>  - Make image type for: all, arch, arndale, e850, qcom"
+	echo " -I <image_type>  - Make image type for: arch, arndale, e850, qcom"
 	echo "                    qcom - creates boot image with ramdisk including the modules"
 	echo "                           and ramdisk source (${RAMDISK_SRC}), see also -b"
 	echo "                    By default images are not created, only build is performed."
@@ -271,7 +271,6 @@ fi
 
 # Test for image to create
 test -z "$CHOSEN_IMAGE" -o "$CHOSEN_IMAGE" = "arch" \
-	-o "$CHOSEN_IMAGE" = "all" \
 	-o "$CHOSEN_IMAGE" = "arndale" \
 	-o "$CHOSEN_IMAGE" = "qcom" \
 	-o "$CHOSEN_IMAGE" = "e850" \
