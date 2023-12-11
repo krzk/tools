@@ -516,7 +516,6 @@ make_image_qcom() {
 }
 
 ls_image_qcom() {
-       local _release_image="$1"
        test "$CHOSEN_IMAGE" = "qcom" || return 0
 
        echo "Boot:                $(ls -lh ${KBUILD_OUTPUT}boot.img)"
@@ -549,7 +548,6 @@ make_image_e850() {
 }
 
 ls_image_e850() {
-       local _release_image="$1"
        test "$CHOSEN_IMAGE" = "e850" || return 0
 
        echo "Boot:                $(ls -lh ${KBUILD_OUTPUT}boot.img)"
