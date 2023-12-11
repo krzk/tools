@@ -114,7 +114,6 @@ LOAD_ADDRESS="0x41008000"
 ENABLE_CONFIG_ITEMS=""
 MODULE_CONFIG_ITEMS=""
 DISABLE_CONFIG_ITEMS=""
-CREATE_IMAGES=0
 CHOSEN_IMAGE=""
 JOBS="-j$(nproc)"
 KBUILD_OUTPUT="out/"
@@ -275,7 +274,6 @@ test -z "$CHOSEN_IMAGE" -o "$CHOSEN_IMAGE" = "arch" \
 	-o "$CHOSEN_IMAGE" = "qcom" \
 	-o "$CHOSEN_IMAGE" = "e850" \
 	|| die "Wrong image to create '$CHOSEN_IMAGE'"
-test -n "$CHOSEN_IMAGE" && CREATE_IMAGES=1
 
 # Test for config
 if [ -n "$CONFIG_NAME" ]; then
@@ -425,15 +423,14 @@ run_standard_checks() {
 }
 
 make_image_arch() {
-	test "$CHOSEN_IMAGE" = "arch" || return 0
-
 	cp $IMAGE_OUT_PATH ${KBUILD_OUTPUT}vmlinuz-${KERNEL_VERSION}
 	cp ${KBUILD_OUTPUT}System.map ${KBUILD_OUTPUT}System.map-${KERNEL_VERSION}
 }
 
 ls_image_arch() {
-	test "$CHOSEN_IMAGE" = "arch" || return 0
-
+	echo
+	echo "#################################"
+	echo
 	echo "Arch files:"
 	echo "    ${KBUILD_OUTPUT}vmlinuz-${KERNEL_VERSION}"
 	echo "    ${KBUILD_OUTPUT}System.map-${KERNEL_VERSION}"
@@ -447,15 +444,16 @@ ls_image_arch() {
 make_image_arndale() {
 	local _dts_name="$1"
 
-	test "$CHOSEN_IMAGE" = "arndale" || return 0
-
 	append_dtb "$_dts_name"
 	mkimage -A $ARCH_MKIMAGE -O linux -C none -T kernel -a 0x20008000 -e 0x20008000 \
 	       -d ${IMAGE_OUT_PATH} ${KBUILD_OUTPUT}uImage
 }
 
 ls_image_arndale() {
-	test "$CHOSEN_IMAGE" = "arndale" || return 0
+	echo
+	echo "#################################"
+	echo
+
 	echo "Arndale U-Boot image:	$(ls -lh ${KBUILD_OUTPUT}uImage)"
 }
 
@@ -499,8 +497,6 @@ make_image_qcom() {
 	# copy_modules requires rw mount (no "ro")
 	local cmdline="earlycon console=ttyMSM0,115200n8 root=PARTLABEL=rootfs rootwait=2 init=/sbin/init copy_modules"
 
-	test "$CHOSEN_IMAGE" = "qcom" || return 0
-
 	append_dtb "$_dts_name"
 	make_ramdisk
 
@@ -516,8 +512,9 @@ make_image_qcom() {
 }
 
 ls_image_qcom() {
-       test "$CHOSEN_IMAGE" = "qcom" || return 0
-
+	echo
+	echo "#################################"
+	echo
        echo "Boot:                $(ls -lh ${KBUILD_OUTPUT}boot.img)"
        echo "fastboot set_active a && fastboot flash boot ${KBUILD_OUTPUT}boot.img && fastboot reboot"
 }
@@ -528,8 +525,6 @@ make_image_e850() {
 	local cmdline="earlycon root=PARTLABEL=userdata rootwait=2 init=/sbin/init copy_modules"
 	# E850 bootloader expects uncompressed Image
 	local image_path=${IMAGE_PATH%.gz}
-
-	test "$CHOSEN_IMAGE" = "e850" || return 0
 
 	append_dtb
 	make_ramdisk
@@ -548,8 +543,9 @@ make_image_e850() {
 }
 
 ls_image_e850() {
-       test "$CHOSEN_IMAGE" = "e850" || return 0
-
+	echo
+	echo "#################################"
+	echo
        echo "Boot:                $(ls -lh ${KBUILD_OUTPUT}boot.img)"
        echo "fastboot flash boot ${KBUILD_OUTPUT}boot.img && fastboot reboot"
 }
@@ -569,19 +565,29 @@ make_clean() {
 make_images() {
 	local _dts_name="$1"
 
-	make_image_arch
-	make_image_arndale "$_dts_name"
-	make_image_qcom "$_dts_name"
-	make_image_e850 "$_dts_name"
-
-	echo
-	echo "#################################"
-	echo
-
-	ls_image_arch
-	ls_image_arndale
-	ls_image_qcom
-	ls_image_e850
+	case "$CHOSEN_IMAGE" in
+	arch)
+		make_image_arch
+		ls_image_arch
+		;;
+	arndale)
+		make_image_arndale "$_dts_name"
+		ls_image_arndale
+		;;
+	qcom)
+		make_image_qcom "$_dts_name"
+		ls_image_qcom
+		;;
+	e850)
+		make_image_e850 "$_dts_name"
+		ls_image_e850
+		;;
+	*)
+		append_dtb "$_dts_name"
+		# make_image_xxx installs modules in other cases
+		test -n "$MODULES_INSTALL_PATH" && make_modules_install
+		;;
+	esac
 }
 
 # make_modules_img() {
@@ -654,12 +660,7 @@ build_kernel() {
 
 	test $STD_CHECKS -eq 1 && run_standard_checks
 
-	if [ $CREATE_IMAGES -eq 1 ]; then
-		make_images "$_dts_name"
-	else
-		# No point to have modules if image was already prepared earlier
-		test -n "$MODULES_INSTALL_PATH" && make_modules_install
-	fi
+	make_images "$_dts_name"
 
 	# Either we died already or everything succeeded and we should exit
 	# with 0, not with last 'test' result
