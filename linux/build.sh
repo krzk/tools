@@ -515,8 +515,8 @@ ls_image_qcom() {
 	echo
 	echo "#################################"
 	echo
-       echo "Boot:                $(ls -lh ${KBUILD_OUTPUT}boot.img)"
-       echo "fastboot set_active a && fastboot flash boot ${KBUILD_OUTPUT}boot.img && fastboot reboot"
+	echo "Boot:                $(ls -lh ${KBUILD_OUTPUT}boot.img)"
+	echo "fastboot set_active a && fastboot flash boot ${KBUILD_OUTPUT}boot.img && fastboot reboot"
 }
 
 make_image_e850() {
@@ -546,8 +546,8 @@ ls_image_e850() {
 	echo
 	echo "#################################"
 	echo
-       echo "Boot:                $(ls -lh ${KBUILD_OUTPUT}boot.img)"
-       echo "fastboot flash boot ${KBUILD_OUTPUT}boot.img && fastboot reboot"
+	echo "Boot:                $(ls -lh ${KBUILD_OUTPUT}boot.img)"
+	echo "fastboot flash boot ${KBUILD_OUTPUT}boot.img && fastboot reboot"
 }
 
 # Clean all output artifacts. If any of these will remain then next build
