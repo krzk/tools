@@ -344,10 +344,16 @@ def pexpect_boot_to_prompt(target, config):
                        timeout=90)
 
     print('Target """ + target + """ reached: Mounted local file systems')
-    child.expect_exact(['Reached target Login Prompts',
-                        'Reached target """ + systemd_color('Login Prompts') + """',
-                        'Reached target Graphical Interface',
-                        'Reached target """ + systemd_color('Graphical Interface') + """'])
+    expect = ['Reached target Login Prompts',
+              'Reached target """ + systemd_color('Login Prompts') + """',
+              'Reached target Graphical Interface',
+              'Reached target """ + systemd_color('Graphical Interface') + """',
+              'A start job is running for Flush']
+    index = child.expect_exact(expect)
+    if index == 4:
+        # Sometimes, e.g. on unclean shutdowns, flushing Journal Persistent Storage takes up to 90 seconds,
+        # so then just repeat looking for prompt:
+        child.expect_exact(expect, timeout=90)
 
     print('Target """ + target + """ reached: Reached login interface')
     child.expect('Arch Linux [0-9a-z\.-]+ \\(""" + TARGET_CONFIG[target]['serial'] + """\\)')
