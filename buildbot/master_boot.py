@@ -353,6 +353,7 @@ def pexpect_boot_to_prompt(target, config):
     if index == 4:
         # Sometimes, e.g. on unclean shutdowns, flushing Journal Persistent Storage takes up to 90 seconds,
         # so then just repeat looking for prompt:
+        print('Longer timeout needed for """ + target + """')
         child.expect_exact(expect, timeout=90)
 
     print('Target """ + target + """ reached: Reached login interface')
