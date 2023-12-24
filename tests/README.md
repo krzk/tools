@@ -27,5 +27,6 @@ List of requirements (Arch Linux packages):
 * udev
 * usbutils
 * util-linux
+* v4l-utils
 
 Tested on Arch ARM Linux but should be distro-independent.
