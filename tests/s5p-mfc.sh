@@ -40,6 +40,12 @@ test_s5p_mfc() {
 	local dev_enc=""
 	print_msg "Testing..."
 
+	if is_kernel_le 6 5; then
+		# Test does not support older kernels
+		print_msg "Old kernel, skipped"
+		return 0
+	fi
+
 	case "$(get_board_compatible)" in
 	hardkernel,odroid-hc1|hardkernel,odroid-xu3|hardkernel,odroid-xu3-lite|hardkernel,odroid-xu4|hardkernel,odroid-xu|insignal,arndale-octa)
 		device="11000000.codec"
