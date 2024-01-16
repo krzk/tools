@@ -293,11 +293,13 @@ MIC=2
 
 speakers_on
 aplay -D plughw:0,${SPEAKER} /usr/share/sounds/alsa/Front_Center.wav
+aplay -D plughw:0,${SPEAKER} stereo.wav
 speakers_off
 
 # Headset:
 headset_on
 aplay -D plughw:0,${HEADSET} /usr/share/sounds/alsa/Front_Center.wav
+aplay -D plughw:0,${HEADSET} stereo.wav
 headset_off
 
 # HDMI
