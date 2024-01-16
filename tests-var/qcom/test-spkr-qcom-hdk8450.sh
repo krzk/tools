@@ -212,6 +212,16 @@ amic3_record_on() {
 	amixer -c 0 cset name='TX DMIC MUX0' ZERO
 }
 
+amic3_record_off() {
+	amixer -c 0 cset name='MultiMedia3 Mixer TX_CODEC_DMA_TX_3' 0
+	amixer -c 0 cset name='ADC2_MIXER Switch' 0
+	amixer -c 0 cset name='ADC2 Switch' 0
+	amixer -c 0 cset name='TX SMIC MUX0' 'ZERO'
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 0
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 0
+	amixer -c 0 cset name='TX1 MODE' ADC_INVALID
+}
+
 # Does not work
 amic4_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
@@ -234,6 +244,16 @@ amic4_record_on() {
 	amixer -c 0 cset name='TX DMIC MUX0' ZERO
 }
 
+amic4_record_off() {
+	amixer -c 0 cset name='MultiMedia3 Mixer TX_CODEC_DMA_TX_3' 0
+	amixer -c 0 cset name='ADC3_MIXER Switch' 0
+	amixer -c 0 cset name='ADC3 Switch' 0
+	amixer -c 0 cset name='TX SMIC MUX0' 'ZERO'
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 0
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 0
+	amixer -c 0 cset name='TX2 MODE' ADC_INVALID
+}
+
 # Does not work
 amic5_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
@@ -254,6 +274,16 @@ amic5_record_on() {
 	amixer -c 0 cset name='MultiMedia3 Mixer TX_CODEC_DMA_TX_3' 1
 	# Not really needed
 	amixer -c 0 cset name='TX DMIC MUX0' ZERO
+}
+
+amic5_record_off() {
+	amixer -c 0 cset name='MultiMedia3 Mixer TX_CODEC_DMA_TX_3' 0
+	amixer -c 0 cset name='ADC4_MIXER Switch' 0
+	amixer -c 0 cset name='ADC4 Switch' 0
+	amixer -c 0 cset name='TX SMIC MUX0' 'ZERO'
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 0
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 0
+	amixer -c 0 cset name='TX3 MODE' ADC_INVALID
 }
 
 if [ -c /dev/snd/pcmC0D4p ]; then
