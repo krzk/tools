@@ -286,19 +286,10 @@ amic5_record_off() {
 	amixer -c 0 cset name='TX3 MODE' ADC_INVALID
 }
 
-if [ -c /dev/snd/pcmC0D4p ]; then
-	# Pre HDMI - no hdmi-playback-dai-link
-	HEADSET=4
-	SPEAKER=5
-	MIC=6
-elif [ -c /dev/snd/pcmC0D5p ]; then
-	HEADSET=5
-	SPEAKER=6
-	MIC=7
-else
-	echo "Missing /dev/snd/pcmC0D4p and /dev/snd/pcmC0D5p"
-	exit 1
-fi
+# Pre HDMI - no hdmi-playback-dai-link
+HEADSET=0
+SPEAKER=1
+MIC=2
 
 speakers_on
 aplay -D plughw:0,${SPEAKER} /usr/share/sounds/alsa/Front_Center.wav
