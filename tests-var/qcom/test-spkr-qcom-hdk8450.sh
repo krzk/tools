@@ -138,6 +138,8 @@ amic1_record_on() {
 	# TX0 matches ADC1
 	amixer -c 0 cset name='TX0 MODE' ADC_NORMAL
 	amixer -c 0 cset name='ADC1_MIXER Switch' 1
+	amixer -c 0 cset name='HDR12 MUX' NO_HDR12
+	# No ADC1 MUX
 	amixer -c 0 cset name='ADC1 Switch' 1
 	amixer -c 0 cset name='ADC1 Volume' 18
 	amixer -c 0 cset name='DEC0 MODE' ADC_DEFAULT
