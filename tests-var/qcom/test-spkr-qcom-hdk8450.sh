@@ -128,6 +128,7 @@ dmic0_record_off() {
 	amixer -c 0 cset name='TX DEC0 MUX' ZERO
 }
 
+# Works:
 amic1_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
 	# SWR_MIC0 (so TX SWR_INPUT0) should match audio-route in DTS to ADC1 on WCD938x
@@ -159,6 +160,7 @@ amic1_record_off() {
 	amixer -c 0 cset name='TX0 MODE' ADC_INVALID
 }
 
+# Works:
 headset_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
 	# Should go to ADC2 on WCD938x (SWR_INPUT1)
@@ -190,7 +192,7 @@ headset_record_off() {
 	amixer -c 0 cset name='TX1 MODE' ADC_INVALID
 }
 
-# Other AMICs for reference, works:
+# Works:
 amic3_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
 	# Should go to ADC2 on WCD938x (SWR_INPUT1)
@@ -319,6 +321,27 @@ echo "Recording for 5 seconds - headphones"
 headset_record_on
 arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
 headset_record_off
+speakers_on
+aplay -D plughw:0,${SPEAKER} out_h.wav
+speakers_off
+
+amic3_record_on
+arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+amic3_record_off
+speakers_on
+aplay -D plughw:0,${SPEAKER} out_h.wav
+speakers_off
+
+amic4_record_on
+arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+amic4_record_off
+speakers_on
+aplay -D plughw:0,${SPEAKER} out_h.wav
+speakers_off
+
+amic5_record_on
+arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+amic5_record_off
 speakers_on
 aplay -D plughw:0,${SPEAKER} out_h.wav
 speakers_off
