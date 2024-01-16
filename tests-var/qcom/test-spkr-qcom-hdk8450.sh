@@ -130,7 +130,7 @@ dmic0_record_off() {
 
 amic1_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
-	# SWR_MIC0 (so TX SWR_INPUT0) should match audio-route in DTS to ADC1
+	# SWR_MIC0 (so TX SWR_INPUT0) should match audio-route in DTS to ADC1 on WCD938x
 	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC0
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
@@ -159,10 +159,12 @@ amic1_record_off() {
 
 headset_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
+	# Should go to ADC2 on WCD938x (SWR_INPUT1)
 	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC1
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
+	# TX1 matches ADC2
 	amixer -c 0 cset name='TX1 MODE' ADC_NORMAL
 	amixer -c 0 cset name='ADC2_MIXER Switch' 1
 	amixer -c 0 cset name='HDR12 MUX' NO_HDR12
@@ -189,10 +191,12 @@ headset_record_off() {
 # Other AMICs for reference, works:
 amic3_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
+	# Should go to ADC2 on WCD938x (SWR_INPUT1)
 	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC1
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
+	# TX1 matches ADC2
 	amixer -c 0 cset name='TX1 MODE' ADC_NORMAL
 	amixer -c 0 cset name='ADC2_MIXER Switch' 1
 	amixer -c 0 cset name='HDR12 MUX' NO_HDR12
@@ -209,10 +213,12 @@ amic3_record_on() {
 # Does not work
 amic4_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
+	# Should go to ADC3 on WCD938x (SWR_INPUT2)
 	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC2
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
+	# TX2 matches ADC3
 	amixer -c 0 cset name='TX2 MODE' ADC_NORMAL
 	amixer -c 0 cset name='ADC3_MIXER Switch' 1
 	amixer -c 0 cset name='HDR34 MUX' NO_HDR34
@@ -229,10 +235,12 @@ amic4_record_on() {
 # Does not work
 amic5_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
+	# Should go to ADC4 on WCD938x (SWR_INPUT3)
 	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC3
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
+	# TX2 matches ADC3
 	amixer -c 0 cset name='TX3 MODE' ADC_NORMAL
 	amixer -c 0 cset name='ADC4_MIXER Switch' 1
 	amixer -c 0 cset name='HDR34 MUX' NO_HDR34
