@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2023 Krzysztof Kozlowski
+# Copyright (c) 2015-2024 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -33,6 +33,12 @@ fi
 
 git checkout for-next || die "git checkout for-next error"
 git reset --hard master || die "git reset --hard master error"
-for br in $BRANCHES; do
-	git merge $br || die "git merge $br error"
-done
+git merge $BRANCHES
+if [ $? -ne 0 ]; then
+	echo
+	echo "git merge $BRANCHES error"
+	echo "You can try merging each branch individually:"
+	for br in $BRANCHES; do
+		echo "git merge $br"
+	done
+fi
