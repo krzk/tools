@@ -299,7 +299,6 @@ arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
 amic1_record_off
 speakers_on
 aplay -D plughw:0,${SPEAKER} out_h.wav
-aplay -D plughw:0,${HEADSET} out_h.wav
 speakers_off
 
 headset_record_on
