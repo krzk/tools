@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2022-2023 Linaro Ltd
+# Copyright (C) 2022-2024 Linaro Ltd
 #
 # SPDX-License-Identifier: GPL-2.0
 #
@@ -94,6 +94,7 @@ headset_off() {
 	amixer -c 0 cset name='HPHR Switch' 0
 }
 
+# Does not work
 dmic0_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' MSM_DMIC
 	amixer -c 0 cset name='TX DMIC MUX0' DMIC1
@@ -115,13 +116,13 @@ dmic0_record_off() {
 	amixer -c 0 cset name='TX DEC0 MUX' ZERO
 }
 
+# Works:
 amic1_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
-	# SWR_MIC4 (so TX SWR_INPUT4) should match audio-route in DTS to ADC1
-	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC4
+	# SWR_MIC0 (so TX SWR_INPUT0) should match audio-route in DTS to ADC1 on WCD938x
+	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC0
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
-	# TODO: mixer_paths say DEC2! Test it
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
 	# TX0 matches ADC1
 	amixer -c 0 cset name='TX0 MODE' ADC_NORMAL
@@ -147,13 +148,15 @@ amic1_record_off() {
 	amixer -c 0 cset name='TX0 MODE' ADC_INVALID
 }
 
-# AMIC2
+# Does not work, could be USB switch issue
 headset_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
-	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC5
+	# Should go to ADC2 on WCD938x (SWR_INPUT1)
+	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC1
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
+	# TX1 matches ADC2
 	amixer -c 0 cset name='TX1 MODE' ADC_NORMAL
 	amixer -c 0 cset name='ADC2_MIXER Switch' 1
 	amixer -c 0 cset name='HDR12 MUX' NO_HDR12
@@ -177,16 +180,15 @@ headset_record_off() {
 	amixer -c 0 cset name='TX1 MODE' ADC_INVALID
 }
 
-# Other AMICs for reference
-# Does not work
+# Works:
 amic3_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
-	# TODO: mixer_paths say SWR_MIC5! Test it
-	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC5
+	# Should go to ADC2 on WCD938x (SWR_INPUT1)
+	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC1
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
-	# TODO: mixer_paths say DEC2! Test it
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
+	# TX1 matches ADC2
 	amixer -c 0 cset name='TX1 MODE' ADC_NORMAL
 	amixer -c 0 cset name='ADC2_MIXER Switch' 1
 	amixer -c 0 cset name='HDR12 MUX' NO_HDR12
@@ -200,13 +202,25 @@ amic3_record_on() {
 	amixer -c 0 cset name='TX DMIC MUX0' ZERO
 }
 
-# Does not work
+amic3_record_off() {
+	amixer -c 0 cset name='MultiMedia3 Mixer TX_CODEC_DMA_TX_3' 0
+	amixer -c 0 cset name='ADC2_MIXER Switch' 0
+	amixer -c 0 cset name='ADC2 Switch' 0
+	amixer -c 0 cset name='TX SMIC MUX0' 'ZERO'
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 0
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 0
+	amixer -c 0 cset name='TX1 MODE' ADC_INVALID
+}
+
+# Works:
 amic4_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
-	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC4
+	# Should go to ADC3 on WCD938x (SWR_INPUT0)
+	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC0
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
+	# TX2 matches ADC3
 	amixer -c 0 cset name='TX2 MODE' ADC_NORMAL
 	amixer -c 0 cset name='ADC3_MIXER Switch' 1
 	amixer -c 0 cset name='HDR34 MUX' NO_HDR34
@@ -220,13 +234,25 @@ amic4_record_on() {
 	amixer -c 0 cset name='TX DMIC MUX0' ZERO
 }
 
-# Does not work
+amic4_record_off() {
+	amixer -c 0 cset name='MultiMedia3 Mixer TX_CODEC_DMA_TX_3' 0
+	amixer -c 0 cset name='ADC3_MIXER Switch' 0
+	amixer -c 0 cset name='ADC3 Switch' 0
+	amixer -c 0 cset name='TX SMIC MUX0' 'ZERO'
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 0
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 0
+	amixer -c 0 cset name='TX2 MODE' ADC_INVALID
+}
+
+# Works:
 amic5_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
-	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC4
+	# Should go to ADC4 on WCD938x (SWR_INPUT1)
+	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC1
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
+	# TX2 matches ADC3
 	amixer -c 0 cset name='TX3 MODE' ADC_NORMAL
 	amixer -c 0 cset name='ADC4_MIXER Switch' 1
 	amixer -c 0 cset name='HDR34 MUX' NO_HDR34
@@ -238,6 +264,16 @@ amic5_record_on() {
 	amixer -c 0 cset name='MultiMedia3 Mixer TX_CODEC_DMA_TX_3' 1
 	# Not really needed
 	amixer -c 0 cset name='TX DMIC MUX0' ZERO
+}
+
+amic5_record_off() {
+	amixer -c 0 cset name='MultiMedia3 Mixer TX_CODEC_DMA_TX_3' 0
+	amixer -c 0 cset name='ADC4_MIXER Switch' 0
+	amixer -c 0 cset name='ADC4 Switch' 0
+	amixer -c 0 cset name='TX SMIC MUX0' 'ZERO'
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 0
+	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 0
+	amixer -c 0 cset name='TX3 MODE' ADC_INVALID
 }
 
 HEADSET=1
@@ -257,8 +293,8 @@ aplay -D plughw:0,${HEADSET} /usr/share/sounds/alsa/Front_Center.wav
 headset_off
 
 # Record:
-echo "Recording for 5 seconds - amic1 (board)"
 amic1_record_on
+echo "Recording for 5 seconds - AMIC1"
 arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
 amic1_record_off
 speakers_on
@@ -266,10 +302,34 @@ aplay -D plughw:0,${SPEAKER} out_h.wav
 aplay -D plughw:0,${HEADSET} out_h.wav
 speakers_off
 
-echo "Recording for 5 seconds - headphones"
 headset_record_on
+echo "Recording for 5 seconds - AMIC2/headphones"
 arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
 headset_record_off
+speakers_on
+aplay -D plughw:0,${SPEAKER} out_h.wav
+speakers_off
+
+amic3_record_on
+echo "Recording for 5 seconds - AMIC3"
+arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+amic3_record_off
+speakers_on
+aplay -D plughw:0,${SPEAKER} out_h.wav
+speakers_off
+
+amic4_record_on
+echo "Recording for 5 seconds - AMIC4"
+arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+amic4_record_off
+speakers_on
+aplay -D plughw:0,${SPEAKER} out_h.wav
+speakers_off
+
+amic5_record_on
+echo "Recording for 5 seconds - AMIC5"
+arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+amic5_record_off
 speakers_on
 aplay -D plughw:0,${SPEAKER} out_h.wav
 speakers_off
