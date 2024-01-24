@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2022 Linaro Ltd
+# Copyright (C) 2022-2024 Linaro Ltd
 #
 # SPDX-License-Identifier: GPL-2.0
 #
@@ -292,16 +292,20 @@ amic5_record_off() {
 HEADSET=0
 SPEAKER=1
 MIC=2
+if ! [ -c /dev/snd/pcmC0D${HEADSET}p ]; then
+	echo "Missing /dev/snd/pcmC0D${HEADSET}p"
+	exit 1
+fi
 
 speakers_on
 aplay -D plughw:0,${SPEAKER} /usr/share/sounds/alsa/Front_Center.wav
-aplay -D plughw:0,${SPEAKER} stereo.wav
+aplay -D plughw:0,${SPEAKER} /home/linaro/stereo.wav
 speakers_off
 
 # Headset:
 headset_on
 aplay -D plughw:0,${HEADSET} /usr/share/sounds/alsa/Front_Center.wav
-aplay -D plughw:0,${HEADSET} stereo.wav
+aplay -D plughw:0,${HEADSET} /home/linaro/stereo.wav
 headset_off
 
 # HDMI
