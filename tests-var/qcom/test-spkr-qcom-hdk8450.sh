@@ -224,11 +224,11 @@ amic3_record_off() {
 	amixer -c 0 cset name='TX1 MODE' ADC_INVALID
 }
 
-# Does not work
+# Works:
 amic4_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
-	# Should go to ADC3 on WCD938x (SWR_INPUT2)
-	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC2
+	# Should go to ADC3 on WCD938x (SWR_INPUT0)
+	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC0
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
@@ -256,11 +256,11 @@ amic4_record_off() {
 	amixer -c 0 cset name='TX2 MODE' ADC_INVALID
 }
 
-# Does not work
+# Works:
 amic5_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
-	# Should go to ADC4 on WCD938x (SWR_INPUT3)
-	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC3
+	# Should go to ADC4 on WCD938x (SWR_INPUT1)
+	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC1
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
