@@ -313,16 +313,16 @@ headset_off
 #aplay -D plughw:0,8 /usr/share/sounds/alsa/Front_Center.wav
 
 # Record:
-echo "Recording for 5 seconds - amic1 (board)"
 amic1_record_on
+echo "Recording for 5 seconds - AMIC1"
 arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
 amic1_record_off
 speakers_on
 aplay -D plughw:0,${SPEAKER} out_h.wav
 speakers_off
 
-echo "Recording for 5 seconds - headphones"
 headset_record_on
+echo "Recording for 5 seconds - AMIC2/headphones"
 arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
 headset_record_off
 speakers_on
@@ -330,6 +330,7 @@ aplay -D plughw:0,${SPEAKER} out_h.wav
 speakers_off
 
 amic3_record_on
+echo "Recording for 5 seconds - AMIC3"
 arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
 amic3_record_off
 speakers_on
@@ -337,6 +338,7 @@ aplay -D plughw:0,${SPEAKER} out_h.wav
 speakers_off
 
 amic4_record_on
+echo "Recording for 5 seconds - AMIC4"
 arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
 amic4_record_off
 speakers_on
@@ -344,6 +346,7 @@ aplay -D plughw:0,${SPEAKER} out_h.wav
 speakers_off
 
 amic5_record_on
+echo "Recording for 5 seconds - AMIC5"
 arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
 amic5_record_off
 speakers_on
