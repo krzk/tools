@@ -21,44 +21,64 @@ BUILD_WARN_IGNORE = [ (None, '.*warning: #warning syscall .* not implemented.*',
 CMD_MAKE = '%(prop:builddir:-~/)s/tools/buildbot/build-slave.sh'
 
 DTBS_CHECK_KNOWN_WARNINGS = {
-    'arm': {
-        'exynos': [
-            # Pending on mailing list (old patchset)
-            ('.*exynos5250-snow.dtb$', re.escape("/i2c-arbitrator/i2c-arb/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
-            ('.*exynos5250-snow-rev5.dtb$', re.escape("/i2c-arbitrator/i2c-arb/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
-            ('.*exynos5420-peach-pit.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
-            ('.*exynos5800-peach-pi.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
-        ],
-        's3c6400': [
-        ],
-        's5pv210': [
-            ('.*s5pv210-aquila.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-aquila.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-aquila.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-fascinate4g.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-fascinate4g.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-fascinate4g.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-galaxys.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-galaxys.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-galaxys.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-goni.dtb$', re.escape("/soc/i2c@e1800000/sensor@30: failed to match any schema with compatible: ['siliconfile,noon010pc30']"), None, None),
-            ('.*s5pv210-goni.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-goni.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-goni.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-smdkc110.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-smdkc110.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-smdkc110.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-smdkv210.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-smdkv210.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-smdkv210.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-torbreck.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-torbreck.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            ('.*s5pv210-torbreck.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
-        ],
+    'all': {
+        'arm': {
+            'exynos': [
+                # Pending on mailing list (old patchset)
+                ('.*exynos5250-snow.dtb$', re.escape("/i2c-arbitrator/i2c-arb/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
+                ('.*exynos5250-snow-rev5.dtb$', re.escape("/i2c-arbitrator/i2c-arb/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
+                ('.*exynos5420-peach-pit.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
+                ('.*exynos5800-peach-pi.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
+            ],
+            's3c6400': [
+            ],
+            's5pv210': [
+                ('.*s5pv210-aquila.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-aquila.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-aquila.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-fascinate4g.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-fascinate4g.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-fascinate4g.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-galaxys.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-galaxys.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-galaxys.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-goni.dtb$', re.escape("/soc/i2c@e1800000/sensor@30: failed to match any schema with compatible: ['siliconfile,noon010pc30']"), None, None),
+                ('.*s5pv210-goni.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-goni.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-goni.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-smdkc110.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-smdkc110.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-smdkc110.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-smdkv210.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-smdkv210.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-smdkv210.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-torbreck.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-torbreck.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                ('.*s5pv210-torbreck.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
+            ],
+        },
+        'arm64': {
+            'defconfig': [
+            ],
+        },
     },
-    'arm64': {
-        'defconfig': [
-        ],
+    'krzk': {
+        'arm64': {
+            'defconfig': [
+                # Depends on patches via other trees, all applied for v6.9-rc1:
+                ('.*gs101-oriole.dtb$', re.escape("timer@10050000: compatible: 'oneOf' conditional failed, one must be fixed:"), None, None),
+                ('.*gs101-oriole.dtb$', re.escape("/soc@0/timer@10050000: failed to match any schema with compatible: ['google,gs101-mct', 'samsung,exynos4210-mct']"), None, None),
+                ('.*gs101-oriole.dtb$', re.escape("syscon@10820000: clocks: False schema does not allow [[20, 79]]"), None, None),
+                ('.*gs101-oriole.dtb$', re.escape("usi@109700c0: i2c@10970000:compatible: 'oneOf' conditional failed, one must be fixed:"), None, None),
+                ('.*gs101-oriole.dtb$', re.escape("i2c@10970000: compatible: 'oneOf' conditional failed, one must be fixed:"), None, None),
+                ('.*gs101-oriole.dtb$', re.escape("/soc@0/usi@109700c0/i2c@10970000: failed to match any schema with compatible: ['google,gs101-hsi2c', 'samsung,exynosautov9-hsi2c']"), None, None),
+                ('.*gs101-oriole.dtb$', re.escape("syscon@10c20000: clocks: False schema does not allow [[24, 46]]"), None, None),
+                ('.*gs101-oriole.dtb$', re.escape("usi@10d500c0: i2c@10d50000:compatible: 'oneOf' conditional failed, one must be fixed:"), None, None),
+                ('.*gs101-oriole.dtb$', re.escape("i2c@10d50000: compatible: 'oneOf' conditional failed, one must be fixed:"), None, None),
+                ('.*gs101-oriole.dtb$', re.escape("/soc@0/usi@10d500c0/i2c@10d50000: failed to match any schema with compatible: ['google,gs101-hsi2c', 'samsung,exynosautov9-hsi2c']"), None, None),
+                ('.*exynos850-e850-96.dtb$', re.escape("usi@139400c0: spi@13940000:compatible: 'oneOf' conditional failed, one must be fixed:"), None, None),
+            ],
+        },
     },
 }
 
@@ -452,7 +472,7 @@ def steps_build_selected_folders(builder_name, env):
                             env=env, name='Rebuild selected paths'))
     return st
 
-def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, only_changed_files=True):
+def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, only_changed_files=True, next_or_mainline=False):
     st = []
     if git_reset:
         st += steps_build_common(env, kbuild_output, config)
@@ -531,9 +551,13 @@ def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, 
     for schema in schema_dirs:
         step_name = 'make dtbs_check warnings: ' + env['ARCH'] + '/' + step_name_cfg + '/' + schema.strip('/')
         suppression_list = []
-        if env['ARCH'] in DTBS_CHECK_KNOWN_WARNINGS:
-            if real_config in DTBS_CHECK_KNOWN_WARNINGS[env['ARCH']]:
-                suppression_list = DTBS_CHECK_KNOWN_WARNINGS[env['ARCH']][real_config]
+        if env['ARCH'] in DTBS_CHECK_KNOWN_WARNINGS['all']:
+            if real_config in DTBS_CHECK_KNOWN_WARNINGS['all'][env['ARCH']]:
+                suppression_list = DTBS_CHECK_KNOWN_WARNINGS['all'][env['ARCH']][real_config]
+        if not next_or_mainline:
+            if env['ARCH'] in DTBS_CHECK_KNOWN_WARNINGS['krzk']:
+                if real_config in DTBS_CHECK_KNOWN_WARNINGS['krzk'][env['ARCH']]:
+                    suppression_list.extend(DTBS_CHECK_KNOWN_WARNINGS['krzk'][env['ARCH']][real_config])
         st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'dtbs_check',
                                          'DT_SCHEMA_FILES=' + schema if schema else ''],
                                 haltOnFailure=True,
