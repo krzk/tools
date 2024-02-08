@@ -77,6 +77,9 @@ headset_on() {
 	amixer -c 0 cset name='HPHL_COMP Switch' 0
 	amixer -c 0 cset name='HPHR_COMP Switch' 0
 	sleep 0.3
+
+	# Not needed for buttons to work, if playback or recording started
+	# amixer -c 0 cset name='MBHC Switch' 1
 }
 
 headset_off() {
