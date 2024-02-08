@@ -23,17 +23,11 @@ CMD_MAKE = '%(prop:builddir:-~/)s/tools/buildbot/build-slave.sh'
 DTBS_CHECK_KNOWN_WARNINGS = {
     'arm': {
         'exynos': [
-            # Patches on LKML for v6.8-rc1, waiting on dependency to be merged in v6.7-rc1
-            ('.*exynos4[24]12.*.dtb$', re.escape("camera@11800000: fimc-is@12000000: 'samsung,pmu-syscon' is a required property"), None, None),
-            # Patches on LKML for v6.8-rc1, waiting on dependency to be merged in v6.7-rc1
-            ('.*exynos4[24]12.*.dtb$', re.escape("fimc-is@12000000: 'samsung,pmu-syscon' is a required property"), None, None),
             # Pending on mailing list (old patchset)
             ('.*exynos5250-snow.dtb$', re.escape("/i2c-arbitrator/i2c-arb/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
             ('.*exynos5250-snow-rev5.dtb$', re.escape("/i2c-arbitrator/i2c-arb/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
             ('.*exynos5420-peach-pit.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
             ('.*exynos5800-peach-pi.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
-            # Fixed in v6.7-rc1:
-            ('.*exynos4[24]12.*.dtb$', re.escape("sound: 'audio-routing' is a required property"), None, None),
         ],
         's3c6400': [
         ],
@@ -60,14 +54,10 @@ DTBS_CHECK_KNOWN_WARNINGS = {
             ('.*s5pv210-torbreck.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-torbreck.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
             ('.*s5pv210-torbreck.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
-            # Fixed in v6.7-rc1:
-            ('.*s5pv210.*.dtb$', re.escape("sound: 'audio-routing' is a required property"), None, None),
         ],
     },
     'arm64': {
         'defconfig': [
-            # Fixed in v6.7-rc1:
-            ('.*exynos5433.*.dtb$', re.escape("sound: 'audio-routing' is a required property"), None, None),
         ],
     },
 }
