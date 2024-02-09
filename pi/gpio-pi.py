@@ -6,8 +6,8 @@
 #
 # SPDX-License-Identifier: GPL-2.0
 #
-# On Raspberry Pi 3 B+, aarch64 (Arch Linux ARM), all Python libraries do not
-# work have troubles:
+# On Raspberry Pi 3 B+, aarch64 (Arch Linux ARM), all Python libraries did not
+# work and have troubles:
 # 1. RPi.GPIO, RPIO: no support for 3 B+
 # 2. wiringx-git: no support for reading pin mode and reading output value (once set)
 #
