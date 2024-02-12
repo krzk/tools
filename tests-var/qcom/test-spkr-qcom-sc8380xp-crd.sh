@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2023 Linaro Ltd
+# Copyright (C) 2023-2024 Linaro Ltd
 #
 # SPDX-License-Identifier: GPL-2.0
 #
@@ -145,14 +145,15 @@ headset_off() {
 	amixer -c 0 cset name='HPHR Switch' 0
 }
 
-# AMIC2, not working
+# AMIC2, ??? does not work so far
 headset_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
-	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC5
-	# TODO: do we have "DEC0_BCS Switch" and "BCS Switch"?
+	# Should go to ADC2 on WCD938x (SWR_INPUT1)
+	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC1
 	# DEC1 must be set before DEC0 for the latter to be changeable
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
+	# TX1 matches ADC2
 	amixer -c 0 cset name='TX1 MODE' ADC_NORMAL
 	amixer -c 0 cset name='ADC2_MIXER Switch' 1
 	amixer -c 0 cset name='HDR12 MUX' NO_HDR12
@@ -176,9 +177,63 @@ headset_record_off() {
 	amixer -c 0 cset name='TX1 MODE' ADC_INVALID
 }
 
+# Works
+dmic01_va_record_on() {
+	amixer -c 0 cset name='VA DEC0 MUX' VA_DMIC
+	amixer -c 0 cset name='VA DMIC MUX0' DMIC0
+	amixer -c 0 cset name='VA_AIF1_CAP Mixer DEC0' 1
+	amixer -c 0 cset name='VA_DEC0 Volume' 100
+
+	amixer -c 0 cset name='VA DEC1 MUX' VA_DMIC
+	amixer -c 0 cset name='VA DMIC MUX1' DMIC1
+	amixer -c 0 cset name='VA_AIF1_CAP Mixer DEC1' 1
+	amixer -c 0 cset name='VA_DEC1 Volume' 100
+	
+	amixer -c 0 cset name='MultiMedia4 Mixer VA_CODEC_DMA_TX_0' 1
+}
+
+dmic01_va_record_off() {
+	amixer -c 0 cset name='MultiMedia4 Mixer VA_CODEC_DMA_TX_0' 0
+	amixer -c 0 cset name='VA_DEC0 Volume' 0
+	amixer -c 0 cset name='VA_AIF1_CAP Mixer DEC0' 0
+	amixer -c 0 cset name='VA DMIC MUX0' ZERO
+
+	amixer -c 0 cset name='VA_DEC1 Volume' 0
+	amixer -c 0 cset name='VA_AIF1_CAP Mixer DEC1' 0
+	amixer -c 0 cset name='VA DMIC MUX1' ZERO
+}
+
+# Works
+dmic23_va_record_on() {
+	#amixer -c 0 cset name='VA DEC2 MUX' VA_DMIC
+	amixer -c 0 cset name='VA DEC0 MUX' VA_DMIC
+	amixer -c 0 cset name='VA DMIC MUX0' DMIC2
+	amixer -c 0 cset name='VA_AIF1_CAP Mixer DEC0' 1
+	amixer -c 0 cset name='VA_DEC0 Volume' 100
+
+	amixer -c 0 cset name='VA DEC1 MUX' VA_DMIC
+	amixer -c 0 cset name='VA DMIC MUX1' DMIC3
+	amixer -c 0 cset name='VA_AIF1_CAP Mixer DEC1' 1
+	amixer -c 0 cset name='VA_DEC1 Volume' 100
+	
+	amixer -c 0 cset name='MultiMedia4 Mixer VA_CODEC_DMA_TX_0' 1
+}
+
+dmic23_va_record_off() {
+	amixer -c 0 cset name='MultiMedia4 Mixer VA_CODEC_DMA_TX_0' 0
+	amixer -c 0 cset name='VA_DEC0 Volume' 0
+	amixer -c 0 cset name='VA_AIF1_CAP Mixer DEC0' 0
+	amixer -c 0 cset name='VA DMIC MUX0' ZERO
+
+	amixer -c 0 cset name='VA_DEC1 Volume' 0
+	amixer -c 0 cset name='VA_AIF1_CAP Mixer DEC1' 0
+	amixer -c 0 cset name='VA DMIC MUX1' ZERO
+}
+
 HEADSET=0
 SPEAKER=1
 MIC=2
+DMIC=3
 if ! [ -c /dev/snd/pcmC0D${HEADSET}p ]; then
 	echo "Missing /dev/snd/pcmC0D${HEADSET}p"
 	exit 1
@@ -195,11 +250,27 @@ headset_on
 aplay -D plughw:0,$HEADSET /usr/share/sounds/alsa/Front_Center.wav
 headset_off
 
-echo "Recording for 5 seconds - headphones"
+# Record:
 headset_record_on
-arecord -D plughw:0,$MIC -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+echo "Recording for 5 seconds - AMIC2/headphones"
+arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
 headset_record_off
 speakers_on
-aplay -D plughw:0,$SPEAKER out_h.wav
-aplay -D plughw:0,$SPEAKER /root/4-side-channels.wav
-#speakers_off
+aplay -D plughw:0,${SPEAKER} out_h.wav
+speakers_off
+
+dmic01_va_record_on
+echo "Recording for 5 seconds - DMIC01"
+arecord -D plughw:0,${DMIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+dmic01_va_record_off
+speakers_on
+aplay -D plughw:0,${SPEAKER} out_h.wav
+speakers_off
+
+dmic23_va_record_on
+echo "Recording for 5 seconds - DMIC23"
+arecord -D plughw:0,${DMIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+dmic23_va_record_off
+speakers_on
+aplay -D plughw:0,${SPEAKER} out_h.wav
+speakers_off
