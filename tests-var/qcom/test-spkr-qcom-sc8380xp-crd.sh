@@ -205,7 +205,6 @@ dmic01_va_record_off() {
 
 # Works
 dmic23_va_record_on() {
-	#amixer -c 0 cset name='VA DEC2 MUX' VA_DMIC
 	amixer -c 0 cset name='VA DEC0 MUX' VA_DMIC
 	amixer -c 0 cset name='VA DMIC MUX0' DMIC2
 	amixer -c 0 cset name='VA_AIF1_CAP Mixer DEC0' 1
