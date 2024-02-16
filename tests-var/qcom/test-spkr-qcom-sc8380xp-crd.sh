@@ -286,7 +286,7 @@ speakers_off
 
 dmic01_va_record_on
 echo "Recording for 5 seconds - DMIC01"
-arecord -D plughw:0,${DMIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+arecord -D plughw:0,${DMIC} -f S16_LE -c 2 -r 48000 -d 5 out_h.wav
 dmic01_va_record_off
 speakers_on
 aplay -D plughw:0,${SPEAKER} out_h.wav
@@ -294,7 +294,7 @@ speakers_off
 
 dmic23_va_record_on
 echo "Recording for 5 seconds - DMIC23"
-arecord -D plughw:0,${DMIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+arecord -D plughw:0,${DMIC} -f S16_LE -c 2 -r 48000 -d 5 out_h.wav
 dmic23_va_record_off
 speakers_on
 aplay -D plughw:0,${SPEAKER} out_h.wav
