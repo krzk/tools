@@ -230,6 +230,31 @@ dmic23_va_record_off() {
 	amixer -c 0 cset name='VA DMIC MUX1' ZERO
 }
 
+# TODO:
+dmic0123_va_record_on() {
+	amixer -c 0 cset name='VA DEC0 MUX' VA_DMIC
+	amixer -c 0 cset name='VA DMIC MUX0' DMIC0
+	amixer -c 0 cset name='VA_AIF1_CAP Mixer DEC0' 1
+	amixer -c 0 cset name='VA_DEC0 Volume' 100
+
+	amixer -c 0 cset name='VA DEC1 MUX' VA_DMIC
+	amixer -c 0 cset name='VA DMIC MUX1' DMIC1
+	amixer -c 0 cset name='VA_AIF1_CAP Mixer DEC1' 1
+	amixer -c 0 cset name='VA_DEC1 Volume' 100
+
+	amixer -c 0 cset name='VA DEC2 MUX' VA_DMIC
+	amixer -c 0 cset name='VA DMIC MUX2' DMIC2
+	amixer -c 0 cset name='VA_AIF1_CAP Mixer DEC2' 1
+	amixer -c 0 cset name='VA_DEC2 Volume' 100
+
+	amixer -c 0 cset name='VA DEC3 MUX' VA_DMIC
+	amixer -c 0 cset name='VA DMIC MUX3' DMIC3
+	amixer -c 0 cset name='VA_AIF1_CAP Mixer DEC3' 1
+	amixer -c 0 cset name='VA_DEC3 Volume' 100
+
+	amixer -c 0 cset name='MultiMedia4 Mixer VA_CODEC_DMA_TX_0' 1
+}
+
 HEADSET=0
 SPEAKER=1
 MIC=2
