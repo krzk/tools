@@ -500,6 +500,7 @@ make_image_qcom() {
 	append_dtb "$_dts_name"
 	make_ramdisk
 
+	# Some targets might require: --header_version 2
 	cmdline="$cmdline $CMDLINE"
 	echo "Making kernel image with cmdline: $cmdline"
 	mkbootimg --kernel ${IMAGE_OUT_PATH} \
