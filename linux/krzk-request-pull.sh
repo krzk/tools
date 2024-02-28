@@ -37,7 +37,7 @@ if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
 	if [[ $TAG == *"-clk-"* ]]; then
 		SUBJECT="clk: samsung:"
 		TO="Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>"
-		CC="Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, $CC"
+		CC="Sylwester Nawrocki <snawrocki@kernel.org>, $CC"
 		CC="Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, $CC"
 	elif [[ $TAG == *"-drivers-"* ]]; then
 		SUBJECT="samsung: drivers"
@@ -89,7 +89,7 @@ elif [[ $REMOTE_URL == *"/krzk/linux-w1.git"* ]]; then
 elif [[ $REMOTE_URL == *"/pinctrl/samsung.git"* ]]; then
 	TO="Linus Walleij <linus.walleij@linaro.org>"
 	CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org"
-	CC="Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, $CC, $CC_KRZK"
+	CC="Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, $CC, $CC_KRZK"
 	SUBJECT="pinctrl: samsung:"
 else
 	usage
