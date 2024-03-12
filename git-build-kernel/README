@@ -34,7 +34,7 @@ The destination branch should be of format:
 TARGET[-ARCH[-CONFIG]]
 
 where:
- - TARGET, required, valid options: build|dt_binding_check|dtbs_check|dtbs_check_w1
+ - TARGET, required, valid options: build|dt_binding_check|dtbs|dtbs_w1|dtbs_check|dtbs_check_w1
  - ARCH, optional, default: x86_64
  - CONFIG, optional, default: defconfig
 

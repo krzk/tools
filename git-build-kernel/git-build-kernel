@@ -110,6 +110,9 @@ fi
 if [ "$TARGET" = "dtbs_check_w1" ]; then
 	TARGET="dtbs_check"
 	FLAGS="W=1"
+elif [ "$TARGET" = "dtbs_w1" ]; then
+	TARGET="dtbs"
+	FLAGS="W=1"
 fi
 
 ###
