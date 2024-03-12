@@ -29,8 +29,14 @@ DTBS_CHECK_KNOWN_WARNINGS = {
                 ('.*exynos5250-snow-rev5.dtb$', re.escape("/i2c-arbitrator/i2c-arb/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
                 ('.*exynos5420-peach-pit.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
                 ('.*exynos5800-peach-pi.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
+                # Pending on mailing list
+                ('.*exynos.*.dtb$', re.escape("/soc/keypad@100a0000: failed to match any schema with compatible: ['samsung,s5pv210-keypad']"), None, None),
+                # Planned to fix in 6.10
+                ('.*exynos.*.dtb$', re.escape("/soc/dp-controller@145b0000: failed to match any schema with compatible: ['samsung,exynos5-dp']"), None, None),
             ],
             's3c6400': [
+                # Pending on mailing list
+                ('.*s3c6410-.*.dtb$', re.escape("/soc/clock-controller@7e00f000: failed to match any schema with compatible: ['samsung,s3c6410-clock']"), None, None),
             ],
             's5pv210': [
                 ('.*s5pv210-aquila.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
@@ -55,6 +61,12 @@ DTBS_CHECK_KNOWN_WARNINGS = {
                 ('.*s5pv210-torbreck.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
                 ('.*s5pv210-torbreck.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
                 ('.*s5pv210-torbreck.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
+                # Pending on mailing list
+                ('.*s5pv210-.*.dtb$', re.escape("/soc/keypad@e1600000: failed to match any schema with compatible: ['samsung,s5pv210-keypad']"), None, None),
+                ('.*s5pv210-.*.dtb$', re.escape("/soc/dmc@f0000000: failed to match any schema with compatible: ['samsung,s5pv210-dmc']"), None, None),
+                ('.*s5pv210-.*.dtb$', re.escape("/soc/dmc@f1400000: failed to match any schema with compatible: ['samsung,s5pv210-dmc']"), None, None),
+                # Planned to fix in 6.10
+                ('.*s5pv210-.*.dtb$', re.escape("/soc/onenand@b0600000: failed to match any schema with compatible: ['samsung,s5pv210-onenand']"), None, None),
             ],
         },
         'arm64': {
