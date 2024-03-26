@@ -15,9 +15,12 @@ from buildbot import process
 import twisted
 import re
 
-BUILD_WARN_IGNORE = [ (None, '.*warning: #warning syscall .* not implemented.*', None, None),
+BUILD_WARN_IGNORE = [
+    (None, '.*warning: #warning syscall .* not implemented.*', None, None),
+    ('.*exynos5433.dtsi$', re.escape("Warning (graph_child_address): /soc@0/decon@13800000/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary"), None, None),
+    ('.*exynos5433.dtsi$', re.escape("Warning (graph_child_address): /soc@0/dsi@13900000/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary"), None, None),
+    ('.*exynos5433-tm2-common.dtsi$', re.escape("Warning (graph_child_address): /soc@0/decon@13880000/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary"), None, None),
                     ]
-
 CMD_MAKE = '%(prop:builddir:-~/)s/tools/buildbot/build-slave.sh'
 
 DTBS_CHECK_KNOWN_WARNINGS = {
