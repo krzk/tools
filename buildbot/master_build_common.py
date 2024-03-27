@@ -287,7 +287,8 @@ def steps_build_common(env, kbuild_output, config=None):
                         workdir='tools',
                         haltOnFailure=True,
                         env=util.Property('git_env')))
-    st.append(steps.Git(repourl=repo_git_kernel_org,
+    # Workers use grokmirror same way as buildbot-master, so same repository path will work
+    st.append(steps.Git(repourl=util.Property('repository'),
                         name='Clone the sources',
                         # Run full/fresh checkout to get rid of any old DTBs or binaries from
                         # KBUILD_OUTPUT. For example when compiling stable kernel without
