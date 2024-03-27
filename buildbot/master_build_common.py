@@ -305,6 +305,9 @@ def steps_build_common(env, kbuild_output, config=None):
     st.append(steps.SetPropertyFromCommand(command=[util.Interpolate(CMD_MAKE), '-s', 'kernelversion'],
                                            property='kernel_version', haltOnFailure=True,
                                            env=env, name='Set property: kernel version'))
+    st.append(steps.SetPropertyFromCommand(command=['dt-validate', '--version'],
+                                           property='dtschema_version', haltOnFailure=True,
+                                           env=env, name='Set property: dtschema version'))
     st.append(step_set_prop_if_file_exists('Set property: ARM DTS vendor subdirs',
                                            'arm_boot_dts_vendor_subdirs',
                                            ['arch/arm/boot/dts/samsung/Makefile']))
