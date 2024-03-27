@@ -80,20 +80,6 @@ DTBS_CHECK_KNOWN_WARNINGS = {
     'krzk': {
         'arm64': {
             'defconfig': [
-                # Depends on patches via other trees, all applied for v6.9-rc1:
-                ('.*gs101-oriole.dtb$', re.escape("timer@10050000: compatible: 'oneOf' conditional failed, one must be fixed:"), None, None),
-                ('.*gs101-oriole.dtb$', re.escape("/soc@0/timer@10050000: failed to match any schema with compatible: ['google,gs101-mct', 'samsung,exynos4210-mct']"), None, None),
-                ('.*gs101-oriole.dtb$', re.escape("syscon@10820000: clocks: False schema does not allow [[20, 79]]"), None, None),
-                ('.*gs101-oriole.dtb$', re.escape("usi@109700c0: i2c@10970000:compatible: 'oneOf' conditional failed, one must be fixed:"), None, None),
-                ('.*gs101-oriole.dtb$', re.escape("i2c@10970000: compatible: 'oneOf' conditional failed, one must be fixed:"), None, None),
-                ('.*gs101-oriole.dtb$', re.escape("/soc@0/usi@109700c0/i2c@10970000: failed to match any schema with compatible: ['google,gs101-hsi2c', 'samsung,exynosautov9-hsi2c']"), None, None),
-                ('.*gs101-oriole.dtb$', re.escape("syscon@10c20000: clocks: False schema does not allow [[24, 46]]"), None, None),
-                ('.*gs101-oriole.dtb$', re.escape("usi@10d500c0: i2c@10d50000:compatible: 'oneOf' conditional failed, one must be fixed:"), None, None),
-                ('.*gs101-oriole.dtb$', re.escape("i2c@10d50000: compatible: 'oneOf' conditional failed, one must be fixed:"), None, None),
-                ('.*gs101-oriole.dtb$', re.escape("/soc@0/usi@10d500c0/i2c@10d50000: failed to match any schema with compatible: ['google,gs101-hsi2c', 'samsung,exynosautov9-hsi2c']"), None, None),
-                ('.*exynos850-e850-96.dtb$', re.escape("usi@139400c0: spi@13940000:compatible: 'oneOf' conditional failed, one must be fixed:"), None, None),
-                ('.*exynos850-e850-96.dtb$', re.escape("usi@11d000c0: spi@11d00000:compatible: 'oneOf' conditional failed, one must be fixed:"), None, None),
-                ('.*exynos850-e850-96.dtb$', re.escape("usi@11d200c0: spi@11d20000:compatible: 'oneOf' conditional failed, one must be fixed:"), None, None),
             ],
         },
     },
