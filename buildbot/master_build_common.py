@@ -80,6 +80,23 @@ DTBS_CHECK_KNOWN_WARNINGS = {
         },
     },
     'krzk': {
+        'arm': {
+            'exynos': [
+                # Applied for v6.10-rc1
+                ('.*exynos.*.dtb$', re.escape("/soc/dp-controller@145b0000: failed to match any schema with compatible: ['samsung,exynos5-dp']"), None, None),
+            ],
+            's3c6400': [
+                # Applied for v6.10-rc1 (krzk/clk)
+                ('.*s3c6410-.*.dtb$', re.escape("/soc/clock-controller@7e00f000: failed to match any schema with compatible: ['samsung,s3c6410-clock']"), None, None),
+            ],
+            's5pv210': [
+                # Applied for v6.10-rc1
+                ('.*s5pv210-.*.dtb$', re.escape("/soc/onenand@b0600000: failed to match any schema with compatible: ['samsung,s5pv210-onenand']"), None, None),
+                ('.*s5pv210-.*.dtb$', re.escape("/soc/nand-controller@b0600000: failed to match any schema with compatible: ['samsung,s5pv210-onenand']"), None, None),
+                ('.*s5pv210-.*.dtb$', re.escape("/soc/dmc@f0000000: failed to match any schema with compatible: ['samsung,s5pv210-dmc']"), None, None),
+                ('.*s5pv210-.*.dtb$', re.escape("/soc/dmc@f1400000: failed to match any schema with compatible: ['samsung,s5pv210-dmc']"), None, None),
+            ],
+        },
         'arm64': {
             'defconfig': [
             ],
