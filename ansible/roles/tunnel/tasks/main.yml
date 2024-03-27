@@ -98,10 +98,10 @@
   become_user: root
 
 # Public SSH key of host_gate to add to known hosts of user_tunnel.
-# Pubkey retrieved with: ssh-keyscan -H HOSTNAME IP
+# Pubkey retrieved with: ssh-keyscan -p PORT -H HOSTNAME IP
 - name: Add server to known hosts
   known_hosts:
-    name: '{{ item.host_gate }}'
+    name: '[{{ item.host_gate }}]:{{ item.port_gate }}'
     state: present
     key: "{{ lookup('file', item.pubkey_gate) }}"
   with_flattened: '{{ tunnels }}'
