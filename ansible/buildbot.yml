@@ -4,6 +4,7 @@
     - hardened
     - sshd
     - tunnel
+    - buildbot-git-mirror
     - buildbot-builder
 
 - hosts: buildbot_masters
