@@ -37,6 +37,8 @@ DTBS_CHECK_KNOWN_WARNINGS = {
                 ('.*exynos.*.dtb$', re.escape("/soc/dp-controller@145b0000: failed to match any schema with compatible: ['samsung,exynos5-dp']"), None, None),
                 ('.*exynos4.*.dtb$', re.escape("keypad@100a0000: 'linux,keypad-no-autorepeat' does not match any of the regexes: '^key-[0-9a-z]+$', 'pinctrl-[0-9]+'"), None, None),
                 ('.*exynos4412-smdk4412.dtb$', re.escape("keypad@100a0000: 'key-A', 'key-B', 'key-C', 'key-D', 'key-E', 'linux,keypad-no-autorepeat' do not match any of the regexes: '^key-[0-9a-z]+$', 'pinctrl-[0-9]+'"), None, None),
+                # Waiting for dtschema 2024.03
+                ('.*exynos4212-tab3-.*.dtb$', re.escape("chosen: linux,usable-memory-range: [[1073741824, 1069547520]] is too short"), None, None),
             ],
             's3c6400': [
                 # Pending on mailing list
