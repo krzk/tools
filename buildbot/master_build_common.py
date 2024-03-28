@@ -32,17 +32,13 @@ DTBS_CHECK_KNOWN_WARNINGS = {
                 ('.*exynos5250-snow-rev5.dtb$', re.escape("/i2c-arbitrator/i2c-arb/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
                 ('.*exynos5420-peach-pit.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
                 ('.*exynos5800-peach-pi.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
-                # Pending on mailing list
-                ('.*exynos.*.dtb$', re.escape("/soc/keypad@100a0000: failed to match any schema with compatible: ['samsung,s5pv210-keypad']"), None, None),
-                ('.*exynos.*.dtb$', re.escape("/soc/dp-controller@145b0000: failed to match any schema with compatible: ['samsung,exynos5-dp']"), None, None),
-                ('.*exynos4.*.dtb$', re.escape("keypad@100a0000: 'linux,keypad-no-autorepeat' does not match any of the regexes: '^key-[0-9a-z]+$', 'pinctrl-[0-9]+'"), None, None),
-                ('.*exynos4412-smdk4412.dtb$', re.escape("keypad@100a0000: 'key-A', 'key-B', 'key-C', 'key-D', 'key-E', 'linux,keypad-no-autorepeat' do not match any of the regexes: '^key-[0-9a-z]+$', 'pinctrl-[0-9]+'"), None, None),
                 # Waiting for dtschema 2024.03
                 ('.*exynos4212-tab3-.*.dtb$', re.escape("chosen: linux,usable-memory-range: [[1073741824, 1069547520]] is too short"), None, None),
+                # Appear on next/pending-fixes, scheduled for v5.10-rc1
+                ('.*exynos4.*.dtb$', re.escape("keypad@100a0000: 'linux,keypad-no-autorepeat' does not match any of the regexes: '^key-[0-9a-z]+$', 'pinctrl-[0-9]+'"), None, None),
+                ('.*exynos4412-smdk4412.dtb$', re.escape("keypad@100a0000: 'key-A', 'key-B', 'key-C', 'key-D', 'key-E', 'linux,keypad-no-autorepeat' do not match any of the regexes: '^key-[0-9a-z]+$', 'pinctrl-[0-9]+'"), None, None),
             ],
             's3c6400': [
-                # Pending on mailing list
-                ('.*s3c6410-.*.dtb$', re.escape("/soc/clock-controller@7e00f000: failed to match any schema with compatible: ['samsung,s3c6410-clock']"), None, None),
             ],
             's5pv210': [
                 ('.*s5pv210-aquila.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
@@ -67,11 +63,6 @@ DTBS_CHECK_KNOWN_WARNINGS = {
                 ('.*s5pv210-torbreck.dtb$', "i2s@e2100000: #sound-dai-cells:0:0: 1 was expected", None, None),
                 ('.*s5pv210-torbreck.dtb$', "i2s@e2a00000: #sound-dai-cells:0:0: 1 was expected", None, None),
                 ('.*s5pv210-torbreck.dtb$', "i2s@eee30000: #sound-dai-cells:0:0: 1 was expected", None, None),
-                # Pending on mailing list
-                ('.*s5pv210-.*.dtb$', re.escape("/soc/keypad@e1600000: failed to match any schema with compatible: ['samsung,s5pv210-keypad']"), None, None),
-                ('.*s5pv210-.*.dtb$', re.escape("/soc/dmc@f0000000: failed to match any schema with compatible: ['samsung,s5pv210-dmc']"), None, None),
-                ('.*s5pv210-.*.dtb$', re.escape("/soc/dmc@f1400000: failed to match any schema with compatible: ['samsung,s5pv210-dmc']"), None, None),
-                ('.*s5pv210-.*.dtb$', re.escape("/soc/onenand@b0600000: failed to match any schema with compatible: ['samsung,s5pv210-onenand']"), None, None),
             ],
         },
         'arm64': {
