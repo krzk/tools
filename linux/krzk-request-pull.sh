@@ -68,7 +68,9 @@ elif [[ $REMOTE_URL == *"/krzk/linux-dt.git"* ]]; then
 		CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, $CC_KRZK"
 		SUBJECT="arm64: dts: "
 	else
-		die "Unknown tag format"
+		TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
+		CC="linux-kernel@vger.kernel.org, $CC_KRZK"
+		SUBJECT="drivers:"
 	fi
 elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
 	TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
