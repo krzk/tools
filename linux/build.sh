@@ -844,6 +844,9 @@ config_qcom() {
 	config_item_on TYPEC QCOM_PMIC_GLINK PHY_QCOM_EUSB2_REPEATER
 	config_item_on MEDIA_SUPPORT LEDS_CLASS_FLASH V4L2_FLASH_LED_CLASS LEDS_QCOM_FLASH
 
+	# CRD8380xp ramdisk without modules
+	config_item_on BLK_DEV_NVME
+
 	# I2C, peripherals
 	config_item_on I2C_QCOM_GENI
 	# Storage, USB, PHY
