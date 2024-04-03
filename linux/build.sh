@@ -41,7 +41,7 @@ usage() {
 	echo " -C               - Run standard kernel checks (checkstack,"
 	echo "                    namespacecheck, includecheck, headers_check,"
 	echo "                    coccicheck)"
-	echo " -I <image_type>  - Make image type for: arch, arndale, e850, qcom"
+	echo " -I <image_type>  - Make image type for: arch, arndale, e850, qcom, qcom2"
 	echo "                    qcom - creates boot image with ramdisk including the modules"
 	echo "                           and ramdisk source (${RAMDISK_SRC}), see also -b"
 	echo "                    By default images are not created, only build is performed."
@@ -272,6 +272,7 @@ fi
 test -z "$CHOSEN_IMAGE" -o "$CHOSEN_IMAGE" = "arch" \
 	-o "$CHOSEN_IMAGE" = "arndale" \
 	-o "$CHOSEN_IMAGE" = "qcom" \
+	-o "$CHOSEN_IMAGE" = "qcom2" \
 	-o "$CHOSEN_IMAGE" = "e850" \
 	|| die "Wrong image to create '$CHOSEN_IMAGE'"
 
@@ -292,7 +293,8 @@ if [ -n "$DTS_NAME" ]; then
 		|| die "File 'arch/${ARCH_DIR}/boot/dts/${DTS_NAME}.dts' does not exist"
 else
 	# Certain images require DTS
-	test "$CHOSEN_IMAGE" = "qcom" -o "$CHOSEN_IMAGE" = "e850" \
+	test "$CHOSEN_IMAGE" = "qcom" -o "$CHOSEN_IMAGE" = "qcom2" \
+		-o "$CHOSEN_IMAGE" = "e850" \
 		&& die "Image '$CHOSEN_IMAGE' requires dts_name"
 	echo "Missing dts_name parameter, ignoring DTS"
 fi
@@ -512,6 +514,32 @@ make_image_qcom() {
 		|| die "mkbootimg failure"
 }
 
+# Same as make_image_qcom but --header_version 2
+make_image_qcom2() {
+	local _dts_name="$1"
+	# copy_modules requires rw mount (no "ro")
+	local cmdline="earlycon console=ttyMSM0,115200n8 root=PARTLABEL=rootfs rootwait=2 init=/sbin/init copy_modules"
+	# GRUB/Bootloader expects uncompressed Image
+	local image_path=${IMAGE_PATH%.gz}
+
+	append_dtb
+	make_ramdisk
+
+	# Some targets might require: --header_version 2
+	cmdline="$cmdline $CMDLINE"
+	echo "Making kernel image with cmdline: $cmdline"
+	mkbootimg --kernel ${image_path} \
+		--ramdisk ${RAMDISK_PATH} \
+		--cmdline "$cmdline" \
+		--dtb "${KBUILD_OUTPUT}arch/${ARCH_DIR}/boot/dts/${_dts_name}.dtb" \
+		--dtb_offset 0 \
+		--base 0x80000000 \
+		--pagesize 4096 \
+		--header_version 2 \
+		--output ${KBUILD_OUTPUT}boot.img \
+		|| die "mkbootimg failure"
+}
+
 ls_image_qcom() {
 	echo
 	echo "#################################"
@@ -558,7 +586,8 @@ ls_image_e850() {
 make_clean() {
 	rm -f ${KBUILD_OUTPUT}uImage \
 		$IMAGE_PATH $IMAGE_OUT_PATH
-	test "$CHOSEN_IMAGE" = "qcom" -o "$CHOSEN_IMAGE" = "e850" \
+	test "$CHOSEN_IMAGE" = "qcom" -o "$CHOSEN_IMAGE" = "qcom2" \
+		-o "$CHOSEN_IMAGE" = "e850" \
 		&& rm -f ${KBUILD_OUTPUT}boot.img
 }
 
@@ -577,6 +606,10 @@ make_images() {
 		;;
 	qcom)
 		make_image_qcom "$_dts_name"
+		ls_image_qcom
+		;;
+	qcom2)
+		make_image_qcom2 "$_dts_name"
 		ls_image_qcom
 		;;
 	e850)
