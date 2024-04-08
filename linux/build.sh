@@ -1,7 +1,7 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-2.0
 #
-# Copyright (c) 2023 Krzysztof Kozlowski
+# Copyright (c) 2023-2024 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #
 # Script for building kernel images for several platforms.
@@ -93,6 +93,7 @@ usage() {
 	exit 2
 }
 
+# Optional dependencies
 have_ccache() {
 	which ccache > /dev/null
 	echo $?
@@ -102,6 +103,16 @@ have_eatmydata() {
 	which eatmydata > /dev/null
 	echo $?
 }
+
+# Dependencies
+which awk > /dev/null || die "Missing awk"
+which cpio > /dev/null || die "Missing cpio"
+which du > /dev/null || die "Missing du"
+which git > /dev/null || die "Missing git"
+which lz4 > /dev/null || die "Missing lz4"
+which make > /dev/null || die "Missing make"
+which mkbootimg > /dev/null || die "Missing mkbootimg"
+which mktemp > /dev/null || die "Missing mktemp"
 
 TEST_CONFIG=""
 CHECK_CMD=""
