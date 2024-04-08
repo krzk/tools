@@ -132,7 +132,7 @@ CROSS_COMPILE=""
 CMDLINE=""
 MODULES_INSTALL_PATH="modules-out"
 RAMDISK=""
-RAMDISK_SRC="${HOME}/etc/boards/initramfs/arm64-rootfs/initramfs-qemuarm64-krzk.cpio"
+RAMDISK_SRC="${HOME}/etc/boards/initramfs/arm64-rootfs/initramfs-qemuarm64-krzk.cpio.lz4"
 
 while getopts "Chkl:t:S:s:p:c:d:A:b:E:e:D:M:j:I:r:R:m:" flag
 do
@@ -491,7 +491,7 @@ make_ramdisk() {
 			local modules_src_path="${workdir}/${KBUILD_OUTPUT}${MODULES_INSTALL_PATH}/lib/modules"
 
 			cd "$RAMDISK_TMP"
-			cpio -idm --quiet < "${RAMDISK_SRC}"
+			lz4 -d -c "${RAMDISK_SRC}" | cpio -idm --quiet
 			echo "Installing modules to ramdisk ($(du -sh ${modules_src_path} | awk '{print $1}'))"
 			cp -r ${modules_src_path} ./lib/
 			echo "Packing ramdisk ($(du -sh . | awk '{print $1}'))"
