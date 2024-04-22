@@ -539,7 +539,6 @@ make_image_qcom2() {
 	# Some targets might require: --header_version 2
 	cmdline="$cmdline $CMDLINE"
 	echo "Making kernel image with cmdline: $cmdline"
-	set -x
 	mkbootimg --kernel ${image_path} \
 		--ramdisk ${RAMDISK_PATH} \
 		--cmdline "$cmdline" \
@@ -550,7 +549,6 @@ make_image_qcom2() {
 		--header_version 2 \
 		--output ${KBUILD_OUTPUT}boot.img \
 		|| die "mkbootimg failure"
-	set +x
 }
 
 ls_image_qcom() {
