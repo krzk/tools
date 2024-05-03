@@ -111,6 +111,18 @@ git_send_email() {
 	fi
 }
 
+# Shows currently applied cherry-pick patch (e.g. during cherry-pick conflict)
+git_show_cherry_pick() {
+	local gitdir="$(git rev-parse --path-format=absolute --git-dir)"
+	local rev=""
+	if [ -f "${gitdir}/CHERRY_PICK_HEAD" ]; then
+		rev="$(sed -e 's/[^0-9a-f]*//g' ${gitdir}/CHERRY_PICK_HEAD)"
+		git show "$(git rev-parse --verify --end-of-options $rev^{commit})"
+	else
+		echo "No cherry-pick in progress"
+	fi
+}
+
 # cros_build cross_arch arch command
 # e.g.:
 # cross_build arm-linux-gnueabi arm
