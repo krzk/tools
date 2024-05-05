@@ -487,15 +487,14 @@ make_ramdisk() {
 		RAMDISK_TMP="$(mktemp -d)" || die "mkdir tmp directory for ramdisk error"
 
 		(
-			set -e -E
 			local modules_src_path="${workdir}/${KBUILD_OUTPUT}${MODULES_INSTALL_PATH}/lib/modules"
 
-			cd "$RAMDISK_TMP"
-			lz4 -d -c "${RAMDISK_SRC}" | cpio -idm --quiet
+			cd "$RAMDISK_TMP" || die "No ramdisk tmp"
+			lz4 -d -c "${RAMDISK_SRC}" | cpio -idm --quiet || die "Unpack source ramdisk error"
 			echo "Installing modules to ramdisk ($(du -sh ${modules_src_path} | awk '{print $1}'))"
-			cp -r ${modules_src_path} ./lib/
+			cp -r ${modules_src_path} ./lib/ || die "cp modules error"
 			echo "Packing ramdisk ($(du -sh . | awk '{print $1}'))"
-			find . 2>/dev/null | LANG=C cpio -o -H newc -R root:root --quiet > "${workdir}/${ramdisk_out}"
+			find . 2>/dev/null | LANG=C cpio -o -H newc -R root:root --quiet > "${workdir}/${ramdisk_out}" || die "pack ramdisk error"
 		) || die "Make new initramfs with modules error"
 		$ramdisk_compress_cmd "$ramdisk_out" || die "$ramdisk_compress_cmd $ramdisk_out error"
 		RAMDISK_PATH="${ramdisk_out}.${ramdisk_compress_fmt}"
