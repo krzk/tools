@@ -108,6 +108,7 @@ have_eatmydata() {
 which awk > /dev/null || die "Missing awk"
 which cpio > /dev/null || die "Missing cpio"
 which du > /dev/null || die "Missing du"
+which fakeroot > /dev/null || die "Missing fakeroot"
 which git > /dev/null || die "Missing git"
 which lz4 > /dev/null || die "Missing lz4"
 which make > /dev/null || die "Missing make"
@@ -490,7 +491,7 @@ make_ramdisk() {
 			local modules_src_path="${workdir}/${KBUILD_OUTPUT}${MODULES_INSTALL_PATH}/lib/modules"
 
 			cd "$RAMDISK_TMP" || die "No ramdisk tmp"
-			lz4 -d -c "${RAMDISK_SRC}" | cpio -idm --quiet || die "Unpack source ramdisk error"
+			lz4 -d -c "${RAMDISK_SRC}" | fakeroot cpio -idm --quiet || die "Unpack source ramdisk error"
 			echo "Installing modules to ramdisk ($(du -sh ${modules_src_path} | awk '{print $1}'))"
 			cp -r ${modules_src_path} ./lib/ || die "cp modules error"
 			echo "Packing ramdisk ($(du -sh . | awk '{print $1}'))"
