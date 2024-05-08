@@ -45,8 +45,8 @@ speakers_on() {
 	amixer -c 0 cset name='TwitterLeft BOOST Switch' 1
 	amixer -c 0 cset name='TwitterLeft DAC Switch' 1
 	amixer -c 0 cset name='TwitterLeft VISENSE Switch' 0
-	amixer -c 0 cset name='WooferLeft PA Volume' 20
-	amixer -c 0 cset name='TwitterLeft PA Volume' 20
+	amixer -c 0 cset name='WooferLeft PA Volume' 10
+	amixer -c 0 cset name='TwitterLeft PA Volume' 10
 	amixer -c 0 cset name='WooferRight WSA MODE' 0
 	amixer -c 0 cset name='WooferRight COMP Switch' 1
 	amixer -c 0 cset name='WooferRight PBR Switch' 1
@@ -59,12 +59,12 @@ speakers_on() {
 	amixer -c 0 cset name='TwitterRight BOOST Switch' 1
 	amixer -c 0 cset name='TwitterRight DAC Switch' 1
 	amixer -c 0 cset name='TwitterRight VISENSE Switch' 0
-	amixer -c 0 cset name='WooferRight PA Volume' 20
-	amixer -c 0 cset name='TwitterRight PA Volume' 20
-	amixer -c 0 cset name='WSA WSA_RX0 Digital Volume' 84
-	amixer -c 0 cset name='WSA WSA_RX1 Digital Volume' 84
-	amixer -c 0 cset name='WSA2 WSA_RX0 Digital Volume' 84
-	amixer -c 0 cset name='WSA2 WSA_RX1 Digital Volume' 84
+	amixer -c 0 cset name='WooferRight PA Volume' 10
+	amixer -c 0 cset name='TwitterRight PA Volume' 10
+	amixer -c 0 cset name='WSA WSA_RX0 Digital Volume' 70
+	amixer -c 0 cset name='WSA WSA_RX1 Digital Volume' 70
+	amixer -c 0 cset name='WSA2 WSA_RX0 Digital Volume' 70
+	amixer -c 0 cset name='WSA2 WSA_RX1 Digital Volume' 70
 	amixer -c 0 cset name='WSA_CODEC_DMA_RX_0 Audio Mixer MultiMedia2' 1
 }
 
@@ -106,8 +106,8 @@ speakers_off() {
 headset_on() {
 	amixer -c 0 cset name='RX_RX0 Digital Volume' 65
 	amixer -c 0 cset name='RX_RX1 Digital Volume' 65
-	amixer -c 0 cset name='HPHR Volume' 20
-	amixer -c 0 cset name='HPHL Volume' 20
+	amixer -c 0 cset name='HPHR Volume' 15
+	amixer -c 0 cset name='HPHL Volume' 15
 	amixer -c 0 cset name='RX_HPH PWR Mode' LOHIFI
 	amixer -c 0 cset name='RX HPH Mode' CLS_H_ULP
 	amixer -c 0 cset name='RX_MACRO RX0 MUX' AIF1_PB
