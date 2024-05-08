@@ -265,13 +265,13 @@ fi
 
 speakers_on
 #aplay -D plughw:0,$SPEAKER /usr/share/sounds/alsa/Front_Center.wav
-#aplay -D plughw:0,$SPEAKER /root/stereo.wav
-#aplay -D plughw:0,$SPEAKER /root/4channels.wav
-aplay -D plughw:0,$SPEAKER /root/4-side-channels.wav
+#aplay -D plughw:0,$SPEAKER ~/stereo.wav
+#aplay -D plughw:0,$SPEAKER ~/4channels.wav
+aplay -D plughw:0,$SPEAKER ~/4-side-channels.wav
 speakers_off
 
 headset_on
-aplay -D plughw:0,$HEADSET /usr/share/sounds/alsa/Front_Center.wav
+aplay -D plughw:0,$HEADSET ~/stereo.wav
 headset_off
 
 # Record:
