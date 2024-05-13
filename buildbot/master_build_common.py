@@ -32,8 +32,6 @@ DTBS_CHECK_KNOWN_WARNINGS = {
                 ('.*exynos5250-snow-rev5.dtb$', re.escape("/i2c-arbitrator/i2c-arb/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
                 ('.*exynos5420-peach-pit.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
                 ('.*exynos5800-peach-pi.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
-                # Waiting for dtschema 2024.03
-                ('.*exynos4212-tab3-.*.dtb$', re.escape("chosen: linux,usable-memory-range: [[1073741824, 1069547520]] is too short"), None, None),
                 # Appear on next/pending-fixes, scheduled for v5.10-rc1
                 ('.*exynos4.*.dtb$', re.escape("keypad@100a0000: 'linux,keypad-no-autorepeat' does not match any of the regexes: '^key-[0-9a-z]+$', 'pinctrl-[0-9]+'"), None, None),
                 ('.*exynos4412-smdk4412.dtb$', re.escape("keypad@100a0000: 'key-A', 'key-B', 'key-C', 'key-D', 'key-E', 'linux,keypad-no-autorepeat' do not match any of the regexes: '^key-[0-9a-z]+$', 'pinctrl-[0-9]+'"), None, None),
