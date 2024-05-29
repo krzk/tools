@@ -30,6 +30,7 @@
     - buildbot_worker_admin
     - buildbot_worker_description
     - host_buildbot_master_ssh
+    - path_mirror_repos
     - user_buildbot_master_ssh
 
 - name: Install PIP buildbot
@@ -99,6 +100,18 @@
     content: '{{ buildbot_worker_description }}'
     dest: '{{ buildbot_basedir }}/info/host'
     mode: 0644
+  remote_user: '{{ buildbot_user }}'
+
+- name: Mark mirror repos path as Git-safe
+  shell:
+    cmd: |
+      git config --global --replace-all safe.directory {{ path_mirror_repos }}
+      for i in `find {{ path_mirror_repos }}/ -name 'grokmirror.fingerprint'`
+      do
+        git config --global --add safe.directory "$(dirname $i)"
+      done
+  args:
+    executable: /bin/bash
   remote_user: '{{ buildbot_user }}'
 
 - name: Install SystemD unit file
