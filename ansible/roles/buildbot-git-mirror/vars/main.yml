@@ -5,7 +5,6 @@
 #                             <krzk@kernel.org>
 ---
 mail_foward_to: buildbot
-path_mirror_repos: /var/lib/mirror
 mirror_repos_korg:
  - /pub/scm/linux/kernel/git/torvalds/linux.git
  - /pub/scm/linux/kernel/git/next/linux-next.git
