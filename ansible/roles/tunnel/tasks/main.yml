@@ -18,7 +18,7 @@
 
 - name: Check requirements for variables
   assert:
-    that: '{{ item }} is defined'
+    that: item is defined
   with_items:
     - tunnels
     - user_tunnel
