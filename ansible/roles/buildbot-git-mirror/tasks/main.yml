@@ -13,6 +13,7 @@
     that: item is defined
   with_items:
     - group_mirror
+    - mirror_repos_korg
     - path_mirror_repos
     - user_mirror
 

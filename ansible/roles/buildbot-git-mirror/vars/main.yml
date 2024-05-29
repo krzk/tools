@@ -1,8 +1,17 @@
 # SPDX-License-Identifier: GPL-2.0
 #
-# Copyright (c) 2022 Krzysztof Kozlowski
+# Copyright (c) 2022-2024 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 ---
 mail_foward_to: buildbot
 path_mirror_repos: /var/lib/mirror
+mirror_repos_korg:
+ - /pub/scm/linux/kernel/git/torvalds/linux.git
+ - /pub/scm/linux/kernel/git/next/linux-next.git
+ - /pub/scm/linux/kernel/git/stable/linux.git
+ - /pub/scm/linux/kernel/git/krzk/linux.git
+ - /pub/scm/linux/kernel/git/krzk/linux-dt.git
+ - /pub/scm/linux/kernel/git/pinctrl/samsung.git
+ - /pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git
+ - /pub/scm/linux/kernel/git/krzk/linux-w1.git
