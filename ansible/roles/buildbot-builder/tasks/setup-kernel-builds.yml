@@ -1,3 +1,8 @@
+# SPDX-License-Identifier: GPL-2.0
+#
+# Copyright (c) 2021-2023 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+#                             <krzk@kernel.org>
 ---
 - name: Check requirements for variables
   assert:
