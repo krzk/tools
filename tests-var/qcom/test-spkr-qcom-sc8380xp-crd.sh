@@ -254,7 +254,25 @@ dmic0123_va_record_on() {
 	amixer -c 0 cset name='MultiMedia4 Mixer VA_CODEC_DMA_TX_0' 1
 }
 
+dp0_on() {
+	amixer -c 0 cset name='DISPLAY_PORT_RX_0 Audio Mixer MultiMedia1' 1
+}
+
+dp0_off() {
+	amixer -c 0 cset name='DISPLAY_PORT_RX_0 Audio Mixer MultiMedia1' 0
+}
+
+dp1_on() {
+	amixer -c 0 cset name='DISPLAY_PORT_RX_1 Audio Mixer MultiMedia1' 1
+}
+
+dp1_off() {
+	amixer -c 0 cset name='DISPLAY_PORT_RX_1 Audio Mixer MultiMedia1' 0
+}
+
+
 HEADSET=0
+DP=$HEADSET
 SPEAKER=1
 MIC=2
 DMIC=3
