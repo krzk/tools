@@ -145,13 +145,10 @@ headset_off() {
 	amixer -c 0 cset name='HPHR Switch' 0
 }
 
-# AMIC2, ??? does not work so far
 headset_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
 	# Should go to ADC2 on WCD938x (SWR_INPUT1)
 	amixer -c 0 cset name='TX SMIC MUX0' SWR_MIC1
-	# DEC1 must be set before DEC0 for the latter to be changeable
-	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC1' 1
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 1
 	# TX1 matches ADC2
 	amixer -c 0 cset name='TX1 MODE' ADC_NORMAL
@@ -177,7 +174,6 @@ headset_record_off() {
 	amixer -c 0 cset name='TX1 MODE' ADC_INVALID
 }
 
-# Works
 dmic01_va_record_on() {
 	amixer -c 0 cset name='VA DEC0 MUX' VA_DMIC
 	amixer -c 0 cset name='VA DMIC MUX0' DMIC0
@@ -203,7 +199,6 @@ dmic01_va_record_off() {
 	amixer -c 0 cset name='VA DMIC MUX1' ZERO
 }
 
-# Works
 dmic23_va_record_on() {
 	amixer -c 0 cset name='VA DEC0 MUX' VA_DMIC
 	amixer -c 0 cset name='VA DMIC MUX0' DMIC2
@@ -229,7 +224,6 @@ dmic23_va_record_off() {
 	amixer -c 0 cset name='VA DMIC MUX1' ZERO
 }
 
-# TODO:
 dmic0123_va_record_on() {
 	amixer -c 0 cset name='VA DEC0 MUX' VA_DMIC
 	amixer -c 0 cset name='VA DMIC MUX0' DMIC0
