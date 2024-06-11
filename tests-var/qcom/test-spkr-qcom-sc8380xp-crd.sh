@@ -248,6 +248,25 @@ dmic0123_va_record_on() {
 	amixer -c 0 cset name='MultiMedia4 Mixer VA_CODEC_DMA_TX_0' 1
 }
 
+dmic0123_va_record_off() {
+	amixer -c 0 cset name='MultiMedia4 Mixer VA_CODEC_DMA_TX_0' 0
+	amixer -c 0 cset name='VA_DEC0 Volume' 0
+	amixer -c 0 cset name='VA_AIF1_CAP Mixer DEC0' 0
+	amixer -c 0 cset name='VA DMIC MUX0' ZERO
+
+	amixer -c 0 cset name='VA_DEC1 Volume' 0
+	amixer -c 0 cset name='VA_AIF1_CAP Mixer DEC1' 0
+	amixer -c 0 cset name='VA DMIC MUX1' ZERO
+
+	amixer -c 0 cset name='VA_DEC2 Volume' 0
+	amixer -c 0 cset name='VA_AIF1_CAP Mixer DEC2' 0
+	amixer -c 0 cset name='VA DMIC MUX2' ZERO
+
+	amixer -c 0 cset name='VA_DEC3 Volume' 0
+	amixer -c 0 cset name='VA_AIF1_CAP Mixer DEC3' 0
+	amixer -c 0 cset name='VA DMIC MUX3' ZERO
+}
+
 dp0_on() {
 	amixer -c 0 cset name='DISPLAY_PORT_RX_0 Audio Mixer MultiMedia1' 1
 }
@@ -307,6 +326,14 @@ dmic23_va_record_on
 echo "Recording for 5 seconds - DMIC23"
 arecord -D plughw:0,${DMIC} -f S16_LE -c 2 -r 48000 -d 5 out_h.wav
 dmic23_va_record_off
+speakers_on
+aplay -D plughw:0,${SPEAKER} out_h.wav
+speakers_off
+
+dmic0123_va_record_on
+echo "Recording for 5 seconds - DMIC0123"
+arecord -D plughw:0,${DMIC} -f S16_LE -c 4 -r 48000 -d 5 out_h.wav
+dmic0123_va_record_off
 speakers_on
 aplay -D plughw:0,${SPEAKER} out_h.wav
 speakers_off
