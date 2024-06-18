@@ -508,7 +508,7 @@ make_ramdisk() {
 make_image_qcom() {
 	local _dts_name="$1"
 	# copy_modules requires rw mount (no "ro")
-	local cmdline="earlycon console=ttyMSM0,115200n8 root=PARTLABEL=rootfs rootwait=2 init=/sbin/init copy_modules"
+	local cmdline="earlycon console=ttyMSM0,115200n8 root=PARTLABEL=rootfs rootwait=2 init=/sbin/init copy_modules clk_ignore_unused pd_ignore_unused cma=128M"
 
 	append_dtb "$_dts_name"
 	make_ramdisk
@@ -529,7 +529,7 @@ make_image_qcom() {
 make_image_qcom2() {
 	local _dts_name="$1"
 	# copy_modules requires rw mount (no "ro")
-	local cmdline="earlycon console=ttyMSM0,115200n8 root=PARTLABEL=rootfs rootwait=2 init=/sbin/init copy_modules"
+	local cmdline="earlycon console=ttyMSM0,115200n8 root=PARTLABEL=rootfs rootwait=2 init=/sbin/init copy_modules clk_ignore_unused pd_ignore_unused cma=128M"
 	# GRUB/Bootloader expects uncompressed Image
 	local image_path=${IMAGE_PATH%.gz}
 
