@@ -432,7 +432,7 @@ def steps_build_w1_adjust_config(builder_name, env, kbuild_output, make_olddefco
     st.append(steps.ShellCommand(
         command=['scripts/config', '--file', util.Interpolate(kbuild_output + '.config'),
                  '-e', 'COMPILE_TEST', '-e', 'OF',
-                 '-e', 'w1', '-e', 'CONNECTOR', '-e', 'W1_CON',
+                 '-e', 'W1', '-e', 'CONNECTOR', '-e', 'W1_CON',
                  # drivers/w1/masters/Kconfig
                  '-e', 'W1_MASTER_MATROX',
                  '-e', 'W1_MASTER_DS2490', '-e', 'W1_MASTER_DS2482',
