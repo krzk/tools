@@ -41,5 +41,5 @@ esac
 for f in drivers/${WANT_SUBSYSTEM}/${WANT_PLATFORM}/Kconfig* ; do
 	while IFS= read -r platform ; do
 		scripts/config --file "${OUT_DIR}.config" -e "$platform"
-	done < <(grep config -- $f | cut -d ' ' -f 2 | grep -vE "$WANT_PLATFORM")
+	done < <(grep -E '^(menu)?config' -- $f | cut -d ' ' -f 2)
 done
