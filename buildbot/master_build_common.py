@@ -472,9 +472,15 @@ def steps_build_selected_folders(builder_name, env):
     paths_to_build = ['arch/arm/',
                       # make won't build DTBs but include it for completeness
                       'arch/arm64/boot/dts/',
-                      'drivers/clk/samsung/', 'drivers/memory/',
+                      'drivers/clk/samsung/',
+                      'drivers/interconnect/samsung/',
+                      'drivers/memory/',
+                      'drivers/phy/samsung/'
                       'drivers/pinctrl/samsung/', 'drivers/pinctrl/qcom/',
-                      'drivers/soc/samsung/', 'drivers/w1/']
+                      'drivers/pmdomain/samsung/'
+                      'drivers/soc/samsung/',
+                      'drivers/thermal/samsung/',
+                      'drivers/w1/']
     st.append(steps.ShellCommand(command=[util.Interpolate(CMD_MAKE)] + paths_to_build,
                                  haltOnFailure=True, env=env, name='Build selected paths'))
     st.append(step_touch_commit_files())
