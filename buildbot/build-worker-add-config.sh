@@ -16,8 +16,6 @@ set -x
 
 test $# -eq 3 || die "Wrong number of parameters"
 
-test -f arch/arm64/Kconfig.platforms || die "Missing Kconfig.platforms"
-
 OUT_DIR="$1"
 WANT_SUBSYSTEM=""
 WANT_PLATFORMS=""
