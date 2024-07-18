@@ -21,8 +21,8 @@ WANT_SUBSYSTEM=""
 WANT_PLATFORM=""
 
 case "$2" in
-	pinctrl)
-		WANT_SUBSYSTEM="$2"
+	memory|pinctrl|w1)
+		WANT_SUBSYSTEM="drivers/${2}/"
 		;;
 	*)
 		die "Unsupported subsystem to add"
@@ -31,14 +31,16 @@ esac
 
 case "$3" in
 	qcom|samsung)
-		WANT_PLATFORM="$3"
+		WANT_PLATFORM="$3/"
+		;;
+	memory|w1)
 		;;
 	*)
 		die "Unsupported platforms to add"
 		;;
 esac
 
-for f in drivers/${WANT_SUBSYSTEM}/${WANT_PLATFORM}/Kconfig* ; do
+for f in `find "${WANT_SUBSYSTEM}${WANT_PLATFORM}" -name "*Kconfig*"` ; do
 	while IFS= read -r platform ; do
 		scripts/config --file "${OUT_DIR}.config" -e "$platform"
 	done < <(grep -E '^(menu)?config' -- $f | cut -d ' ' -f 2)
