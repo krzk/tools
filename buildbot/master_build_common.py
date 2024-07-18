@@ -469,20 +469,16 @@ def steps_build_selected_folders(builder_name, env):
     st = []
     if not env['KBUILD_OUTPUT']:
         raise ValueError('Missing KBUILD_OUTPUT path in environment')
-    st.append(steps.ShellCommand(command=[util.Interpolate(CMD_MAKE), 'arch/arm/',
-                                          # make won't build DTBs but include it for completeness
-                                          'arch/arm64/boot/dts/',
-                                          'drivers/clk/samsung/', 'drivers/pinctrl/samsung/',
-                                          'drivers/pinctrl/qcom/', 'drivers/memory/',
-                                          'drivers/soc/samsung/', 'drivers/w1/'],
+    paths_to_build = ['arch/arm/',
+                      # make won't build DTBs but include it for completeness
+                      'arch/arm64/boot/dts/',
+                      'drivers/clk/samsung/', 'drivers/memory/',
+                      'drivers/pinctrl/samsung/', 'drivers/pinctrl/qcom/',
+                      'drivers/soc/samsung/', 'drivers/w1/']
+    st.append(steps.ShellCommand(command=[util.Interpolate(CMD_MAKE)] + paths_to_build,
                                  haltOnFailure=True, env=env, name='Build selected paths'))
     st.append(step_touch_commit_files())
-    st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'arch/arm/',
-                                     # make won't build DTBs but include it for completeness
-                                     'arch/arm64/boot/dts/',
-                                     'drivers/clk/samsung/', 'drivers/pinctrl/samsung/',
-                                     'drivers/pinctrl/qcom/', 'drivers/memory/',
-                                     'drivers/soc/samsung/', 'drivers/w1/'],
+    st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE)] + paths_to_build,
                             haltOnFailure=True,
                             warnOnWarnings=True,
                             suppressionList=BUILD_WARN_IGNORE,
