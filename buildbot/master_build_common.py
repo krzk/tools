@@ -406,30 +406,16 @@ def steps_build_mem_ctrl_adjust_config(env, kbuild_output, make_olddefconfig=Tru
         command=['scripts/config', '--file', util.Interpolate(kbuild_output + '.config'),
                  '-e', 'COMPILE_TEST', '-e', 'OF',
                  '-e', 'SRAM', '-e', 'MEMORY', '-e', 'PM_DEVFREQ',
-                 # drivers/memory/Kconfig
-                 '-e', 'ARM_PL172_MPMC',
-                 '-e', 'ATMEL_SDRAMC', '-e', 'ATMEL_EBI',
-                 '-e', 'BRCMSTB_DPFE', '-e', 'BRCMSTB_MEMC',
-                 '-e', 'BT1_L2_CTL',
-                 '-e', 'TI_AEMIF', '-e', 'TI_EMIF', '-e', 'OMAP_GPMC',
-                 '-e', 'TI_EMIF_SRAM',
-                 # FPGA_DFL_EMIF + dependencies:
-                 '-e', 'FPGA', '-e', 'FPGA_DFL', '-e', 'FPGA_DFL_EMIF',
-                 # drivers/memory/Kconfig
-                 '-e', 'MVEBU_DEVBUS', '-e', 'FSL_CORENET_CF',
-                 '-e', 'FSL_IFC', '-e', 'JZ4780_NEMC', '-e', 'MTK_SMI',
-                 '-e', 'DA8XX_DDRCTL', '-e', 'PL353_SMC', '-e', 'RENESAS_RPCIF',
-                 '-e', 'STM32_FMC2_EBI',
-                 # drivers/memory/samsung/Kconfig
-                 '-e', 'SAMSUNG_MC', '-e', 'EXYNOS5422_DMC',
-                 '-e', 'EXYNOS_SROM',
-                 # drivers/memory/tegra/Kconfig
-                 '-e', 'TEGRA_MC', '-e', 'TEGRA20_EMC',
-                 '-e', 'TEGRA30_EMC', '-e', 'TEGRA124_EMC', '-e', 'TEGRA210_EMC_TABLE',
-                 '-e', 'TEGRA210_EMC',
+                 # FPGA_DFL_EMIF dependencies:
+                 '-e', 'FPGA', '-e', 'FPGA_DFL',
                 ],
         haltOnFailure=True,
         env=env, name='Toggle memory controller compile test config'))
+    st.append(steps.ShellCommand(command=[util.Interpolate('%(prop:builddir:-~/)s/tools/buildbot/build-worker-add-config.sh'),
+                                              env['KBUILD_OUTPUT'], 'memory', 'memory'],
+                                 haltOnFailure=True,
+                                 env=env,
+                                 name='Add memory controller to config'))
     if make_olddefconfig:
         st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'olddefconfig'],
                                 haltOnFailure=True,
@@ -471,26 +457,15 @@ def steps_build_w1_adjust_config(env, kbuild_output, make_olddefconfig=True):
     st.append(steps.ShellCommand(
         command=['scripts/config', '--file', util.Interpolate(kbuild_output + '.config'),
                  '-e', 'COMPILE_TEST', '-e', 'OF',
-                 '-e', 'W1', '-e', 'CONNECTOR', '-e', 'W1_CON',
-                 # drivers/w1/masters/Kconfig
-                 '-e', 'W1_MASTER_MATROX',
-                 '-e', 'W1_MASTER_DS2490', '-e', 'W1_MASTER_DS2482',
-                 '-e', 'W1_MASTER_MXC', '-e', 'W1_MASTER_GPIO',
-                 '-e', 'HDQ_MASTER_OMAP', '-e', 'W1_MASTER_SGI',
-                 # drivers/w1/slaves/Kconfig
-                 '-e', 'W1_SLAVE_THERM', '-e', 'W1_SLAVE_SMEM',
-                 '-e', 'W1_SLAVE_DS2405', '-e', 'W1_SLAVE_DS2408',
-                 '-e', 'W1_SLAVE_DS2408_READBACK', '-e', 'W1_SLAVE_DS2413',
-                 '-e', 'W1_SLAVE_DS2406', '-e', 'W1_SLAVE_DS2423',
-                 '-e', 'W1_SLAVE_DS2805', '-e', 'W1_SLAVE_DS2430',
-                 '-e', 'W1_SLAVE_DS2431', '-e', 'W1_SLAVE_DS2433',
-                 '-e', 'W1_SLAVE_DS2433_CRC', '-e', 'W1_SLAVE_DS2438',
-                 '-e', 'W1_SLAVE_DS250X', '-e', 'W1_SLAVE_DS2780',
-                 '-e', 'W1_SLAVE_DS2781', '-e', 'W1_SLAVE_DS28E04',
-                 '-e', 'W1_SLAVE_DS28E17',
+                 '-e', 'W1', '-e', 'CONNECTOR', '-e', 'W1_CON'
                 ],
         haltOnFailure=True,
         env=env, name='Toggle w1 compile test config'))
+    st.append(steps.ShellCommand(command=[util.Interpolate('%(prop:builddir:-~/)s/tools/buildbot/build-worker-add-config.sh'),
+                                              env['KBUILD_OUTPUT'], 'w1', 'w1'],
+                                 haltOnFailure=True,
+                                 env=env,
+                                 name='Add w1 to config'))
     if make_olddefconfig:
         st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'olddefconfig'],
                                 haltOnFailure=True,
