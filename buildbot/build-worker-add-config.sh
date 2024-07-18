@@ -18,7 +18,7 @@ test $# -eq 3 || die "Wrong number of parameters"
 
 OUT_DIR="$1"
 WANT_SUBSYSTEM=""
-WANT_PLATFORMS=""
+WANT_PLATFORM=""
 
 case "$2" in
 	pinctrl)
