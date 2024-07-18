@@ -359,7 +359,7 @@ def steps_build_upload_artifacts(name, config, out_dir, buildbot_url):
                                           url=util.Interpolate(buildbot_url + 'pub/' + masterdest_dir_pub)))
     return st
 
-def steps_build_mem_ctrl_adjust_config(builder_name, env, kbuild_output, make_olddefconfig=True):
+def steps_build_mem_ctrl_adjust_config(env, kbuild_output, make_olddefconfig=True):
     st = []
     if not env['KBUILD_OUTPUT']:
         raise ValueError('Missing KBUILD_OUTPUT path in environment')
@@ -397,7 +397,7 @@ def steps_build_mem_ctrl_adjust_config(builder_name, env, kbuild_output, make_ol
                                 env=env, name='Make olddefconfig'))
     return st
 
-def steps_build_pinctrl_adjust_config(builder_name, env, kbuild_output, make_olddefconfig=True):
+def steps_build_pinctrl_adjust_config(env, kbuild_output, make_olddefconfig=True):
     st = []
     if not env['KBUILD_OUTPUT']:
         raise ValueError('Missing KBUILD_OUTPUT path in environment')
@@ -425,7 +425,7 @@ def steps_build_pinctrl_adjust_config(builder_name, env, kbuild_output, make_old
                                 env=env, name='Make olddefconfig'))
     return st
 
-def steps_build_w1_adjust_config(builder_name, env, kbuild_output, make_olddefconfig=True):
+def steps_build_w1_adjust_config(env, kbuild_output, make_olddefconfig=True):
     st = []
     if not env['KBUILD_OUTPUT']:
         raise ValueError('Missing KBUILD_OUTPUT path in environment')
@@ -458,11 +458,11 @@ def steps_build_w1_adjust_config(builder_name, env, kbuild_output, make_olddefco
                                 env=env, name='Make olddefconfig'))
     return st
 
-def steps_build_all_drivers_adjust_config(builder_name, env, kbuild_output):
+def steps_build_all_drivers_adjust_config(env, kbuild_output):
      st = []
-     st.extend(steps_build_mem_ctrl_adjust_config(builder_name, env, kbuild_output, make_olddefconfig=False))
-     st.extend(steps_build_pinctrl_adjust_config(builder_name, env, kbuild_output, make_olddefconfig=False))
-     st.extend(steps_build_w1_adjust_config(builder_name, env, kbuild_output, make_olddefconfig=True))
+     st.extend(steps_build_mem_ctrl_adjust_config(env, kbuild_output, make_olddefconfig=False))
+     st.extend(steps_build_pinctrl_adjust_config(env, kbuild_output, make_olddefconfig=False))
+     st.extend(steps_build_w1_adjust_config(env, kbuild_output, make_olddefconfig=True))
      return st
 
 def steps_build_selected_folders(builder_name, env):
