@@ -359,6 +359,45 @@ def steps_build_upload_artifacts(name, config, out_dir, buildbot_url):
                                           url=util.Interpolate(buildbot_url + 'pub/' + masterdest_dir_pub)))
     return st
 
+def steps_build_arm_var_multi_v4_v5_adjust_config(env, kbuild_output, make_olddefconfig=True):
+    st = []
+    if not env['KBUILD_OUTPUT']:
+        raise ValueError('Missing KBUILD_OUTPUT path in environment')
+    st.append(steps.ShellCommand(
+        command=['scripts/config', '--file', util.Interpolate(kbuild_output + '.config'),
+                 '-e', 'COMPILE_TEST', '-e', 'OF',
+                 '-e', 'ARCH_MULTI_V4', '-e', 'ARCH_MOXART',
+                 '-e', 'ARCH_MULTI_V4T', '-e', 'ARCH_NSPIRE',
+                 '-e', 'ARCH_MULTI_V5', '-e', 'MACH_ASM9260',
+                 '-e', 'ARCH_MULTI_V5', '-e', 'ARCH_WM8505',
+                ],
+        haltOnFailure=True,
+        env=env, name='Toggle arm v4 and v5 platforms compile test config'))
+    if make_olddefconfig:
+        st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'olddefconfig'],
+                                haltOnFailure=True,
+                                env=env, name='Make olddefconfig'))
+    return st
+
+def steps_build_arm_var_multi_v6_v7_adjust_config(env, kbuild_output, make_olddefconfig=True):
+    st = []
+    if not env['KBUILD_OUTPUT']:
+        raise ValueError('Missing KBUILD_OUTPUT path in environment')
+    st.append(steps.ShellCommand(
+        command=['scripts/config', '--file', util.Interpolate(kbuild_output + '.config'),
+                 '-e', 'COMPILE_TEST', '-e', 'OF',
+                 '-e', 'ARCH_MULTI_V7', '-e', 'ARM_LPAE', '-e', 'ARCH_AXXIA',
+                 '-e', 'ARCH_MULTI_V6', '-e', 'ARCH_WM8750',
+                 '-e', 'ARCH_MULTI_V7', '-e', 'ARCH_WM8850',
+                ],
+        haltOnFailure=True,
+        env=env, name='Toggle arm v6 and v7 platforms compile test config'))
+    if make_olddefconfig:
+        st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'olddefconfig'],
+                                haltOnFailure=True,
+                                env=env, name='Make olddefconfig'))
+    return st
+
 def steps_build_mem_ctrl_adjust_config(env, kbuild_output, make_olddefconfig=True):
     st = []
     if not env['KBUILD_OUTPUT']:
@@ -460,6 +499,7 @@ def steps_build_w1_adjust_config(env, kbuild_output, make_olddefconfig=True):
 
 def steps_build_all_drivers_adjust_config(env, kbuild_output):
      st = []
+     st.extend(steps_build_arm_var_multi_v6_v7_adjust_config(env, kbuild_output, make_olddefconfig=False))
      st.extend(steps_build_mem_ctrl_adjust_config(env, kbuild_output, make_olddefconfig=False))
      st.extend(steps_build_pinctrl_adjust_config(env, kbuild_output, make_olddefconfig=False))
      st.extend(steps_build_w1_adjust_config(env, kbuild_output, make_olddefconfig=True))
