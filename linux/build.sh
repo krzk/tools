@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0
 #
 # Copyright (c) 2023-2024 Krzysztof Kozlowski
-# Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+# Author: Krzysztof Kozlowski <krzk@kernel.org>
 #
 # Script for building kernel images for several platforms.
 #
