@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# Copyright (c) 2024 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <krzk@kernel.org>
+#
+# SPDX-License-Identifier: GPL-2.0
+#
+# Installation:
+# 1. Copy to .git/hooks/post-merge
+#
+
+TOOLS_DIR="$HOME/dev/tools/linux/"
+
+${TOOLS_DIR}verify_b4.sh >&2
+
+exit 0
