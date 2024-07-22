@@ -61,7 +61,7 @@ test_s5p_mfc() {
 
 	for v4l_dev in $v4l_devices; do
 		local codec_name="$(cat /sys/bus/platform/drivers/s5p-mfc/${device}/video4linux/${v4l_dev}/name)"
-		print_msg "Found codec $codec_name on $/dev/${v4l_dev}"
+		print_msg "Found codec $codec_name on /dev/${v4l_dev}"
 
 		v4l2-ctl --info --device "/dev/${v4l_dev}"
 		test_s5p_mfc_v4l2_compliance "${v4l_dev}"
