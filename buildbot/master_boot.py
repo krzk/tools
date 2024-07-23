@@ -497,7 +497,7 @@ def step_test_dmesg_errors(target, config):
         step
     """
     # TODO: report as warnings?
-    return step_ssh('Test: dmesg errors', target, ['dmesg', '-l', 'err'])
+    return step_ssh('Test: dmesg errors', target, ['dmesg', '-l', 'err+'])
 
 def step_test_dmesg_warnings(target, config):
     """ Return step for getting dmesg warnings on the target via SSH
