@@ -284,10 +284,12 @@ fi
 
 speakers_on
 aplay -D plughw:0,1 /usr/share/sounds/alsa/Front_Center.wav
+aplay -D plughw:0,1 /opt/stereo.wav
 speakers_off
 
 headset_on
 aplay -D plughw:0,0 /usr/share/sounds/alsa/Front_Center.wav
+aplay -D plughw:0,0 /opt/stereo.wav
 headset_off
 
 # Record:
