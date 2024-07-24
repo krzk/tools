@@ -292,23 +292,21 @@ amic5_record_off() {
 }
 
 # Pre HDMI - no hdmi-playback-dai-link
-HEADSET=0
-SPEAKER=1
-MIC=2
-if ! [ -c /dev/snd/pcmC0D${HEADSET}p ]; then
-	echo "Missing /dev/snd/pcmC0D${HEADSET}p"
+# headset=0, speaker=1, mic=2
+if ! [ -c /dev/snd/pcmC0D0p ]; then
+	echo "Missing /dev/snd/pcmC0D0p"
 	exit 1
 fi
 
 speakers_on
-aplay -D plughw:0,${SPEAKER} /usr/share/sounds/alsa/Front_Center.wav
-aplay -D plughw:0,${SPEAKER} /home/linaro/stereo.wav
+aplay -D plughw:0,1 /usr/share/sounds/alsa/Front_Center.wav
+aplay -D plughw:0,1 /home/linaro/stereo.wav
 speakers_off
 
 # Headset:
 headset_on
-aplay -D plughw:0,${HEADSET} /usr/share/sounds/alsa/Front_Center.wav
-aplay -D plughw:0,${HEADSET} /home/linaro/stereo.wav
+aplay -D plughw:0,0 /usr/share/sounds/alsa/Front_Center.wav
+aplay -D plughw:0,0 /home/linaro/stereo.wav
 headset_off
 
 # HDMI
@@ -318,48 +316,48 @@ headset_off
 # Record:
 amic1_record_on
 echo "Recording for 5 seconds - AMIC1"
-arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+arecord -D plughw:0,2 -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
 amic1_record_off
 speakers_on
-aplay -D plughw:0,${SPEAKER} out_h.wav
+aplay -D plughw:0,1 out_h.wav
 speakers_off
 
 headset_record_on
 echo "Recording for 5 seconds - AMIC2/headphones"
-arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+arecord -D plughw:0,2 -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
 headset_record_off
 speakers_on
-aplay -D plughw:0,${SPEAKER} out_h.wav
+aplay -D plughw:0,1 out_h.wav
 speakers_off
 
 amic3_record_on
 echo "Recording for 5 seconds - AMIC3"
-arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+arecord -D plughw:0,2 -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
 amic3_record_off
 speakers_on
-aplay -D plughw:0,${SPEAKER} out_h.wav
+aplay -D plughw:0,1 out_h.wav
 speakers_off
 
 amic4_record_on
 echo "Recording for 5 seconds - AMIC4"
-arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+arecord -D plughw:0,2 -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
 amic4_record_off
 speakers_on
-aplay -D plughw:0,${SPEAKER} out_h.wav
+aplay -D plughw:0,1 out_h.wav
 speakers_off
 
 amic5_record_on
 echo "Recording for 5 seconds - AMIC5"
-arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+arecord -D plughw:0,2 -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
 amic5_record_off
 speakers_on
-aplay -D plughw:0,${SPEAKER} out_h.wav
+aplay -D plughw:0,1 out_h.wav
 speakers_off
 
 #echo "Recording for 5 seconds - DMIC"
 #dmic0_record_on
-#arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_d.wav
+#arecord -D plughw:0,2 -f S16_LE -c 1 -r 48000 -d 5 out_d.wav
 #dmic0_record_off
 #speakers_on
-#aplay -D plughw:0,${SPEAKER} out_d.wav
+#aplay -D plughw:0,1 out_d.wav
 #speakers_off

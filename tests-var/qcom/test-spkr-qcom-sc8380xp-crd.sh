@@ -283,57 +283,52 @@ dp1_off() {
 	amixer -c 0 cset name='DISPLAY_PORT_RX_1 Audio Mixer MultiMedia1' 0
 }
 
-
-HEADSET=0
-DP=$HEADSET
-SPEAKER=1
-MIC=2
-DMIC=3
-if ! [ -c /dev/snd/pcmC0D${HEADSET}p ]; then
-	echo "Missing /dev/snd/pcmC0D${HEADSET}p"
+# headset=0, dp=0, speaker=1, mic=2, dmic=3
+if ! [ -c /dev/snd/pcmC0D0p ]; then
+	echo "Missing /dev/snd/pcmC0D0p"
 	exit 1
 fi
 
 speakers_on
-#aplay -D plughw:0,$SPEAKER /usr/share/sounds/alsa/Front_Center.wav
-#aplay -D plughw:0,$SPEAKER ~/stereo.wav
-#aplay -D plughw:0,$SPEAKER ~/4channels.wav
-aplay -D plughw:0,$SPEAKER ~/4-side-channels.wav
+#aplay -D plughw:0,1 /usr/share/sounds/alsa/Front_Center.wav
+#aplay -D plughw:0,1 ~/stereo.wav
+#aplay -D plughw:0,1 ~/4channels.wav
+aplay -D plughw:0,1 ~/4-side-channels.wav
 speakers_off
 
 headset_on
-aplay -D plughw:0,$HEADSET ~/stereo.wav
+aplay -D plughw:0,0 ~/stereo.wav
 headset_off
 
 # Record:
 headset_record_on
 echo "Recording for 5 seconds - AMIC2/headphones"
-arecord -D plughw:0,${MIC} -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+arecord -D plughw:0,2 -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
 headset_record_off
 speakers_on
-aplay -D plughw:0,${SPEAKER} out_h.wav
+aplay -D plughw:0,1 out_h.wav
 speakers_off
 
 dmic01_va_record_on
 echo "Recording for 5 seconds - DMIC01"
-arecord -D plughw:0,${DMIC} -f S16_LE -c 2 -r 48000 -d 5 out_h.wav
+arecord -D plughw:0,3 -f S16_LE -c 2 -r 48000 -d 5 out_h.wav
 dmic01_va_record_off
 speakers_on
-aplay -D plughw:0,${SPEAKER} out_h.wav
+aplay -D plughw:0,1 out_h.wav
 speakers_off
 
 dmic23_va_record_on
 echo "Recording for 5 seconds - DMIC23"
-arecord -D plughw:0,${DMIC} -f S16_LE -c 2 -r 48000 -d 5 out_h.wav
+arecord -D plughw:0,3 -f S16_LE -c 2 -r 48000 -d 5 out_h.wav
 dmic23_va_record_off
 speakers_on
-aplay -D plughw:0,${SPEAKER} out_h.wav
+aplay -D plughw:0,1 out_h.wav
 speakers_off
 
 dmic0123_va_record_on
 echo "Recording for 5 seconds - DMIC0123"
-arecord -D plughw:0,${DMIC} -f S16_LE -c 4 -r 48000 -d 5 out_h.wav
+arecord -D plughw:0,3 -f S16_LE -c 4 -r 48000 -d 5 out_h.wav
 dmic0123_va_record_off
 speakers_on
-aplay -D plughw:0,${SPEAKER} out_h.wav
+aplay -D plughw:0,1 out_h.wav
 speakers_off
