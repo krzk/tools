@@ -340,7 +340,9 @@ def pexpect_boot_to_prompt(target, config):
     print('Target """ + target + """ reached: Intermediate system boot targets')
     # Getting to local file systems can take a lot
     child.expect_exact(['Reached target Local File Systems',
-                        'Reached target """ + systemd_color('Local File Systems') + """'],
+                        'Reached target """ + systemd_color('Local File Systems') + """',
+                        'Reached target System Initialization',
+                        'Reached target """ + systemd_color('System Initialization') + """'],
                        timeout=90)
 
     print('Target """ + target + """ reached: Mounted local file systems')
