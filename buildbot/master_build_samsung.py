@@ -10,7 +10,7 @@
 
 from buildbot.plugins import steps, util
 
-from master_build_common import is_set_arm_boot_dts_vendor_subdirs, steps_prepare_upload_master, \
+from master_build_common import steps_prepare_upload_master, \
                                 step_upload_files_to_master
 
 CMD_MAKE = '%(prop:builddir:-~/)s/tools/buildbot/build-slave.sh'
