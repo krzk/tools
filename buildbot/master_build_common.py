@@ -95,6 +95,15 @@ DTBS_CHECK_KNOWN_WARNINGS = {
     },
 }
 
+DT_BINDING_CHECK_KNOWN_WARNINGS = [
+    ('.*snps,dwmac.yaml$', 'mac-mode: missing type definition', None, None),
+    ('.*adi,ad7173.yaml$', 'oneOf: Missing additionalProperties/unevaluatedProperties constraint', None, None),
+    ('.*xlnx,zynqmp-r5fss.yaml$', 'Missing additionalProperties/unevaluatedProperties constraint', None, None),
+    ('.*st,stm32-romem.yaml$', 'Missing additionalProperties/unevaluatedProperties constraint', None, None),
+    ('.*hi3798cv200-perictrl.example.dtb$', re.escape("/example-0/peripheral-controller@8a20000/phy@850: failed to match any schema with compatible: ['hisilicon,hi3798cv200-combphy']"), None, None),
+    ('.*brcm,avs-ro-thermal.example.dtb$', re.escape("/example-0/avs-monitor@7d5d2000: failed to match any schema with compatible: ['brcm,bcm2711-avs-monitor', 'syscon', 'simple-mfd']"), None, None),
+]
+
 DTBS_CHECK_BOARDS = {
     'arm64': {
         'qcom': [
@@ -125,6 +134,7 @@ DTBS_CHECK_BOARDS = {
 }
 
 DTBS_CHECK_WARNING_PATTERN = "^(.*?\.dtb): (.*)$"
+DT_BINDING_CHECK_WARNING_PATTERN = "^(.*?\.yaml|.*?\.example\.dtb): (.*)$"
 
 def warnExtractFromRegexpGroups(self, line, match):
     """
@@ -512,6 +522,9 @@ def steps_dt_binding_check(env, kbuild_output):
     st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'dt_binding_check'],
                             haltOnFailure=True,
                             warnOnWarnings=True,
+                            suppressionList=DT_BINDING_CHECK_KNOWN_WARNINGS,
+                            warningPattern=DT_BINDING_CHECK_WARNING_PATTERN,
+                            warningExtractor=warnExtractFromRegexpGroups,
                             env=env, name='make dt_binding_check'))
     return st
 
