@@ -254,8 +254,9 @@ def step_make_config(env, config=None):
 
 def step_touch_commit_files():
     cmd = '''
-    DIFF_CMD="git diff-tree --diff-filter=ACM --no-commit-id --name-only -r"
-    if git rev-parse HEAD^2 ; then
+    DIFF_CMD="git diff-tree --diff-filter=ACMRT --no-commit-id --name-only -r"
+    git rev-parse HEAD^2 > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
         # It's a merge
         if [ "$(git rev-parse HEAD^2)" = "$(git rev-parse origin/master)" ]; then
             # Merge with master, so get only one parent
