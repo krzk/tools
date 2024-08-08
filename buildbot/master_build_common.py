@@ -14,6 +14,7 @@ from buildbot.plugins import steps, util
 from buildbot import process
 import twisted
 import re
+import shlex
 
 BUILD_WARN_IGNORE = [
     (None, '.*warning: #warning syscall .* not implemented.*', None, None),
@@ -192,8 +193,56 @@ def step_set_prop_if_file_exists(name, prop, files):
                                         haltOnFailure=True,
                                         name=name)
 
+def step_set_prop_if_changed_path(name, prop, path):
+    """ Return step for setting a property if commit changes given path and under.
+    The path will be used as value of property. Otherwise (if commit does not change path)
+    it sets empty property. Does not fail the test.
+
+    Arguments:
+        name - name for the step
+        prop - name of property to set
+        path - path to look for changes under, must be shell friendly
+    Returns:
+        step
+    """
+    cmd = '''
+    DIFF_CMD="git diff-tree --diff-filter=ACDMRT --no-commit-id --name-only -r"
+    git rev-parse HEAD^2 > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        # It's a merge
+        if [ "$(git rev-parse HEAD^2)" = "$(git rev-parse origin/master)" ]; then
+            # Merge with master, so get only one parent
+            FILES="`$DIFF_CMD HEAD^2..HEAD`"
+        elif [ "$(git rev-parse HEAD^1)" = "$(git rev-parse origin/master)" ]; then
+            # Merge with master, so get only one parent
+            FILES="`$DIFF_CMD HEAD^1..HEAD`"
+        else
+            # Merge between my branches, touch files changed by both parents
+            FILES="`$DIFF_CMD HEAD^1..HEAD` `$DIFF_CMD HEAD^2..HEAD`"
+        fi
+    else
+        FILES="`$DIFF_CMD HEAD`"
+    fi
+    for file in ${FILES}; do
+        if [ "$file" != "${file#''' + shlex.quote(path) + '''}" ]; then
+            echo $file
+            exit 0
+        fi
+    done
+    exit 0
+    '''
+    return steps.SetPropertyFromCommand(command=util.Interpolate(cmd),
+                                        property=prop,
+                                        haltOnFailure=True,
+                                        name=name)
+
 def is_set_arm_boot_dts_vendor_subdirs(step):
     if step.getProperty('arm_boot_dts_vendor_subdirs') and (len(str(step.getProperty('arm_boot_dts_vendor_subdirs'))) > 0):
+        return True
+    return False
+
+def is_set_dt_bindings_changed(step):
+    if step.getProperty('dt_bindings_changed') and (len(str(step.getProperty('dt_bindings_changed'))) > 0):
         return True
     return False
 
@@ -519,12 +568,17 @@ def steps_build_selected_folders(builder_name, env):
 def steps_dt_binding_check(env, kbuild_output):
     st = []
     st += steps_build_common(env, kbuild_output)
+    st.append(step_set_prop_if_changed_path('Set property: changed bindings',
+                                            'dt_bindings_changed',
+                                            # Don't care about headers - no impact on schema bindings expected
+                                            'Documentation/devicetree/bindings/'))
     st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'dt_binding_check'],
                             haltOnFailure=True,
                             warnOnWarnings=True,
                             suppressionList=DT_BINDING_CHECK_KNOWN_WARNINGS,
                             warningPattern=DT_BINDING_CHECK_WARNING_PATTERN,
                             warningExtractor=warnExtractFromRegexpGroups,
+                            doStepIf=is_set_dt_bindings_changed,
                             env=env, name='make dt_binding_check'))
     return st
 
