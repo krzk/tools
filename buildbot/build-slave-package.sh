@@ -28,7 +28,7 @@ rm -fr "${OUT_DIR}modules-out" "${OUT_DIR}dtb-out"
 find "${OUT_DIR}modules-out/lib/modules/" -type l -delete
 # Tar the modules and dtbs (download cannot transfer entire directories)
 tar -cf - -C "${OUT_DIR}modules-out" lib/modules | xz --threads=0 > "${OUT_DIR}modules-out.tar.xz"
-find "${OUT_DIR}dtb-out" -name "*.dtb" -printf "%f\n" | \
+find "${OUT_DIR}dtb-out" -name "*exynos*.dtb" -printf "%f\n" | \
 	tar -cf - -C "${OUT_DIR}dtb-out" --verbatim-files-from --files-from - | \
 	xz --threads=0 > "${OUT_DIR}dtb-out.tar.xz"
 
