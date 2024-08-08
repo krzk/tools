@@ -45,7 +45,7 @@ def steps_build_upload_artifacts_binaries(name, config, out_dir):
                                           errors_fatal=True))
     return st
 
-def steps_build_boot_adjust_config(builder_name, env, kbuild_output, slaves, config):
+def steps_build_boot_adjust_config(builder_name, env, kbuild_output, config):
     st = []
     if not config:
         raise ValueError('Missing config for booting')
