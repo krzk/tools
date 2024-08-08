@@ -506,6 +506,15 @@ def steps_build_selected_folders(builder_name, env):
                             env=env, name='Rebuild selected paths'))
     return st
 
+def steps_dt_binding_check(env, kbuild_output):
+    st = []
+    st += steps_build_common(env, kbuild_output)
+    st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'dt_binding_check'],
+                            haltOnFailure=True,
+                            warnOnWarnings=True,
+                            env=env, name='make dt_binding_check'))
+    return st
+
 def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, only_changed_files=True, next_or_mainline=False):
     st = []
     if git_reset:
