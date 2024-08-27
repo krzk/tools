@@ -101,7 +101,7 @@ git_send_email() {
 	test -n "$files" || return 1
 
 	# Do not use --to-cmd because it collects addresses per each email.
-	# Instead need to collect addressesonce and use them for entire set.
+	# Instead need to collect addresses once and use them for entire set.
 	if [ "$cc" == "" ]; then
 		git send-email --to="$(scripts/get_maintainer.pl --no-multiline --separator=, --no-git --no-roles --no-rolestats --no-git-fallback $files)" \
 			--cc linux-kernel@vger.kernel.org $files
