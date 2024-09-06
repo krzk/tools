@@ -10,6 +10,8 @@
 
 from buildbot.plugins import steps, util
 
+import re
+
 TARGET_SERIAL_DEV = {
     'arndaleocta': 'by-path/platform-3f980000.usb-usb-0:1.1.3:1.0-port0',
     'odroidhc1': 'by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D4562A-if00-port0',
@@ -359,8 +361,9 @@ def pexpect_boot_to_prompt(target, config):
         child.expect_exact(expect, timeout=180)
 
     print('Target """ + target + """ reached: Reached login interface')
-    child.expect('Arch Linux [0-9a-z.-]+ \\(""" + TARGET_CONFIG[target]['serial'] + """\\)')
-    child.expect_exact('""" + target + """ login:')
+    expect = ['Arch Linux [0-9a-z.-]+ \\\\(""" + re.escape(TARGET_CONFIG[target]['serial']) + """\\\\)',
+              '""" + re.escape(target) + """ login:']
+    child.expect(expect)
     """
     return pexpect_cmd
 
