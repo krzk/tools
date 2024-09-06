@@ -296,7 +296,7 @@ visense_testing_on() {
 	amixer -c 0 cset name='SpkrRight BOOST Switch' 1
 	amixer -c 0 cset name='SpkrRight DAC Switch' 1
 	amixer -c 0 cset name='WSA_RX0 Digital Volume' 85
-	amixer -c 0 cset name='WSA_RX1 Digital Volume' 55
+	amixer -c 0 cset name='WSA_RX1 Digital Volume' 85
 
 	amixer -c 0 cset name='WSA_AIF_VI Mixer WSA_SPKR_VI_1' 1
 	amixer -c 0 cset name='WSA_AIF_VI Mixer WSA_SPKR_VI_2' 1
@@ -328,7 +328,7 @@ visense_cps_testing_on() {
 	amixer -c 0 cset name='SpkrRight BOOST Switch' 1
 	amixer -c 0 cset name='SpkrRight DAC Switch' 1
 	amixer -c 0 cset name='WSA_RX0 Digital Volume' 85
-	amixer -c 0 cset name='WSA_RX1 Digital Volume' 55
+	amixer -c 0 cset name='WSA_RX1 Digital Volume' 85
 
 	amixer -c 0 cset name='WSA_AIF_VI Mixer WSA_SPKR_VI_1' 1
 	amixer -c 0 cset name='WSA_AIF_VI Mixer WSA_SPKR_VI_2' 1
