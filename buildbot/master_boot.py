@@ -359,7 +359,7 @@ def pexpect_boot_to_prompt(target, config):
         child.expect_exact(expect, timeout=180)
 
     print('Target """ + target + """ reached: Reached login interface')
-    child.expect('Arch Linux [0-9a-z\.-]+ \\(""" + TARGET_CONFIG[target]['serial'] + """\\)')
+    child.expect('Arch Linux [0-9a-z.-]+ \\(""" + TARGET_CONFIG[target]['serial'] + """\\)')
     child.expect_exact('""" + target + """ login:')
     """
     return pexpect_cmd
