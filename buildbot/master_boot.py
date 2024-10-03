@@ -212,15 +212,20 @@ def pexpect_gracefull_shutdown(target, config, halt_on_failure=True, reboot=Fals
             systemd_log('Stopped', 'Login Service') + \
             systemd_log('Stopped', 'Network Time Synchronization') + \
             systemd_log('Unmounted', '/home') + \
+            systemd_log('Unmounted', '/mnt/sd-home') + \
+            systemd_log('Stopped target', 'Swaps') + \
             systemd_log('Stopped target', 'Swap') + """])
         child.expect_exact([""" + \
             systemd_log('Reached target', 'Shutdown') + \
+            systemd_log('Finished', 'System Reboot') + \
+            systemd_log('Reached target', 'System Reboot') + \
             systemd_log('Reached target', 'Unmount All Filesystems') + \
             systemd_log('Reached target', 'Final Step') + """])
         child.expect_exact(['Unmounting \\'/oldroot/sys/kernel/config\\'.',
                             'Remounting \\'/oldroot/sys/fs/cgroup/systemd\\' read-only',
                             'shutdown[1]: All filesystems unmounted.',
-                            'shutdown[1]: All loop devices detached.'])
+                            'shutdown[1]: All loop devices detached.',
+                            'shutdown[1]: Rebooting.'])
         print('Target reached last shutdown log')
         # Wait for final shutdown (it might be 1 second after some of these logs)
         time.sleep(3)
