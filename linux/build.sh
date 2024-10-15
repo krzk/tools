@@ -29,7 +29,7 @@ usage() {
 	echo " -M <options>     - Enable as modules these config options (comma"
 	echo "                    separated list of options without the CONFIG_ prefix)"
 	echo " -S <set>         - Run a specific config set."
-	echo "                    Valid sets: crypto, tests, buildbot, qcom, qemutest, nfc"
+	echo "                    Valid sets: crypto, tests, buildbot, qcom, qemutest, nfc, t14s"
 	echo
 	echo " Build options:"
 	echo " -A <arch>        - Build for architecture, one of:"
@@ -970,6 +970,31 @@ config_qemutest() {
 	#config_item_module BT_HCIBLUECARD BT_MRVL BT_ATH3K
 }
 
+# Lenovo T14s
+config_t14s() {
+	# Disable other arm64 archs to speed up
+	config_item_off ARCH_ACTIONS ARCH_AIROHA ARCH_SUNXI ARCH_ALPINE ARCH_APPLE ARCH_BCM
+	config_item_off ARCH_BERLIN ARCH_EXYNOS ARCH_SPARX5 ARCH_K3 ARCH_LG1K ARCH_HISI ARCH_KEEMBAY
+	config_item_off ARCH_MEDIATEK ARCH_MESON ARCH_MVEBU ARCH_NXP ARCH_LAYERSCAPE ARCH_MXC
+	config_item_off ARCH_S32 ARCH_MA35 ARCH_NPCM ARCH_REALTEK ARCH_RENESAS ARCH_ROCKCHIP
+	config_item_off ARCH_SEATTLE ARCH_INTEL_SOCFPGA ARCH_STM32 ARCH_SYNQUACER ARCH_TEGRA ARCH_TESLA_FSD
+	config_item_off ARCH_SPRD ARCH_THUNDER ARCH_THUNDER2
+	config_item_off ARCH_UNIPHIER ARCH_VEXPRESS ARCH_VISCONTI ARCH_XGENE ARCH_ZYNQMP
+
+	# USB net
+	config_item_on USB_USBNET USB_NET_AX8817X USB_LAN78XX USB_CONFIGFS USB_FUNCTIONFS
+
+	# Bluetooth
+	config_item_module RFKILL BT BT_HCIBTUSB BT_HCIUART BT_QCOMSMD MFD_QCOM_QCA639X
+
+	# Other hardware on x1e
+	config_item_on I2C_HID_OF_GOODIX TYPEC_MUX_PS8830 PHY_NXP_PTN3222 UHID
+
+	# Useful options for Qualcomm boards used in different contexts, e.g. RB5 as cdba server
+	config_item_on USB_SUPPORT USB_ACM USB_SERIAL USB_SERIAL_CP210X USB_SERIAL_FTDI_SIO USB_SERIAL_OPTION
+	config_item_on TYPEC_TCPM TYPEC_TCPCI
+}
+
 build_tests() {
 	config_tests
 
@@ -1008,6 +1033,12 @@ build_qcom() {
 	build_kernel $DTS_NAME
 }
 
+build_t14s() {
+	config_t14s
+
+	build_kernel $DTS_NAME
+}
+
 # Start of execution (entry point):
 if [ "$(have_ccache)" == "0" ]; then
 	export CROSS_COMPILE="ccache $CROSS_COMPILE"
@@ -1026,6 +1057,9 @@ if [ "$TEST_CONFIG" != "" ]; then
 		;;
 	qcom)
 		build_qcom
+		;;
+	t14s)
+		build_t14s
 		;;
 	tests)
 		build_tests
