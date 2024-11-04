@@ -33,7 +33,8 @@ b4_am_patch() {
 # Apply series
 b4_am_series() {
 	local msg_id="$1"
-	local am_options="$2"
+	shift
+	local am_options="$*"
 
 	test -n "$msg_id" || return 1
 
