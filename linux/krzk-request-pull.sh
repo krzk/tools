@@ -31,7 +31,7 @@ REMOTE_URL="$(git remote get-url ${REMOTE})"
 CC_KRZK="Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>"
 
 if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
-	TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
+	TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, soc@lists.linux.dev"
 	CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org"
 	CC="Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, $CC, $CC_KRZK"
 	if [[ $TAG == *"-clk-"* ]]; then
@@ -60,20 +60,20 @@ elif [[ $REMOTE_URL == *"/krzk/linux-dt.git"* ]]; then
 		CC="devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, $CC_KRZK"
 		SUBJECT="dt-bindings:"
 	elif [[ $TAG == *"dt-"* ]]; then
-		TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
+		TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, soc@lists.linux.dev"
 		CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, $CC_KRZK"
 		SUBJECT="ARM: dts: "
 	elif [[ $TAG == *"dt64-"* ]]; then
-		TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
+		TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, soc@lists.linux.dev"
 		CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, $CC_KRZK"
 		SUBJECT="arm64: dts: "
 	else
-		TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
+		TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, soc@lists.linux.dev"
 		CC="linux-kernel@vger.kernel.org, $CC_KRZK"
 		SUBJECT="drivers:"
 	fi
 elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
-	TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, soc@kernel.org"
+	TO="Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, soc@lists.linux.dev"
 	CC="linux-kernel@vger.kernel.org, $CC_KRZK"
 	if [[ $TAG == *"-fixes-"* ]]; then
 		SUBJECT="memory: fixes:"
