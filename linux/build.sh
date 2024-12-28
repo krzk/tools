@@ -111,6 +111,7 @@ which du > /dev/null || die "Missing du"
 which fakeroot > /dev/null || die "Missing fakeroot"
 which git > /dev/null || die "Missing git"
 which lz4 > /dev/null || die "Missing lz4"
+which lzma > /dev/null || die "Missing lzma"
 which make > /dev/null || die "Missing make"
 which mkbootimg > /dev/null || die "Missing mkbootimg"
 which mktemp > /dev/null || die "Missing mktemp"
@@ -489,9 +490,15 @@ make_ramdisk() {
 
 		(
 			local modules_src_path="${workdir}/${KBUILD_OUTPUT}${MODULES_INSTALL_PATH}/lib/modules"
+			local lztool
 
 			cd "$RAMDISK_TMP" || die "No ramdisk tmp"
-			lz4 -d -c "${RAMDISK_SRC}" | fakeroot cpio -idm --quiet || die "Unpack source ramdisk error"
+			if [ "${RAMDISK_SRC##*.}" == "lz4" ]; then
+				lztool="lz4"
+			else
+				lztool="lzma"
+			fi
+			$lztool -d -c "${RAMDISK_SRC}" | fakeroot cpio -idm --quiet || die "Unpack source ramdisk error"
 			echo "Installing modules to ramdisk ($(du -sh ${modules_src_path} | awk '{print $1}'))"
 			cp -r ${modules_src_path} ./lib/ || die "cp modules error"
 			echo "Packing ramdisk ($(du -sh . | awk '{print $1}'))"
