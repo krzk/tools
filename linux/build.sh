@@ -897,6 +897,13 @@ config_qcom() {
 	config_item_on DRM DRM_MSM DRM_DISPLAY_CONNECTOR
 	config_item_on DRM_LONTIUM_LT9611 DRM_LONTIUM_LT9611UXC
 
+	# Display on HDK8450
+	config_item_on SM_DISPCC_8450
+	config_item_on DRM_PANEL_NOVATEK_NT36672A
+
+	# Display on MTP8750
+	config_item_on SM_DISPCC_8750
+
 	# Remoteproc
 	config_item_on QCOM_Q6V5_PAS
 
@@ -911,7 +918,7 @@ config_qcom() {
 	config_item_on SND_SOC_LPASS_WSA_MACRO SND_SOC_LPASS_VA_MACRO SND_SOC_LPASS_RX_MACRO SND_SOC_LPASS_TX_MACRO
 	config_item_on PINCTRL_LPASS_LPI PINCTRL_SM8450_LPASS_LPI PINCTRL_SM8350_LPASS_LPI PINCTRL_SM8250_LPASS_LPI PINCTRL_SM8550_LPASS_LPI
 	config_item_on PINCTRL_SM8650_LPASS_LPI
-	config_item_on SM_DISPCC_8450 QCOM_RMTFS_MEM
+	config_item_on QCOM_RMTFS_MEM
 
 	# Audio maybe not upstreamed (need to double check later)
 	config_item_on SC_LPASSCSR_8280XP
