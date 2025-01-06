@@ -68,6 +68,8 @@ DTBS_CHECK_KNOWN_WARNINGS = {
             'defconfig': [
                 # Pending on mailing lists (probably v6.11-rc1)
                 ('.*gs101-oriole.dtb$', re.escape("/soc@0/phy@11100000: failed to match any schema with compatible: ['google,gs101-usb31drd-phy']"), None, None),
+                # Pending on mailing lists, probably v6.14-rc1 - https://lore.kernel.org/all/20241206-gs101-phy-lanes-orientation-phy-v4-2-f5961268b149@linaro.org/
+                ('.*gs101-oriole.dtb$', re.escape("phy@11100000: 'orientation-switch' does not match any of the regexes: 'pinctrl-[0-9]+'"), None, None),
             ],
         },
     },
