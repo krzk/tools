@@ -67,7 +67,7 @@ DTBS_CHECK_KNOWN_WARNINGS = {
         'arm64': {
             'defconfig': [
                 # Pending on mailing lists (probably v6.11-rc1)
-                ('.*gs101-oriole.dtb$', "/soc@0/phy@11100000: failed to match any schema with compatible: ['google,gs101-usb31drd-phy']", None, None),
+                ('.*gs101-oriole.dtb$', re.escape("/soc@0/phy@11100000: failed to match any schema with compatible: ['google,gs101-usb31drd-phy']"), None, None),
             ],
         },
     },
