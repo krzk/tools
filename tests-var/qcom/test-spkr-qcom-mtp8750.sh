@@ -127,6 +127,7 @@ dmic_va_record_off() {
 	amixer -c 0 cset name='VA DMIC MUX0' ZERO
 }
 
+# Does not work - missing DTS for USB switch ports?
 headset_record_on() {
 	amixer -c 0 cset name='TX DEC0 MUX' SWR_MIC
 	# Should go to ADC2 on WCD93xx (SWR_INPUT1)
@@ -171,6 +172,14 @@ speakers_off
 headset_on
 aplay -D plughw:0,0 /usr/share/sounds/alsa/Front_Center.wav
 headset_off
+
+headset_record_on
+echo "Recording for 5 seconds - AMIC2/headphones"
+arecord -D plughw:0,2 -f S16_LE -c 1 -r 48000 -d 5 out_h.wav
+headset_record_off
+speakers_on
+aplay -D plughw:0,1 out_h.wav
+speakers_off
 
 dmic0_va_record_on
 echo "Recording for 5 seconds - DMIC0"
