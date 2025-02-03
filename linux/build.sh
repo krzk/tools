@@ -896,6 +896,7 @@ config_qcom() {
 	# Display
 	config_item_on DRM DRM_MSM DRM_DISPLAY_CONNECTOR
 	config_item_on DRM_LONTIUM_LT9611 DRM_LONTIUM_LT9611UXC
+	config_item_on EXPERT DRM_MSM_VALIDATE_XML
 
 	# Display on HDK8450
 	config_item_on SM_DISPCC_8450
