@@ -9,6 +9,9 @@
 
 from buildbot.plugins import steps, util
 
+from master_build_common import steps_prepare_upload_master, \
+                                step_upload_files_to_master
+
 import shlex
 
 # from master_build_common import steps_prepare_upload_master, \
@@ -49,7 +52,28 @@ def steps_yocto_prepare_downloads():
                                  haltOnFailure=True))
     return st
 
-def steps_yocto_builder(machine, image):
+def steps_yocto_upload_image(builder_name, machine, image):
+    st = []
+    image_file_name = f'{image}-{machine}.cpio.xz'
+    masterdest_dir_bin = f'deploy-bin/{builder_name}/%(prop:got_revision)s/'
+    st.extend(steps_prepare_upload_master('Prepare upload directory: binaries', masterdest_dir_bin))
+
+    upload_files_bin = [f'build/tmp/deploy/images/{machine}/{image_file_name}']
+    st.append(step_upload_files_to_master('Upload image',
+                                          upload_files_bin, masterdest_dir_bin,
+                                          errors_fatal=True))
+
+    # Relative to deploy-bin:
+    masterdest_file = f'{builder_name}/%(prop:got_revision)s/{image_file_name}'
+
+    st.append(steps.MasterShellCommand(command=['ln', '-sf',
+                                                util.Interpolate(masterdest_file),
+                                                f'deploy-bin/{image_file_name}'],
+                                       haltOnFailure=True,
+                                       name='Link to latest image'))
+    return st
+
+def steps_yocto_builder(builder_name, machine, image):
     st = []
     st.append(steps.Git(repourl=util.Property('repository'),
                         name='Clone the sources',
@@ -63,4 +87,5 @@ def steps_yocto_builder(machine, image):
     st.append(step_yocto_cmd(f'Build: {image}',
                              machine,
                              f'bitbake {image}'))
+    st.extend(steps_yocto_upload_image(builder_name, machine, image))
     return st
