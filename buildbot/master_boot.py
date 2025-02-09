@@ -20,7 +20,7 @@ TARGET_SERIAL_DEV = {
     'odroidmc1': 'by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0',
 }
 
-TARGET_SSH_USER = 'buildbot'
+TARGET_SSH_USER = 'root'
 SERIAL_LOG = 'serial.log'
 TIMEOUT_PING = '20'
 TIMEOUT_SSH = '30'
@@ -204,7 +204,7 @@ def pexpect_gracefull_shutdown(target, config, halt_on_failure=True, reboot=Fals
     power_cmd = 'reboot' if reboot else 'poweroff'
 
     pexpect_cmd = """
-    process = subprocess.run(""" + str(cmd_ssh(target, ['sudo', power_cmd])) + """,
+    process = subprocess.run(""" + str(cmd_ssh(target, [power_cmd])) + """,
                              check=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                              encoding='utf-8', errors='backslashreplace')
     print('cmd \\'%s\\' returned: %d, output:' % ('""" + power_cmd + """', process.returncode))
@@ -324,27 +324,12 @@ def pexpect_boot_to_prompt(target, config):
     """
 
     pexpect_cmd += """
-    print('Target """ + target + """ reached: Mount NFS root')
-    child.expect_exact([':: running early hook [udev]', ':: running hook [udev]', ':: Triggering uevents...'])
-    child.expect_exact(':: running hook [net_nfs4]')
-    child.expect_exact(['NFS-Mount: 192.168.1.10:/srv/nfs/""" + target + """',
-                        'mount.nfs4 -o vers=4,nolock 192.168.1.10:/srv/nfs/""" + target + """'])
-
-    print('Target """ + target + """ reached: Mounted NFS root, start system')
-    # NFS mount sometimes take a lot of time so add additional intermediate expects
-    # and use higher timeouts.
-    # Sometimes these messages got corrupted and mixed with each other so look for any of them:
-    child.expect_exact([':: running cleanup hook [udev]',
-                        'System time before build time, advancing clock.',
-                        # New kernels:
-                        'random: crng init done',
-                        # Old (v4.4) kernels:
-                        'random: nonblocking pool is initialized'],
-                       timeout=60)
-    # On certain next kernels (next-20180924), this takes up to 100 seconds:
-    child.expect_exact('systemd[1]: Detected architecture arm.', timeout=180)
+    print('Target """ + target + """ reached: Kernel network configuration')
+    child.expect_exact('systemd[1]: Detected architecture arm.')
     child.expect_exact(['Set hostname to <""" + target + """>',
-                        'Hostname set to <""" + target + """>'])
+                        'Hostname set to <""" + target + """>',
+                        'Set hostname to <qemuarm>',
+                        'Hostname set to <qemuarm>'])
     print('Target """ + target + """ reached: Started systemd')
     # Wait for any early targets, before file systems to see if boot progresses
     child.expect_exact(['Reached target Remote File Systems',
@@ -352,32 +337,24 @@ def pexpect_boot_to_prompt(target, config):
                         'Reached target Paths',
                         'Reached target """ + systemd_color('Paths') + """',
                         'Reached target Swap',
-                        'Reached target """ + systemd_color('Swap') + """'],
-                       timeout=30)
+                        'Reached target """ + systemd_color('Swap') + """'])
     print('Target """ + target + """ reached: Intermediate system boot targets')
     # Getting to local file systems can take a lot
     child.expect_exact(['Reached target Local File Systems',
                         'Reached target """ + systemd_color('Local File Systems') + """',
                         'Reached target System Initialization',
-                        'Reached target """ + systemd_color('System Initialization') + """'],
-                       timeout=90)
+                        'Reached target """ + systemd_color('System Initialization') + """'])
 
     print('Target """ + target + """ reached: Mounted local file systems')
     expect = ['Reached target Login Prompts',
               'Reached target """ + systemd_color('Login Prompts') + """',
               'Reached target Graphical Interface',
-              'Reached target """ + systemd_color('Graphical Interface') + """',
-              'A start job is running for Flush']
-    index = child.expect_exact(expect)
-    if index == 4:
-        # Sometimes, e.g. on unclean shutdowns, flushing Journal Persistent Storage takes up to 90 seconds,
-        # so then just repeat looking for prompt:
-        print('Longer timeout needed for """ + target + """')
-        child.expect_exact(expect, timeout=180)
+              'Reached target """ + systemd_color('Graphical Interface') + """']
 
     print('Target """ + target + """ reached: Reached login interface')
-    expect = ['Arch Linux [0-9a-z.-]+ \\\\(""" + re.escape(TARGET_CONFIG[target]['serial']) + """\\\\)',
-              '""" + re.escape(target) + """ login:']
+    expect = ['krzk development Linux',
+              '""" + re.escape(target) + """ login:',
+              'qemuarm login:']
     child.expect(expect)
     """
     return pexpect_cmd
@@ -511,7 +488,7 @@ def step_test_uname(target, config):
     print(process.stdout)
     print('---')
     if not process.returncode:
-        expected_output = '^Linux """ + target + """ %(prop:kernel_version:-)s #[0-9] SMP (PREEMPT )?[0-9a-zA-Z: ]+ armv7l GNU/Linux$'
+        expected_output = '^Linux (""" + target + """|qemuarm) %(prop:kernel_version:-)s #[0-9] SMP (PREEMPT )?[0-9a-zA-Z: ]+ armv7l GNU/Linux$'
         print('checking if uname matches expected: ' + expected_output)
         print('uname output: ' + process.stdout)
         if not re.search(expected_output, process.stdout):
@@ -647,7 +624,7 @@ def step_test_case(target, config, test, is_fast=False, force_skip=False):
     test_allowed = not force_skip
 
     return step_ssh('Test: ' + test + ' @' + target, target,
-                    ['sudo', '/opt/tools/tests/' + test + '.sh', target, config],
+                    ['/opt/tools/tests/' + test + '.sh', target, config],
                     halt_on_failure=False,
                     do_step_if=lambda step: test_allowed and (is_fast or if_step_want_tests(step)))
 
