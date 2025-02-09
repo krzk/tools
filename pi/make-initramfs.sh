@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 #
-# Copyright (c) 2018 Krzysztof Kozlowski
+# Copyright (c) 2018-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -44,7 +44,11 @@ KERNEL_NAME="$(ls """${MODULES_DIR}/lib/modules""")"
 test -d "${MODULES_DIR}/lib/modules/${KERNEL_NAME}" || die "Cannot get kernel name. Got: $KERNEL_NAME"
 echo "Got kernel name: $KERNEL_NAME"
 
-cp "$BASE_CPIO" "$OUTPUT_FILE"
+if [ "${BASE_CPIO##*.}" == "xz" ]; then
+	xz -d --stdout "$BASE_CPIO" > "$OUTPUT_FILE"
+else
+	cp "$BASE_CPIO" "$OUTPUT_FILE"
+fi
 OUTPUT_FILE_FULL="$(readlink -f """$OUTPUT_FILE""")"
 
 cd "$ADDONS_DIR" && fakeroot find -mindepth 1 -printf '%P\0' | LANG=C cpio -0 -oA -H newc -R 0:0 -F "$OUTPUT_FILE_FULL"
