@@ -29,14 +29,17 @@ test $# -eq 4 || usage
 
 BASE_CPIO="$(readlink -f """$1""")"
 MODULES_DIR="$(readlink -f """$2""")"
-ADDONS_DIR="$(readlink -f """$3""")"
+ADDONS_DIR=""
+if [ -n "$3" ]; then
+	ADDONS_DIR="$(readlink -f """$3""")"
+fi
 OUTPUT_FILE="$4"
 
 MODULES_WANTED="phy-exynos-usb2 ehci-exynos ohci-exynos dwc2 r8152 rtl8150 lan78xx s2mpa01 s2mps11 s5m8767 clk-s2mps11 sec-irq sec-core rtc-s5m"
 
 test -f "$BASE_CPIO" || die "Missing base_cpio file"
 test -d "$MODULES_DIR" || die "Missing modules directory"
-test -d "$ADDONS_DIR" || die "Missing addons directory"
+test -z "$ADDONS_DIR" || test -d "$ADDONS_DIR" || die "Missing addons directory"
 
 trap "temp_cleanup" EXIT
 
@@ -51,9 +54,11 @@ else
 fi
 OUTPUT_FILE_FULL="$(readlink -f """$OUTPUT_FILE""")"
 
-cd "$ADDONS_DIR" && fakeroot find -mindepth 1 -printf '%P\0' | LANG=C cpio -0 -oA -H newc -R 0:0 -F "$OUTPUT_FILE_FULL"
-test $? -eq 0 || die "Adding addons to cpio failed"
-cd - > /dev/null
+if [ -n "$ADDONS_DIR" ]; then
+	cd "$ADDONS_DIR" && fakeroot find -mindepth 1 -printf '%P\0' | LANG=C cpio -0 -oA -H newc -R 0:0 -F "$OUTPUT_FILE_FULL"
+	test $? -eq 0 || die "Adding addons to cpio failed"
+	cd - > /dev/null
+fi
 
 test -d "${MODULES_DIR}/lib" || die "Module directory should be top-level, containing /lib"
 MODULES_TMP="`mktemp -d`" || die "Create tmp directory for modules failed"
