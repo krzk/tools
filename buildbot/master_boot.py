@@ -728,7 +728,7 @@ def steps_boot(builder_name, target, config, run_pm_tests=False):
                                           'deploy-board-test-image-qemuarm.cpio.xz',
                                           'initramfs-odroidxu3.img'],
                                  name='Remove old binaries'))
-    st = st + steps_download(target)
+    st.extend(steps_download(target))
 
     st.append(steps.ShellCommand(command=[util.Interpolate('%(prop:builddir:-~/)s/tools/buildbot/build-slave-deploy.sh'),
                                           target, config, util.Property('revision'), 'deploy-tmp'],
@@ -747,8 +747,8 @@ def steps_boot(builder_name, target, config, run_pm_tests=False):
     st.append(step_test_dmesg_errors(target, config))
     st.append(step_test_dmesg_warnings(target, config))
 
-    st = st + steps_test_suite_fast(target, config)
-    st = st + steps_test_suite_slow(target, config)
+    st.extend(steps_test_suite_fast(target, config))
+    st.extend(steps_test_suite_slow(target, config))
 
     # After all the tests check again if ping and SSH are working:
     st.append(step_test_ping(target, config))
@@ -759,6 +759,6 @@ def steps_boot(builder_name, target, config, run_pm_tests=False):
     st.append(step_test_ping(target, config))
     st.append(step_test_uname(target, config))
 
-    st = st + steps_shutdown(target, config)
+    st.extend(steps_shutdown(target, config))
 
     return st
