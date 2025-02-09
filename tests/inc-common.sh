@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2019 Krzysztof Kozlowski
+# Copyright (c) 2015-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -73,7 +73,8 @@ error_msg() {
 }
 
 get_board_compatible() {
-	sed 's/\x0.\+/\n/' /sys/firmware/devicetree/base/compatible
+	IFS= read -r -d '' model </sys/firmware/devicetree/base/compatible || [[ $model ]]
+	echo "$model"
 }
 
 # is_kernel_le major minor
