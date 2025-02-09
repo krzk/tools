@@ -666,7 +666,8 @@ def steps_test_suite_fast(target, config):
     st.append(step_test_case(target, config, 'clk-s2mps11', is_fast=True))
     st.append(step_test_case(target, config, 'cpu-online', is_fast=True))
     st.append(step_test_case(target, config, 'drm', is_fast=True))
-    st.append(step_test_case(target, config, 's5p-mfc', is_fast=True))
+    # Disable s5p-mfc because it requires firmware and v4l-utils - none present in initramfs
+    # st.append(step_test_case(target, config, 's5p-mfc', is_fast=True))
     st.append(step_test_case(target, config, 's5p-sss', is_fast=True))
     st.append(step_test_case(target, config, 'thermal', is_fast=True))
     st.append(step_test_case(target, config, 'usb', is_fast=True))
