@@ -110,6 +110,7 @@ git_send_email() {
 		git send-email "$cc" --to="$(scripts/get_maintainer.pl --no-multiline --separator=, --no-git --no-roles --no-rolestats --no-git-fallback $files)" \
 			--cc linux-kernel@vger.kernel.org $files
 	fi
+	# TODO: git send-email --dry-run --to="$(scripts/get_maintainer.pl --no-multiline --separator=, --no-r --no-l --no-git --no-roles --no-rolestats --no-git-fallback *.patch)" --cc="$(scripts/get_maintainer.pl --no-multiline --separator=, --no-m --no-git --no-roles --no-rolestats --no-git-fallback *.patch)" *.patch
 }
 
 # Shows currently applied cherry-pick patch (e.g. during cherry-pick conflict)
