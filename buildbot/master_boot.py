@@ -69,7 +69,9 @@ def cmd_ssh(target, command):
     Returns
         list of strings with cmd
     """
-    return ['ssh', '-o', 'ConnectTimeout %s' % TIMEOUT_SSH,
+    return ['ssh',
+            '-o', f'ConnectTimeout {TIMEOUT_SSH}',
+            '-o', 'StrictHostKeyChecking no',
             '%s@%s' % (TARGET_SSH_USER, target)] + command
 
 def step_serial_open(target):
@@ -200,6 +202,7 @@ def pexpect_gracefull_shutdown(target, config, halt_on_failure=True, reboot=Fals
         Remember about no_special_chars=True
     """
     power_cmd = 'reboot' if reboot else 'poweroff'
+
     pexpect_cmd = """
     process = subprocess.run(""" + str(cmd_ssh(target, ['sudo', power_cmd])) + """,
                              check=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
@@ -208,6 +211,7 @@ def pexpect_gracefull_shutdown(target, config, halt_on_failure=True, reboot=Fals
     print(process.stdout)
     print('---')
     if not process.returncode or ('Connection to """ + target + """ closed by remote host.' in process.stdout):
+        # Board is on and we executed SSH
         child.expect_exact([""" + \
             systemd_log('Stopped', 'Login Service') + \
             systemd_log('Stopped', 'Network Time Synchronization') + \
@@ -232,6 +236,12 @@ def pexpect_gracefull_shutdown(target, config, halt_on_failure=True, reboot=Fals
         print('Target reached shutdown state')
     elif """ + ("%d" % halt_on_failure) + """:
         raise Exception('Cannot shutdown target (rc: %d)' % process.returncode)
+
+    # Cleanup, SSH host public key might change on every reboot
+    process = subprocess.run(['ssh-keygen', '-R', '""" + target + """'])
+    print(process)
+    if process.returncode:
+        raise Exception('Cannot cleanup SSH (rc: %d)' % process.returncode)
     """
     return pexpect_cmd
 
@@ -429,6 +439,12 @@ def step_subprocess(name, target, command,
     return step_pexpect(name=name, target=target, python_code=pexpect_cmd, do_step_if=do_step_if,
                         always_run=always_run, halt_on_failure=halt_on_failure)
 
+def step_setup_ssh(target, config):
+    return steps.ShellCommand(command=['ssh-keygen', '-R', target],
+                              name='Clean old SSH known host',
+                              alwaysRun=False,
+                              haltOnFailure=False)
+
 def step_ssh(name, target, command, do_step_if=True, halt_on_failure=True):
     """ Return step for executing one command on the target via SSH
 
@@ -465,6 +481,14 @@ def step_test_ping(target, config):
     """
     return step_subprocess('Test: ping', target,
                            ['ping', '-c', '1', '-W', TIMEOUT_PING, target])
+
+def step_test_ssh(target, config):
+    """ Return step for checking if SSH is alive
+
+    Returns:
+        step
+    """
+    return step_ssh('Test: SSH', target, ['id'])
 
 def step_test_uname(target, config):
     """ Return step for executing uname on the target via SSH and checking
@@ -737,12 +761,15 @@ def steps_boot(builder_name, target, config, run_pm_tests=False):
     st.append(steps.SetPropertyFromCommand(command='ls deploy-tmp/lib/modules',
                                            property='kernel_version', haltOnFailure=True))
 
+    # Gracefull shutdown uses SSH, so depends on SSH setup earlier
+    st.append(step_setup_ssh(target, config))
     st.append(step_serial_open(target))
 
     st.append(step_gracefull_shutdown(target, config, halt_on_failure=False))
 
     st.append(step_boot_to_prompt(target, config))
     st.append(step_test_ping(target, config))
+    st.append(step_test_ssh(target, config))
     st.append(step_test_uname(target, config))
     st.append(step_test_dmesg_errors(target, config))
     st.append(step_test_dmesg_warnings(target, config))
@@ -757,6 +784,7 @@ def steps_boot(builder_name, target, config, run_pm_tests=False):
     # Test reboot
     st.append(step_test_reboot(target, config))
     st.append(step_test_ping(target, config))
+    st.append(step_test_ssh(target, config))
     st.append(step_test_uname(target, config))
 
     st.extend(steps_shutdown(target, config))
