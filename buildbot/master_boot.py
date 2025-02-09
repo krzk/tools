@@ -697,6 +697,10 @@ def steps_download(target):
         mastersrc=util.Interpolate(mastersrc_dir + '/modules-out.tar.xz'),
         workerdest='deploy-modules-out.tar.xz',
         haltOnFailure=True, mode=0o0644, name='Download modules'))
+    st.append(steps.FileDownload(
+        mastersrc='deploy-bin/board-test-image-qemuarm.cpio.xz',
+        workerdest='deploy-board-test-image-qemuarm.cpio.xz',
+        haltOnFailure=True, mode=0o0644, name='Download initramfs image'))
 
     return st
 
@@ -721,6 +725,7 @@ def steps_boot(builder_name, target, config, run_pm_tests=False):
 
     st.append(steps.ShellCommand(command=['rm', '-fr', 'lib',
                                           'deploy-modules-out.tar.xz', 'deploy-dtb-out.tar.xz',
+                                          'deploy-board-test-image-qemuarm.cpio.xz',
                                           'initramfs-odroidxu3.img'],
                                  name='Remove old binaries'))
     st = st + steps_download(target)
