@@ -47,7 +47,7 @@ test -d "${DEPLOY_TMP}/lib/modules/${KERNEL_NAME}" || die "Cannot get kernel nam
 echo "Got kernel name: $KERNEL_NAME"
 
 echo "Making initramfs and image"
-${SELF_DIR}/../pi/make-initramfs.sh deploy-board-test-image-qemuarm.cpio.xz \
+${SELF_DIR}/../pi/make-initramfs.sh deploy-board-test-image-odroid.cpio.xz \
 	"$DEPLOY_TMP" \
 	"" \
 	/srv/tftp/uboot-initramfs-odroidxu3.img
