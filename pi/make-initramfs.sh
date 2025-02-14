@@ -38,6 +38,10 @@ OUTPUT_FILE="$4"
 MODULES_WANTED="clk-s2mps11 \
 dwc2 \
 ehci-exynos \
+exynos-fimc-is \
+exynos-fimc-lite \
+exynos-gsc \
+exynos4-is-common \
 lan78xx \
 ohci-exynos \
 phy-exynos-usb2 \
@@ -46,6 +50,8 @@ rtc-s5m \
 rtl8150 \
 s2mpa01 s2mps11 s5m8767 \
 sec-core sec-irq \
+s5p-cec s5p-csis s5p-fimc \
+s5p-jpeg s5p-mfc \
 "
 
 test -f "$BASE_CPIO" || die "Missing base_cpio file"
