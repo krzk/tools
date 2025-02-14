@@ -314,17 +314,10 @@ def pexpect_boot_to_prompt(target, config):
     # Older (e.g. v4.4) kernels: fdt: Machine model: Hardkernel Odroid XU3 Lite
     # New kernels: OF: fdt: Machine model: Hardkernel Odroid XU3 Lite
     child.expect_exact('Machine model: """ + TARGET_CONFIG[target]['machine'] + """')
-    """
+    child.expect_exact(['Freeing unused kernel image',
+                        'Run /init as init process'])
 
-    if config == 'exynos':
-        # Aparently on multi_v7 IP configuration does not appear (modules instead of built-in)
-        pexpect_cmd += """
-    child.expect_exact('IP-Config: Complete:')
-    child.expect_exact('bootserver=192.168.1.10, rootserver=192.168.1.10, rootpath=')
-    """
-
-    pexpect_cmd += """
-    print('Target """ + target + """ reached: Kernel network configuration')
+    print('Target """ + target + """ reached: Running init process')
     child.expect_exact('systemd[1]: Detected architecture arm.')
     child.expect_exact(['Set hostname to <""" + target + """>',
                         'Hostname set to <""" + target + """>',
