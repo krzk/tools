@@ -65,14 +65,6 @@ ${SELF_DIR}/../pi/make-initramfs.sh deploy-board-test-image-odroid.cpio.xz \
 chown -R buildbot:buildbot /srv/tftp
 chmod -R g+rw,a+r /srv/tftp
 
-MODULES_DEST_DIR="/srv/nfs/${TARGET}/lib/modules"
-echo "Installing modules to $MODULES_DEST_DIR"
-test -d "$MODULES_DEST_DIR" || die "Destination modules dir '$MODULES_DEST_DIR' does not exist"
-rm -fr "${MODULES_DEST_DIR}/${KERNEL_NAME}"
-cp -r "${DEPLOY_TMP}/lib/modules/${KERNEL_NAME}" "${MODULES_DEST_DIR}/"
-chown -R buildbot:buildbot "${MODULES_DEST_DIR}/${KERNEL_NAME}"
-chmod -R g+rw,a+r "${MODULES_DEST_DIR}/${KERNEL_NAME}"
-
 # Unpack downloaded dtbs:
 echo "Unpacking dtbs..."
 mkdir -p "${DEPLOY_TMP}/dtb"
