@@ -35,7 +35,18 @@ if [ -n "$3" ]; then
 fi
 OUTPUT_FILE="$4"
 
-MODULES_WANTED="phy-exynos-usb2 ehci-exynos ohci-exynos dwc2 r8152 rtl8150 lan78xx s2mpa01 s2mps11 s5m8767 clk-s2mps11 sec-irq sec-core rtc-s5m"
+MODULES_WANTED="clk-s2mps11 \
+dwc2 \
+ehci-exynos \
+lan78xx \
+ohci-exynos \
+phy-exynos-usb2 \
+r8152 \
+rtc-s5m \
+rtl8150 \
+s2mpa01 s2mps11 s5m8767 \
+sec-core sec-irq \
+"
 
 test -f "$BASE_CPIO" || die "Missing base_cpio file"
 test -d "$MODULES_DIR" || die "Missing modules directory"
