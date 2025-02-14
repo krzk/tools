@@ -328,8 +328,8 @@ def pexpect_boot_to_prompt(target, config):
     child.expect_exact('systemd[1]: Detected architecture arm.')
     child.expect_exact(['Set hostname to <""" + target + """>',
                         'Hostname set to <""" + target + """>',
-                        'Set hostname to <qemuarm>',
-                        'Hostname set to <qemuarm>'])
+                        'Set hostname to <odroid>',
+                        'Hostname set to <odroid>'])
     print('Target """ + target + """ reached: Started systemd')
     # Wait for any early targets, before file systems to see if boot progresses
     child.expect_exact(['Reached target Remote File Systems',
@@ -354,7 +354,7 @@ def pexpect_boot_to_prompt(target, config):
     print('Target """ + target + """ reached: Reached login interface')
     expect = ['krzk development Linux',
               '""" + re.escape(target) + """ login:',
-              'qemuarm login:']
+              'odroid login:']
     child.expect(expect)
     """
     return pexpect_cmd
@@ -488,7 +488,7 @@ def step_test_uname(target, config):
     print(process.stdout)
     print('---')
     if not process.returncode:
-        expected_output = '^Linux (""" + target + """|qemuarm) %(prop:kernel_version:-)s #[0-9] SMP (PREEMPT )?[0-9a-zA-Z: ]+ armv7l GNU/Linux$'
+        expected_output = '^Linux (""" + target + """|odroid) %(prop:kernel_version:-)s #[0-9] SMP (PREEMPT )?[0-9a-zA-Z: ]+ armv7l GNU/Linux$'
         print('checking if uname matches expected: ' + expected_output)
         print('uname output: ' + process.stdout)
         if not re.search(expected_output, process.stdout):
@@ -700,8 +700,8 @@ def steps_download(target):
         workerdest='deploy-modules-out.tar.xz',
         haltOnFailure=True, mode=0o0644, name='Download modules'))
     st.append(steps.FileDownload(
-        mastersrc='deploy-bin/board-test-image-qemuarm.cpio.xz',
-        workerdest='deploy-board-test-image-qemuarm.cpio.xz',
+        mastersrc='deploy-bin/board-test-image-odroid.cpio.xz',
+        workerdest='deploy-board-test-image-odroid.cpio.xz',
         haltOnFailure=True, mode=0o0644, name='Download initramfs image'))
 
     return st
@@ -727,7 +727,7 @@ def steps_boot(builder_name, target, config, run_pm_tests=False):
 
     st.append(steps.ShellCommand(command=['rm', '-fr', 'lib',
                                           'deploy-modules-out.tar.xz', 'deploy-dtb-out.tar.xz',
-                                          'deploy-board-test-image-qemuarm.cpio.xz',
+                                          'deploy-board-test-image-odroid.cpio.xz',
                                           'initramfs-odroidxu3.img'],
                                  name='Remove old binaries'))
     st.extend(steps_download(target))
