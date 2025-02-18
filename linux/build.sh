@@ -543,7 +543,9 @@ make_image_qcom2() {
 	append_dtb
 	make_ramdisk
 
-	# Some targets might require: --header_version 2
+	# Some targets might require:
+	# --header_version 2
+	# --os_version 14.0.0 --os_patch_level 2023-10
 	cmdline="$cmdline $CMDLINE"
 	echo "Making kernel image with cmdline: $cmdline"
 	mkbootimg --kernel ${image_path} \
