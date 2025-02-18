@@ -236,50 +236,74 @@ get_image_name() {
 	echo "$image_name"
 }
 
+# get_cross_compile arch
+get_cross_compile() {
+	local arch="$1"
+	local machine=""
+
+	machine="$(uname -m)" || die "Cannot get machine/arch"
+
+	case "$arch" in
+	alpha)
+		export CROSS_COMPILE="alpha-linux-gnu-"
+		;;
+	arm)
+		export CROSS_COMPILE="arm-linux-gnueabi-"
+		;;
+	arm64)
+		export CROSS_COMPILE="aarch64-linux-gnu-"
+		;;
+	i386|x86_64)
+		export CROSS_COMPILE="x86_64-linux-gnu-"
+		ARCH_DIR="x86"
+		ARCH_MKIMAGE="x86"
+		;;
+	m68k)
+		export CROSS_COMPILE="m68k-linux-gnu-"
+		;;
+	mips)
+		export CROSS_COMPILE="mips-linux-gnu-"
+		;;
+	parisc)
+		export CROSS_COMPILE="hppa-linux-gnu-"
+		;;
+	powerpc)
+		export CROSS_COMPILE="powerpc-linux-gnu-"
+		;;
+	riscv)
+		export CROSS_COMPILE="riscv64-linux-gnu-"
+		;;
+	s390)
+		export CROSS_COMPILE="s390x-linux-gnu-"
+		;;
+	sh)
+		export CROSS_COMPILE="sh4-linux-gnu-"
+		;;
+	sparc)
+		export CROSS_COMPILE="sparc64-linux-gnu-"
+		;;
+	um)
+		# nothing
+		ARCH_BOOT_IMAGE_DIR=""
+		;;
+	*)
+		echo "Unknown architecture '$ARCH'"
+		;;
+	esac
+
+	return 0
+}
+
 # Select proper architecture and set cross compile settings
-test "$ARCH" = "alpha" -o "$ARCH" = "arm" -o "$ARCH" = "arm64" -o \
-	"$ARCH" = "i386" -o \
-	"$ARCH" = "m68k" -o  "$ARCH" = "mips" -o  "$ARCH" = "parisc" -o \
-	"$ARCH" = "powerpc" -o  "$ARCH" = "riscv" -o  "$ARCH" = "s390" -o \
-	"$ARCH" = "sh" -o  "$ARCH" = "sparc" -o  "$ARCH" = "um" -o \
-	"$ARCH" = "x86_64" \
-	|| echo "Unknown architecture '$ARCH'"
-export ARCH
 ARCH_DIR="$ARCH"
 ARCH_MKIMAGE="$ARCH"
 ARCH_BOOT_IMAGE_DIR="arch/${ARCH_DIR}/boot/"
 if [ -n "$CROSS_COMPILE" ]; then
 	export CROSS_COMPILE
-elif [ "$ARCH" = "alpha" ]; then
-	export CROSS_COMPILE="alpha-linux-gnu-"
-elif [ "$ARCH" = "arm" ]; then
-	export CROSS_COMPILE="arm-linux-gnueabi-"
-elif [ "$ARCH" = "arm64" ]; then
-	export CROSS_COMPILE="aarch64-linux-gnu-"
-elif [ "$ARCH" = "m68k" ]; then
-	export CROSS_COMPILE="m68k-linux-gnu-"
-elif [ "$ARCH" = "mips" ]; then
-	export CROSS_COMPILE="mips-linux-gnu-"
-elif [ "$ARCH" = "parisc" ]; then
-	export CROSS_COMPILE="hppa-linux-gnu-"
-elif [ "$ARCH" = "powerpc" ]; then
-	export CROSS_COMPILE="powerpc-linux-gnu-"
-elif [ "$ARCH" = "riscv" ]; then
-	export CROSS_COMPILE="riscv64-linux-gnu-"
-elif [ "$ARCH" = "s390" ]; then
-	export CROSS_COMPILE="s390x-linux-gnu-"
-elif [ "$ARCH" = "sh" ]; then
-	export CROSS_COMPILE="sh4-linux-gnu-"
-elif [ "$ARCH" = "sparc" ]; then
-	export CROSS_COMPILE="sparc64-linux-gnu-"
-elif [ "$ARCH" = "um" ]; then
-	# nothing
-	ARCH_BOOT_IMAGE_DIR=""
 else
-	# i386, x86_64
-	ARCH_DIR="x86"
-	ARCH_MKIMAGE="x86"
+	get_cross_compile "$ARCH"
 fi
+export ARCH
 
 # Test for image to create
 test -z "$CHOSEN_IMAGE" -o "$CHOSEN_IMAGE" = "arch" \
