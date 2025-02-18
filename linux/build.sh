@@ -871,7 +871,7 @@ config_qcom() {
 	config_item_on MEDIA_SUPPORT LEDS_CLASS_FLASH V4L2_FLASH_LED_CLASS LEDS_QCOM_FLASH
 
 	# CRD8380xp ramdisk without modules
-	config_item_on BLK_DEV_NVME
+	config_item_on BLK_DEV_NVME X1E80100_TCSRCC
 
 	# I2C, peripherals
 	config_item_on I2C_QCOM_GENI
@@ -925,7 +925,10 @@ config_qcom() {
 	config_item_on SC_LPASSCSR_8280XP
 
 	# Other
-	config_item_on QCOM_OCMEM QCOM_LLCC
+	config_item_on QCOM_OCMEM QCOM_LLCC BACKLIGHT_QCOM_WLED
+
+	# Other hardware on x1e
+	config_item_on I2C_HID_OF_GOODIX TYPEC_MUX_PS8830 PHY_NXP_PTN3222 UHID
 
 	# Useful options for Qualcomm boards used in different contexts, e.g. RB5 as cdba server
 	config_item_on USB_SUPPORT USB_ACM USB_SERIAL USB_SERIAL_CP210X USB_SERIAL_FTDI_SIO USB_SERIAL_OPTION
