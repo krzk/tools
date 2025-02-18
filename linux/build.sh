@@ -251,10 +251,14 @@ get_cross_compile() {
 		export CROSS_COMPILE="arm-linux-gnueabi-"
 		;;
 	arm64)
-		export CROSS_COMPILE="aarch64-linux-gnu-"
+		if [ "$machine" != "aarch64" ]; then
+			export CROSS_COMPILE="aarch64-linux-gnu-"
+		fi
 		;;
 	i386|x86_64)
-		export CROSS_COMPILE="x86_64-linux-gnu-"
+		if [ "$machine" != "x86_64" ]; then
+			export CROSS_COMPILE="x86_64-linux-gnu-"
+		fi
 		ARCH_DIR="x86"
 		ARCH_MKIMAGE="x86"
 		;;
@@ -716,10 +720,18 @@ make_modules_install() {
 # Usage: build_kernel dts_name
 build_kernel() {
 	local _dts_name="$1"
+	local env="ARCH=\"$ARCH\""
+
+	if [ "$CROSS_COMPILE" = "" ]; then
+		env="$env CC=\"$CC\""
+	else
+		env="$env CROSS_COMPILE=\"$CROSS_COMPILE\""
+	fi
+	env="$env KBUILD_OUTPUT=\"$KBUILD_OUTPUT\""
 
 	echo "#################################"
 	echo "BUILDING: $CONFIG_NAME for $ARCH"
-	echo "ARCH=\"$ARCH\" CROSS_COMPILE=\"$CROSS_COMPILE\" KBUILD_OUTPUT=\"$KBUILD_OUTPUT\""
+	echo "$env make $TARGET"
 	echo "#################################"
 
 	if [ -n "$ENABLE_CONFIG_ITEMS" ] || [ -n "$DISABLE_CONFIG_ITEMS" ] ||
@@ -748,10 +760,18 @@ build_kernel() {
 # Usage: build_target target
 build_target() {
 	local _target="$1"
+	local env="ARCH=\"$ARCH\""
+
+	if [ "$CROSS_COMPILE" = "" ]; then
+		env="$env CC=\"$CC\""
+	else
+		env="$env CROSS_COMPILE=\"$CROSS_COMPILE\""
+	fi
+	env="$env KBUILD_OUTPUT=\"$KBUILD_OUTPUT\""
 
 	echo "#################################"
 	echo "BUILDING: $CONFIG_NAME for $ARCH"
-	echo "ARCH=\"$ARCH\" CROSS_COMPILE=\"$CROSS_COMPILE\" KBUILD_OUTPUT=\"$KBUILD_OUTPUT\" make $TARGET"
+	echo "$env make $TARGET"
 	echo "#################################"
 
 	if [ -n "$ENABLE_CONFIG_ITEMS" ] || [ -n "$DISABLE_CONFIG_ITEMS" ] ||
@@ -1092,7 +1112,11 @@ build_t14s() {
 
 # Start of execution (entry point):
 if [ "$(have_ccache)" == "0" ]; then
-	export CROSS_COMPILE="ccache $CROSS_COMPILE"
+	if [ "$CROSS_COMPILE" = "" ]; then
+		export CC="ccache gcc"
+	else
+		export CROSS_COMPILE="ccache $CROSS_COMPILE"
+	fi
 fi
 
 trap "tmp_cleanup" EXIT

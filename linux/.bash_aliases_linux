@@ -8,8 +8,14 @@
 #
 
 alias crosc="CROSS_COMPILE=\"ccache arm-linux-gnueabi-\" ARCH=arm KBUILD_OUTPUT=out/"
-alias crosc64="CROSS_COMPILE=\"ccache aarch64-linux-gnu-\" ARCH=arm64 KBUILD_OUTPUT=out/"
 alias crosc_riscv="CROSS_COMPILE=\"ccache riscv64-linux-gnu-\" ARCH=riscv KBUILD_OUTPUT=out/"
+if [ "$(uname -m)" == "x86_64" ]; then
+	alias crosc64="CROSS_COMPILE=\"ccache aarch64-linux-gnu-\" ARCH=arm64 KBUILD_OUTPUT=out/"
+elif [ "$(uname -m)" == "aarch64" ]; then
+	alias crosc64="CC=\"ccache gcc\" ARCH=arm64 KBUILD_OUTPUT=out/"
+else
+	echo "Unknown arch, not setting cross compile aliases"
+fi
 
 alias git_bisect_fixed="git bisect start --term-new fixed --term-old broken; echo \"Use terms fixed or broken\""
 
