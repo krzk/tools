@@ -32,7 +32,6 @@ else
 fi
 
 git checkout for-next || die "git checkout for-next error"
-git reset --hard master || die "git reset --hard master error"
 git merge $BRANCHES
 if [ $? -ne 0 ]; then
 	echo
