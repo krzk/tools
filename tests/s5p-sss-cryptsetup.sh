@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2017 Krzysztof Kozlowski
+# Copyright (c) 2017,2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -99,7 +99,7 @@ s5p_sss_cryptsetup_run() {
 	local name="s5p-sss cryptsetup"
 	local dev="$1"
 
-	for i in `seq 0 50`; do
+	for i in $(seq 0 50); do
 		echo "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" \
 			| dd of=/dev/mapper/${dev} bs=1 seek=$(($i * 160)) status=none
 	done
@@ -121,28 +121,28 @@ test_s5p_sss_cryptsetup() {
 	print_msg "Testing..."
 
 	s5p_sss_cryptsetup_prepare $dev "$CRYPT_MODE_CBC"
-	for i in `seq 1 $LOOPS`; do
+	for i in $(seq 1 $LOOPS); do
 		test $LOOPS -gt 1 && print_msg "Test ${i}/${LOOPS}"
 		s5p_sss_cryptsetup_run $dev
 	done
 	s5p_sss_cryptsetup_unprepare $dev
 
 	s5p_sss_cryptsetup_prepare $dev "$CRYPT_MODE_XTS"
-	for i in `seq 1 $LOOPS`; do
+	for i in $(seq 1 $LOOPS); do
 		test $LOOPS -gt 1 && print_msg "Test ${i}/${LOOPS}"
 		s5p_sss_cryptsetup_run $dev
 	done
 	s5p_sss_cryptsetup_unprepare $dev
 
 	s5p_sss_cryptsetup_prepare $dev "$CRYPT_MODE_CBC" yes
-	for i in `seq 1 $LOOPS`; do
+	for i in $(seq 1 $LOOPS); do
 		test $LOOPS -gt 1 && print_msg "Test ${i}/${LOOPS}"
 		s5p_sss_cryptsetup_run $dev
 	done
 	s5p_sss_cryptsetup_unprepare $dev
 
 	s5p_sss_cryptsetup_prepare $dev "$CRYPT_MODE_XTS_LUKS" yes
-	for i in `seq 1 $LOOPS`; do
+	for i in $(seq 1 $LOOPS); do
 		test $LOOPS -gt 1 && print_msg "Test ${i}/${LOOPS}"
 		s5p_sss_cryptsetup_run $dev
 	done
