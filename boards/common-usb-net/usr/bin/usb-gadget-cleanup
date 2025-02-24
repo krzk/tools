@@ -5,9 +5,9 @@ set -x
 
 [ -d /sys/kernel/config/usb_gadget ] || exit 0
 
-cd /sys/kernel/config/usb_gadget
+cd /sys/kernel/config/usb_gadget1 || exit
 
-cd g2
+cd g2 || exit
 
 echo -n "" > UDC || true
 
@@ -20,5 +20,5 @@ test -d functions/ecm.usb0 && rmdir functions/ecm.usb0
 test -d functions/rndis.rn0 && rmdir functions/rndis.rn0
 rmdir strings/0x409
 
-cd ..
+cd .. || exit
 rmdir g2
