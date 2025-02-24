@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2023 Krzysztof Kozlowski
+# Copyright (c) 2023-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -40,7 +40,7 @@ case "$3" in
 		;;
 esac
 
-for f in `find "${WANT_SUBSYSTEM}${WANT_PLATFORM}" -name "*Kconfig*"` ; do
+for f in $(find "${WANT_SUBSYSTEM}${WANT_PLATFORM}" -name "*Kconfig*") ; do
 	while IFS= read -r platform ; do
 		scripts/config --file "${OUT_DIR}.config" -e "$platform"
 	done < <(grep -E '^(menu)?config' -- $f | cut -d ' ' -f 2)
