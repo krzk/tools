@@ -67,7 +67,7 @@ do_buildbot() {
 	test "$2" == "slave" && bot_cmd="buildslave"
 
 	parse_environment
-	cd $HOME
+	cd "$HOME" || exit
 	test -d "sandbox" && source sandbox/bin/activate
 	test -d "$2" || die "No buildbot: $2"
 	echo "Launching: $bot_cmd $1 $2"
