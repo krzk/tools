@@ -50,7 +50,7 @@ parse_environment ()
 		[ -s "$ENV_FILE" ] || continue
 
 		for var in LANG LANGUAGE LC_ALL LC_CTYPE; do
-			value=$(egrep "^${var}=" "$ENV_FILE" | tail -n1 | cut -d= -f2)
+			value=$(grep -E "^${var}=" "$ENV_FILE" | tail -n1 | cut -d= -f2)
 			[ -n "$value" ] && eval export $var="$value"
 
 			if [ -n "$value" ] && [ "$ENV_FILE" = /etc/environment ]; then
