@@ -50,8 +50,8 @@ parse_environment ()
 		[ -s "$ENV_FILE" ] || continue
 
 		for var in LANG LANGUAGE LC_ALL LC_CTYPE; do
-			value=`egrep "^${var}=" "$ENV_FILE" | tail -n1 | cut -d= -f2`
-			[ -n "$value" ] && eval export $var=$value
+			value=$(egrep "^${var}=" "$ENV_FILE" | tail -n1 | cut -d= -f2)
+			[ -n "$value" ] && eval export $var="$value"
 
 			if [ -n "$value" ] && [ "$ENV_FILE" = /etc/environment ]; then
 				echo "/etc/environment has been deprecated for locale information; use /etc/default/locale for $var=$value instead"
@@ -71,14 +71,14 @@ do_buildbot() {
 	test "$2" == "slave" && bot_cmd="buildslave"
 
 	parse_environment
-	cd $HOME
+	cd "$HOME"
 	test -d "sandbox" && source sandbox/bin/activate
 	test -d "$2" || die "No buildbot: $2"
 	if [ "$1" != "start" ]; then
 		OPTIONS=""
 	fi
 	echo "Launching: $bot_cmd $1 $OPTIONS $2"
-	$bot_cmd $1 $OPTIONS $2
+	"$bot_cmd" "$1" $OPTIONS "$2"
 }
 
 usage() {
@@ -89,9 +89,9 @@ usage() {
 
 launch_service() {
 	if [ $SYSTEMD -eq 1 ]; then
-		do_buildbot $1 $BOT
+		do_buildbot "$1" "$BOT"
 	else
-		start-stop-daemon --start -c buildbot:buildbot --exec $SCRIPT -- $1 $OPTIONS $BOT
+		start-stop-daemon --start -c buildbot:buildbot --exec "$SCRIPT" -- "$1" $OPTIONS "$BOT"
 	fi
 }
 
