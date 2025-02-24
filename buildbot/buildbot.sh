@@ -8,7 +8,7 @@
 # Short-Description: Buildbot master and slave
 ### END INIT INFO
 #
-# Copyright (c) 2015 Krzysztof Kozlowski
+# Copyright (c) 2015-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -61,7 +61,7 @@ parse_environment ()
 
 	# Get the timezone set.
 	if [ -z "$TZ" -a -e /etc/timezone ]; then
-		TZ=`cat /etc/timezone`
+		TZ=$(cat /etc/timezone)
 	fi
 }
 
