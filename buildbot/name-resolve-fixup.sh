@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2021-2022 Krzysztof Kozlowski
+# Copyright (c) 2021-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -19,7 +19,7 @@ i=0
 while [ $i -le 50 ]; do
 	resolvectl query $NAMES
 	test $? -eq 0 && exit 0
-	i=$(( $i + 1 ))
+	i=$(( i + 1 ))
 	sleep 0.5
 done
 
