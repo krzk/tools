@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2018 Krzysztof Kozlowski
+# Copyright (c) 2015-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -20,7 +20,7 @@ cpu_mmc_stress_cleanup() {
 }
 
 get_mmc() {
-	for i in `seq 0 9`; do
+	for i in $(seq 0 9); do
 		test -b /dev/mmcblk${i} && echo /dev/mmcblk${i} && return 0
 	done
 	echo ""
@@ -54,7 +54,7 @@ test_cpu_mmc_stress() {
 	test_cat_lt ${therm}/thermal_zone0/temp 65000
 
 	# Make all CPUs busy
-	for i in `seq 8`; do
+	for i in $(seq 8); do
 		{ sudo -u $USER cat "$mmc" | gzip -c > /dev/null & disown ; } 2> /dev/null
 		pids="$pids $!"
 	done
