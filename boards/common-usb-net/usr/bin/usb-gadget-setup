@@ -10,12 +10,12 @@ mode="ecm"
 
 [ -d /sys/kernel/config/usb_gadget ] || modprobe libcomposite
 
-cd /sys/kernel/config/usb_gadget
+cd /sys/kernel/config/usb_gadget || exit
 
 [ -d g2 ] && /usr/bin/usb-gadget-cleanup || true
 
 mkdir g2
-cd g2
+cd g2 || exit
 
 echo 0x1d6b > idVendor
 echo 0x0104 > idProduct
