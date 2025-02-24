@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2018 Krzysztof Kozlowski
+# Copyright (c) 2015-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -16,7 +16,8 @@ set -x
 
 test $# -eq 2 || die "Wrong number of parameters"
 
-NAME="$1"
+# Unused:
+# NAME="$1"
 OUT_DIR="$2"
 
 # Remove old modules-out and dtb-out
