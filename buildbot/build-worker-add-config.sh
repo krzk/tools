@@ -43,5 +43,5 @@ esac
 for f in $(find "${WANT_SUBSYSTEM}${WANT_PLATFORM}" -name "*Kconfig*") ; do
 	while IFS= read -r platform ; do
 		scripts/config --file "${OUT_DIR}.config" -e "$platform"
-	done < <(grep -E '^(menu)?config' -- $f | cut -d ' ' -f 2)
+	done < <(grep -E '^(menu)?config' -- "$f" | cut -d ' ' -f 2)
 done
