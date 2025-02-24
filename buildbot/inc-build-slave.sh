@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2016-2020 Krzysztof Kozlowski
+# Copyright (c) 2016-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -18,8 +18,8 @@ die() {
 # ping: socket: Address family not supported by protocol (raw socket required by specified options).
 # Detect if '-4' is supported, if it is, then use it
 get_ping() {
-	ping -h |& grep vV64 > /dev/null
-	if [ $? -eq 0 ]; then
+	if ping -h |& grep vV64 > /dev/null
+	then
 		echo 'ping -4'
 	else
 		echo 'ping'
