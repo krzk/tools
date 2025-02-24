@@ -12,6 +12,7 @@ mode="ecm"
 
 cd /sys/kernel/config/usb_gadget || exit
 
+# shellcheck disable=SC2015
 [ -d g2 ] && /usr/bin/usb-gadget-cleanup || true
 
 mkdir g2
