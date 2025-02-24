@@ -25,10 +25,10 @@ JOBS="$(nproc)"
 # Non-linear scale of jobs
 if [ $JOBS -lt 4 ]; then
 	# <1,3>: n+1
-	JOBS=$(($JOBS + 1))
+	JOBS=$((JOBS + 1))
 else
 	# >=5: n+n/2
-	JOBS=$(($JOBS + $JOBS / 2))
+	JOBS=$((JOBS + JOBS / 2))
 fi
 JOBS="-j${JOBS}"
 
