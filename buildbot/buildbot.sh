@@ -60,7 +60,7 @@ parse_environment ()
 	done
 
 	# Get the timezone set.
-	if [ -z "$TZ" -a -e /etc/timezone ]; then
+	if [ -z "$TZ" ] && [ -e /etc/timezone ]; then
 		TZ=$(cat /etc/timezone)
 	fi
 }
