@@ -7,11 +7,6 @@
 # SPDX-License-Identifier: GPL-2.0
 #
 
-die() {
-	echo "Fail: $1"
-	exit 1
-}
-
 have_ccache() {
 	which ccache > /dev/null
 	echo $?
