@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2019 Krzysztof Kozlowski
+# Copyright (c) 2015-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -42,12 +42,12 @@ chmod -R a+r "${DEPLOY_TMP}/"
 find "${DEPLOY_TMP}/lib/modules/" -type 'd' -exec chmod a+x '{}' \;
 
 # Prepare initrd:
-KERNEL_NAME=$(ls ${DEPLOY_TMP}/lib/modules)
+KERNEL_NAME="$(ls "${DEPLOY_TMP}"/lib/modules)"
 test -d "${DEPLOY_TMP}/lib/modules/${KERNEL_NAME}" || die "Cannot get kernel name. Got: $KERNEL_NAME"
 echo "Got kernel name: $KERNEL_NAME"
 
 echo "Making initramfs and image"
-${SELF_DIR}/../pi/make-initramfs.sh deploy-board-test-image-odroid.cpio.xz \
+"${SELF_DIR}/../pi/make-initramfs.sh" deploy-board-test-image-odroid.cpio.xz \
 	"$DEPLOY_TMP" \
 	"" \
 	/srv/tftp/uboot-initramfs-odroidxu3.img
@@ -74,10 +74,10 @@ chmod -R a+r "${DEPLOY_TMP}/dtb"
 DTB_DEST_DIR="/srv/tftp"
 echo "Installing dtbs to $DTB_DEST_DIR"
 test -d "$DTB_DEST_DIR" || die "Destination modules dir '$DTB_DEST_DIR' does not exist"
-rm -fr ${DTB_DEST_DIR}/*dtb
-cp -r ${DEPLOY_TMP}/dtb/*dtb "${DTB_DEST_DIR}/"
-chown -R buildbot:buildbot ${DTB_DEST_DIR}/*dtb
-chmod -R g+rw,a+r,a-x ${DTB_DEST_DIR}/*dtb
+rm -fr "${DTB_DEST_DIR}"/*dtb
+cp -r "${DEPLOY_TMP}"/dtb/*dtb "${DTB_DEST_DIR}/"
+chown -R buildbot:buildbot "${DTB_DEST_DIR}"/*dtb
+chmod -R g+rw,a+r,a-x "${DTB_DEST_DIR}"/*dtb
 
 # Leave DEPLOY_TMP directory for next steps
 
