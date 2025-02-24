@@ -11,8 +11,8 @@ set -e -E -x
 . $(dirname "${BASH_SOURCE[0]}")/inc-common.sh
 
 rtc_suspend_rtcwake_cmd() {
-	rtcwake --help 2>&1 | grep -q BusyBox
-	if [ $? -eq 0 ]; then
+	if rtcwake --help 2>&1 | grep -q BusyBox
+	then
 		echo "rtcwake"
 	else
 		echo "rtcwake -v"
