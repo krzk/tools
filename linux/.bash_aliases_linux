@@ -60,11 +60,15 @@ b4_get() {
 
 # Sync track/next and master branches with remotes
 git_sync_mainline() {
-	local branch="$(git rev-parse --abbrev-ref HEAD)"
+	local branch
+
+	branch="$(git rev-parse --abbrev-ref HEAD)"
 	if [ "$branch" == "track/next" ]; then
 		echo "On next branch ($branch), use git reset --hard manually to update it"
 	else
-		local upstream="$(git rev-parse --abbrev-ref track/next@{upstream})"
+		local upstream
+
+		upstream="$(git rev-parse --abbrev-ref track/next@{upstream})"
 		if [ $? -ne 0 ]; then
 			echo "No upstream configured for track/next"
 		else
@@ -76,7 +80,9 @@ git_sync_mainline() {
 	if [ "$branch" == "master" ]; then
 		echo "On master branch ($branch), use git pull manually to update it"
 	else
-		local upstream="$(git rev-parse --abbrev-ref master@{upstream})"
+		local upstream
+
+		upstream="$(git rev-parse --abbrev-ref master@{upstream})"
 		# shellcheck disable=SC2181
 		if [ $? -ne 0 ]; then
 			echo "No upstream configured for master"
@@ -90,7 +96,9 @@ git_sync_mainline() {
 
 # Get maintainers for git send-email
 get_maint() {
-	local maintainers="$(scripts/get_maintainer.pl --s --no-multiline --interactive --separator=\'' --to '\' "$@")"
+	local maintainers
+
+	maintainers="$(scripts/get_maintainer.pl --s --no-multiline --interactive --separator=\'' --to '\' "$@")"
 	echo "--to '$maintainers'"
 }
 
@@ -122,8 +130,10 @@ git_send_email() {
 
 # Shows currently applied cherry-pick patch (e.g. during cherry-pick conflict)
 git_show_cherry_pick() {
-	local gitdir="$(git rev-parse --path-format=absolute --git-dir)"
+	local gitdir
 	local rev=""
+
+	gitdir="$(git rev-parse --path-format=absolute --git-dir)"
 	if [ -f "${gitdir}/CHERRY_PICK_HEAD" ]; then
 		rev="$(sed -e 's/[^0-9a-f]*//g' "${gitdir}/CHERRY_PICK_HEAD")"
 		git show "$(git rev-parse --verify --end-of-options "$rev^{commit}")"
