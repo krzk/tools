@@ -6,6 +6,7 @@
 #
 # SPDX-License-Identifier: GPL-2.0
 #
+# shellcheck disable=SC2317
 
 usage() {
 	echo "$(basename "$0") <base_cpio> <modules_dir> <addons_dir> <output_file>"
