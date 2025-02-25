@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (c) 2015-2020 Krzysztof Kozlowski
+# Copyright (c) 2015-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -29,4 +29,4 @@ if [ $# -gt 0 ]; then
 		SERIAL="${SERIAL}$1"
 	fi
 fi
-picocom -b 115200 --flow none $SERIAL
+picocom -b 115200 --flow none "$SERIAL"
