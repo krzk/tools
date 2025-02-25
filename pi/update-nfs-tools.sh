@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (c) 2018-2023 Krzysztof Kozlowski
+# Copyright (c) 2018-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -22,7 +22,7 @@ for board in $SRV_NFS_BOARDS; do
 		echo "Wrong path: $path"
 		continue
 	fi
-	cd "$path"
+	cd "$path" || exit
 	echo "Updating $path"
 	git fsck || die "git fsck error in $path"
 
