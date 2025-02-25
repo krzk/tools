@@ -89,7 +89,7 @@ git_sync_mainline() {
 
 # Get maintainers for git send-email
 get_maint() {
-	local maintainers="$(scripts/get_maintainer.pl --s --no-multiline --interactive --separator=\'' --to '\' $*)"
+	local maintainers="$(scripts/get_maintainer.pl --s --no-multiline --interactive --separator=\'' --to '\' "$@")"
 	echo "--to '$maintainers'"
 }
 
