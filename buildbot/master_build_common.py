@@ -658,14 +658,19 @@ def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, 
     if only_changed_files:
         for schema in schema_dirs:
             step_name = 'make dtbs_check baseline: ' + env['ARCH'] + '/' + step_name_cfg + '/' + schema.strip('/')
-            st.append(steps.ShellCommand(command=[util.Interpolate(CMD_MAKE), 'dtbs_check',
-                                                  'DT_SCHEMA_FILES=' + schema if schema else ''],
+            cmd_dtbs_check = [util.Interpolate(CMD_MAKE), 'dtbs_check']
+            if schema:
+                cmd_dtbs_check.append(f'DT_SCHEMA_FILES={schema}')
+            st.append(steps.ShellCommand(command=cmd_dtbs_check,
                                          haltOnFailure=True,
                                          env=env, name=step_name[:50]))
         st.append(step_touch_commit_files())
 
     for schema in schema_dirs:
         step_name = 'make dtbs_check warnings: ' + env['ARCH'] + '/' + step_name_cfg + '/' + schema.strip('/')
+        cmd_dtbs_check = [util.Interpolate(CMD_MAKE), 'dtbs_check']
+        if schema:
+            cmd_dtbs_check.append(f'DT_SCHEMA_FILES={schema}')
         suppression_list = []
         if env['ARCH'] in DTBS_CHECK_KNOWN_WARNINGS['all']:
             if real_config in DTBS_CHECK_KNOWN_WARNINGS['all'][env['ARCH']]:
@@ -674,8 +679,7 @@ def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, 
             if env['ARCH'] in DTBS_CHECK_KNOWN_WARNINGS['krzk']:
                 if real_config in DTBS_CHECK_KNOWN_WARNINGS['krzk'][env['ARCH']]:
                     suppression_list.extend(DTBS_CHECK_KNOWN_WARNINGS['krzk'][env['ARCH']][real_config])
-        st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'dtbs_check',
-                                         'DT_SCHEMA_FILES=' + schema if schema else ''],
+        st.append(steps.Compile(command=cmd_dtbs_check,
                                 haltOnFailure=True,
                                 warnOnWarnings=True,
                                 suppressionList=suppression_list,
