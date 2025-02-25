@@ -22,7 +22,7 @@ alias git_bisect_fixed="git bisect start --term-new fixed --term-old broken; ech
 # Faster tig
 tigl() {
 	local head="${1:-HEAD}"
-	tig ${head}~1000..${head}
+	tig "${head}~1000..${head}"
 }
 
 # Apply one patch
@@ -82,7 +82,7 @@ git_sync_mainline() {
 		else
 			echo "Updating master to upstream: $upstream"
 			# For fast-forward
-			git fetch ${upstream%%/*} ${upstream##*/}:master
+			git fetch "${upstream%%/*}" "${upstream##*/}":master
 		fi
 	fi
 }
@@ -96,7 +96,7 @@ get_maint() {
 # Improved git send-email to CC all maintainers/lists on all patches.
 # git_send_email [--cc=ARG] files
 git_send_email() {
-	local files
+	local files=()
 	local cc=""
 
 	if [[ "$1" == --cc* ]] || [[ "$1" == --to* ]]; then
@@ -104,17 +104,17 @@ git_send_email() {
 		shift
 	fi
 
-	files="$*"
-	test -n "$files" || return 1
+	files=("$@")
+	test $# -gt 0 || return 1
 
 	# Do not use --to-cmd because it collects addresses per each email.
 	# Instead need to collect addresses once and use them for entire set.
 	if [ "$cc" == "" ]; then
-		git send-email --to="$(scripts/get_maintainer.pl --no-multiline --separator=, --no-git --no-roles --no-rolestats --no-git-fallback $files)" \
-			--cc linux-kernel@vger.kernel.org $files
+		git send-email --to="$(scripts/get_maintainer.pl --no-multiline --separator=, --no-git --no-roles --no-rolestats --no-git-fallback "${files[@]}")" \
+			--cc linux-kernel@vger.kernel.org "${files[@]}"
 	else
-		git send-email "$cc" --to="$(scripts/get_maintainer.pl --no-multiline --separator=, --no-git --no-roles --no-rolestats --no-git-fallback $files)" \
-			--cc linux-kernel@vger.kernel.org $files
+		git send-email "$cc" --to="$(scripts/get_maintainer.pl --no-multiline --separator=, --no-git --no-roles --no-rolestats --no-git-fallback "${files[@]}")" \
+			--cc linux-kernel@vger.kernel.org "${files[@]}"
 	fi
 	# TODO: git send-email --dry-run --to="$(scripts/get_maintainer.pl --no-multiline --separator=, --no-r --no-l --no-git --no-roles --no-rolestats --no-git-fallback *.patch)" --cc="$(scripts/get_maintainer.pl --no-multiline --separator=, --no-m --no-git --no-roles --no-rolestats --no-git-fallback *.patch)" *.patch
 }
@@ -124,7 +124,7 @@ git_show_cherry_pick() {
 	local gitdir="$(git rev-parse --path-format=absolute --git-dir)"
 	local rev=""
 	if [ -f "${gitdir}/CHERRY_PICK_HEAD" ]; then
-		rev="$(sed -e 's/[^0-9a-f]*//g' ${gitdir}/CHERRY_PICK_HEAD)"
+		rev="$(sed -e 's/[^0-9a-f]*//g' "${gitdir}/CHERRY_PICK_HEAD")"
 		git show "$(git rev-parse --verify --end-of-options "$rev^{commit}")"
 	else
 		echo "No cherry-pick in progress"
@@ -145,7 +145,7 @@ cross_build() {
 	local cross="$1"
 	local arch="$2"
 	shift 2
-	ARCH="$arch" CROSS_COMPILE="ccache /opt/${cross}/bin/${cross}-" KBUILD_OUTPUT=out/ $*
+	ARCH="$arch" CROSS_COMPILE="ccache /opt/${cross}/bin/${cross}-" KBUILD_OUTPUT=out/ "$@"
 }
 
 # dt_check target schema
@@ -164,20 +164,20 @@ dt_check() {
 		return 1
 	fi
 
-	make -j$(nproc) $target DT_SCHEMA_FILES="${schema}" $*
+	make "-j$(nproc)" "$target" DT_SCHEMA_FILES="${schema}" "$@"
 }
 
 crosc_dt_binding_check() {
-	crosc dt_check dt_binding_check $*
+	crosc dt_check dt_binding_check "$@"
 }
 crosc_dtbs_all_check() {
-	crosc dt_check dtbs_check $*
+	crosc dt_check dtbs_check "$@"
 }
 crosc64_dt_binding_check() {
-	crosc64 dt_check dt_binding_check $*
+	crosc64 dt_check dt_binding_check "$@"
 }
 crosc64_dtbs_all_check() {
-	crosc64 dt_check dtbs_check $*
+	crosc64 dt_check dtbs_check "$@"
 }
 
 # dtb_check <target> [schema]
@@ -192,8 +192,8 @@ dtb_check() {
 	fi
 
 	if [ -n "$schema" ]; then
-		make -j$(nproc) DT_SCHEMA_FILES="${schema}" CHECK_DTBS=y W=1 "$target"
+		make "-j$(nproc)" DT_SCHEMA_FILES="${schema}" CHECK_DTBS=y W=1 "$target"
 	else
-		make -j$(nproc) CHECK_DTBS=y W=1 "$target"
+		make "-j$(nproc)" CHECK_DTBS=y W=1 "$target"
 	fi
 }
