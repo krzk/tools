@@ -6,6 +6,7 @@
 #
 # SPDX-License-Identifier: GPL-2.0
 #
+# shellcheck disable=SC2181
 
 SERIAL_u3="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00D45567-if00-port0"
 SERIAL_mc1="/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_00CFE461-if00-port0"
