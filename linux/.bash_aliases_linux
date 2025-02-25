@@ -77,6 +77,7 @@ git_sync_mainline() {
 		echo "On master branch ($branch), use git pull manually to update it"
 	else
 		local upstream="$(git rev-parse --abbrev-ref master@{upstream})"
+		# shellcheck disable=SC2181
 		if [ $? -ne 0 ]; then
 			echo "No upstream configured for master"
 		else
