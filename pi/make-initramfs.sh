@@ -72,7 +72,7 @@ if [ -n "$ADDONS_DIR" ]; then
 fi
 
 test -d "${MODULES_DIR}/lib" || die "Module directory should be top-level, containing /lib"
-MODULES_TMP="`mktemp -d`" || die "Create tmp directory for modules failed"
+MODULES_TMP="$(mktemp -d)" || die "Create tmp directory for modules failed"
 MODULES_TMP_SUBDIR="${MODULES_TMP}/usr/lib"
 mkdir -p "${MODULES_TMP_SUBDIR}/modules/${KERNEL_NAME}"
 
@@ -96,7 +96,7 @@ cd "$MODULES_TMP" && fakeroot find -mindepth 1 -printf '%P\0' | LANG=C cpio -0 -
 test $? -eq 0 || die "Adding modules to cpio failed"
 cd - > /dev/null || exit
 
-OUTPUT_TMP="`mktemp`" || die "Creating tmp file for compression failed"
+OUTPUT_TMP="$(mktemp)" || die "Creating tmp file for compression failed"
 gzip -c < "${OUTPUT_FILE_FULL}" > "${OUTPUT_TMP}"
 
 mkimage -n "U-Boot Odroid ARMv7 ramdisk" -A arm -O linux -T ramdisk -C gzip \
