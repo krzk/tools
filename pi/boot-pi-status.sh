@@ -15,7 +15,7 @@ SERIAL_arndaleocta="/dev/serial/by-path/platform-3f980000.usb-usb-0:1.1.3:1.0-po
 
 # board_ping host
 board_ping() {
-	/usr/sbin/ping -c 1 -q -W 1 $1 > /dev/null
+	/usr/sbin/ping -c 1 -q -W 1 "$1" > /dev/null
 	if [ $? -eq 0 ]; then
 		echo "online"
 	else
