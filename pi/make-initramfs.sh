@@ -97,7 +97,7 @@ test $? -eq 0 || die "Adding modules to cpio failed"
 cd - > /dev/null
 
 OUTPUT_TMP="`mktemp`" || die "Creating tmp file for compression failed"
-cat "${OUTPUT_FILE_FULL}" | gzip -c > "${OUTPUT_TMP}"
+gzip -c < "${OUTPUT_FILE_FULL}" > "${OUTPUT_TMP}"
 
 mkimage -n "U-Boot Odroid ARMv7 ramdisk" -A arm -O linux -T ramdisk -C gzip \
 	-d "${OUTPUT_TMP}" "$OUTPUT_FILE_FULL" || die "Create U-Boot image into $OUTPUT_FILE_FULL failed"
