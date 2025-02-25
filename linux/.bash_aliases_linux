@@ -68,13 +68,13 @@ git_sync_mainline() {
 	else
 		local upstream
 
-		upstream="$(git rev-parse --abbrev-ref track/next@{upstream})"
+		upstream="$(git rev-parse --abbrev-ref "track/next@{upstream}")"
 		if [ $? -ne 0 ]; then
 			echo "No upstream configured for track/next"
 		else
 			echo "Updating track/next to upstream: $upstream"
 			# For non-fast-forward:
-			git update-ref refs/heads/track/next refs/remotes/${upstream}
+			git update-ref refs/heads/track/next "refs/remotes/${upstream}"
 		fi
 	fi
 	if [ "$branch" == "master" ]; then
@@ -82,7 +82,7 @@ git_sync_mainline() {
 	else
 		local upstream
 
-		upstream="$(git rev-parse --abbrev-ref master@{upstream})"
+		upstream="$(git rev-parse --abbrev-ref "master@{upstream}")"
 		# shellcheck disable=SC2181
 		if [ $? -ne 0 ]; then
 			echo "No upstream configured for master"
