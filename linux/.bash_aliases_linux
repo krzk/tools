@@ -125,7 +125,7 @@ git_show_cherry_pick() {
 	local rev=""
 	if [ -f "${gitdir}/CHERRY_PICK_HEAD" ]; then
 		rev="$(sed -e 's/[^0-9a-f]*//g' ${gitdir}/CHERRY_PICK_HEAD)"
-		git show "$(git rev-parse --verify --end-of-options $rev^{commit})"
+		git show "$(git rev-parse --verify --end-of-options "$rev^{commit}")"
 	else
 		echo "No cherry-pick in progress"
 	fi
