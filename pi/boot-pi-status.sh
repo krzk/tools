@@ -36,9 +36,12 @@ serial_check() {
 }
 
 pi_check() {
-	local hostname="$(/usr/bin/hostname)"
+	local hostname
+	local msg
 
-	local msg="Target alarmpi boot up
+	hostname="$(/usr/bin/hostname)"
+
+	msg="Target alarmpi boot up
 
 Pi:
 ===
