@@ -68,7 +68,7 @@ OUTPUT_FILE_FULL="$(readlink -f """$OUTPUT_FILE""")"
 if [ -n "$ADDONS_DIR" ]; then
 	cd "$ADDONS_DIR" && fakeroot find -mindepth 1 -printf '%P\0' | LANG=C cpio -0 -oA -H newc -R 0:0 -F "$OUTPUT_FILE_FULL"
 	test $? -eq 0 || die "Adding addons to cpio failed"
-	cd - > /dev/null
+	cd - > /dev/null || exit
 fi
 
 test -d "${MODULES_DIR}/lib" || die "Module directory should be top-level, containing /lib"
@@ -94,7 +94,7 @@ depmod --basedir "${MODULES_TMP}/usr" "$KERNEL_NAME" || die "depmod for kernel $
 
 cd "$MODULES_TMP" && fakeroot find -mindepth 1 -printf '%P\0' | LANG=C cpio -0 -oA -H newc -R 0:0 -F "$OUTPUT_FILE_FULL"
 test $? -eq 0 || die "Adding modules to cpio failed"
-cd - > /dev/null
+cd - > /dev/null || exit
 
 OUTPUT_TMP="`mktemp`" || die "Creating tmp file for compression failed"
 gzip -c < "${OUTPUT_FILE_FULL}" > "${OUTPUT_TMP}"
