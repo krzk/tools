@@ -897,8 +897,8 @@ config_nfc() {
 	config_item_module NFC_S3FWRN5_I2C NFC_S3FWRN82_UART NFC_ST95HF
 }
 
-# QCOM devices
-config_qcom() {
+# QCOM devices - dev boards and T14s
+config_qcom_common() {
 	# Disable other arm64 archs to speed up
 	config_item_off ARCH_ACTIONS ARCH_AIROHA ARCH_SUNXI ARCH_ALPINE ARCH_APPLE ARCH_BCM
 	#ARCH_BCM2835 ARCH_BCM_IPROC ARCH_BCMBCA ARCH_BRCMSTB
@@ -911,6 +911,18 @@ config_qcom() {
 
 	# USB net
 	config_item_on ETHERNET USB_USBNET USB_NET_AX8817X USB_LAN78XX USB_CONFIGFS USB_FUNCTIONFS
+
+	# Other hardware on x1e
+	config_item_on I2C_HID_OF_GOODIX TYPEC_MUX_PS8830 PHY_NXP_PTN3222 UHID
+
+	# Useful options for Qualcomm boards used in different contexts, e.g. RB5 as cdba server
+	config_item_on USB_SUPPORT USB_ACM USB_SERIAL USB_SERIAL_CP210X USB_SERIAL_FTDI_SIO USB_SERIAL_OPTION
+	config_item_on TYPEC_TCPM TYPEC_TCPCI
+}
+
+# QCOM dev boards
+config_qcom() {
+	config_qcom_common
 
 	# QRD8550
 	config_item_on TYPEC QCOM_PMIC_GLINK PHY_QCOM_EUSB2_REPEATER
@@ -972,10 +984,6 @@ config_qcom() {
 
 	# Other
 	config_item_on QCOM_OCMEM QCOM_LLCC
-
-	# Useful options for Qualcomm boards used in different contexts, e.g. RB5 as cdba server
-	config_item_on USB_SUPPORT USB_ACM USB_SERIAL USB_SERIAL_CP210X USB_SERIAL_FTDI_SIO USB_SERIAL_OPTION
-	config_item_on TYPEC_TCPM TYPEC_TCPCI
 }
 
 # QEMU guest plus some additional testing stuff for my trees
@@ -1033,23 +1041,10 @@ config_qemutest() {
 
 # Lenovo T14s
 config_t14s() {
-	# Disable other arm64 archs to speed up
-	config_item_off ARCH_ACTIONS ARCH_AIROHA ARCH_SUNXI ARCH_ALPINE ARCH_APPLE ARCH_BCM
-	config_item_off ARCH_BERLIN ARCH_EXYNOS ARCH_SPARX5 ARCH_K3 ARCH_LG1K ARCH_HISI ARCH_KEEMBAY
-	config_item_off ARCH_MEDIATEK ARCH_MESON ARCH_MVEBU ARCH_NXP ARCH_LAYERSCAPE ARCH_MXC
-	config_item_off ARCH_S32 ARCH_MA35 ARCH_NPCM ARCH_REALTEK ARCH_RENESAS ARCH_ROCKCHIP
-	config_item_off ARCH_SEATTLE ARCH_INTEL_SOCFPGA ARCH_STM32 ARCH_SYNQUACER ARCH_TEGRA ARCH_TESLA_FSD
-	config_item_off ARCH_SPRD ARCH_THUNDER ARCH_THUNDER2
-	config_item_off ARCH_UNIPHIER ARCH_VEXPRESS ARCH_VISCONTI ARCH_XGENE ARCH_ZYNQMP
-
-	# USB net
-	config_item_on USB_USBNET USB_NET_AX8817X USB_LAN78XX USB_CONFIGFS USB_FUNCTIONFS
+	config_qcom_common
 
 	# Bluetooth
 	config_item_module RFKILL BT BT_HCIBTUSB BT_HCIUART BT_QCOMSMD MFD_QCOM_QCA639X
-
-	# Other hardware on x1e
-	config_item_on I2C_HID_OF_GOODIX TYPEC_MUX_PS8830 PHY_NXP_PTN3222 UHID
 
 	# Recent boards audio
 	config_item_module MFD_WCD934X SND_SOC_WCD9335 SND_SOC_WCD934X GPIO_WCD934X SND_SOC_WCD938X_SDW
@@ -1057,9 +1052,6 @@ config_t14s() {
 	config_item_module PINCTRL_LPASS_LPI PINCTRL_SM8450_LPASS_LPI PINCTRL_SM8350_LPASS_LPI PINCTRL_SM8250_LPASS_LPI PINCTRL_SM8550_LPASS_LPI
 	config_item_module PINCTRL_SM8650_LPASS_LPI
 
-	# Useful options for Qualcomm boards used in different contexts, e.g. RB5 as cdba server
-	config_item_on USB_SUPPORT USB_ACM USB_SERIAL USB_SERIAL_CP210X USB_SERIAL_FTDI_SIO USB_SERIAL_OPTION
-	config_item_on TYPEC_TCPM TYPEC_TCPCI
 
 	# For Ubuntu/snap
 	config_item_module SQUASHFS
