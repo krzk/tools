@@ -152,6 +152,7 @@ headset_record_on() {
 headset_record_off() {
 	amixer -c 0 cset name='MultiMedia3 Mixer TX_CODEC_DMA_TX_3' 0
 	amixer -c 0 cset name='ADC2_MIXER Switch' 0
+	amixer -c 0 cset name='ADC2 MUX' CH2_AMIC_DISABLE
 	amixer -c 0 cset name='ADC2 Switch' 0
 	amixer -c 0 cset name='TX SMIC MUX0' 'ZERO'
 	amixer -c 0 cset name='TX_AIF1_CAP Mixer DEC0' 0
