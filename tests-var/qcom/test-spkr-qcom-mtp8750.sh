@@ -160,6 +160,56 @@ headset_record_off() {
 	amixer -c 0 cset name='TX1 MODE' ADC_INVALID
 }
 
+visense_testing_on() {
+	amixer -c 0 cset name='SpkrLeft PA Volume' 20
+	amixer -c 0 cset name='SpkrRight PA Volume' 20
+	amixer -c 0 cset name='WSA RX0 MUX' AIF1_PB
+	amixer -c 0 cset name='WSA RX1 MUX' AIF1_PB
+	amixer -c 0 cset name='WSA_RX0 INP0' RX0
+	amixer -c 0 cset name='WSA_RX1 INP0' RX1
+	amixer -c 0 cset name='WSA_COMP1 Switch' 1
+	amixer -c 0 cset name='WSA_COMP2 Switch' 1
+	amixer -c 0 cset name='SpkrLeft WSA MODE' 0
+	amixer -c 0 cset name='SpkrLeft COMP Switch' 1
+	amixer -c 0 cset name='SpkrLeft BOOST Switch' 1
+	amixer -c 0 cset name='SpkrLeft DAC Switch' 1
+	amixer -c 0 cset name='SpkrRight WSA MODE' 0
+	amixer -c 0 cset name='SpkrRight COMP Switch' 1
+	amixer -c 0 cset name='SpkrRight BOOST Switch' 1
+	amixer -c 0 cset name='SpkrRight DAC Switch' 1
+	amixer -c 0 cset name='WSA_RX0 Digital Volume' 85
+	amixer -c 0 cset name='WSA_RX1 Digital Volume' 85
+
+	amixer -c 0 cset name='WSA_AIF_VI Mixer WSA_SPKR_VI_1' 1
+	amixer -c 0 cset name='WSA_AIF_VI Mixer WSA_SPKR_VI_2' 1
+	amixer -c 0 cset name='SpkrLeft VISENSE Switch' 1
+	amixer -c 0 cset name='SpkrRight VISENSE Switch' 1
+
+	amixer -c 0 cset name='WSA_CODEC_DMA_RX_0 Audio Mixer MultiMedia2' 1
+	amixer -c 0 cset name='MultiMedia3 Mixer WSA_CODEC_DMA_TX_0' 1
+	( arecord -D plughw:0,2 -f S16_LE -c 2 -r 48000 -d 5 out_h.wav & ) ; aplay -D plughw:0,1 ~/samples/stereo.wav
+}
+
+visense_testing_off() {
+	amixer -c 0 cset name='WSA RX0 MUX' ZERO
+	amixer -c 0 cset name='WSA RX1 MUX' ZERO
+	amixer -c 0 cset name='WSA_RX0 INP0' ZERO
+	amixer -c 0 cset name='WSA_RX1 INP0' ZERO
+	amixer -c 0 cset name='WSA_COMP1 Switch' 0
+	amixer -c 0 cset name='WSA_COMP2 Switch' 0
+	amixer -c 0 cset name='SpkrLeft COMP Switch' 0
+	amixer -c 0 cset name='SpkrLeft BOOST Switch' 0
+	amixer -c 0 cset name='SpkrLeft DAC Switch' 0
+	amixer -c 0 cset name='SpkrRight COMP Switch' 0
+	amixer -c 0 cset name='SpkrRight BOOST Switch' 0
+	amixer -c 0 cset name='SpkrRight DAC Switch' 0
+
+	amixer -c 0 cset name='WSA_AIF_VI Mixer WSA_SPKR_VI_1' 0
+	amixer -c 0 cset name='WSA_AIF_VI Mixer WSA_SPKR_VI_2' 0
+	amixer -c 0 cset name='SpkrLeft VISENSE Switch' 0
+	amixer -c 0 cset name='SpkrRight VISENSE Switch' 0
+}
+
 # headset=0, speaker=1, mic=2
 if ! [ -c /dev/snd/pcmC0D0p ]; then
 	echo "Missing /dev/snd/pcmC0D0p"
