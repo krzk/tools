@@ -443,6 +443,36 @@ def step_boot_to_prompt(target, config):
     pexpect_cmd = pexpect_hard_reset(target, config) + pexpect_boot_to_prompt(target, config)
     return step_pexpect(name='Boot: ' + target, target=target, python_code=pexpect_cmd)
 
+def step_check_status(target, config):
+    """ Return step for testing system boot status over serial console
+
+    Arguments:
+        target - which board
+        config - which config us being tested (e.g. exynos, multi_v7)
+    Returns:
+        step
+    """
+
+    pexpect_cmd = r"""
+    child.sendline('')
+    index = child.expect_exact(['root@odroid', pexpect.TIMEOUT], timeout=1)
+    if index == 1:
+        # Prompt could be corrupted by kernel message
+        print('Retrying lookup for prompt...')
+        time.sleep(1)
+        child.sendline('')
+        child.expect_exact('root@odroid', timeout=1)
+    child.sendline('')
+    # Check if system finished boot and all services are up.
+    print('Checking system status...')
+    child.sendline('systemctl is-system-running')
+    # Pexpect (like TTY terminals) uses 'CRLF' to denote end of line. Also '$' cannot be used with pexpect.
+    child.expect('\r\nrunning\r\n', timeout=1)
+    child.expect_exact('root@odroid', timeout=1)
+    """
+
+    return step_pexpect(name='Check status: ' + target, target=target, python_code=pexpect_cmd)
+
 def step_test_ping(target, config):
     """ Return step for pinging target
 
@@ -739,6 +769,7 @@ def steps_boot(builder_name, target, config, run_pm_tests=False):
     st.append(step_gracefull_shutdown(target, config, halt_on_failure=False))
 
     st.append(step_boot_to_prompt(target, config))
+    st.append(step_check_status(target, config))
     st.append(step_test_ping(target, config))
     st.append(step_test_ssh(target, config))
     st.append(step_test_uname(target, config))
