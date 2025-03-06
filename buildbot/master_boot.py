@@ -469,6 +469,11 @@ def step_check_status(target, config):
     # Pexpect (like TTY terminals) uses 'CRLF' to denote end of line. Also '$' cannot be used with pexpect.
     child.expect('\r\nrunning\r\n', timeout=1)
     child.expect_exact('root@odroid', timeout=1)
+    # Ensure network started. On multi_v7 USB and USB PHYs are modules, thus
+    # network starts very late, sometimes after prompt.
+    print('Checking network online...')
+    child.sendline('systemctl start --no-ask-password network-online.target')
+    child.expect_exact('root@odroid', timeout=10)
     """
 
     return step_pexpect(name='Check status: ' + target, target=target, python_code=pexpect_cmd)
