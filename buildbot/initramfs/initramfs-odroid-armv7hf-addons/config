@@ -1,4 +1,4 @@
-MODULES="phy-exynos-usb2 ehci-exynos ohci-exynos r8152"
+MODULES="phy-exynos-usb2 phy-exynos5-usbdrd ehci-exynos ohci-exynos r8152 typec"
 EARLYHOOKS="udev"
 HOOKS="udev net_nfs4"
 LATEHOOKS=""
