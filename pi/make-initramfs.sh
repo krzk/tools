@@ -42,11 +42,13 @@ ehci-exynos \
 lan78xx \
 ohci-exynos \
 phy-exynos-usb2 \
+phy-exynos5-usbdrd \
 r8152 \
 rtc-s5m \
 rtl8150 \
 s2mpa01 s2mps11 s5m8767 \
 sec-core sec-irq \
+typec \
 "
 
 test -f "$BASE_CPIO" || die "Missing base_cpio file"
