@@ -53,7 +53,7 @@ def cmd_serial(target, close=False):
     Returns
         list of strings with cmd
     """
-    cmd = ['picocom', '-b', '115200', '--flow', 'none', '--exit']
+    cmd = ['picocom', '-b', '115200', '--flow', 'x', '--exit']
     if not close:
         cmd.append('--noreset')
     cmd.append('/dev/serial/' + TARGET_SERIAL_DEV[target])
@@ -119,7 +119,7 @@ def pexpect_start(target, log_file, verbose, no_special_chars):
     pexpect_logfile = 'None'
     if verbose:
         pexpect_logfile = 'sys.stdout'
-    picocom_args = 'picocom -b 115200 --noinit --noreset --flow none'
+    picocom_args = 'picocom -b 115200 --noinit --noreset --flow x'
     if no_special_chars:
         picocom_args += ' --imap spchex'
     else:
@@ -465,6 +465,7 @@ def step_check_status(target, config):
     child.sendline('')
     # Check if system finished boot and all services are up.
     print('Checking system status...')
+    # Don't use sendline, because it loses characters
     child.sendline('systemctl is-system-running')
     # Pexpect (like TTY terminals) uses 'CRLF' to denote end of line. Also '$' cannot be used with pexpect.
     child.expect('\r\nrunning\r\n', timeout=1)
