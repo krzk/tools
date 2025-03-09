@@ -791,6 +791,7 @@ def steps_boot(builder_name, target, config, run_pm_tests=False):
 
     # Test reboot
     st.append(step_test_reboot(target, config))
+    st.append(step_check_status(target, config))
     st.append(step_test_ping(target, config))
     st.append(step_test_ssh(target, config))
     st.append(step_test_uname(target, config))
