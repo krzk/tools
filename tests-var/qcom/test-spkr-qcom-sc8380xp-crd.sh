@@ -361,12 +361,12 @@ visense_cps_testing_on() {
 
 	amixer -c 0 cset name='WSA WSA_AIF_VI Mixer WSA_SPKR_VI_1' 1
 	amixer -c 0 cset name='WSA WSA_AIF_VI Mixer WSA_SPKR_VI_2' 1
-	amixer -c 0 cset name='WSA WSA_AIF_CPS Mixer WSA_SPKR_CPS_1' 1
-	amixer -c 0 cset name='WSA WSA_AIF_CPS Mixer WSA_SPKR_CPS_2' 1
+	#amixer -c 0 cset name='WSA WSA_AIF_CPS Mixer WSA_SPKR_CPS_1' 1
+	#amixer -c 0 cset name='WSA WSA_AIF_CPS Mixer WSA_SPKR_CPS_2' 1
 	amixer -c 0 cset name='WooferLeft VISENSE Switch' 1 # Once implemented, should go to regular playback
-	amixer -c 0 cset name='WooferLeft CPS Switch' 1 # Once implemented, should go to regular playback
+	#amixer -c 0 cset name='WooferLeft CPS Switch' 1 # Once implemented, should go to regular playback
 	amixer -c 0 cset name='TwitterLeft VISENSE Switch' 1 # Once implemented, should go to regular playback
-	amixer -c 0 cset name='TwitterLeft CPS Switch' 1 # Once implemented, should go to regular playback
+	#amixer -c 0 cset name='TwitterLeft CPS Switch' 1 # Once implemented, should go to regular playback
 
 	amixer -c 0 cset name='WSA_CODEC_DMA_RX_0 Audio Mixer MultiMedia2' 1
 	amixer -c 0 cset name='MultiMedia3 Mixer WSA_CODEC_DMA_TX_0' 1
