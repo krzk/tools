@@ -477,6 +477,7 @@ def step_check_status(target, config):
     child.send('systemctl start --no-ask-password network-online.target')
     child.sendline('')
     child.expect_exact('root@odroid', timeout=10)
+    print('System up with network')
     """
 
     return step_pexpect(name='Check status: ' + target, target=target, python_code=pexpect_cmd)
