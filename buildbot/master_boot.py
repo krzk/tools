@@ -74,13 +74,13 @@ def cmd_ssh(target, command):
             '-o', 'StrictHostKeyChecking no',
             '%s@%s' % (TARGET_SSH_USER, target)] + command
 
-def step_serial_open(target):
+def step_test_serial(target):
     """
     Returns:
         step
     """
 
-    return steps.ShellCommand(command=cmd_serial(target, close=False),
+    return steps.ShellCommand(command=cmd_serial(target, close=True),
                               name='Open serial port',
                               alwaysRun=False,
                               haltOnFailure=True)
@@ -119,7 +119,7 @@ def pexpect_start(target, log_file, verbose, no_special_chars):
     pexpect_logfile = 'None'
     if verbose:
         pexpect_logfile = 'sys.stdout'
-    picocom_args = 'picocom -b 115200 --noinit --noreset --flow x'
+    picocom_args = 'picocom -b 115200 --flow x'
     if no_special_chars:
         picocom_args += ' --imap spchex'
     else:
@@ -605,7 +605,6 @@ def steps_shutdown(target, config):
     st = []
 
     st.append(step_gracefull_shutdown(target, config, always_run=True, halt_on_failure=False))
-    st.append(step_serial_close(target))
     st.append(steps.ShellCommand(command=['sudo', '/opt/tools/pi/gpio-pi.py', target, 'off'],
                                  name='Cut the power: ' + target,
                                  alwaysRun=True,
@@ -772,7 +771,8 @@ def steps_boot(builder_name, target, config, run_pm_tests=False):
 
     # Gracefull shutdown uses SSH, so depends on SSH setup earlier
     st.append(step_setup_ssh(target, config))
-    st.append(step_serial_open(target))
+    # Early check if it makes any sense to deal with the device
+    st.append(step_test_serial(target))
 
     st.append(step_gracefull_shutdown(target, config, halt_on_failure=False))
 
