@@ -479,6 +479,10 @@ def step_check_status(target, config):
     child.send('systemctl start --no-ask-password network-online.target')
     child.sendline('')
     child.expect_exact('root@odroid', timeout=10)
+    child.sendline('ip addr')
+    child.expect_exact('1: lo: <LOOPBACK,UP,LOWER_UP>')
+    child.expect_exact([' enu0:', ' enu1:', ' eth0:', ' eth1:'])
+    child.expect_exact('root@odroid', timeout=1)
     print('System up with network')
     """
 
