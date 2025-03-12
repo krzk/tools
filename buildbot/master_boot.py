@@ -463,10 +463,12 @@ def step_check_status(target, config):
         child.sendline('')
         child.expect_exact('root@odroid', timeout=1)
     child.sendline('')
+    child.expect_exact('root@odroid', timeout=1)
     # Check if system finished boot and all services are up.
     print('Checking system status...')
     # First send() or sendline() always gets corrupted, regardless of picocom settings
     child.sendline('systemctl is-system-running')
+    child.expect_exact('root@odroid', timeout=1)
     child.sendline('systemctl is-system-running')
     # Pexpect (like TTY terminals) uses 'CRLF' to denote end of line. Also '$' cannot be used with pexpect.
     child.expect('\r\nrunning\r\n', timeout=1)
