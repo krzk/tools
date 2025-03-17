@@ -1,5 +1,8 @@
 #!/bin/sh
+#
+# Copyright (c) 2022-2023,2025 Krzysztof Kozlowski <krzk@kernel.org>
 # SPDX-License-Identifier: GPL-2.0
+#
 
 set -e -x
 
