@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (C) 2023-2024 Linaro Ltd
+# Copyright (C) 2023-2025 Linaro Ltd
 #
 # SPDX-License-Identifier: GPL-2.0
 #
@@ -292,12 +292,14 @@ visense_testing_on() {
 	amixer -c 0 cset name='WSA WSA_RX1 INP0' RX1
 	amixer -c 0 cset name='WSA WSA_COMP1 Switch' 1
 	amixer -c 0 cset name='WSA WSA_COMP2 Switch' 1
-	amixer -c 0 cset name='WooferLeft WSA MODE' 0
+	# WSA MODE 1 for calibration?
+	amixer -c 0 cset name='WooferLeft WSA MODE' 1
 	amixer -c 0 cset name='WooferLeft COMP Switch' 1
 	amixer -c 0 cset name='WooferLeft PBR Switch' 1
 	amixer -c 0 cset name='WooferLeft BOOST Switch' 1
 	amixer -c 0 cset name='WooferLeft DAC Switch' 1
-	amixer -c 0 cset name='TwitterLeft WSA MODE' 0
+	# WSA MODE 1 for calibration?
+	amixer -c 0 cset name='TwitterLeft WSA MODE' 1
 	amixer -c 0 cset name='TwitterLeft COMP Switch' 1
 	amixer -c 0 cset name='TwitterLeft PBR Switch' 1
 	amixer -c 0 cset name='TwitterLeft BOOST Switch' 1
