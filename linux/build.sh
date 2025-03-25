@@ -1,7 +1,7 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-2.0
 #
-# Copyright (c) 2023-2024 Krzysztof Kozlowski
+# Copyright (c) 2023-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <krzk@kernel.org>
 #
 # Script for building kernel images for several platforms.
@@ -1055,6 +1055,11 @@ config_t14s() {
 	# For Ubuntu/snap
 	config_item_module SQUASHFS
 	config_item_on SQUASHFS_FILE_DIRECT SQUASHFS_COMPILE_DECOMP_MULTI SQUASHFS_MOUNT_DECOMP_THREADS SQUASHFS_LZ4 SQUASHFS_LZO SQUASHFS_XZ
+
+	config_item_on HIDRAW USB_HIDDEV USB_PHY NOP_USB_XCEIV USB_ULPI USB_ULPI_VIEWPORT
+	config_item_on EXTCON
+	config_item_on AUXDISPLAY
+	config_item_module TYPEC_DP_ALTMODE
 }
 
 build_tests() {
