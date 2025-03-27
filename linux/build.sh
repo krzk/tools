@@ -793,6 +793,17 @@ config_item_on() {
 	done
 }
 
+# config_item_value <item value>
+config_item_value() {
+	local item="$1"
+	local val="$2"
+
+	test $# -eq 2 || die "BUG: config_item_value: incorrect number of arguments"
+
+	echo "Setting $item to $val"
+	scripts/config --file ${KBUILD_OUTPUT}.config -k --set-val "$item" "$val"
+}
+
 # config_item_module <items ...>
 config_item_module() {
 	for item in $*; do
@@ -899,6 +910,9 @@ config_nfc() {
 
 # QCOM devices - dev boards and T14s
 config_qcom_common() {
+	# More dmesg size (default 17 (128 kB) -> 19 (512 kB))
+	config_item_value LOG_BUF_SHIFT 19
+
 	# Disable other arm64 archs to speed up
 	config_item_off ARCH_ACTIONS ARCH_AIROHA ARCH_SUNXI ARCH_ALPINE ARCH_APPLE ARCH_BCM
 	#ARCH_BCM2835 ARCH_BCM_IPROC ARCH_BCMBCA ARCH_BRCMSTB
