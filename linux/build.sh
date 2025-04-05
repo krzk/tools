@@ -130,6 +130,7 @@ DISABLE_CONFIG_ITEMS=""
 CHOSEN_IMAGE=""
 JOBS="-j$(nproc)"
 KBUILD_OUTPUT="out/"
+CC=""
 CROSS_COMPILE=""
 CMDLINE=""
 MODULES_INSTALL_PATH="modules-out"
@@ -722,28 +723,26 @@ build_kernel() {
 	local _dts_name="$1"
 	local env="ARCH=\"$ARCH\""
 
-	if [ "$CROSS_COMPILE" = "" ]; then
-		env="$env CC=\"$CC\""
-	else
+	if [ "$CROSS_COMPILE" != "" ]; then
 		env="$env CROSS_COMPILE=\"$CROSS_COMPILE\""
 	fi
 	env="$env KBUILD_OUTPUT=\"$KBUILD_OUTPUT\""
 
 	echo "#################################"
 	echo "BUILDING: $CONFIG_NAME for $ARCH"
-	echo "$env make $TARGET"
+	echo "$env make ${CC:+CC=\"$CC\"} $TARGET"
 	echo "#################################"
 
 	if [ -n "$ENABLE_CONFIG_ITEMS" ] || [ -n "$DISABLE_CONFIG_ITEMS" ] ||
 		[ -n "$MODULE_CONFIG_ITEMS" ]; then
 		manual_config_items
 	fi
-	$MAKE olddefconfig $JOBS || echo "Make olddefconfig error"
+	$MAKE ${CC:+CC="$CC"} olddefconfig $JOBS || echo "Make olddefconfig error"
 
 	if [ -n "$CHECK_CMD" ]; then
-		$MAKE C=1 CHECK="$CHECK_CMD" $JOBS || die "Make error"
+		$MAKE ${CC:+CC="$CC"} C=1 CHECK="$CHECK_CMD" $JOBS || die "Make error"
 	else
-		$MAKE $JOBS || die "Make error"
+		$MAKE ${CC:+CC="$CC"} $JOBS || die "Make error"
 	fi
 
 	build_dts "$_dts_name"
@@ -762,25 +761,23 @@ build_target() {
 	local _target="$1"
 	local env="ARCH=\"$ARCH\""
 
-	if [ "$CROSS_COMPILE" = "" ]; then
-		env="$env CC=\"$CC\""
-	else
+	if [ "$CROSS_COMPILE" != "" ]; then
 		env="$env CROSS_COMPILE=\"$CROSS_COMPILE\""
 	fi
 	env="$env KBUILD_OUTPUT=\"$KBUILD_OUTPUT\""
 
 	echo "#################################"
 	echo "BUILDING: $CONFIG_NAME for $ARCH"
-	echo "$env make $TARGET"
+	echo "$env make ${CC:+CC=\"$CC\"} $TARGET"
 	echo "#################################"
 
 	if [ -n "$ENABLE_CONFIG_ITEMS" ] || [ -n "$DISABLE_CONFIG_ITEMS" ] ||
 		[ -n "$MODULE_CONFIG_ITEMS" ]; then
 		manual_config_items
-		$MAKE olddefconfig $JOBS || echo "Make olddefconfig error"
+		$MAKE ${CC:+CC="$CC"} olddefconfig $JOBS || echo "Make olddefconfig error"
 	fi
 
-	$MAKE $JOBS $_target || die "Make error"
+	$MAKE ${CC:+CC="$CC"} $JOBS $_target || die "Make error"
 
 	return 0
 }
@@ -1128,7 +1125,7 @@ build_t14s() {
 # Start of execution (entry point):
 if [ "$(have_ccache)" == "0" ]; then
 	if [ "$CROSS_COMPILE" = "" ]; then
-		export CC="ccache gcc"
+		CC="ccache gcc"
 	else
 		export CROSS_COMPILE="ccache $CROSS_COMPILE"
 	fi
