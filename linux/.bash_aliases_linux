@@ -7,12 +7,12 @@
 # SPDX-License-Identifier: GPL-2.0
 #
 
-alias crosc="CROSS_COMPILE=\"ccache arm-linux-gnueabi-\" ARCH=arm KBUILD_OUTPUT=out/"
-alias crosc_riscv="CROSS_COMPILE=\"ccache riscv64-linux-gnu-\" ARCH=riscv KBUILD_OUTPUT=out/"
+alias mcrosc="CROSS_COMPILE=\"ccache arm-linux-gnueabi-\" ARCH=arm KBUILD_OUTPUT=out/ make"
+alias mcrosc_riscv="CROSS_COMPILE=\"ccache riscv64-linux-gnu-\" ARCH=riscv KBUILD_OUTPUT=out/ make"
 if [ "$(uname -m)" == "x86_64" ]; then
-	alias crosc64="CROSS_COMPILE=\"ccache aarch64-linux-gnu-\" ARCH=arm64 KBUILD_OUTPUT=out/"
+	alias mcrosc64="CROSS_COMPILE=\"ccache aarch64-linux-gnu-\" ARCH=arm64 KBUILD_OUTPUT=out/ make"
 elif [ "$(uname -m)" == "aarch64" ]; then
-	alias crosc64="CC=\"ccache gcc\" ARCH=arm64 KBUILD_OUTPUT=out/"
+	alias mcrosc64="ARCH=arm64 KBUILD_OUTPUT=out/ make CC=\"ccache gcc\""
 else
 	echo "Unknown arch, not setting cross compile aliases"
 fi
@@ -161,7 +161,7 @@ cross_build() {
 
 # dt_check target schema
 # e.g.:
-# crosc dt_check dt_binding_check sound/samsung,aries-wm8994.yaml
+# dt_check dt_binding_check sound/samsung,aries-wm8994.yaml
 # DT_CHECKER_FLAGS=-g crosc dt_check dt_binding_check sound/samsung,aries-wm8994.yam
 # DT_CHECKER_FLAGS=-v crosc dt_check dt_binding_check sound/samsung,aries-wm8994.yam
 dt_check() {
@@ -179,16 +179,30 @@ dt_check() {
 }
 
 crosc_dt_binding_check() {
-	crosc dt_check dt_binding_check "$@"
+	export CROSS_COMPILE="ccache arm-linux-gnueabi-" ARCH=arm KBUILD_OUTPUT=out/
+	dt_check dt_binding_check "$@"
 }
 crosc_dtbs_all_check() {
-	crosc dt_check dtbs_check "$@"
+	export CROSS_COMPILE="ccache arm-linux-gnueabi-" ARCH=arm KBUILD_OUTPUT=out/
+	dt_check dtbs_check "$@"
 }
 crosc64_dt_binding_check() {
-	crosc64 dt_check dt_binding_check "$@"
+	if [ "$(uname -m)" == "x86_64" ]; then
+		export CROSS_COMPILE="ccache aarch64-linux-gnu-" ARCH=arm64 KBUILD_OUTPUT=out/
+	elif [ "$(uname -m)" == "aarch64" ]; then
+		export ARCH=arm64 KBUILD_OUTPUT=out/
+	fi
+
+	dt_check dt_binding_check "$@"
 }
 crosc64_dtbs_all_check() {
-	crosc64 dt_check dtbs_check "$@"
+	if [ "$(uname -m)" == "x86_64" ]; then
+		export CROSS_COMPILE="ccache aarch64-linux-gnu-" ARCH=arm64 KBUILD_OUTPUT=out/
+	elif [ "$(uname -m)" == "aarch64" ]; then
+		export ARCH=arm64 KBUILD_OUTPUT=out/
+	fi
+
+	dt_check dtbs_check "$@"
 }
 
 # dtb_check <target> [schema]
