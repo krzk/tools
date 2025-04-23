@@ -1,7 +1,7 @@
 # -*- python -*-
 # ex: set filetype=python:
 #
-# Copyright (c) 2016-2023 Krzysztof Kozlowski
+# Copyright (c) 2016-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -481,7 +481,7 @@ def step_check_status(target, config):
     child.expect_exact('root@odroid', timeout=10)
     child.sendline('ip addr')
     child.expect_exact('1: lo: <LOOPBACK,UP,LOWER_UP>')
-    child.expect_exact([' enu0:', ' enu1:', ' eth0:', ' eth1:'])
+    child.expect('(enu0:|enu1:|enu2u1u1:|eth0:|eth1:).*UP,LOWER_UP', timeout=5)
     child.expect_exact('root@odroid', timeout=1)
     print('System up with network')
     """
