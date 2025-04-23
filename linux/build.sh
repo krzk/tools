@@ -1076,6 +1076,15 @@ config_t14s() {
 	config_item_on HIDRAW USB_HIDDEV USB_PHY NOP_USB_XCEIV USB_ULPI USB_ULPI_VIEWPORT
 	config_item_on AUXDISPLAY
 	config_item_module TYPEC_DP_ALTMODE
+
+	# For network sharing - full netfilter setup, a bit bigger than actually needed
+	#
+	config_item_module NF_TABLES
+	config_item_on NF_TABLES_IPV4 NF_TABLES_IPV6
+	config_item_module NFT_NAT NFT_MASQ NFT_CT NFT_REJECT NF_CONNTRACK
+	# Probably not essential but let's make it complete
+	config_item_module NFT_CONNLIMIT NFT_LOG NFT_LIMIT NFT_REDIR NFT_TUNNEL NFT_QUOTA
+	config_item_module NFT_HASH NFT_SOCKET NFT_TPROXY NFT_SYNPROXY
 }
 
 build_tests() {
