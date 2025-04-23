@@ -476,12 +476,10 @@ def step_check_status(target, config):
     # Ensure network started. On multi_v7 USB and USB PHYs are modules, thus
     # network starts very late, sometimes after prompt.
     print('Checking network online...')
-    child.send('systemctl start --no-ask-password network-online.target')
-    child.sendline('')
-    child.expect_exact('root@odroid', timeout=10)
     child.sendline('ip addr')
-    child.expect_exact('1: lo: <LOOPBACK,UP,LOWER_UP>')
+    child.expect_exact('1: lo: <LOOPBACK,UP,LOWER_UP>', timeout=5)
     child.expect('(enu0:|enu1:|enu2u1u1:|eth0:|eth1:).*UP,LOWER_UP', timeout=5)
+    child.expect_exact('inet 192.168', timeout=5)
     child.expect_exact('root@odroid', timeout=1)
     print('System up with network')
     """
