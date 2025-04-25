@@ -14,6 +14,8 @@ alias mcrosc_riscv="CROSS_COMPILE=\"ccache riscv64-linux-gnu-\" ARCH=riscv KBUIL
 if [ "$(uname -m)" == "x86_64" ]; then
 	alias ecrosc64="CROSS_COMPILE=\"ccache aarch64-linux-gnu-\" ARCH=arm64 KBUILD_OUTPUT=out/"
 	alias mcrosc64="CROSS_COMPILE=\"ccache aarch64-linux-gnu-\" ARCH=arm64 KBUILD_OUTPUT=out/ make"
+	alias mcroscx32="ARCH=i386 KBUILD_OUTPUT=out/ make CC=\"ccache gcc\""
+	alias mcroscx64="ARCH=x86_64 KBUILD_OUTPUT=out/ make CC=\"ccache gcc\""
 elif [ "$(uname -m)" == "aarch64" ]; then
 	# ecrosc64 won't work Debian package targets (use mcrosc64):
 	#   make[5]: ccachegcc: No such file or directory
@@ -21,6 +23,8 @@ elif [ "$(uname -m)" == "aarch64" ]; then
 	#   dpkg-buildpackage: error: make -f debian/rules binary subprocess returned exit status 2
 	alias ecrosc64="CROSS_COMPILE=\"ccache aarch64-linux-gnu-\" ARCH=arm64 KBUILD_OUTPUT=out/"
 	alias mcrosc64="ARCH=arm64 KBUILD_OUTPUT=out/ make CC=\"ccache gcc\""
+	alias mcroscx32="CROSS_COMPILE=\"ccache x86_64-linux-gnu-\" ARCH=i386 KBUILD_OUTPUT=out/ make"
+	alias mcroscx64="CROSS_COMPILE=\"ccache x86_64-linux-gnu-\" ARCH=x86_64 KBUILD_OUTPUT=out/ make"
 else
 	echo "Unknown arch, not setting cross compile aliases"
 fi
