@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0
 #
-# Copyright (c) 2022-2024 Krzysztof Kozlowski
+# Copyright (c) 2022-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 ---
@@ -37,13 +37,28 @@
   when: ansible_facts['os_family'] == 'Debian'
 
 - name: Install grokmirror
+  apt:
+    name:
+      - grokmirror
+    state: latest
+  tags: packages, python
+  become: yes
+  become_user: root
+  when:
+    - ansible_facts['os_family'] == 'Debian'
+    - ansible_facts['lsb']['major_release'] | int >= 24
+
+- name: Install grokmirror
   pip:
     name:
       - grokmirror
     state: latest
     executable: pip3
+  tags: packages, python
   become: yes
   become_user: root
+  when: (ansible_facts['os_family'] != 'Debian') or
+        ((ansible_facts['os_family'] == 'Debian') and (ansible_facts['lsb']['major_release'] | int < 24))
 
 - name: Create unprivileged user
   user:
@@ -113,6 +128,36 @@
   become: yes
   become_user: root
 
+- name: Mkdir service override directory
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+  loop:
+    - '/etc/systemd/system/grok-fsck@kernel.service.d'
+    - '/etc/systemd/system/grok-pull@kernel.service.d'
+  become: yes
+  become_user: root
+  when:
+    - ansible_facts['os_family'] == 'Debian'
+    - ansible_facts['lsb']['major_release'] | int >= 24
+
+- name: Install service override files
+  ansible.builtin.template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    mode: '{{ item.mode }}'
+  with_items:
+    - {src: '10-usergroup.conf.j2', dest: '/etc/systemd/system/grok-fsck@kernel.service.d/10-usergroup.conf', mode: '0644'}
+    - {src: '10-usergroup.conf.j2', dest: '/etc/systemd/system/grok-pull@kernel.service.d/10-usergroup.conf', mode: '0644'}
+  become: yes
+  become_user: root
+  when:
+    - ansible_facts['os_family'] == 'Debian'
+    - ansible_facts['lsb']['major_release'] | int >= 24
+
 - name: Install service files
   ansible.builtin.template:
     src: '{{ item.src }}'
@@ -124,6 +169,8 @@
     - {src: 'grok-pull@.service.j2', dest: '/etc/systemd/system/grok-pull@.service', mode: '0644'}
   become: yes
   become_user: root
+  when: (ansible_facts['os_family'] != 'Debian') or
+        ((ansible_facts['os_family'] == 'Debian') and (ansible_facts['lsb']['major_release'] | int < 24))
 
 - name: Link service files
   ansible.builtin.file:
@@ -136,6 +183,8 @@
     - {src: '/etc/systemd/system/grok-pull@.service', dest: '/etc/systemd/system/grok-pull@kernel.service', mode: '0644'}
   become: yes
   become_user: root
+  when: (ansible_facts['os_family'] != 'Debian') or
+        ((ansible_facts['os_family'] == 'Debian') and (ansible_facts['lsb']['major_release'] | int < 24))
 
 - name: Systemd reload
   ansible.builtin.systemd:
