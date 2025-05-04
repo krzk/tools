@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2023 Krzysztof Kozlowski
+# Copyright (c) 2015-2023,2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -21,7 +21,7 @@ REMOTE_URL="$(git remote get-url ${REMOTE})"
 if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
 	BRANCHES="fixes for-next next/clk next/defconfig next/drivers next/dt next/dt64 next/soc next/soc64"
 elif [[ $REMOTE_URL == *"/krzk/linux-dt.git"* ]]; then
-	BRANCHES="fixes for-next next/dt next/dt64 next/dt-bindings next/qcom-pinctrl"
+	BRANCHES="fixes for-next next/dt next/dt64 next/dt-bindings next/qcom-pinctrl next/soc-drivers"
 elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
 	BRANCHES="fixes for-next mem-ctrl-next"
 elif [[ $REMOTE_URL == *"/krzk/linux-w1.git"* ]]; then
