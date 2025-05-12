@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2022 Krzysztof Kozlowski
+# Copyright (c) 2022,2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -28,7 +28,7 @@ if [ "$REMOTE" == "" ]; then
 	REMOTE="$(git rev-parse --abbrev-ref --symbolic-full-name master@{upstream})"
 	REMOTE="${REMOTE%%/*}"
 fi
-URL="$(git remote get-url ${REMOTE})"
+URL="$(git remote get-url "${REMOTE}")"
 echo "Using URL: $URL"
 
 tuxsuite plan --git-repo "$URL" --git-ref "$BRANCH" "$TUX_PLAN"
