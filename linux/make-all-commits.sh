@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2015-2020 Krzysztof Kozlowski
+# Copyright (c) 2015-2020,2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -48,6 +48,9 @@ do
 			;;
 		s)
 			START_COMMIT="$OPTARG"
+			;;
+		*)
+			usage
 			;;
 	esac
 done
