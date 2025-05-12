@@ -73,6 +73,7 @@ build_all_commits() {
 		checkout "$commit"
 		echo
 		nice release.sh -A "$_arch" -c "$_config" -E "${DRIVERS_ADDON}" > /dev/null 2> "${LOGS}/${_arch}-${_config}-${commit}"
+		# shellcheck disable=SC2181
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed build: -A $_arch -c $_config on $commit"
 		fi
