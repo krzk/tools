@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2020 Krzysztof Kozlowski
+# Copyright (c) 2020,2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -14,7 +14,7 @@ elif [ "$1" == "fast" ]; then
 	read -r MAX_FREQ < /sys/bus/cpu/devices/cpu0/cpufreq/cpuinfo_max_freq
 	echo "Runnig CPUs uncapped ($MAX_FREQ Hz)..."
 else
-	echo "$(basename $0) <slow|fast>"
+	echo "$(basename "$0") <slow|fast>"
 	exit 1
 fi
 

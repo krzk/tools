@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (c) 2015-2019 Krzysztof Kozlowski
+# Copyright (c) 2015-2019,2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -13,7 +13,7 @@ die() {
 }
 
 usage() {
-	echo "$(basename $0) <board>"
+	echo "$(basename "$0") <board>"
 	echo "    board - arndale, arndale-octa, odroid-u3, odroid-xu3, all"
 	exit 1
 }

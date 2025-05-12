@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2016-2023 Krzysztof Kozlowski
+# Copyright (c) 2016-2023,2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -13,7 +13,7 @@ die() {
 }
 
 usage() {
-	echo "$(basename $0) <tag> [start]"
+	echo "$(basename "$0") <tag> [start]"
 	exit 1
 }
 

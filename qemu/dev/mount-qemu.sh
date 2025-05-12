@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2017 Krzysztof Kozlowski
+# Copyright (c) 2017,2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -15,7 +15,7 @@ die() {
 }
 
 usage() {
-	echo "$(basename $0) <qcow2.img> <dst>"
+	echo "$(basename "$0") <qcow2.img> <dst>"
 	exit 1
 }
 

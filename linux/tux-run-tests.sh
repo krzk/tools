@@ -13,7 +13,7 @@ die() {
 }
 
 usage() {
-	echo "$(basename $0) <remote_branch> <tux-plan.yaml> [remote]"
+	echo "$(basename "$0") <remote_branch> <tux-plan.yaml> [remote]"
 	echo "  remote - optional, if missing, the remote from master branch will be used"
 	exit 1
 }

@@ -13,7 +13,7 @@ die() {
 }
 
 usage() {
-	echo "Usage: $(basename $0) [options] [-c config_name] [-d dts_name]"
+	echo "Usage: $(basename "$0") [options] [-c config_name] [-d dts_name]"
 	echo
 	echo " Build and package kernel."
 	echo

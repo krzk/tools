@@ -1,6 +1,7 @@
 #!/bin/bash
 #
 # Copyright (c) 2021 Canonical Ltd.
+# Copyright (c) 2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <krzk@kernel.org>
 #
 # SPDX-License-Identifier: GPL-2.0
@@ -12,7 +13,7 @@ die() {
 }
 
 usage() {
-	echo "$(basename $0) <-d drive>"
+	echo "$(basename "$0") <-d drive>"
 	echo " -d <drive>        - drive image file (type: raw or qcow2 depending on extension)"
 	exit 1
 }
