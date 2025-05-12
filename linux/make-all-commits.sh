@@ -116,7 +116,7 @@ echo "End comit:"
 git rev-parse --verify HEAD || die "Wrong HEAD"
 git rev-parse --abbrev-ref HEAD > /dev/null || die "Could not find current branch"
 
-COMMITS="`git log --pretty=format:"%H" $START_COMMIT...HEAD`"
+COMMITS="$(git log --pretty=format:"%H" "$START_COMMIT...HEAD")"
 COMMITS="$COMMITS $START_COMMIT"
 CURRENT_BRANCH="`git rev-parse --abbrev-ref HEAD`"
 
