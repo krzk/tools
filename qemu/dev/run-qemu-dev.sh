@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2017 Krzysztof Kozlowski
+# Copyright (c) 2017,2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -13,7 +13,7 @@ die() {
 }
 
 usage() {
-	echo "$(basename $0) [-m machine] [-k kernel] [-d dtb]"
+	echo "$(basename "$0") [-m machine] [-k kernel] [-d dtb]"
 	echo " -m <machine>      - smdkc210, vexpress-a9 (default: $MACHINE)"
 	echo " -k <kernel>       - path to zImage (default: $KERNEL)"
 	echo " -d <dtb>          - path to dtb (default: $DTB)"
@@ -68,9 +68,9 @@ case $MACHINE in
 esac
 
 echo "Running QEMU with MACHINE $MACHINE, DTB $DTB"
-$QEMU -m $MEM -M $MACHINE -smp $CPU $IMG -append "$CMDLINE_CONSOLE $CMDLINE" \
+$QEMU -m "$MEM" -M "$MACHINE" -smp "$CPU" $IMG -append "$CMDLINE_CONSOLE $CMDLINE" \
 	-d guest_errors \
 	-serial stdio \
-	-D ${ROOT_DIR}log-${MACHINE}.log \
+	-D "${ROOT_DIR}log-${MACHINE}.log" \
 	$NET \
-	-kernel $KERNEL -dtb $DTB -initrd $INITRD
+	-kernel "$KERNEL" -dtb "$DTB" -initrd "$INITRD"
