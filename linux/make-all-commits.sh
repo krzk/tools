@@ -16,7 +16,7 @@ LOGS="logs"
 START_COMMIT=""
 
 usage() {
-	echo "Usage: $(basename $0) [-c config] <-s start>"
+	echo "Usage: $(basename "$0") [-c config] <-s start>"
 	echo
 	echo " Build configurations since <start> GIT revision."
 	echo " Currently built configs:"
@@ -58,7 +58,7 @@ done
 checkout() {
 	local _commit=$1
 
-	git checkout $_commit || die "Checkout error"
+	git checkout "$_commit" || die "Checkout error"
 }
 
 build_all_commits() {
@@ -68,11 +68,11 @@ build_all_commits() {
 	for commit in $COMMITS
 	do
 		echo
-		echo release.sh -A $_arch -c $_config
+		echo release.sh -A "$_arch" -c "$_config"
 		echo
-		checkout $commit
+		checkout "$commit"
 		echo
-		nice release.sh -A $_arch -c $_config -E "${DRIVERS_ADDON}" > /dev/null 2> "${LOGS}/${_arch}-${_config}-${commit}"
+		nice release.sh -A "$_arch" -c "$_config" -E "${DRIVERS_ADDON}" > /dev/null 2> "${LOGS}/${_arch}-${_config}-${commit}"
 		if [ $? -ne 0 ]; then
 			echo "ERROR: Failed build: -A $_arch -c $_config on $commit"
 		fi
@@ -91,14 +91,14 @@ build_arch() {
 
 	for config in $_configs
 	do
-		build_all_commits $_arch $config
+		build_all_commits "$_arch" "$config"
 	done
 }
 
 build_all_archs() {
 	for arch in $ARCHS
 	do
-		build_arch $arch
+		build_arch "$arch"
 	done
 }
 
@@ -111,7 +111,7 @@ DRIVERS_ADDON="$(grep ^config drivers/mfd/Kconfig | sed -e 's/^config //' -e 's/
 test -n "$START_COMMIT" || usage
 
 echo "Start commit:"
-git rev-parse --verify $START_COMMIT || die "Wrong start commit"
+git rev-parse --verify "$START_COMMIT" || die "Wrong start commit"
 echo "End comit:"
 git rev-parse --verify HEAD || die "Wrong HEAD"
 git rev-parse --abbrev-ref HEAD > /dev/null || die "Could not find current branch"
@@ -123,7 +123,7 @@ CURRENT_BRANCH="`git rev-parse --abbrev-ref HEAD`"
 rm -fr $LOGS
 mkdir $LOGS || die "mkdir $LOGS error"
 
-checkout $START_COMMIT
+checkout "$START_COMMIT"
 
 build_all_archs
 
