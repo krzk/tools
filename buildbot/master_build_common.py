@@ -18,10 +18,14 @@ import shlex
 
 BUILD_WARN_IGNORE = [
     (None, '.*warning: #warning syscall .* not implemented.*', None, None),
+    (None, re.escape("warning: 'arch/riscv/kernel/vdso/vdso.so.dbg': invalid PT_DYNAMIC size"), None, None),
+    (None, re.escape("warning: 'arch/riscv/kernel/vdso/vdso.so.dbg': PT_DYNAMIC dynamic table is invalid: SHT_DYNAMIC will be used"), None, None),
     ('.*exynos5433.dtsi$', re.escape("Warning (graph_child_address): /soc@0/decon@13800000/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary"), None, None),
     ('.*exynos5433.dtsi$', re.escape("Warning (graph_child_address): /soc@0/dsi@13900000/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary"), None, None),
     ('.*exynos5433-tm2-common.dtsi$', re.escape("Warning (graph_child_address): /soc@0/decon@13880000/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary"), None, None),
-                    ]
+    # Fix probably in linux-next after v6.16-rc1 (so for v6.17):
+    ('.*emif.c:67$', re.escape("struct member 'lpmode' not described in 'emif_data'"), None, None),
+    ]
 CMD_MAKE = '%(prop:builddir:-~/)s/tools/buildbot/build-slave.sh'
 
 DTBS_CHECK_KNOWN_WARNINGS = {
@@ -545,7 +549,7 @@ def steps_build_all_drivers_adjust_config(env, kbuild_output):
      st.extend(steps_build_w1_adjust_config(env, kbuild_output, make_olddefconfig=True))
      return st
 
-def steps_build_selected_folders(builder_name, env, make_flags=None):
+def steps_build_selected_folders(builder_name, env, make_flags=None, touch_changed=True):
     st = []
     if not env['KBUILD_OUTPUT']:
         raise ValueError('Missing KBUILD_OUTPUT path in environment')
@@ -566,18 +570,27 @@ def steps_build_selected_folders(builder_name, env, make_flags=None):
     if make_flags:
         cmd.append(str(make_flags))
     cmd.extend(paths_to_build)
-    st.append(steps.ShellCommand(command=cmd,
-                                 haltOnFailure=True, env=env, name='Build selected paths'))
-    st.append(step_touch_commit_files())
+    cmd_name = 'Build selected paths'
+    if touch_changed:
+        st.append(steps.ShellCommand(command=cmd,
+                                     haltOnFailure=True, env=env, name=cmd_name))
+        st.append(step_touch_commit_files())
+        cmd_name='Rebuild selected paths'
     st.append(steps.Compile(command=cmd,
                             haltOnFailure=True,
                             warnOnWarnings=True,
                             suppressionList=BUILD_WARN_IGNORE,
-                            env=env, name='Rebuild selected paths'))
+                            env=env, name=cmd_name))
     return st
 
 def steps_build_selected_folders_warnings(builder_name, env):
-    return steps_build_selected_folders(builder_name, env, 'W=1')
+    return steps_build_selected_folders(builder_name, env, make_flags='W=1', touch_changed=True)
+
+def steps_build_selected_folders_no_touch(builder_name, env):
+    return steps_build_selected_folders(builder_name, env, touch_changed=False)
+
+def steps_build_selected_folders_no_touch_warnings(builder_name, env):
+    return steps_build_selected_folders(builder_name, env, make_flags='W=1', touch_changed=False)
 
 def steps_dt_binding_check(env, kbuild_output):
     st = []
