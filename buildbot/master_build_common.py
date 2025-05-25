@@ -553,6 +553,7 @@ def steps_build_selected_folders(builder_name, env):
                       # make won't build DTBs but include it for completeness
                       'arch/arm64/boot/dts/',
                       'drivers/clk/samsung/',
+                      'drivers/firmware/samsung/',
                       'drivers/interconnect/samsung/',
                       'drivers/memory/',
                       'drivers/phy/samsung/'
