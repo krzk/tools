@@ -545,7 +545,7 @@ def steps_build_all_drivers_adjust_config(env, kbuild_output):
      st.extend(steps_build_w1_adjust_config(env, kbuild_output, make_olddefconfig=True))
      return st
 
-def steps_build_selected_folders(builder_name, env):
+def steps_build_selected_folders(builder_name, env, make_flags=None):
     st = []
     if not env['KBUILD_OUTPUT']:
         raise ValueError('Missing KBUILD_OUTPUT path in environment')
@@ -562,15 +562,22 @@ def steps_build_selected_folders(builder_name, env):
                       'drivers/soc/samsung/',
                       'drivers/thermal/samsung/',
                       'drivers/w1/']
-    st.append(steps.ShellCommand(command=[util.Interpolate(CMD_MAKE)] + paths_to_build,
+    cmd = [util.Interpolate(CMD_MAKE)]
+    if make_flags:
+        cmd.append(str(make_flags))
+    cmd.extend(paths_to_build)
+    st.append(steps.ShellCommand(command=cmd,
                                  haltOnFailure=True, env=env, name='Build selected paths'))
     st.append(step_touch_commit_files())
-    st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE)] + paths_to_build,
+    st.append(steps.Compile(command=cmd,
                             haltOnFailure=True,
                             warnOnWarnings=True,
                             suppressionList=BUILD_WARN_IGNORE,
                             env=env, name='Rebuild selected paths'))
     return st
+
+def steps_build_selected_folders_warnings(builder_name, env):
+    return steps_build_selected_folders(builder_name, env, 'W=1')
 
 def steps_dt_binding_check(env, kbuild_output):
     st = []
