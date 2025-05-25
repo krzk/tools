@@ -26,6 +26,7 @@
       - bison
       - build-essential
       - ccache
+      - clang
       - diffutils
       - dwarves # For kernel configs enabling CONFIG_DEBUG_INFO_BTF
       - flex
@@ -39,6 +40,8 @@
       - libelf-dev
       - libkeyutils-dev
       - libssl-dev
+      - lld
+      - llvm
       - patch
     state: present
   tags: packages, python

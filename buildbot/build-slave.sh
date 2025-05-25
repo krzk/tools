@@ -29,9 +29,13 @@ JOBS="-j${JOBS}"
 
 # Check and enable ccache:
 if [ "$(have_ccache)" == "0" ]; then
-	export CROSS_COMPILE="ccache $CROSS_COMPILE"
+	if [[ "$CC" =~ ^clang ]]; then
+		export CC="ccache $CC"
+	else
+		export CROSS_COMPILE="ccache $CROSS_COMPILE"
+	fi
 fi
 
-make "$JOBS" "$@"
+make ${CC:+CC="$CC"} "$JOBS" "$@"
 
 exit $?
