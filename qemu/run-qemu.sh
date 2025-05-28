@@ -21,8 +21,8 @@ usage() {
 set -x
 IMG_FILE=""
 IMG_FILE_TYPE=""
-QEMU_MEM="${QEMU_MEM:=1G}"
-QEMU_CPU="${QEMU_CPU:=2}"
+QEMU_MEM="${QEMU_MEM:=4G}"
+QEMU_CPU="${QEMU_CPU:=4}"
 
 while getopts "hd:k:m:" flag
 do
