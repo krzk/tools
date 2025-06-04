@@ -15,6 +15,7 @@ elif [ "$1" == "fast" ]; then
 	echo "Runnig CPUs uncapped ($MAX_FREQ Hz)..."
 else
 	echo "$(basename "$0") <slow|fast>"
+	echo "Current: $(cat /sys/bus/cpu/devices/cpu0/cpufreq/scaling_max_freq)"
 	exit 1
 fi
 
