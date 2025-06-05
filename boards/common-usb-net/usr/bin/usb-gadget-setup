@@ -31,14 +31,20 @@ echo "$model" > strings/0x409/product
 mkdir configs/c.1
 mkdir configs/c.1/strings/0x409
 
-if [ "$mode" = "ecm" ]; then
-	echo "USB CDC Ethernet config" > configs/c.1/strings/0x409/configuration
-	mkdir functions/ecm.usb0
-	ln -s functions/ecm.usb0 configs/c.1
-else
-	echo "RNDIS Ethernet config" > configs/c.1/strings/0x409/configuration
-	mkdir functions/rndis.rn0
-	ln -s functions/rndis.rn0 configs/c.1
-fi
+case "$mode" in
+	ecm)
+		echo "USB CDC Ethernet config" > configs/c.1/strings/0x409/configuration
+		mkdir functions/ecm.usb0
+		ln -s functions/ecm.usb0 configs/c.1
+		;;
+	rndis)
+		echo "RNDIS Ethernet config" > configs/c.1/strings/0x409/configuration
+		mkdir functions/rndis.rn0
+		ln -s functions/rndis.rn0 configs/c.1
+		;;
+	*)
+		echo "Invalid mode configured"
+		exit 1
+esac
 
 ls /sys/class/udc/ | xargs echo -n > UDC
