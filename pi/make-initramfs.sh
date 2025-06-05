@@ -36,10 +36,14 @@ if [ -n "$3" ]; then
 fi
 OUTPUT_FILE="$4"
 
+# Dependencies:
+# r8152: libsha256
+# libsha256: sha256_arm
 MODULES_WANTED="clk-s2mps11 \
 dwc2 \
 ehci-exynos \
 lan78xx \
+libsha256 \
 ohci-exynos \
 phy-exynos-usb2 \
 phy-exynos5-usbdrd \
@@ -48,6 +52,7 @@ rtc-s5m \
 rtl8150 \
 s2mpa01 s2mps11 s5m8767 \
 sec-core sec-irq \
+sha256-arm \
 typec \
 "
 
