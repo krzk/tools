@@ -9,7 +9,7 @@ set -e -x
 manufacturer="Linux"
 model="Embedded device"
 serial="123456789ABCDEF"
-mode="ecm"
+mode="ncm"
 
 [ -d /sys/kernel/config/usb_gadget ] || modprobe libcomposite
 
@@ -36,6 +36,11 @@ case "$mode" in
 		echo "USB CDC Ethernet config" > configs/c.1/strings/0x409/configuration
 		mkdir functions/ecm.usb0
 		ln -s functions/ecm.usb0 configs/c.1
+		;;
+	ncm)
+		echo "USB CDC Ethernet config" > configs/c.1/strings/0x409/configuration
+		mkdir functions/ncm.usb0
+		ln -s functions/ncm.usb0 configs/c.1
 		;;
 	rndis)
 		echo "RNDIS Ethernet config" > configs/c.1/strings/0x409/configuration

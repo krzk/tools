@@ -14,12 +14,13 @@ cd g2 || exit
 
 printf '%s' '' > UDC || true
 
-rm -f configs/c.1/ecm.usb0 configs/c.1/rndis.rn0
+rm -f configs/c.1/ecm.usb0 configs/c.1/ncm.usb0 configs/c.1/rndis.rn0
 
 rmdir configs/c.1/strings/0x409
 rmdir configs/c.1
 
 test -d functions/ecm.usb0 && rmdir functions/ecm.usb0
+test -d functions/ncm.usb0 && rmdir functions/ncm.usb0
 test -d functions/rndis.rn0 && rmdir functions/rndis.rn0
 rmdir strings/0x409
 
