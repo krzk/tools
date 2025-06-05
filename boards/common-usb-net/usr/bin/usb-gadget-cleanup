@@ -8,7 +8,7 @@ set -x
 
 [ -d /sys/kernel/config/usb_gadget ] || exit 0
 
-cd /sys/kernel/config/usb_gadget1 || exit
+cd /sys/kernel/config/usb_gadget || exit
 
 cd g2 || exit
 
