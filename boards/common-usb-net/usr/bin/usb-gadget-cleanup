@@ -14,7 +14,7 @@ cd g2 || exit
 
 printf '%s' '' > UDC || true
 
-rm -f configs/c.1/ecm.usb0 functions/rndis.rn0
+rm -f configs/c.1/ecm.usb0 configs/c.1/rndis.rn0
 
 rmdir configs/c.1/strings/0x409
 rmdir configs/c.1
