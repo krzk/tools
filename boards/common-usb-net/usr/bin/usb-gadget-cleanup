@@ -12,7 +12,7 @@ cd /sys/kernel/config/usb_gadget || exit
 
 cd g2 || exit
 
-echo -n "" > UDC || true
+printf '%s' '' > UDC || true
 
 rm -f configs/c.1/ecm.usb0 functions/rndis.rn0
 
