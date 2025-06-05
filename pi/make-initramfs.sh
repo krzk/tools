@@ -39,12 +39,14 @@ OUTPUT_FILE="$4"
 # Dependencies:
 # r8152: libsha256
 # libsha256: sha256_arm
+# TODO, probably for multi_v7 on Odroid X USB network: mdio-i2c, onboard_usb_dev, phy/microchip or phy/sfp
 MODULES_WANTED="clk-s2mps11 \
 dwc2 \
 ehci-exynos \
 lan78xx \
 libsha256 \
 ohci-exynos \
+onboard_usb_dev \
 phy-exynos-usb2 \
 phy-exynos5-usbdrd \
 r8152 \
@@ -53,6 +55,7 @@ rtl8150 \
 s2mpa01 s2mps11 s5m8767 \
 sec-core sec-irq \
 sha256-arm \
+spi-s3c64xx \
 typec \
 "
 
@@ -86,6 +89,7 @@ mkdir -p "${MODULES_TMP_SUBDIR}/modules/${KERNEL_NAME}"
 
 for module in $MODULES_WANTED; do
 	echo "Copying module: $module"
+	# If MODULES_WANTED had path: find ./ -path """*/${module}.ko""")
 	module_file="$(cd """${MODULES_DIR}/lib""" && find ./ -name """${module}.ko""")"
 
 	# Missing module is okay - MODULES_WANTED contains everything for different kernels, even for builtin
