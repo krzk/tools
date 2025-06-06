@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0
 #
-# Copyright (c) 2021-2024 Krzysztof Kozlowski
+# Copyright (c) 2021-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 ---
@@ -85,21 +85,21 @@
 - name: Set chmod on worker directory
   file:
     path: '{{ buildbot_basedir }}'
-    mode: 0700
+    mode: '0700'
   remote_user: '{{ buildbot_user }}'
 
 - name: Set worker admin
   copy:
     content: '{{ buildbot_worker_admin }}'
     dest: '{{ buildbot_basedir }}/info/admin'
-    mode: 0644
+    mode: '0644'
   remote_user: '{{ buildbot_user }}'
 
 - name: Set worker description
   copy:
     content: '{{ buildbot_worker_description }}'
     dest: '{{ buildbot_basedir }}/info/host'
-    mode: 0644
+    mode: '0644'
   remote_user: '{{ buildbot_user }}'
 
 - name: Mark mirror repos path as Git-safe
@@ -118,7 +118,7 @@
   template:
     src: buildbot-slave.service.j2
     dest: /etc/systemd/system/buildbot-slave.service
-    mode: 0644
+    mode: '0644'
   become: yes
   become_user: root
 
@@ -126,7 +126,7 @@
   template:
     src: buildbot.sh.j2
     dest: /usr/local/bin/buildbot.sh
-    mode: 0755
+    mode: '0755'
   become: yes
   become_user: root
 
