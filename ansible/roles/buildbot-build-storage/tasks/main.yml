@@ -1,0 +1,88 @@
+# SPDX-License-Identifier: GPL-2.0
+#
+# Copyright (c) 2025 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <krzk@kernel.org>
+---
+- name: Check requirements for variables
+  assert:
+    that: item is defined
+  with_items:
+    - buildbot_user
+    - document_root_dir
+
+- name: Update apt-cache
+  apt:
+    update_cache: yes
+  tags: packages
+  become: yes
+  become_user: root
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Install lighttpd
+  package:
+    name:
+      - lighttpd
+    state: latest
+  tags: packages
+  become: yes
+  become_user: root
+
+- name: Configure userdir lighttpd
+  ansible.builtin.lineinfile:
+    path: /etc/lighttpd/conf-available/10-userdir.conf
+    search_string: 'userdir.include-user'
+    line: 'userdir.include-user := ( "{{ buildbot_user }}" )'
+  become: yes
+  become_user: root
+  notify: Restart service
+
+- name: Enable modules
+  shell:
+    cmd: lighty-enable-mod accesslog dir-listing userdir
+  become: yes
+  become_user: root
+  register: result
+  failed_when:
+    - result.rc != 0 and result.rc != 2
+  notify: Restart service
+
+- name: Install default index.html
+  template:
+    src: index.html.j2
+    dest: '{{ document_root_dir }}/index.html'
+    mode: '0644'
+  become: yes
+  become_user: root
+
+- name: Remove default index.html
+  ansible.builtin.file:
+    path: '{{ document_root_dir }}/index.lighttpd.html'
+    state: absent
+  become: yes
+  become_user: root
+
+- name: Disable unconfigured
+  shell:
+    cmd: lighty-disable-mod unconfigured
+  failed_when:
+    - result.rc != 0 and result.rc != 2
+  become: yes
+  become_user: root
+  notify: Restart service
+
+- name: Systemd reload
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  become: yes
+  become_user: root
+
+- name: Systemd enable service
+  ansible.builtin.systemd:
+    name: '{{ item }}'
+    enabled: yes
+    state: started
+    masked: no
+  with_items:
+    - lighttpd.service
+  become: yes
+  become_user: root

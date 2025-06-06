@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: GPL-2.0
+#
+# Copyright (c) 2025 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <krzk@kernel.org>
+---
+- name: Restart service
+  ansible.builtin.service:
+    name: lighttpd.service
+    state: restarted
+  become: yes
+  become_user: root

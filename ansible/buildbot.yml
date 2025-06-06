@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: GPL-2.0
+#
+# Copyright (c) 2021,2022,2025 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <krzk@kernel.org>
 ---
 - hosts: buildbot_builders
   roles:
@@ -6,6 +10,10 @@
     - tunnel
     - buildbot-git-mirror
     - buildbot-builder
+
+- hosts: buildbot_artifact_storage
+  roles:
+    - buildbot-build-storage
 
 - hosts: buildbot_masters
   roles:
