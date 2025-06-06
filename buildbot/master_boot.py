@@ -347,8 +347,13 @@ def pexpect_boot_to_prompt(target, config):
     print('Target """ + target + """ reached: Reached login interface')
     expect = ['krzk development Linux',
               '""" + re.escape(target) + """ login:',
-              'odroid login:']
-    child.expect(expect)
+              'odroid login:', pexpect.TIMEOUT]
+    index = child.expect(expect, timeout=5)
+    if index == 2:
+        # Prompt could be corrupted by kernel message
+        print('Retrying lookup...')
+        child.sendline('')
+        child.expect(expect, timeout=1)
     """
     return pexpect_cmd
 
