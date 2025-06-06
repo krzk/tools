@@ -481,14 +481,16 @@ def step_check_status(target, config):
     # Ensure network started. On multi_v7 USB and USB PHYs are modules, thus
     # network starts very late, sometimes after prompt.
     print('Checking network online...')
-    child.sendline('ip addr')
-    child.expect_exact('1: lo: <LOOPBACK,UP,LOWER_UP>', timeout=5)
-    index = child.expect(['(enu0:|enu1:|enu2u1u1:|eth0:|eth1:).*UP,LOWER_UP', pexpect.TIMEOUT], timeout=5)
+    child.sendline('systemctl start --no-ask-password network-online.target')
+    index = child.expect_exact(['root@odroid', pexpect.TIMEOUT], timeout=5)
     if index == 1:
-        # multi_v7 kernel loads ethernet modules very late and first `ip addr` still has no network
-        print('Retrying lookup for online network (`ip addr`)...')
-        child.sendline('ip addr')
-        child.expect(['(enu0:|enu1:|enu2u1u1:|eth0:|eth1:).*UP,LOWER_UP', pexpect.TIMEOUT], timeout=5)
+        # Could be messed prompt
+        print('Retrying checking network online...')
+        child.expect_exact(['root@odroid', pexpect.TIMEOUT], timeout=5)
+    print('Checking network IP address...')
+    child.sendline('ip addr')
+    child.expect_exact('1: lo: <LOOPBACK,UP,LOWER_UP>', timeout=1)
+    child.expect('(enu0:|enu1:|enu2u1u1:|eth0:|eth1:).*UP,LOWER_UP', timeout=1)
     child.expect_exact('inet 192.168', timeout=1)
     child.expect_exact('root@odroid', timeout=1)
     print('System up with network')
