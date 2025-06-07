@@ -338,6 +338,17 @@ def steps_prepare_upload_master(name, dest):
                                        name=name + ' (chmod)'))
     return st
 
+def steps_prepare_build_storage(name, dest):
+    st = []
+    st.append(steps.ShellCommand(command=['mkdir', '-p', util.Interpolate(dest)],
+                                 haltOnFailure=True,
+                                 name=name))
+    cmd = 'chmod a+rx {} $(dirname {})'.format(dest, dest)
+    st.append(steps.ShellCommand(command=util.Interpolate(cmd),
+                                 haltOnFailure=True,
+                                 name=name + ' (chmod)'))
+    return st
+
 def steps_build_clean(env, always_run=False):
     st = []
     st.append(steps.ShellCommand(command=['rm', '-fr', env['KBUILD_OUTPUT']],

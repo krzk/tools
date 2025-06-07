@@ -10,39 +10,34 @@
 
 from buildbot.plugins import steps, util
 
-from master_build_common import steps_prepare_upload_master, \
-                                step_upload_files_to_master
+from master_build_common import steps_prepare_build_storage
 
 CMD_MAKE = '%(prop:builddir:-~/)s/tools/buildbot/build-slave.sh'
 
 def steps_build_upload_artifacts_binaries(name, config, out_dir):
     st = []
 
-    masterdest_dir_bin = 'deploy-bin/' + name + '/%(prop:revision)s/'
-    st.extend(steps_prepare_upload_master('Prepare upload directory: binaries', masterdest_dir_bin))
-
-    upload_files_compress = ['Module.symvers',
-                                'System.map',
-                                'modules.builtin',
-                                #'vmlinux.symvers', # Not in kernel v4.4
-                                'vmlinux',
-                                ]
-    upload_files_compress_path = [util.Interpolate(out_dir + i) for i in upload_files_compress]
-    st.append(steps.ShellCommand(command=['xz', '--threads=0',
-                                          upload_files_compress_path],
-                                    haltOnFailure=True,
-                                    name='Compress compiled objects'))
-    upload_files_compress = [(out_dir + i + '.xz') for i in upload_files_compress]
-
-    upload_files_bin = ['arch/arm/boot/zImage',
+    upload_files_bin = ['Module.symvers',
+                        'System.map',
+                        'modules.builtin',
+                        'vmlinux.symvers', # Not in kernel v4.4
+                        'vmlinux',
+                        'arch/arm/boot/zImage',
                         'dtb-out.tar.xz',
                         'modules-out.tar.xz',
                         ]
     upload_files_bin = [(out_dir + i) for i in upload_files_bin]
-    upload_files_bin.extend(upload_files_compress)
-    st.append(step_upload_files_to_master('Upload kernel, modules and required DTBs',
-                                          upload_files_bin, masterdest_dir_bin,
-                                          errors_fatal=True))
+
+    deploy_dir = f'%(prop:basedir:-./)s/../public_html/deploy-bin/{name}/%(prop:got_revision)s/'
+    st.extend(steps_prepare_build_storage('Prepare upload directory: binaries', deploy_dir))
+
+    cmd = ['cp']
+    for s in upload_files_bin:
+        cmd.append(util.Interpolate(s))
+    cmd.append(util.Interpolate(deploy_dir))
+    st.append(steps.ShellCommand(command=cmd,
+                                 haltOnFailure=True,
+                                 name='Copy binaries to build storage'))
     return st
 
 def steps_build_boot_adjust_config(builder_name, env, kbuild_output, config):
