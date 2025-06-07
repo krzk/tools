@@ -65,9 +65,17 @@
 - name: Set chmod on buildbot user's home directory
   file:
     path: '{{ buildbot_home }}'
-    mode: 0750
+    # o+x: Accessible for WWW server
+    mode: '0751'
   become: yes
   become_user: root
+
+- name: Create public_html
+  ansible.builtin.file:
+    path: '{{ buildbot_home }}/public_html'
+    mode: '0755'
+    state: directory
+  remote_user: '{{ buildbot_user }}'
 
 - name: Get public SSH key
   command: /bin/cat {{ buildbot_home }}/.ssh/id_rsa.pub
