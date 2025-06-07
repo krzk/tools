@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: GPL-2.0
+#
+# Copyright (c) 2025 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <krzk@kernel.org>
+---
+- name: Check requirements for variables
+  assert:
+    that: item is defined
+  with_items:
+    - buildbot_home
+    - buildbot_user
+
+- name: Create public_html
+  ansible.builtin.file:
+    path: '{{ buildbot_home }}/public_html'
+    mode: '0755'
+    state: directory
+  remote_user: '{{ buildbot_user }}'
+
+- name: Set up cron - cleanup files
+  ansible.builtin.cron:
+    name: 'cleanup files - {{ item }}'
+    minute: '5'
+    hour: '1'
+    job: 'find {{ item }} -mindepth 1 -mtime +90 -type f -print -delete'
+  with_items:
+    - '{{ buildbot_home }}/public_html/deploy-bin'
+  remote_user: '{{ buildbot_user }}'
+
+- name: Set up cron - cleanup dirs
+  ansible.builtin.cron:
+    name: 'cleanup dirs - {{ item }}'
+    minute: '10'
+    hour: '1'
+    job: 'find {{ item }} -mindepth 1 -mtime +90 -type d -empty -print -delete'
+  with_items:
+    - '{{ buildbot_home }}/public_html/deploy-bin'
+  remote_user: '{{ buildbot_user }}'

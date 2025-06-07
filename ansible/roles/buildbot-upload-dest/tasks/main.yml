@@ -78,7 +78,6 @@
     group: '{{ user_buildbot_upload }}'
   with_items:
     - '/home/{{ user_buildbot_upload }}/deploy-pub'
-    - '/home/{{ user_buildbot_upload }}/deploy-bin'
   become: yes
   become_user: root
 
@@ -96,7 +95,6 @@
   command: "find {{ item }} -type f -exec chmod a+r '{}' \\;"
   with_items:
     - '/home/{{ user_buildbot_upload }}/deploy-pub'
-    - '/home/{{ user_buildbot_upload }}/deploy-bin'
   become: yes
   become_user: root
 
@@ -108,7 +106,6 @@
     job: 'find {{ item }} -mindepth 1 -mtime +50 -type f -print -delete'
   with_items:
     - '/home/{{ user_buildbot_upload }}/deploy-pub'
-    - '/home/{{ user_buildbot_upload }}/deploy-bin'
   become: yes
   become_user: '{{ user_buildbot_master_ssh }}'
 
@@ -120,7 +117,6 @@
     job: 'find {{ item }} -mindepth 1 -mtime +50 -type d -empty -print -delete'
   with_items:
     - '/home/{{ user_buildbot_upload }}/deploy-pub'
-    - '/home/{{ user_buildbot_upload }}/deploy-bin'
   become: yes
   become_user: '{{ user_buildbot_master_ssh }}'
 
@@ -139,7 +135,6 @@
     state: link
   with_items:
     - deploy-pub
-    - deploy-bin
   become: yes
   become_user: '{{ user_buildbot_master_ssh }}'
 

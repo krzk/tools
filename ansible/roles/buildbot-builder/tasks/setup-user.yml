@@ -65,7 +65,8 @@
 - name: Set chmod on buildbot user's home directory
   file:
     path: '{{ buildbot_home }}'
-    mode: 0750
+    # o+x: Accessible for WWW server
+    mode: '0751'
   become: yes
   become_user: root
 
