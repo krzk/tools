@@ -14,9 +14,6 @@ from master_build_common import steps_prepare_upload_master, \
 
 import shlex
 
-# from master_build_common import steps_prepare_upload_master, \
-#                                 step_upload_files_to_master
-
 def step_shell_script(cmd):
     shell_cmd = ['/bin/bash']
     shell_cmd.append('-eEx')
