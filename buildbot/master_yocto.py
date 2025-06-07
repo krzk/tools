@@ -9,8 +9,7 @@
 
 from buildbot.plugins import steps, util
 
-from master_build_common import steps_prepare_upload_master, \
-                                step_upload_files_to_master
+from master_build_common import steps_prepare_build_storage
 
 import shlex
 
@@ -52,22 +51,25 @@ def steps_yocto_prepare_downloads():
 def steps_yocto_upload_image(builder_name, machine, image):
     st = []
     image_file_name = f'{image}-{machine}.cpio.xz'
-    masterdest_dir_bin = f'deploy-bin/{builder_name}/%(prop:got_revision)s/'
-    st.extend(steps_prepare_upload_master('Prepare upload directory: binaries', masterdest_dir_bin))
-
     upload_files_bin = [f'build/tmp/deploy/images/{machine}/{image_file_name}']
-    st.append(step_upload_files_to_master('Upload image',
-                                          upload_files_bin, masterdest_dir_bin,
-                                          errors_fatal=True))
 
-    # Relative to deploy-bin:
-    masterdest_file = f'{builder_name}/%(prop:got_revision)s/{image_file_name}'
+    deploy_top_dir = f'%(prop:basedir:-./)s/../public_html/deploy-bin/'
+    deploy_sub_dir = f'{builder_name}/%(prop:got_revision)s/'
+    st.extend(steps_prepare_build_storage('Prepare upload directory: binaries',
+                                          f'{deploy_top_dir}{deploy_sub_dir}'))
 
-    st.append(steps.MasterShellCommand(command=['ln', '-sf',
-                                                util.Interpolate(masterdest_file),
-                                                f'deploy-bin/{image_file_name}'],
-                                       haltOnFailure=True,
-                                       name='Link to latest image'))
+    cmd = ['cp']
+    cmd.extend(upload_files_bin)
+    cmd.append(util.Interpolate(f'{deploy_top_dir}{deploy_sub_dir}'))
+    st.append(steps.ShellCommand(command=cmd,
+                                 haltOnFailure=True,
+                                 name='Copy image to build storage'))
+
+    st.append(steps.ShellCommand(command=['ln', '-sf',
+                                          util.Interpolate(f'{deploy_sub_dir}{image_file_name}'),
+                                          util.Interpolate(f'{deploy_top_dir}{image_file_name}')],
+                                 haltOnFailure=True,
+                                 name='Copy image to build storage'))
     return st
 
 def steps_yocto_builder(builder_name, machine, image):

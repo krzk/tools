@@ -10,7 +10,9 @@
 
 from buildbot.plugins import steps, util
 
-import re
+import re, shlex
+
+BUILD_STORAGE_URL = 'http://192.168.1.5/~buildbot/deploy-bin/'
 
 TARGET_SERIAL_DEV = {
     'arndaleocta': 'by-path/platform-3f980000.usb-usb-0:1.1.3:1.0-port0',
@@ -436,6 +438,28 @@ def step_ssh(name, target, command, do_step_if=True, halt_on_failure=True):
     return step_subprocess(name, target, cmd_ssh(target, command),
                            do_step_if=do_step_if, halt_on_failure=halt_on_failure)
 
+def step_download_from_build_storage(name, remote_filename, local_filename):
+    """ Return step for downloading a file from build storage
+
+    Arguments:
+        name - name of step
+        remote_filename - remote path on build storage to download, fed to buildbot.util.Interpolate
+        local_filename - where to save the file
+    Returns:
+        step
+    """
+
+    # Everything going to /srv should be group-writeable so I can update it manually
+    cmd = '''
+        #!/bin/bash
+        umask 002
+        wget {} -O {}'''.format(shlex.quote(BUILD_STORAGE_URL + remote_filename),
+                                shlex.quote(local_filename))
+
+    return steps.ShellCommand(command=util.Interpolate(cmd),
+                              name=name,
+                              haltOnFailure=True)
+
 def step_boot_to_prompt(target, config):
     """ Return step for booting the target to user-space prompt
 
@@ -731,25 +755,20 @@ def steps_test_suite_slow(target, config):
 
 def steps_download(target):
     st = []
-    mastersrc_dir = 'deploy-bin/%(prop:trigger_builder)s/%(prop:revision)s'
+    mastersrc_dir = '%(prop:trigger_builder)s/%(prop:revision)s'
 
-    # Everything going to /srv should be group-writeable so I can update it manually
-    st.append(steps.FileDownload(
-        mastersrc=util.Interpolate(mastersrc_dir + '/zImage'),
-        workerdest=u'/srv/tftp/zImage',
-        haltOnFailure=True, mode=0o0664, name='Download zImage'))
-    st.append(steps.FileDownload(
-        mastersrc=util.Interpolate(mastersrc_dir + '/dtb-out.tar.xz'),
-        workerdest='deploy-dtb-out.tar.xz',
-        haltOnFailure=True, mode=0o0644, name='Download dtb'))
-    st.append(steps.FileDownload(
-        mastersrc=util.Interpolate(mastersrc_dir + '/modules-out.tar.xz'),
-        workerdest='deploy-modules-out.tar.xz',
-        haltOnFailure=True, mode=0o0644, name='Download modules'))
-    st.append(steps.FileDownload(
-        mastersrc='deploy-bin/board-test-image-odroid.cpio.xz',
-        workerdest='deploy-board-test-image-odroid.cpio.xz',
-        haltOnFailure=True, mode=0o0644, name='Download initramfs image'))
+    st.append(step_download_from_build_storage('Download zImage',
+                                               mastersrc_dir + '/zImage',
+                                               '/srv/tftp/zImage'))
+    st.append(step_download_from_build_storage('Download DTB',
+                                               mastersrc_dir + '/dtb-out.tar.xz',
+                                               'deploy-dtb-out.tar.xz'))
+    st.append(step_download_from_build_storage('Download modules',
+                                               mastersrc_dir + '/modules-out.tar.xz',
+                                               'deploy-modules-out.tar.xz'))
+    st.append(step_download_from_build_storage('Download initramfs image',
+                                               'board-test-image-odroid.cpio.xz',
+                                               'deploy-board-test-image-odroid.cpio.xz'))
 
     return st
 
