@@ -20,6 +20,7 @@
     that: item is defined
   with_items:
     - buildbot_group
+    - buildbot_home
     - buildbot_user
     - ssh_allow_group
     - user_buildbot_upload
