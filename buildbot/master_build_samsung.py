@@ -20,7 +20,6 @@ def steps_build_upload_artifacts_binaries(name, config, out_dir):
     upload_files_bin = ['Module.symvers',
                         'System.map',
                         'modules.builtin',
-                        'vmlinux.symvers', # Not in kernel v4.4
                         'vmlinux',
                         'arch/arm/boot/zImage',
                         'dtb-out.tar.xz',
