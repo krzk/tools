@@ -116,6 +116,10 @@ DT_BINDING_CHECK_KNOWN_WARNINGS = [
     ('.*brcm,avs-ro-thermal.example.dtb$', re.escape("/example-0/avs-monitor@7d5d2000: failed to match any schema with compatible: ['brcm,bcm2711-avs-monitor', 'syscon', 'simple-mfd']"), None, None),
     # Fixed with: https://lore.kernel.org/all/20241112-fd-dp-fux-warning-v2-1-8cc4960094bd@linaro.org/
     ('.*qcom,sa8775p-mdss.example.dtb$', re.escape('displayport-controller@af54000: reg: [[183844864, 260], [183845376, 192], [183848960, 1904], [183853056, 156]] is too short'), None, None),
+    # v6.16-rc1:
+    ('.*/pinctrl/xlnx,versal-pinctrl.yaml$', 'allOf: Missing additionalProperties/unevaluatedProperties constraint', None, None),
+    # v6.16-rc1:
+    ('.*/regulator/infineon,ir38060.yaml$', re.escape("maintainers:0: 'Not Me.' does not match '@'"), None, None),
 ]
 
 DTBS_CHECK_BOARDS = {
