@@ -925,6 +925,9 @@ config_qcom_common() {
 	# Useful options for Qualcomm boards used in different contexts, e.g. RB5 as cdba server
 	config_item_on USB_SUPPORT USB_ACM USB_SERIAL USB_SERIAL_CP210X USB_SERIAL_FTDI_SIO USB_SERIAL_OPTION
 	config_item_on TYPEC_TCPM TYPEC_TCPCI
+
+	# T14s firmware or hardware crashes (with watchdog kickin) all the time
+	config_item_on MAGIC_SYSRQ
 }
 
 # QCOM dev boards
