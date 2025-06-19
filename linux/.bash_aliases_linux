@@ -7,11 +7,11 @@
 # SPDX-License-Identifier: GPL-2.0
 #
 
-alias crosc="CROSS_COMPILE=\"ccache arm-linux-gnueabi-\" ARCH=arm KBUILD_OUTPUT=out/"
-alias crosc64="CROSS_COMPILE=\"ccache aarch64-linux-gnu-\" ARCH=arm64 KBUILD_OUTPUT=out/"
-alias crosc_riscv="CROSS_COMPILE=\"ccache riscv64-linux-gnu-\" ARCH=riscv KBUILD_OUTPUT=out/"
-alias croscx32="CROSS_COMPILE=\"ccache x86_64-linux-gnu-\" ARCH=i386 KBUILD_OUTPUT=out/"
-alias croscx64="CROSS_COMPILE=\"ccache x86_64-linux-gnu-\" ARCH=x86_64 KBUILD_OUTPUT=out/"
+alias crosc="CROSS_COMPILE=\"ccache arm-linux-gnueabi-\" ARCH=arm KBUILD_OUTPUT=build/"
+alias crosc64="CROSS_COMPILE=\"ccache aarch64-linux-gnu-\" ARCH=arm64 KBUILD_OUTPUT=build/"
+alias crosc_riscv="CROSS_COMPILE=\"ccache riscv64-linux-gnu-\" ARCH=riscv KBUILD_OUTPUT=build/"
+alias croscx32="CROSS_COMPILE=\"ccache x86_64-linux-gnu-\" ARCH=i386 KBUILD_OUTPUT=build/"
+alias croscx64="CROSS_COMPILE=\"ccache x86_64-linux-gnu-\" ARCH=x86_64 KBUILD_OUTPUT=build/"
 
 alias git_bisect_fixed="git bisect start --term-new fixed --term-old broken; echo \"Use terms fixed or broken\""
 
@@ -152,7 +152,7 @@ cross_build() {
 	local cross="$1"
 	local arch="$2"
 	shift 2
-	ARCH="$arch" CROSS_COMPILE="ccache /opt/${cross}/bin/${cross}-" KBUILD_OUTPUT=out/ "$@"
+	ARCH="$arch" CROSS_COMPILE="ccache /opt/${cross}/bin/${cross}-" KBUILD_OUTPUT=build/ "$@"
 }
 
 # dt_check target schema
