@@ -252,14 +252,10 @@ get_cross_compile() {
 		export CROSS_COMPILE="arm-linux-gnueabi-"
 		;;
 	arm64)
-		if [ "$machine" != "aarch64" ]; then
-			export CROSS_COMPILE="aarch64-linux-gnu-"
-		fi
+		export CROSS_COMPILE="aarch64-linux-gnu-"
 		;;
 	i386|x86_64)
-		if [ "$machine" != "x86_64" ]; then
-			export CROSS_COMPILE="x86_64-linux-gnu-"
-		fi
+		export CROSS_COMPILE="x86_64-linux-gnu-"
 		ARCH_DIR="x86"
 		ARCH_MKIMAGE="x86"
 		;;

@@ -7,27 +7,11 @@
 # SPDX-License-Identifier: GPL-2.0
 #
 
-alias ecrosc="CROSS_COMPILE=\"ccache arm-linux-gnueabi-\" ARCH=arm KBUILD_OUTPUT=out/"
-alias mcrosc="CROSS_COMPILE=\"ccache arm-linux-gnueabi-\" ARCH=arm KBUILD_OUTPUT=out/ make"
-alias ecrosc_riscv="CROSS_COMPILE=\"ccache riscv64-linux-gnu-\" ARCH=riscv KBUILD_OUTPUT=out/"
-alias mcrosc_riscv="CROSS_COMPILE=\"ccache riscv64-linux-gnu-\" ARCH=riscv KBUILD_OUTPUT=out/ make"
-if [ "$(uname -m)" == "x86_64" ]; then
-	alias ecrosc64="CROSS_COMPILE=\"ccache aarch64-linux-gnu-\" ARCH=arm64 KBUILD_OUTPUT=out/"
-	alias mcrosc64="CROSS_COMPILE=\"ccache aarch64-linux-gnu-\" ARCH=arm64 KBUILD_OUTPUT=out/ make"
-	alias mcroscx32="ARCH=i386 KBUILD_OUTPUT=out/ make CC=\"ccache gcc\""
-	alias mcroscx64="ARCH=x86_64 KBUILD_OUTPUT=out/ make CC=\"ccache gcc\""
-elif [ "$(uname -m)" == "aarch64" ]; then
-	# ecrosc64 won't work Debian package targets (use mcrosc64):
-	#   make[5]: ccachegcc: No such file or directory
-	#   scripts/Kconfig.include:40: C compiler 'ccachegcc' not found
-	#   dpkg-buildpackage: error: make -f debian/rules binary subprocess returned exit status 2
-	alias ecrosc64="CROSS_COMPILE=\"ccache aarch64-linux-gnu-\" ARCH=arm64 KBUILD_OUTPUT=out/"
-	alias mcrosc64="ARCH=arm64 KBUILD_OUTPUT=out/ make CC=\"ccache gcc\""
-	alias mcroscx32="CROSS_COMPILE=\"ccache x86_64-linux-gnu-\" ARCH=i386 KBUILD_OUTPUT=out/ make"
-	alias mcroscx64="CROSS_COMPILE=\"ccache x86_64-linux-gnu-\" ARCH=x86_64 KBUILD_OUTPUT=out/ make"
-else
-	echo "Unknown arch, not setting cross compile aliases"
-fi
+alias crosc="CROSS_COMPILE=\"ccache arm-linux-gnueabi-\" ARCH=arm KBUILD_OUTPUT=out/"
+alias crosc64="CROSS_COMPILE=\"ccache aarch64-linux-gnu-\" ARCH=arm64 KBUILD_OUTPUT=out/"
+alias crosc_riscv="CROSS_COMPILE=\"ccache riscv64-linux-gnu-\" ARCH=riscv KBUILD_OUTPUT=out/"
+alias croscx32="CROSS_COMPILE=\"ccache x86_64-linux-gnu-\" ARCH=i386 KBUILD_OUTPUT=out/"
+alias croscx64="CROSS_COMPILE=\"ccache x86_64-linux-gnu-\" ARCH=x86_64 KBUILD_OUTPUT=out/"
 
 alias git_bisect_fixed="git bisect start --term-new fixed --term-old broken; echo \"Use terms fixed or broken\""
 
@@ -173,9 +157,9 @@ cross_build() {
 
 # dt_check target schema
 # e.g.:
-# ecrosc dt_check dt_binding_check sound/samsung,aries-wm8994.yaml
-# DT_CHECKER_FLAGS=-g ecrosc dt_check dt_binding_check sound/samsung,aries-wm8994.yam
-# DT_CHECKER_FLAGS=-v ecrosc dt_check dt_binding_check sound/samsung,aries-wm8994.yam
+# crosc dt_check dt_binding_check sound/samsung,aries-wm8994.yaml
+# DT_CHECKER_FLAGS=-g crosc dt_check dt_binding_check sound/samsung,aries-wm8994.yam
+# DT_CHECKER_FLAGS=-v crosc dt_check dt_binding_check sound/samsung,aries-wm8994.yam
 dt_check() {
 	local target="$1"
 	local schema="$2"
@@ -191,16 +175,16 @@ dt_check() {
 }
 
 crosc_dt_binding_check() {
-	ecrosc dt_check dt_binding_check "$@"
+	crosc dt_check dt_binding_check "$@"
 }
 crosc_dtbs_all_check() {
-	ecrosc dt_check dtbs_check "$@"
+	crosc dt_check dtbs_check "$@"
 }
 crosc64_dt_binding_check() {
-	ecrosc64 dt_check dt_binding_check "$@"
+	crosc64 dt_check dt_binding_check "$@"
 }
 crosc64_dtbs_all_check() {
-	ecrosc64 dt_check dtbs_check "$@"
+	crosc64 dt_check dtbs_check "$@"
 }
 
 # dtb_check <target> [schema]
