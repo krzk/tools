@@ -135,7 +135,7 @@ CROSS_COMPILE=""
 CMDLINE=""
 MODULES_INSTALL_PATH="modules-out"
 RAMDISK=""
-RAMDISK_SRC="${HOME}/etc/boards/initramfs/arm64-rootfs/initramfs-qemuarm64-krzk.cpio.lz4"
+RAMDISK_SRC="${HOME}/dev/linux/testing/arm64-rootfs/initramfs-qemuarm64-krzk.cpio.lz4"
 
 while getopts "Chkl:t:S:s:p:c:d:A:b:E:e:D:M:j:I:r:R:m:" flag
 do
