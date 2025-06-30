@@ -106,6 +106,34 @@ def systemd_color(expected):
 def systemd_log(expected_msg, expected_target):
     return "'{0} {1}', '{0} \x1b[0;1;39m{1}\x1b[0m', '{0} [1b][0;1;39m{1}[1b][0m',".format(expected_msg, expected_target)
 
+def pexpect_is_kernel_newer():
+    """ Return string with Python code for is_kernel_newer() function for Buildbot worker checking
+        if it is of booting kernel version >= exp_major.exp_minor
+    Returns:
+        string with Python code (for util.Interpolate)
+    """
+
+    pexpect_cmd = """
+def is_kernel_newer(exp_major, exp_minor)
+    ver = %(prop:kernel_version:-)
+    if (not ver) or (not len(ver)):
+        return False
+    vers = ver.split('.')
+    if len(vers) < 2:
+        return False
+    ver_major = int(vers[0])
+    ver_minor = int(vers[1])
+    if not ver_major:
+        return False
+    if ver_major > exp_major:
+        return True
+    if (ver_major == exp_major) and (ver_minor >= exp_minor):
+        return True
+    return False
+    """
+
+    return pexpect_cmd
+
 def pexpect_start(target, log_file, verbose, no_special_chars):
     """ Return string with Python code for new pexpect session inside a "try" block.
 
@@ -135,6 +163,8 @@ import subprocess
 import sys
 import time
 import pexpect
+
+""" + pexpect_is_kernel_newer() + """
 
 serial = '/dev/serial/""" + TARGET_SERIAL_DEV[target] + """'
 try:
@@ -383,10 +413,10 @@ def step_pexpect(name, target, python_code, interpolate=False,
     Returns:
         step
     """
-    if interpolate:
-        full_cmd = util.Interpolate(pexpect_start(target, SERIAL_LOG, verbose, no_special_chars) + "\n" + python_code + "\n" + pexpect_finish())
-    else:
-        full_cmd = pexpect_start(target, SERIAL_LOG, verbose, no_special_chars) + "\n" + python_code + "\n" + pexpect_finish()
+    #if interpolate:
+    full_cmd = util.Interpolate(pexpect_start(target, SERIAL_LOG, verbose, no_special_chars) + "\n" + python_code + "\n" + pexpect_finish())
+    #else:
+    #    full_cmd = pexpect_start(target, SERIAL_LOG, verbose, no_special_chars) + "\n" + python_code + "\n" + pexpect_finish()
 
     return steps.ShellCommand(command=['/usr/bin/env', 'python', '-c', full_cmd],
                               name=name,
