@@ -8,6 +8,8 @@
 # SPDX-License-Identifier: GPL-2.0
 #
 
+from master_var_common import step_is_kernel_newer
+
 from buildbot.plugins import steps, util
 
 import re, shlex
@@ -472,16 +474,17 @@ def step_boot_to_prompt(target, config):
     pexpect_cmd = pexpect_hard_reset(target, config) + pexpect_boot_to_prompt(target, config)
     return step_pexpect(name='Boot: ' + target, target=target, python_code=pexpect_cmd)
 
-def step_check_status(target, config):
-    """ Return step for testing system boot status over serial console
+def steps_check_status(target, config):
+    """ Return steps for testing system boot status over serial console
 
     Arguments:
         target - which board
         config - which config us being tested (e.g. exynos, multi_v7)
     Returns:
-        step
+        list of steps
     """
 
+    st = []
     pexpect_cmd = r"""
     child.sendline('')
     index = child.expect_exact(['root@odroid', pexpect.TIMEOUT], timeout=1)
@@ -493,6 +496,10 @@ def step_check_status(target, config):
         child.expect_exact('root@odroid', timeout=1)
     child.sendline('')
     child.expect_exact('root@odroid', timeout=1)
+    """
+    st.append(step_pexpect(name='Check status: prompt: ' + target, target=target, python_code=pexpect_cmd))
+
+    pexpect_cmd = r"""
     # Check if system finished boot and all services are up.
     print('Checking system status...')
     # First send() or sendline() always gets corrupted, regardless of picocom settings
@@ -511,6 +518,14 @@ def step_check_status(target, config):
         # Could be messed prompt
         print('Retrying checking network online...')
         child.expect_exact(['root@odroid', pexpect.TIMEOUT], timeout=5)
+    """
+    # v5.5 reports boots witthout systemd
+    # v5.15 reports degraded state
+    st.append(step_pexpect(name='Check status: systemd: ' + target,
+                           target=target, python_code=pexpect_cmd,
+                           do_step_if=lambda step: step_is_kernel_newer(step, 5, 16)))
+
+    pexpect_cmd = r"""
     print('Checking network IP address...')
     child.sendline('ip addr')
     child.expect_exact('1: lo: <LOOPBACK,UP,LOWER_UP>', timeout=1)
@@ -519,8 +534,9 @@ def step_check_status(target, config):
     child.expect_exact('root@odroid', timeout=1)
     print('System up with network')
     """
+    st.append(step_pexpect(name='Check status: network: ' + target, target=target, python_code=pexpect_cmd))
 
-    return step_pexpect(name='Check status: ' + target, target=target, python_code=pexpect_cmd)
+    return st
 
 def step_test_ping(target, config):
     """ Return step for pinging target
@@ -813,7 +829,7 @@ def steps_boot(builder_name, target, config, run_pm_tests=False):
     st.append(step_gracefull_shutdown(target, config, halt_on_failure=False))
 
     st.append(step_boot_to_prompt(target, config))
-    st.append(step_check_status(target, config))
+    st.extend(steps_check_status(target, config))
     st.append(step_test_ping(target, config))
     st.append(step_test_ssh(target, config))
     st.append(step_test_uname(target, config))
@@ -829,7 +845,7 @@ def steps_boot(builder_name, target, config, run_pm_tests=False):
 
     # Test reboot
     st.append(step_test_reboot(target, config))
-    st.append(step_check_status(target, config))
+    st.extend(steps_check_status(target, config))
     st.append(step_test_ping(target, config))
     st.append(step_test_ssh(target, config))
     st.append(step_test_uname(target, config))
