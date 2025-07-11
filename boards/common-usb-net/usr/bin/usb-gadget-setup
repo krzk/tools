@@ -52,4 +52,8 @@ case "$mode" in
 		exit 1
 esac
 
-find /sys/class/udc/ -mindepth 1 -maxdepth 1 -printf '%f\0' | xargs -0 echo -n > UDC
+# shellcheck disable=SC2011
+# Busybox does not have -printf and using print0 gives path, not name,
+# so no clue how to write it nicely... devices should not have non-alphanumeric
+# names anyway.
+cd /sys/class/udc/ && ls -1 | xargs echo -n > /sys/kernel/config/usb_gadget/g2/UDC
