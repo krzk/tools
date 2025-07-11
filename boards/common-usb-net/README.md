@@ -4,7 +4,7 @@ Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 
 SPDX-License-Identifier: GPL-2.0
 
-USB networking via USB CDC ECM gadget (or RNDIS).
+USB networking via USB CDC NCM gadget (or ECM or RNDIS).
 
 # Install
 
