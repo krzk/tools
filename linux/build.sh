@@ -972,8 +972,8 @@ config_qcom() {
 	config_item_on SM_DISPCC_8450
 	config_item_on DRM_PANEL_NOVATEK_NT36672A
 
-	# Display on MTP8750
-	config_item_on SM_DISPCC_8750
+	# Display and Iris on MTP8750
+	config_item_on SM_DISPCC_8750 SM_VIDEOCC_8750
 
 	# Remoteproc
 	config_item_on QCOM_Q6V5_PAS
