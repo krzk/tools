@@ -48,7 +48,7 @@ def steps_build_boot_adjust_config(builder_name, env, kbuild_output, config):
     st.append(steps.ShellCommand(
         command=['scripts/config', '--file', util.Interpolate(kbuild_output + '.config'),
                  # Enable IPV6 for Odroid systemd, AUTOFS4_FS/NFS_V4 will be in exynos_defconfig around v4.5
-                 '-e', 'IPV6', '-e', 'NFS_V4', '-e', 'AUTOFS4_FS',
+                 '-e', 'AUTOFS4_FS',
                  # Enable fan so it won't be spinning on full speed on multi_v7
                  # (PWM_FAN will be in multi_v7 around v4.5-4.6 but both
                  # won't be in older stables)
@@ -65,10 +65,6 @@ def steps_build_boot_adjust_config(builder_name, env, kbuild_output, config):
                  '-d', 'SECTION_MISMATCH_WARN_ONLY',
                  # SECCOMP is required by newer Arch ARM systemd
                  '-e', 'SECCOMP',
-                 # Broken commit d3b00a802c84 ("NFS: Replace the READ_PLUS decoding code")
-                 # No schedule for a fix...
-                 # https://lore.kernel.org/all/2add1769-1458-b185-bc78-6d573f61b6fc@linaro.org/
-                 '-d', 'NFS_V4_2_READ_PLUS',
                 ],
         haltOnFailure=True,
         env=env, name='Toggle config options'))
