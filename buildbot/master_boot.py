@@ -761,10 +761,7 @@ def steps_test_suite_slow(target, config):
 
     # RNG does not work on Odroid, missing clock enable?
     # st.append(step_test_case(target, config, 'rng-exynos'))
-
-    # RTC often fail on NFS root so put it at the end
-    # Also RTC of max77686 seems to fail pretty often, so skip U3:
-    st.append(step_test_case(target, config, 'rtc', force_skip=(target == 'odroidu3')))
+    st.append(step_test_case(target, config, 'rtc'))
     st.append(step_test_case(target, config, 'thermal-cooling'))
 
     return st
