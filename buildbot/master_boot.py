@@ -529,7 +529,7 @@ def steps_check_status(target, config):
     print('Checking network IP address...')
     child.sendline('ip addr')
     child.expect_exact('1: lo: <LOOPBACK,UP,LOWER_UP>', timeout=1)
-    child.expect('(enu0:|enu1:|enu2u1u1:|eth0:|eth1:).*UP,LOWER_UP', timeout=1)
+    child.expect('(enu[0-2]:|enu2u1u1:|eth[0-2]:).*UP,LOWER_UP', timeout=1)
     child.expect_exact('inet 192.168', timeout=1)
     child.expect_exact('root@odroid', timeout=1)
     print('System up with network')
