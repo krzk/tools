@@ -724,7 +724,6 @@ def steps_test_suite_fast(target, config):
     st.append(step_test_case(target, config, 'adc-exynos', is_fast=True))
     # Broken and I do not have time to work on this
     # st.append(step_test_case(target, config, 'arm-pmu', is_fast=True))
-    st.append(step_test_case(target, config, 'audio', is_fast=True))
     st.append(step_test_case(target, config, 'board-name', is_fast=True))
     st.append(step_test_case(target, config, 'board-led', is_fast=True))
     st.append(step_test_case(target, config, 'clk-s2mps11', is_fast=True))
@@ -751,6 +750,7 @@ def steps_test_suite_slow(target, config):
     # See: Matrix of configurations
     if config != 'exynos':
         return st
+    st.append(step_test_case(target, config, 'audio'))
     st.append(step_test_case(target, config, 'cpu-mmc-stress', force_skip=(target != 'odroidxu3')))
     st.append(step_test_case(target, config, 'pwm-fan'))
     # Intensive and not that important test, run it only on XU3
