@@ -31,7 +31,7 @@ test_rtc_suspend_device() {
 			$(rtc_suspend_rtcwake_cmd) -d "$rtc" -m mem -s 3
 			# Test whether network works after suspend:
 			sleep 2
-			ifconfig eth0
+			ifconfig
 			ping -c 1 google.pl
 		done
 	else
