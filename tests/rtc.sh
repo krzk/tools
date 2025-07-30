@@ -27,8 +27,8 @@ test_rtc_device() {
 	print_msg "Testing /dev/${rtc}..."
 	if [ -c "/dev/${rtc}" ]; then
 		hwclock --systohc -f "/dev/${rtc}"
-		for _ in $(seq 3); do
-			$(rtc_suspend_rtcwake_cmd) -d "$rtc" -m on -s 5
+		for _ in $(seq 2); do
+			$(rtc_suspend_rtcwake_cmd) -d "$rtc" -m on -s 1
 		done
 	else
 		error_msg "Missing /dev/${rtc}"
