@@ -504,11 +504,24 @@ def steps_check_status(target, config):
     print('Checking system status...')
     # First send() or sendline() always gets corrupted, regardless of picocom settings
     child.sendline('systemctl is-system-running')
-    child.expect_exact('root@odroid', timeout=1)
+    child.sendline('')
     child.sendline('systemctl is-system-running')
-    # Pexpect (like TTY terminals) uses 'CRLF' to denote end of line. Also '$' cannot be used with pexpect.
-    child.expect('\r\nrunning\r\n', timeout=1)
-    child.expect_exact('root@odroid', timeout=1)
+    i = 0
+    index = 0
+    while i < 5:
+        # Pexpect (like TTY terminals) uses 'CRLF' to denote end of line. Also '$' cannot be used with pexpect.
+        index = child.expect_exact(['\r\nrunning\r\n',
+                                    pexpect.TIMEOUT],
+                                timeout=1)
+        if index == 0:
+            break
+        else:
+            i += 1
+            print(f'Result {index}, retrying ({i})...')
+            child.sendline('systemctl is-system-running')
+    if index != 0:
+        raise Exception('`systemctl is-system-running` failure or prompt corrupted')
+
     # Ensure network started. On multi_v7 USB and USB PHYs are modules, thus
     # network starts very late, sometimes after prompt.
     print('Checking network online...')
