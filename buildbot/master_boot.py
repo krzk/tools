@@ -517,7 +517,7 @@ def steps_check_status(target, config):
     if index == 1:
         # Could be messed prompt
         print('Retrying checking network online...')
-        child.expect_exact(['root@odroid', pexpect.TIMEOUT], timeout=5)
+        child.expect_exact('root@odroid', timeout=5)
     """
     # v5.5 reports boots witthout systemd
     # v5.15 reports degraded state
