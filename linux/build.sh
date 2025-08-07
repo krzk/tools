@@ -562,6 +562,7 @@ make_image_qcom2() {
 	local _dts_name="$1"
 	# copy_modules requires rw mount (no "ro")
 	local cmdline="earlycon console=ttyMSM0,115200n8 root=PARTLABEL=rootfs rootwait=2 init=/sbin/init copy_modules clk_ignore_unused pd_ignore_unused cma=128M"
+	# See also https://git.codelinaro.org/linaro/qcomlt/ci/staging/cdba-tester/-/blob/master/boards.yaml?ref_type=heads
 	# GRUB/Bootloader expects uncompressed Image
 	local image_path=${IMAGE_PATH%.gz}
 
