@@ -125,6 +125,18 @@ DTBS_CHECK_KNOWN_WARNINGS = {
 DT_BINDING_CHECK_KNOWN_WARNINGS = [
     # v6.16-rc1:
     ('.*/regulator/infineon,ir38060.yaml$', re.escape("maintainers:0: 'Not Me.' does not match '@'"), None, None),
+    # v6.17-rc1:
+    ('.*/pci/axis,artpec6-pcie.yaml$', 'oneOf: Missing additionalProperties/unevaluatedProperties constraint', None, None),
+    # v6.17-rc1:
+    ('.*/bus/fsl,imx8mp-aipstz.yaml$', 'oneOf: Missing additionalProperties/unevaluatedProperties constraint', None, None),
+    # v6.17-rc1:
+    ('.*/leds/issi,is31fl319x.yaml', re.escape("properties:audio-gain-db: '$ref' should not be valid under {'const': '$ref'}"), None, None),
+    # v6.17-rc1:
+    ('.*/net/nfc/ti,trf7970a.yaml', re.escape("properties:ti,rx-gain-reduction-db: '$ref' should not be valid under {'const': '$ref'}"), None, None),
+    # v6.17-rc1:
+    ('.*/phy/fsl,imx8mq-usb-phy.yaml', re.escape("properties:fsl,phy-pcs-tx-deemph-3p5db-attenuation-db: '$ref' should not be valid under {'const': '$ref'}"), None, None),
+    # v6.17-rc1:
+    ('.*/nfc/ti,trf7970a.example.dtb', re.escape("nfc@0 (ti,trf7970a): ti,rx-gain-reduction-db: 15 is not of type 'array'"), None, None),
 ]
 
 DTBS_CHECK_BOARDS = {
