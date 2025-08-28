@@ -1058,6 +1058,8 @@ config_qemutest() {
 config_t14s() {
 	config_qcom_common
 
+	config_item_module DM_CRYPT
+
 	# Bluetooth
 	config_item_module RFKILL BT BT_HCIBTUSB BT_HCIUART BT_QCOMSMD MFD_QCOM_QCA639X
 
@@ -1082,6 +1084,7 @@ config_t14s() {
 	config_item_module TYPEC_DP_ALTMODE
 
 	# For network sharing - full netfilter setup, a bit bigger than actually needed
+	config_item_on IP_ADVANCED_ROUTER IP_MULTIPLE_TABLES IPV6_MULTIPLE_TABLES
 	config_item_module NF_TABLES
 	config_item_on NF_TABLES_IPV4 NF_TABLES_IPV6
 	config_item_module NFT_NAT NFT_MASQ NFT_CT NFT_REJECT NF_CONNTRACK
@@ -1091,6 +1094,10 @@ config_t14s() {
 
 	# Network from mobile phone (so as a device)
 	config_item_module USB_NET_CDCETHER USB_NET_RNDIS_HOST
+
+	# Useful for laptop usage
+	config_item_module NTFS_FS
+	config_item_on FW_LOADER_COMPRESS FW_LOADER_COMPRESS_XZ FW_LOADER_COMPRESS_ZSTD
 }
 
 build_tests() {
