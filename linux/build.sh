@@ -1098,6 +1098,8 @@ config_t14s() {
 	# Useful for laptop usage
 	config_item_module NTFS_FS
 	config_item_on FW_LOADER_COMPRESS FW_LOADER_COMPRESS_XZ FW_LOADER_COMPRESS_ZSTD
+	config_item_module SND_USB_AUDIO SND_SOC_USB
+	config_item_on SND_USB_AUDIO_MIDI_V2
 }
 
 build_tests() {
