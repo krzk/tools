@@ -591,7 +591,7 @@ ls_image_qcom() {
 	echo "#################################"
 	echo
 	echo "Boot:                $(ls -lh ${KBUILD_OUTPUT}boot.img)"
-	echo "fastboot set_active a && fastboot flash boot ${KBUILD_OUTPUT}boot.img && fastboot reboot"
+	echo "fastboot set_active a && fastboot boot ${KBUILD_OUTPUT}boot.img"
 }
 
 make_image_e850() {
