@@ -585,7 +585,7 @@ def steps_build_all_drivers_adjust_config(env, kbuild_output):
      st.extend(steps_build_w1_adjust_config(env, kbuild_output, make_olddefconfig=True))
      return st
 
-def steps_build_selected_folders(builder_name, env, make_flags=None, touch_changed=True):
+def steps_build_selected_folders(builder_name, kbuild_output, env, make_flags=None, touch_changed=True):
     st = []
     if not env['KBUILD_OUTPUT']:
         raise ValueError('Missing KBUILD_OUTPUT path in environment')
@@ -619,14 +619,33 @@ def steps_build_selected_folders(builder_name, env, make_flags=None, touch_chang
                             env=env, name=cmd_name))
     return st
 
-def steps_build_selected_folders_warnings(builder_name, env):
-    return steps_build_selected_folders(builder_name, env, make_flags='W=1', touch_changed=True)
+def steps_build_selected_folders_warnings(builder_name, kbuild_output, env):
+    return steps_build_selected_folders(builder_name, kbuild_output, env,
+                                        make_flags='W=1', touch_changed=True)
 
-def steps_build_selected_folders_no_touch(builder_name, env):
-    return steps_build_selected_folders(builder_name, env, touch_changed=False)
+def steps_build_selected_folders_no_touch(builder_name, kbuild_output, env):
+    return steps_build_selected_folders(builder_name, kbuild_output, env,
+                                        touch_changed=False)
 
-def steps_build_selected_folders_no_touch_warnings(builder_name, env):
-    return steps_build_selected_folders(builder_name, env, make_flags='W=1', touch_changed=False)
+def steps_build_selected_folders_no_touch_warnings(builder_name, kbuild_output, env):
+    return steps_build_selected_folders(builder_name, kbuild_output, env,
+                                        make_flags='W=1', touch_changed=False)
+
+def steps_build_dtbs(builder_name, kbuild_output, env):
+    st = []
+    if not env['KBUILD_OUTPUT']:
+        raise ValueError('Missing KBUILD_OUTPUT path in environment')
+    st.append(steps.ShellCommand(command=[util.Interpolate(CMD_MAKE), 'dtbs'],
+                                 haltOnFailure=True,
+                                 warnOnWarnings=True,
+                                 env=env, name='make dtbs'))
+    st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'dtbs_install',
+                                     util.Interpolate('INSTALL_DTBS_PATH=' + kbuild_output + 'dtbs-install')],
+                            haltOnFailure=True,
+                            warnOnWarnings=True,
+                            suppressionList=BUILD_WARN_IGNORE,
+                            env=env, name='make dtbs_install'))
+    return st
 
 def steps_dt_binding_check(env, kbuild_output):
     st = []
@@ -787,7 +806,7 @@ def steps_dtbs_warnings(env, kbuild_output, config=None):
                             env=env, name=step_name))
     return st
 
-def steps_build_with_warnings_diff(builder_name, env):
+def steps_build_with_warnings_diff(builder_name, kbuild_output, env):
     st = []
     if not env['KBUILD_OUTPUT']:
         raise ValueError('Missing KBUILD_OUTPUT path in environment')
