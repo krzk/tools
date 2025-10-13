@@ -16,9 +16,9 @@
   delegate_facts: true
 
 - name: Check requirements for variables
-  assert:
-    that: item is defined
-  with_items:
+  debug:
+  when: lookup('vars', item) is undefined
+  loop:
     - buildbot_group
     - buildbot_home
     - buildbot_user

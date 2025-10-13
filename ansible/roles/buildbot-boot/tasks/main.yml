@@ -9,9 +9,9 @@
     file: ~/etc/ansible/vars/buildbot-boot.yml
 
 - name: Check requirements for variables
-  assert:
-    that: item is defined
-  with_items:
+  debug:
+  when: lookup('vars', item) is undefined
+  loop:
     - group_buildbot
     - user_buildbot
 

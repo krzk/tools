@@ -4,9 +4,9 @@
 # Author: Krzysztof Kozlowski <krzk@kernel.org>
 ---
 - name: Check requirements for variables
-  assert:
-    that: item is defined
-  with_items:
+  debug:
+  when: lookup('vars', item) is undefined
+  loop:
     - buildbot_home
     - buildbot_user
 

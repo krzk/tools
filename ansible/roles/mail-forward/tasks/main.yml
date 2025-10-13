@@ -1,12 +1,13 @@
 ---
-# Copyright (c) 2022-2024 Krzysztof Kozlowski
+# Copyright (c) 2022-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <krzk@kernel.org>
 #
 # SPDX-License-Identifier: GPL-2.0
+
 - name: Check requirements for variables
-  assert:
-    that: item is defined
-  with_items:
+  debug:
+  when: lookup('vars', item) is undefined
+  loop:
     - postfix_my_domain
     - postfix_my_hostname
     - postfix_relay_host

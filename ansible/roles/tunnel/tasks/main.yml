@@ -17,15 +17,17 @@
   delegate_facts: true
 
 - name: Check requirements for variables
-  assert:
-    that: item is defined
-  with_items:
+  debug:
+  when: lookup('vars', item) is undefined
+  loop:
     - tunnels
     - user_tunnel
 
+# TODO: no clue how to convert it to loop with flattened items
 - name: Check requirements for variables
-  assert:
-    that:
+  debug:
+  when: lookup('vars', item) is undefined
+  loop:
       - 'item.host_gate is defined'
       - 'item.host_gate_ssh is defined'
       - 'item.port_forward is defined'

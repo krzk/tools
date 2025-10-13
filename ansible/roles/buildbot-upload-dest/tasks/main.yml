@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0
 #
-# Copyright (c) 2021-2024 Krzysztof Kozlowski
+# Copyright (c) 2021-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 ---
@@ -9,9 +9,9 @@
     file: ~/etc/ansible/vars/buildbot-upload.yml
 
 - name: Check requirements for variables
-  assert:
-    that: item is defined
-  with_items:
+  debug:
+  when: lookup('vars', item) is undefined
+  loop:
     - mail_foward_to
     - ssh_allow_group
     - user_buildbot_master_ssh

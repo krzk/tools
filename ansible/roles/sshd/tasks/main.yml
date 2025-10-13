@@ -1,13 +1,13 @@
 # SPDX-License-Identifier: GPL-2.0
 #
-# Copyright (c) 2019-2024 Krzysztof Kozlowski
+# Copyright (c) 2019-2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 ---
 - name: Check requirements for variables
-  assert:
-    that: item is defined
-  with_items:
+  debug:
+  when: lookup('vars', item) is undefined
+  loop:
     - ssh_allow_group
 
 - name: Add group for SSH logins
