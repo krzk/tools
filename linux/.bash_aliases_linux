@@ -28,8 +28,8 @@ b4_am_patch() {
 
 	test -n "$msg_id" || return 1
 
-	#b4 am --check-newer-revisions --apply-cover-trailers --outdir - --cherry-pick _ "${msg_id}" | git am $am_options
-	b4 shazam --apply-cover-trailers --cherry-pick _ $am_options "${msg_id}"
+	#b4 am --check-newer-revisions --apply-cover-trailers --outdir - --add-link --cherry-pick _ "${msg_id}" | git am $am_options
+	b4 shazam --apply-cover-trailers --add-link --cherry-pick _ $am_options "${msg_id}"
 }
 
 # Apply series
@@ -40,8 +40,8 @@ b4_am_series() {
 
 	test -n "$msg_id" || return 1
 
-	#b4 am --check-newer-revisions --apply-cover-trailers --outdir - "${msg_id}" | git am $am_options
-	b4 shazam --apply-cover-trailers $am_options "${msg_id}"
+	#b4 am --check-newer-revisions --apply-cover-trailers --outdir - --add-link "${msg_id}" | git am $am_options
+	b4 shazam --apply-cover-trailers --add-link $am_options "${msg_id}"
 }
 
 # Download series
