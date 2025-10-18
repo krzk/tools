@@ -123,6 +123,12 @@ DTBS_CHECK_KNOWN_WARNINGS = {
 }
 
 DT_BINDING_CHECK_KNOWN_WARNINGS = [
+    # v6.18-rc1
+    ('.*/media/fsl,imx6q-vdoa.yaml$', re.escape('[error] string value is redundantly quoted with any quotes (quoted-strings)'), None, None),
+    ('.*/slimbus/slimbus.example.dtb$', re.escape("slim@28080000 (qcom,slim-ngd-v1.5.0): 'audio-codec@1,0' does not match any of the regexes: '^pinctrl-[0-9]+$', '^slim@[0-9a-f]+$'"), None, None),
+    ('.*/slimbus/slimbus.example.dtb$', re.escape("slim@28080000 (qcom,slim-ngd-v1.5.0): #address-cells: 1 was expected"), None, None),
+    ('.*/slimbus/slimbus.example.dtb$', re.escape("slim@28080000 (qcom,slim-ngd-v1.5.0): 'dmas' is a required property"), None, None),
+    ('.*/slimbus/slimbus.example.dtb$', re.escape("slim@28080000 (qcom,slim-ngd-v1.5.0): 'dma-names' is a required property"), None, None),
 ]
 
 DTBS_CHECK_BOARDS = {
