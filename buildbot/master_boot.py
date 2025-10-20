@@ -249,6 +249,21 @@ def pexpect_gracefull_shutdown(target, config, halt_on_failure=True, reboot=Fals
     """
     return pexpect_cmd
 
+def pexpect_clear_buffer():
+    """ Return string with Python code for clearing pexpect buffer, so previous
+        prompts from sendline('') won't affect next commands
+    """
+    pexpect_cmd = r"""
+    # Clear pexpect buffer
+    buf = None
+    try:
+        buf = child.read_nonblocking(16384, timeout = 0.1)
+        print(f'clear_buffer(): read nonblocking: buffer: {buf}')
+    except pexpect.exceptions.TIMEOUT:
+        print(f'clear_buffer(): TIMEOUT: buffer: {buf}')
+    """
+    return pexpect_cmd
+
 def pexpect_boot_to_prompt(target, config):
     """ Return string with Python code for booting the target to user-space prompt.
 
@@ -499,12 +514,12 @@ def steps_check_status(target, config):
     """
     st.append(step_pexpect(name='Check status: prompt: ' + target, target=target, python_code=pexpect_cmd))
 
-    pexpect_cmd = r"""
+    pexpect_cmd = pexpect_clear_buffer() + r"""
     # Check if system finished boot and all services are up.
     print('Checking system status...')
     # First send() or sendline() always gets corrupted, regardless of picocom settings
     child.sendline('systemctl is-system-running')
-    child.sendline('')
+    child.sendline('') # Needs pexpect_clear_buffer() after this block
     child.sendline('systemctl is-system-running')
     i = 0
     index = 0
@@ -522,6 +537,8 @@ def steps_check_status(target, config):
     if index != 0:
         raise Exception('`systemctl is-system-running` failure or prompt corrupted')
 
+    """ + pexpect_clear_buffer() + r"""
+
     # Ensure network started. On multi_v7 USB and USB PHYs are modules, thus
     # network starts very late, sometimes after prompt.
     print('Checking network online...')
@@ -530,6 +547,7 @@ def steps_check_status(target, config):
     if index == 1:
         # Could be messed prompt
         print('Retrying checking network online...')
+        child.sendline('systemctl start --no-ask-password network-online.target')
         child.expect_exact('root@odroid', timeout=5)
     """
     # v5.5 reports boots witthout systemd
@@ -538,10 +556,10 @@ def steps_check_status(target, config):
                            target=target, python_code=pexpect_cmd,
                            do_step_if=lambda step: step_is_kernel_newer(step, 5, 16)))
 
-    pexpect_cmd = r"""
+    pexpect_cmd = pexpect_clear_buffer() + r"""
     print('Checking network IP address...')
     child.sendline('ip addr')
-    child.expect_exact('1: lo: <LOOPBACK,UP,LOWER_UP>', timeout=1)
+    child.expect_exact('1: lo: <LOOPBACK,UP,LOWER_UP>', timeout=5)
     child.expect('(enu[0-2]:|enu2u1u1:|eth[0-2]:).*UP,LOWER_UP', timeout=1)
     child.expect_exact('inet 192.168', timeout=1)
     child.expect_exact('root@odroid', timeout=1)
