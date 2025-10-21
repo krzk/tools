@@ -27,7 +27,7 @@ def steps_build_upload_artifacts_binaries(name, config, out_dir):
                         ]
     upload_files_bin = [(out_dir + i) for i in upload_files_bin]
 
-    deploy_dir = f'%(prop:basedir:-./)s/../public_html/deploy-bin/{name}/%(prop:got_revision)s/'
+    deploy_dir = f'%(prop:basedir:-~/)s/public_html/deploy-bin/{name}/%(prop:got_revision)s/'
     st.extend(steps_prepare_build_storage('Prepare upload directory: binaries', deploy_dir))
 
     cmd = ['cp']

@@ -383,6 +383,13 @@ def steps_build_common(env, kbuild_output, config=None):
                                  haltOnFailure=False, warnOnFailure=True, flunkOnFailure=False,
                                  name='Cache DNS addresses (workaround)'))
     st.extend(steps_build_clean(env))
+    cmd = '''
+    repo="%(prop:repository)s"
+    git config --global --replace-all safe.directory "${repo#file://}"
+    '''
+    st.append(steps.ShellCommand(command=util.Interpolate(cmd),
+                                 haltOnFailure=True,
+                                 name='Mark local mirror repo as safe'))
     st.append(steps.Git(repourl='https://github.com/krzk/tools.git',
                         name='Clone krzk tools sources',
                         mode='incremental',

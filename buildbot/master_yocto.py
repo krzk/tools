@@ -53,7 +53,7 @@ def steps_yocto_upload_image(builder_name, machine, image):
     image_file_name = f'{image}-{machine}.cpio.xz'
     upload_files_bin = [f'build/tmp/deploy/images/{machine}/{image_file_name}']
 
-    deploy_top_dir = f'%(prop:basedir:-./)s/../public_html/deploy-bin/'
+    deploy_top_dir = f'%(prop:basedir:-~/)s/public_html/deploy-bin/'
     deploy_sub_dir = f'{builder_name}/%(prop:got_revision)s/'
     st.extend(steps_prepare_build_storage('Prepare upload directory: binaries',
                                           f'{deploy_top_dir}{deploy_sub_dir}'))

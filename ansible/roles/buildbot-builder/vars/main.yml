@@ -1,7 +1,6 @@
 ---
-buildbot_worker_dirname: worker
 buildbot_home: '/home/{{ buildbot_user }}'
-buildbot_basedir: '{{ buildbot_home }}/{{ buildbot_worker_dirname }}'
-buildbot_sandbox: '{{ buildbot_home }}/sandbox'
-buildbot_worker_password: '{{ 99999 | random }}-{{ 99999 | random }}-{{ 99999 | random }}-{{ 99999 | random }}'
-buildbot_ccache_limit: '20G'
+buildbot_docker_container_name: 'buildbot-worker'
+buildbot_docker_image_name: 'buildbot-worker-krzk'
+buildbot_docker_conf_dir: '{{ buildbot_home }}/buildbot-docker-build'
+buildbot_ccache_limit: '50G'

@@ -1,0 +1,122 @@
+# SPDX-License-Identifier: GPL-2.0
+#
+# Copyright (c) 2025 Krzysztof Kozlowski
+# Author: Krzysztof Kozlowski <krzk@kernel.org>
+#
+# please follow docker best practices
+# https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/
+
+FROM docker.io/library/debian:13
+LABEL org.opencontainers.image.authors="Krzysztof Kozlowski <krzk@kernel.org>"
+
+USER        root
+WORKDIR     {{ buildbot_home }}
+
+ARG         DEBIAN_FRONTEND=noninteractive
+#ENV         VIRTUAL_ENV=/buildbot_venv
+
+# Install security updates and required packages
+RUN apt-get update \
+    && apt-get -y upgrade \
+    && apt-get -y install -q \
+        build-essential \
+        git \
+        subversion \
+        python3-dev \
+        python3-pip \
+        libffi-dev \
+        libssl-dev \
+        # Test runs produce a great quantity of dead grandchild processes.  In a
+        # non-docker environment, these are automatically reaped by init (process 1),
+        # so we need to simulate that here.  See https://github.com/Yelp/dumb-init
+        dumb-init \
+        curl \
+        mc \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p {{ buildbot_home }} \
+    && useradd -ms /bin/bash buildbot \
+    && chown -R buildbot {{ buildbot_home }}
+
+RUN apt-get update \
+    && apt-get install -y locales \
+    && rm -rf /var/lib/apt/lists/* \
+    && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+
+ENV LANG=en_US.utf8
+
+# Buildbot related tools
+RUN apt-get update \
+    && apt-get install -y \
+            dnsutils
+
+# Kernel
+RUN apt-get update \
+    && apt-get install -y \
+        bc \
+        bison \
+        ccache \
+        clang \
+        diffutils \
+        dwarves \
+        flex \
+        gcc-arm-linux-gnueabi \
+        gcc-aarch64-linux-gnu \
+        gcc-powerpc64-linux-gnu \
+        gcc-riscv64-linux-gnu \
+        gcc-s390x-linux-gnu \
+        gcc-sparc64-linux-gnu \
+        # For depmod / `make modules_install` \
+        kmod \
+        libelf-dev \
+        libkeyutils-dev \
+        libssl-dev \
+        lld \
+        llvm
+
+RUN apt-get update \
+    && apt-get install -y \
+        chrpath \
+        cpio \
+        diffstat \
+        gawk \
+        lz4 \
+        patch \
+        psmisc \
+        texinfo \
+        wget \
+        zstd
+
+ENV PIP_BREAK_SYSTEM_PACKAGES=1
+
+#RUN virtualenv --python=python3 $VIRTUAL_ENV
+
+#ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+RUN pip3 install --root-user-action=ignore 'twisted[tls]'
+
+RUN git clone https://github.com/buildbot/buildbot.git buildbot-src
+RUN cd buildbot-src && git checkout v4.3.0 && cd ..
+COPY buildbot.tac {{ buildbot_home }}/buildbot.tac
+
+RUN pip3 install --root-user-action=ignore buildbot-src/worker
+
+RUN pip3 install --root-user-action=ignore dtschema \
+    GitPython \
+    ply \
+    yamllint
+
+#RUN mkdir {{ buildbot_home }}/.ssh
+RUN mkdir /root/.ssh
+RUN ln -s /root/.ssh {{ buildbot_home }}/.ssh
+
+#COPY .ssh/id_rsa.pub .ssh/id_rsa .ssh/known_hosts {{ buildbot_home }}/.ssh/
+
+#RUN chown -R buildbot {{ buildbot_home }}
+
+#USER buildbot
+
+RUN ccache -M {{ buildbot_ccache_limit }}
+
+#CMD ["source", "$VIRTUAL_ENV/bin/activate"] && ["/usr/bin/dumb-init", "$VIRTUAL_ENV/bin/twistd", "--pidfile=", "-ny", "buildbot.tac"]
+
+CMD ["/usr/bin/dumb-init", "/usr/local/bin/twistd", "--pidfile=", "-ny", "buildbot.tac"]

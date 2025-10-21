@@ -1,0 +1,58 @@
+# SPDX-License-Identifier: GPL-2.0
+import base64
+import fnmatch
+import os
+import sys
+
+from twisted.application import service
+from twisted.python.log import FileLogObserver
+from twisted.python.log import ILogObserver
+from twisted.python.logfile import LogFile
+
+from buildbot_worker.bot import Worker
+
+# setup worker
+basedir = os.environ.get("BUILDBOT_BASEDIR",
+    os.path.abspath(os.path.dirname(__file__)))
+application = service.Application('buildbot-worker')
+
+rotate_length = 10000000
+max_rotated_files = 10
+logfile = LogFile.fromFullPath(
+    os.path.join(basedir, "twistd.log"), rotateLength=rotate_length,
+    maxRotatedFiles=max_rotated_files)
+application.setComponent(ILogObserver, FileLogObserver(logfile).emit)
+
+# and worker on the same process!
+buildmaster_host = os.environ.get("BUILDMASTER", 'localhost')
+port = int(os.environ.get("BUILDMASTER_PORT", 9989))
+protocol = os.environ.get("BUILDMASTER_PROTOCOL", 'pb')
+workername = os.environ.get("WORKERNAME", 'docker')
+passwd = os.environ.get("WORKERPASS")
+
+# setup SSH key, default to new line/empty
+ssh_key = os.environ.get("SSH_KEY_B64", "Cg==")
+ssh_key = base64.b64decode(ssh_key) if ssh_key else ""
+with open(os.open(".ssh/id_rsa", os.O_CREAT | os.O_WRONLY, 0o600), "w", encoding="utf-8") as f:
+    f.write(ssh_key.decode("utf-8"))
+
+# delete the password from the environ so that it is not leaked in the log
+blacklist = os.environ.get("WORKER_ENVIRONMENT_BLACKLIST", "WORKERPASS SSH_KEY_B64").split()
+for name in list(os.environ.keys()):
+    for toremove in blacklist:
+        if fnmatch.fnmatch(name, toremove):
+            del os.environ[name]
+
+keepalive = 600
+umask = 0o022
+maxdelay = 300
+allow_shutdown = 'file'
+maxretries = None
+use_tls = 0
+delete_leftover_dirs = False
+
+s = Worker(buildmaster_host, port, workername, passwd, basedir,
+           keepalive, umask=umask, maxdelay=maxdelay, protocol=protocol, useTls=use_tls,
+           allow_shutdown=allow_shutdown, maxRetries=maxretries,
+           delete_leftover_dirs=delete_leftover_dirs)
+s.setServiceParent(application)

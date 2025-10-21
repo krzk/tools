@@ -19,48 +19,114 @@
   debug:
   when: lookup('vars', item) is undefined
   loop:
+    - buildbot_docker_conf_dir
     - buildbot_user
     - buildbot_home
-    - buildbot_worker_dirname
-    - buildbot_basedir
-    - buildbot_sandbox
     - buildbot_master_hostname
     - buildbot_worker_name
     - buildbot_worker_password
-    - buildbot_worker_admin
-    - buildbot_worker_description
     - host_buildbot_master_ssh
-    - path_mirror_repos
     - user_buildbot_master_ssh
 
-- name: Install PIP buildbot
-  pip:
+- name: Install Docker dependencies
+  apt:
     name:
-      - buildbot-worker
-    state: latest
-    virtualenv: '{{ buildbot_sandbox }}'
-  register: pip_buildbot
+      - docker.io
+      - python3-docker
+    state: present
+  tags: packages
+  become: yes
+  become_user: root
+  register: docker_dependencies
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Add buildbot to docker group
+  user:
+    name: '{{ buildbot_user }}'
+    groups: 'docker'
+    append: yes
+  become: yes
+  become_user: root
+
+- name: Systemd enable Docker
+  systemd:
+    name: docker
+    enabled: yes
+    masked: no
+  become: yes
+  become_user: root
+
+- name: Restart Docker
+  service:
+    name: docker
+    state: restarted
+  become: yes
+  become_user: root
+  when: docker_dependencies.changed | default(False)
+
+- name: Create Docker build context
+  file:
+    path: '{{ buildbot_docker_conf_dir }}'
+    state: directory
+    mode: '0755'
   remote_user: '{{ buildbot_user }}'
 
-- name: Create worker
-  shell:
-    cmd: |
-      set -eE
-      source {{ buildbot_sandbox }}/bin/activate
-      buildbot-worker create-worker --allow-shutdown=file --umask 0o022 {{ buildbot_worker_dirname }} \
-        {{ buildbot_master_hostname }} {{ buildbot_worker_name }} {{ buildbot_worker_password }}
-  args:
-    executable: /bin/bash
-    creates: '{{ buildbot_basedir }}/buildbot.tac'
+- name: Install files
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    mode: '{{ item.mode }}'
+  with_items:
+    - {src: 'Dockerfile.j2', dest: '{{ buildbot_docker_conf_dir }}/Dockerfile', mode: '0644'}
+    - {src: 'buildbot.tac.j2', dest: '{{ buildbot_docker_conf_dir }}/buildbot.tac', mode: '0644'}
   remote_user: '{{ buildbot_user }}'
 
-- name: Print Buildbot worker password for registering in master
-  command: sed -ne "s/^passwd = '\(.\+\)'$/\\1/p" {{ buildbot_basedir }}/buildbot.tac
-  register: details
-  # Command does not change system so run it always (even in --check)
-  check_mode: no
-  changed_when: no
+- name: Build buildbot-worker Docker image
+  community.general.docker_image:
+    name: '{{ buildbot_docker_image_name }}'
+    build:
+      path: '{{ buildbot_docker_conf_dir }}/'
+      pull: yes
+    source: build
+    # Once built, docker would never rebuild the image
+    force_source: yes
+    state: present
+  register: docker_image_build
   remote_user: '{{ buildbot_user }}'
+
+- name: Create cache (.ccache) volume
+  community.docker.docker_volume:
+    name: '{{ buildbot_docker_container_name }}-ccache'
+
+- name: Read remote buildbot SSH key
+  ansible.builtin.slurp:
+    src: '{{ buildbot_home }}/.ssh/id_rsa'
+  register: ssh_key
+  remote_user: '{{ buildbot_user }}'
+
+- name: Restart buildbot-worker container
+  community.general.docker_container:
+    name: '{{ buildbot_docker_container_name }}'
+    image: '{{ buildbot_docker_image_name }}'
+    network_mode: host
+    tmpfs:
+      - '/tmp:rw,nosuid,nodev,exec'
+    volumes:
+      - '{{ buildbot_docker_container_name }}-ccache:/root/.cache/ccache:rw'
+      - '/var/lib/mirror:/var/lib/mirror:ro'
+      - '{{ buildbot_home }}/public_html:{{ buildbot_home }}/public_html:rw'
+    state: started
+    restart: yes
+    restart_policy: unless-stopped
+    env:
+      BUILDMASTER: '{{ buildbot_master_hostname }}'
+      BUILDMASTER_PORT: '9989'
+      SSH_KEY_B64: '{{ ssh_key["content"] }}'
+      WORKERNAME: '{{ buildbot_worker_name }}'
+      WORKERPASS: '{{ buildbot_worker_password }}'
+      WORKER_ENVIRONMENT_BLACKLIST: 'SSH_KEY_B64 WORKERPASS'
+  remote_user: '{{ buildbot_user }}'
+  when: docker_image_build.changed | default(False)
 
 - name: Deploy worker auth to master
   lineinfile:
@@ -68,87 +134,16 @@
     state: present
     insertafter: EOF
     regexp: '^master_auth_config\["{{ buildbot_worker_name }}-worker-pass"\] '
-    line: 'master_auth_config["{{ buildbot_worker_name }}-worker-pass"] = "{{ details.stdout }}"'
+    line: 'master_auth_config["{{ buildbot_worker_name }}-worker-pass"] = "{{ buildbot_worker_password }}"'
   delegate_to: '{{ host_buildbot_master_ssh }}'
   remote_user: '{{ user_buildbot_master_ssh }}'
   # Ansible has trouble with concurrent steps on one machine -> gate,
   # so only one key is being stored eventually (last step overwrites).
   # Throttling solves the problem.
   throttle: 1
+  when: docker_image_build.changed | default(False)
 
 - debug:
     msg:
       - 'Manually restart Buildbot master'
-
-# Umask for worker was set for 0o022 so transferred files to master will be accessible by others.
-# However in such case be sure that the workers directory (its configuration) is private.
-- name: Set chmod on worker directory
-  file:
-    path: '{{ buildbot_basedir }}'
-    mode: '0700'
-  remote_user: '{{ buildbot_user }}'
-
-- name: Set worker admin
-  copy:
-    content: '{{ buildbot_worker_admin }}'
-    dest: '{{ buildbot_basedir }}/info/admin'
-    mode: '0644'
-  remote_user: '{{ buildbot_user }}'
-
-- name: Set worker description
-  copy:
-    content: '{{ buildbot_worker_description }}'
-    dest: '{{ buildbot_basedir }}/info/host'
-    mode: '0644'
-  remote_user: '{{ buildbot_user }}'
-
-- name: Mark mirror repos path as Git-safe
-  shell:
-    cmd: |
-      git config --global --replace-all safe.directory {{ path_mirror_repos }}
-      for i in `find {{ path_mirror_repos }}/ -name 'grokmirror.fingerprint'`
-      do
-        git config --global --add safe.directory "$(dirname $i)"
-      done
-  args:
-    executable: /bin/bash
-  remote_user: '{{ buildbot_user }}'
-
-- name: Install SystemD unit file
-  template:
-    src: buildbot-slave.service.j2
-    dest: /etc/systemd/system/buildbot-slave.service
-    mode: '0644'
-  become: yes
-  become_user: root
-
-- name: Install rc launcher script
-  template:
-    src: buildbot.sh.j2
-    dest: /usr/local/bin/buildbot.sh
-    mode: '0755'
-  become: yes
-  become_user: root
-
-- name: Systemd reload
-  systemd:
-    daemon_reload: yes
-  become: yes
-  become_user: root
-
-- name: Systemd enable buildbot
-  systemd:
-    name: buildbot-slave
-    enabled: yes
-    masked: no
-  become: yes
-  become_user: root
-
-- name: Restart buildbot worker
-  service:
-    name: buildbot-slave
-    state: restarted
-  become: yes
-  become_user: root
-  when: pip_buildbot.changed | default(False)
-  ignore_errors: yes
+  when: docker_image_build.changed | default(False)
