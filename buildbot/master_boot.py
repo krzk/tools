@@ -549,6 +549,9 @@ def steps_check_status(target, config):
         print('Retrying checking network online...')
         child.sendline('systemctl start --no-ask-password network-online.target')
         child.expect_exact('root@odroid', timeout=5)
+
+    child.sendline('systemctl is-active network-online.target')
+    child.expect_exact('\r\nactive\r\n')
     """
     # v5.5 reports boots witthout systemd
     # v5.15 reports degraded state
