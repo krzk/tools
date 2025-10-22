@@ -545,9 +545,13 @@ def steps_build_selected_folders(builder_name, kbuild_output, env, make_flags=No
     st = []
     if not env['KBUILD_OUTPUT']:
         raise ValueError('Missing KBUILD_OUTPUT path in environment')
-    paths_to_build = ['arch/arm/',
-                      # make won't build DTBs but include it for completeness
-                      'arch/arm64/boot/dts/',
+    paths_to_build = ['arch/arm/boot/dts/', # make won't build DTBs but include it for completeness
+                      'arch/arm/mach-axxia/',
+                      'arch/arm/mach-exynos/',
+                      'arch/arm/mach-mxs/',
+                      'arch/arm/mach-s3c/',
+                      'arch/arm/mach-vt8500/',
+                      'arch/arm64/boot/dts/', # make won't build DTBs but include it for completeness
                       'drivers/clk/samsung/',
                       'drivers/firmware/samsung/',
                       'drivers/interconnect/samsung/',
