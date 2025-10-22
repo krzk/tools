@@ -519,34 +519,6 @@ def steps_build_mem_ctrl_adjust_config(env, kbuild_output, make_olddefconfig=Tru
                                 env=env, name='Make olddefconfig'))
     return st
 
-def steps_build_pinctrl_adjust_config(env, kbuild_output, make_olddefconfig=True):
-    st = []
-    if not env['KBUILD_OUTPUT']:
-        raise ValueError('Missing KBUILD_OUTPUT path in environment')
-    st.append(steps.ShellCommand(
-        command=['scripts/config', '--file', util.Interpolate(kbuild_output + '.config'),
-                 '-e', 'COMPILE_TEST', '-e', 'OF',
-                 '-e', 'PINCTRL'
-                ],
-        haltOnFailure=True,
-        env=env, name='Toggle pin controller compile test config'))
-    st.append(steps.ShellCommand(command=[util.Interpolate('%(prop:builddir:-~/)s/tools/buildbot/build-worker-add-config.sh'),
-                                              env['KBUILD_OUTPUT'], 'pinctrl', 'samsung'],
-                                 haltOnFailure=True,
-                                 env=env,
-                                 name='Add pinctrl/samsung to config'))
-    st.append(steps.ShellCommand(command=[util.Interpolate('%(prop:builddir:-~/)s/tools/buildbot/build-worker-add-config.sh'),
-                                              env['KBUILD_OUTPUT'], 'pinctrl', 'qcom'],
-                                 haltOnFailure=True,
-                                 env=env,
-                                 name='Add pinctrl/qcom to config'))
-
-    if make_olddefconfig:
-        st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'olddefconfig'],
-                                haltOnFailure=True,
-                                env=env, name='Make olddefconfig'))
-    return st
-
 def steps_build_w1_adjust_config(env, kbuild_output, make_olddefconfig=True):
     st = []
     if not env['KBUILD_OUTPUT']:
@@ -568,14 +540,6 @@ def steps_build_w1_adjust_config(env, kbuild_output, make_olddefconfig=True):
                                 haltOnFailure=True,
                                 env=env, name='Make olddefconfig'))
     return st
-
-def steps_build_all_drivers_adjust_config(env, kbuild_output):
-     st = []
-     st.extend(steps_build_arm_var_multi_v6_v7_adjust_config(env, kbuild_output, make_olddefconfig=False))
-     st.extend(steps_build_mem_ctrl_adjust_config(env, kbuild_output, make_olddefconfig=False))
-     st.extend(steps_build_pinctrl_adjust_config(env, kbuild_output, make_olddefconfig=False))
-     st.extend(steps_build_w1_adjust_config(env, kbuild_output, make_olddefconfig=True))
-     return st
 
 def steps_build_selected_folders(builder_name, kbuild_output, env, make_flags=None, touch_changed=True):
     st = []
