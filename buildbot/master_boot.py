@@ -550,6 +550,8 @@ def steps_check_status(target, config):
         child.sendline('systemctl start --no-ask-password network-online.target')
         child.expect_exact('root@odroid', timeout=5)
 
+    child.sendline('') # Needs pexpect_clear_buffer() after this block
+    """ + pexpect_clear_buffer() + r"""
     child.sendline('systemctl is-active network-online.target')
     child.expect_exact('\r\nactive\r\n')
     """
