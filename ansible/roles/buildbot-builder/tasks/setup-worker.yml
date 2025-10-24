@@ -98,6 +98,10 @@
   community.docker.docker_volume:
     name: '{{ buildbot_docker_container_name }}-ccache'
 
+- name: Create Yocto downloads volume
+  community.docker.docker_volume:
+    name: '{{ buildbot_docker_container_name }}-yocto-downloads'
+
 - name: Read remote buildbot SSH key
   ansible.builtin.slurp:
     src: '{{ buildbot_home }}/.ssh/id_rsa'
@@ -113,6 +117,7 @@
       - '/tmp:rw,nosuid,nodev,exec'
     volumes:
       - '{{ buildbot_docker_container_name }}-ccache:/root/.cache/ccache:rw'
+      - '{{ buildbot_docker_container_name }}-yocto-downloads:{{ buildbot_home }}/downloads:rw'
       - '/var/lib/mirror:/var/lib/mirror:ro'
       - '{{ buildbot_home }}/public_html:{{ buildbot_home }}/public_html:rw'
     state: started

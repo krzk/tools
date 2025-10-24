@@ -35,13 +35,10 @@ def step_yocto_cmd(name, machine, cmd):
 
 def steps_yocto_prepare_downloads():
     st = []
-    st.append(steps.MakeDirectory(dir='../downloads-cache',
-                                  name='Make downloads cache directory',
-                                  haltOnFailure=True))
     # TODO: parametrize "build" (default workdir - BuildFactory attribute)
     cmd = '''
     test -h %(prop:builddir:-~/)s/build/build/downloads || rm -fr %(prop:builddir:-~/)s/build/build/downloads
-    ln -s --force --no-dereference %(prop:builddir:-~/)s/../downloads-cache %(prop:builddir:-~/)s/build/build/downloads
+    ln -s --force --no-dereference %(prop:basedir:-~/)s/downloads %(prop:builddir:-~/)s/build/build/downloads
     '''
     st.append(steps.ShellCommand(command=util.Interpolate(cmd),
                                  name='Link downloads cache directory',
