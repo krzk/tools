@@ -100,15 +100,13 @@ RUN pip3 install --root-user-action=ignore dtschema \
     ply \
     yamllint
 
-#RUN mkdir {{ buildbot_home }}/.ssh
-RUN mkdir /root/.ssh
-RUN ln -s /root/.ssh {{ buildbot_home }}/.ssh
+RUN chown -R buildbot {{ buildbot_home }}
 
-#COPY .ssh/id_rsa.pub .ssh/id_rsa .ssh/known_hosts {{ buildbot_home }}/.ssh/
+USER buildbot
 
-#RUN chown -R buildbot {{ buildbot_home }}
-
-#USER buildbot
+RUN mkdir -p {{ buildbot_home }}/.ssh \
+        {{ buildbot_home }}/.cache/ccache \
+    && chmod -R og-rwx {{ buildbot_home }}/.ssh
 
 RUN ccache -M {{ buildbot_ccache_limit }}
 

@@ -116,7 +116,7 @@
     tmpfs:
       - '/tmp:rw,nosuid,nodev,exec'
     volumes:
-      - '{{ buildbot_docker_container_name }}-ccache:/root/.cache/ccache:rw'
+      - '{{ buildbot_docker_container_name }}-ccache:{{ buildbot_home }}/.cache/ccache:rw'
       - '{{ buildbot_docker_container_name }}-yocto-downloads:{{ buildbot_home }}/downloads:rw'
       - '/var/lib/mirror:/var/lib/mirror:ro'
       - '{{ buildbot_home }}/public_html:{{ buildbot_home }}/public_html:rw'
