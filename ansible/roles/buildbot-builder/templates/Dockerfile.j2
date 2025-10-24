@@ -13,7 +13,6 @@ USER        root
 WORKDIR     {{ buildbot_home }}
 
 ARG         DEBIAN_FRONTEND=noninteractive
-#ENV         VIRTUAL_ENV=/buildbot_venv
 
 # Install security updates and required packages
 RUN apt-get update \
@@ -88,10 +87,6 @@ RUN apt-get update \
 
 ENV PIP_BREAK_SYSTEM_PACKAGES=1
 
-#RUN virtualenv --python=python3 $VIRTUAL_ENV
-
-#ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
 RUN pip3 install --root-user-action=ignore 'twisted[tls]'
 
 RUN git clone https://github.com/buildbot/buildbot.git buildbot-src
@@ -116,7 +111,5 @@ RUN ln -s /root/.ssh {{ buildbot_home }}/.ssh
 #USER buildbot
 
 RUN ccache -M {{ buildbot_ccache_limit }}
-
-#CMD ["source", "$VIRTUAL_ENV/bin/activate"] && ["/usr/bin/dumb-init", "$VIRTUAL_ENV/bin/twistd", "--pidfile=", "-ny", "buildbot.tac"]
 
 CMD ["/usr/bin/dumb-init", "/usr/local/bin/twistd", "--pidfile=", "-ny", "buildbot.tac"]
