@@ -57,7 +57,7 @@ def cmd_serial(target):
     Returns
         list of strings with cmd
     """
-    cmd = ['picocom', '-b', '115200', '--flow', 'x', '--exit']
+    cmd = ['picocom', '-b', '115200', '--flow', 'none', '--exit']
     cmd.append('/dev/serial/' + TARGET_SERIAL_DEV[target])
 
     return cmd
@@ -531,6 +531,8 @@ def steps_check_status(target, config):
         else:
             i += 1
             print(f'Result {index}, retrying ({i})...')
+            # Soft flow control hangs terminal from time to time
+            child.sendcontrol('\\')
             child.sendline('systemctl is-system-running')
     if index != 0:
         raise Exception('`systemctl is-system-running` failure or prompt corrupted')
