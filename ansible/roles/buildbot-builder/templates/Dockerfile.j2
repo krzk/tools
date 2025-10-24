@@ -106,6 +106,7 @@ USER buildbot
 
 RUN mkdir -p {{ buildbot_home }}/.ssh \
         {{ buildbot_home }}/.cache/ccache \
+        {{ buildbot_home }}/yocto-sstate-cache \
     && chmod -R og-rwx {{ buildbot_home }}/.ssh
 
 RUN ccache -M {{ buildbot_ccache_limit }}

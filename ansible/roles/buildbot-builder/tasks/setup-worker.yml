@@ -102,6 +102,10 @@
   community.docker.docker_volume:
     name: '{{ buildbot_docker_container_name }}-yocto-downloads'
 
+- name: Create Yocto shared state volume
+  community.docker.docker_volume:
+    name: '{{ buildbot_docker_container_name }}-yocto-sstate-cache'
+
 - name: Read remote buildbot SSH key
   ansible.builtin.slurp:
     src: '{{ buildbot_home }}/.ssh/id_rsa'
@@ -117,7 +121,9 @@
       - '/tmp:rw,nosuid,nodev,exec'
     volumes:
       - '{{ buildbot_docker_container_name }}-ccache:{{ buildbot_home }}/.cache/ccache:rw'
-      - '{{ buildbot_docker_container_name }}-yocto-downloads:{{ buildbot_home }}/downloads:rw'
+      - '{{ buildbot_docker_container_name }}-yocto-downloads:{{ buildbot_home }}/yocto-downloads:rw'
+      # TODO shared-sstate, because new build takes 50 minutes
+      - '{{ buildbot_docker_container_name }}-yocto-sstate-cache:{{ buildbot_home }}/yocto-sstate-cache:rw'
       - '/var/lib/mirror:/var/lib/mirror:ro'
       - '{{ buildbot_home }}/public_html:{{ buildbot_home }}/public_html:rw'
     state: started

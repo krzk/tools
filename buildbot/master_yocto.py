@@ -38,10 +38,12 @@ def steps_yocto_prepare_downloads():
     # TODO: parametrize "build" (default workdir - BuildFactory attribute)
     cmd = '''
     test -h %(prop:builddir:-~/)s/build/build/downloads || rm -fr %(prop:builddir:-~/)s/build/build/downloads
-    ln -s --force --no-dereference %(prop:basedir:-~/)s/downloads %(prop:builddir:-~/)s/build/build/downloads
+    ln -s --force --no-dereference %(prop:basedir:-~/)s/yocto-downloads %(prop:builddir:-~/)s/build/build/downloads
+    test -h %(prop:builddir:-~/)s/build/build/sstate-cache || rm -fr %(prop:builddir:-~/)s/build/build/sstate-cache
+    ln -s --force --no-dereference %(prop:basedir:-~/)s/yocto-sstate-cache %(prop:builddir:-~/)s/build/build/sstate-cache
     '''
     st.append(steps.ShellCommand(command=util.Interpolate(cmd),
-                                 name='Link downloads cache directory',
+                                 name='Link downloads and sstate directory',
                                  haltOnFailure=True))
     return st
 
