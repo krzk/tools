@@ -18,7 +18,7 @@ IMPORTFLAGS="--import-options import-clean --import-options merge-only"
 
 # Make sure this points to your gpg v2 binary. You can also add other
 # flags here, such as --homedir
-GPGBIN="/usr/bin/gpg2 --batch"
+GPGBIN="/usr/bin/gpg --batch"
 
 # Run with -q from cron to silence most output
 [[ $1 == '-q' ]] && Q='-q'
