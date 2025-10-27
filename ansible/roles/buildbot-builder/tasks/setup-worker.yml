@@ -77,8 +77,9 @@
     dest: '{{ item.dest }}'
     mode: '{{ item.mode }}'
   with_items:
-    - {src: 'Dockerfile.j2', dest: '{{ buildbot_docker_conf_dir }}/Dockerfile', mode: '0644'}
+    - {src: '51unattended-upgrades-custom.j2', dest: '{{ buildbot_docker_conf_dir }}/51unattended-upgrades-custom', mode: '0644'}
     - {src: 'buildbot.tac.j2', dest: '{{ buildbot_docker_conf_dir }}/buildbot.tac', mode: '0644'}
+    - {src: 'Dockerfile.j2', dest: '{{ buildbot_docker_conf_dir }}/Dockerfile', mode: '0644'}
   remote_user: '{{ buildbot_user }}'
 
 - name: Build buildbot-worker Docker image

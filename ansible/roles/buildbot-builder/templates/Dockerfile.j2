@@ -34,6 +34,7 @@ RUN apt-get update \
         dumb-init \
         curl \
         mc \
+        unattended-upgrades \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p {{ buildbot_home }} \
     && useradd -ms /bin/bash buildbot \
@@ -45,6 +46,8 @@ RUN apt-get update \
     && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
 ENV LANG=en_US.utf8
+
+COPY 51unattended-upgrades-custom /etc/apt/apt.conf.d/51unattended-upgrades-custom
 
 # Buildbot related tools
 RUN apt-get update \
