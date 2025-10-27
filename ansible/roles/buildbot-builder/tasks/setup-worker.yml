@@ -97,14 +97,17 @@
 - name: Create cache (.ccache) volume
   community.docker.docker_volume:
     name: '{{ buildbot_docker_container_name }}-ccache'
+  remote_user: '{{ buildbot_user }}'
 
 - name: Create Yocto downloads volume
   community.docker.docker_volume:
     name: '{{ buildbot_docker_container_name }}-yocto-downloads'
+  remote_user: '{{ buildbot_user }}'
 
 - name: Create Yocto shared state volume
   community.docker.docker_volume:
     name: '{{ buildbot_docker_container_name }}-yocto-sstate-cache'
+  remote_user: '{{ buildbot_user }}'
 
 - name: Read remote buildbot SSH key
   ansible.builtin.slurp:
