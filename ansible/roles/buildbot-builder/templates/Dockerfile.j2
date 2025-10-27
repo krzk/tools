@@ -14,6 +14,9 @@ WORKDIR     {{ buildbot_home }}
 
 ARG         DEBIAN_FRONTEND=noninteractive
 
+RUN echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/99norecommends
+RUN echo 'APT::Install-Suggests "false";' >> /etc/apt/apt.conf.d/99norecommends
+
 # Install security updates and required packages
 RUN apt-get update \
     && apt-get -y upgrade \
@@ -46,7 +49,9 @@ ENV LANG=en_US.utf8
 # Buildbot related tools
 RUN apt-get update \
     && apt-get install -y \
-            dnsutils
+        dnsutils \
+        # For sftp \
+        openssh-client
 
 # Kernel
 RUN apt-get update \
@@ -77,6 +82,7 @@ RUN apt-get update \
         chrpath \
         cpio \
         diffstat \
+        file \
         gawk \
         lz4 \
         patch \
