@@ -52,14 +52,12 @@ TARGET_CONFIG = {
     },
 }
 
-def cmd_serial(target, close=False):
+def cmd_serial(target):
     """
     Returns
         list of strings with cmd
     """
     cmd = ['picocom', '-b', '115200', '--flow', 'x', '--exit']
-    if not close:
-        cmd.append('--noreset')
     cmd.append('/dev/serial/' + TARGET_SERIAL_DEV[target])
 
     return cmd
@@ -84,7 +82,7 @@ def step_test_serial(target):
         step
     """
 
-    return steps.ShellCommand(command=cmd_serial(target, close=True),
+    return steps.ShellCommand(command=cmd_serial(target),
                               name='Open serial port',
                               alwaysRun=False,
                               haltOnFailure=True)
@@ -95,7 +93,7 @@ def step_serial_close(target):
         step
     """
 
-    return steps.ShellCommand(command=cmd_serial(target, close=True),
+    return steps.ShellCommand(command=cmd_serial(target),
                               name='Close serial port',
                               alwaysRun=True,
                               haltOnFailure=False)
