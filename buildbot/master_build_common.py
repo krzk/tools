@@ -26,6 +26,8 @@ BUILD_WARN_IGNORE = [
     ('.*exynos5433.dtsi$', re.escape("Warning (graph_child_address): /soc@0/decon@13800000/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary"), None, None),
     ('.*exynos5433.dtsi$', re.escape("Warning (graph_child_address): /soc@0/dsi@13900000/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary"), None, None),
     ('.*exynos5433-tm2-common.dtsi$', re.escape("Warning (graph_child_address): /soc@0/decon@13880000/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary"), None, None),
+    ('.*exynos7870.dtsi$', re.escape("Warning (graph_child_address): /soc@0/dsi@14800000/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary"), None, None),
+
     # v6.16-rc1:
     (None, 'warning: arch/powerpc/boot/zImage.pseries has a LOAD segment with RWX permissions', None, None),
     # v6.16-rc1:
