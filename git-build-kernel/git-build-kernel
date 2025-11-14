@@ -3,7 +3,7 @@
 # git-build-kernel
 # Kamal Mostafa <kamal@canonical.com>
 # Copyright 2022 Canonical Ltd.
-# Copyright (c) 2022 Krzysztof Kozlowski <krzk@kernel.org>
+# Copyright (c) 2022-2025 Krzysztof Kozlowski <krzk@kernel.org>
 #
 # SPDX-License-Identifier: GPL-3.0-only
 #
@@ -176,7 +176,7 @@ JOBS="-j$(nproc)"
 
 function show_elapsed
 {
-	while [ -f $WORKDIR/building ]
+	while [ -f "$WORKDIR/building" ]
 	do
 		loadavg="`uptime`"
 		loadavg="load${loadavg##*load}"
@@ -197,7 +197,7 @@ show_elapsed &
 	echo "+++gbk++++ git archive $GITREPO ($GITBRANCH)"
 	mkdir "$BUILDDIR"
 	nice git archive --format=tar "$GITBRANCH" | tar -x -C "$BUILDDIR"
-	echo "+++gbk++++ builddir size: $(du -sh $BUILDDIR | cut -f 1)"
+	echo "+++gbk++++ builddir size: $(du -sh "$BUILDDIR" | cut -f 1)"
 
 	cd "$BUILDDIR"
 
@@ -205,16 +205,16 @@ show_elapsed &
 	export CCACHE_BASEDIR="$PWD"
 
 	echo "+++gbk++++ make $JOBS $DEFCONFIG"
-	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" nice make ${CC:+CC="$CC"} $JOBS $DEFCONFIG
+	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" nice make ${CC:+CC="$CC"} "$JOBS" "$DEFCONFIG"
 
 	echo "+++gbk++++ make $JOBS $TARGET $FLAGS"
-	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" nice make ${CC:+CC="$CC"} $JOBS $TARGET $FLAGS
+	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" nice make ${CC:+CC="$CC"} "$JOBS" ${TARGET:+"$TARGET"} ${FLAGS:+"$FLAGS"}
 
 	STATUS=$?
 	echo "+++gbk++++ build exit status was $STATUS"
-	echo "+++gbk++++ builddir size: $(du -sh $BUILDDIR | cut -f 1)"
+	echo "+++gbk++++ builddir size: $(du -sh "$BUILDDIR" | cut -f 1)"
 	exit $STATUS
-) > $LOG 2>&1
+) > "$LOG" 2>&1
 STATUS=$?
 
 rm -f "$WORKDIR/building"
