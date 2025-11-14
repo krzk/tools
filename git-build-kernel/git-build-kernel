@@ -131,7 +131,7 @@ if [ "$(have_ccache)" == "0" ]; then
 fi
 
 # Note: don't use --show-toplevel; it fails inside .git/
-GITREPO="`git rev-parse --git-dir`"
+GITREPO="$(git rev-parse --git-dir)"
 [ "$GITREPO" = "." ] && GITREPO="$PWD"
 GITREPO="${GITREPO%/.git}"
 [ -z "$GITREPO" ] && {
@@ -139,7 +139,7 @@ GITREPO="${GITREPO%/.git}"
 	exit 1
 }
 
-GITSHASHORT="`git log -1 --pretty=%h ${GITBRANCH%%refs/heads/} --`"
+GITSHASHORT="$(git log -1 --pretty=%h "${GITBRANCH%%refs/heads/}" --)"
 [ -z "$GITSHASHORT" ] && {	# (this can probably never happen)
 	echo "warning: Can't determine GITSHASHORT from GITBRANCH=$GITBRANCH" 1>&2
 	GITSHASHORT="UNKNOWN-XXXX"
@@ -153,7 +153,7 @@ export PATH
 ### Set up the /tmp work directory
 
 WORKDIR="kernel-$LOGNAME-$GITSHASHORT-XXXX"
-WORKDIR="`mktemp -u -d -t $WORKDIR`"
+WORKDIR="$(mktemp -u -d -t "$WORKDIR")"
 mkdir "$WORKDIR" || exit
 
 BUILDDIR="$WORKDIR/build"
@@ -178,9 +178,9 @@ function show_elapsed
 {
 	while [ -f "$WORKDIR/building" ]
 	do
-		loadavg="`uptime`"
+		loadavg="$(uptime)"
 		loadavg="load${loadavg##*load}"
-		elapsed=`date --utc --date="@$SECONDS" +%H:%M:%S`
+		elapsed=$(date --utc --date="@$SECONDS" +%H:%M:%S)
 		echo -n -e "\r  elapsed: $elapsed   $loadavg"
 		sleep 11
 	done
@@ -192,7 +192,7 @@ show_elapsed &
 	echo "+++gbk++++ git-build-kernel"
 	echo "+++gbk++++   ($HOSTNAME:$WORKDIR)"
 	echo "+++gbk++++   ARCH=\"$ARCH\" CROSS_COMPILE=\"$CROSS_COMPILE\" $FLAGS"
-	echo "+++gbk++++   ${CC:+CC=\"$CC\"} TARGET: $TARGET"
+	echo "+++gbk++++   ${CC:+CC=\"$CC\" }TARGET: $TARGET"
 
 	echo "+++gbk++++ git archive $GITREPO ($GITBRANCH)"
 	mkdir "$BUILDDIR"
