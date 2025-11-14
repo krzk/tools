@@ -55,6 +55,7 @@ do
 	[ "$opts_arch" = "alpha" ] && arch=alpha
 	[ "$opts_arch" = "arm" ] && arch=arm
 	[ "$opts_arch" = "arm64" ] && arch=arm64
+	[ "$opts_arch" = "loongarch" ] && arch=loongarch
 	[ "$opts_arch" = "m68k" ] && arch=m68k
 	[ "$opts_arch" = "mips" ] && arch=mips
 	[ "$opts_arch" = "mips64" ] && arch=mips64

@@ -69,6 +69,7 @@ done
 [ -z "$GITBRANCH" ] && usage
 [ -z "$ARCH" ] && usage
 
+CC=""
 CROSS_COMPILE=""
 if [ "$ARCH" = "alpha" ]; then
 	export CROSS_COMPILE="alpha-linux-gnu-"
@@ -78,6 +79,9 @@ elif [ "$ARCH" = "arm64" ]; then
 	export CROSS_COMPILE="aarch64-linux-gnu-"
 elif [ "$ARCH" = "i386" ]; then
 	export CROSS_COMPILE=""
+elif [ "$ARCH" = "loongarch" ]; then
+	export CROSS_COMPILE="loongarch64-linux-gnu-"
+	CC="loongarch64-linux-gnu-gcc-14"
 elif [ "$ARCH" = "m68k" ]; then
 	export CROSS_COMPILE="m68k-linux-gnu-"
 elif [ "$ARCH" = "mips" ]; then
@@ -119,7 +123,11 @@ fi
 ### System and repo checks
 
 if [ "$(have_ccache)" == "0" ]; then
-	CROSS_COMPILE="ccache $CROSS_COMPILE"
+	if [ "$CC" != "" ]; then
+		CC="ccache $CC"
+	else
+		CROSS_COMPILE="ccache $CROSS_COMPILE"
+	fi
 fi
 
 # Note: don't use --show-toplevel; it fails inside .git/
@@ -184,7 +192,7 @@ show_elapsed &
 	echo "+++gbk++++ git-build-kernel"
 	echo "+++gbk++++   ($HOSTNAME:$WORKDIR)"
 	echo "+++gbk++++   ARCH=\"$ARCH\" CROSS_COMPILE=\"$CROSS_COMPILE\" $FLAGS"
-	echo "+++gbk++++   TARGET: $TARGET"
+	echo "+++gbk++++   ${CC:+CC=\"$CC\"} TARGET: $TARGET"
 
 	echo "+++gbk++++ git archive $GITREPO ($GITBRANCH)"
 	mkdir "$BUILDDIR"
@@ -197,10 +205,10 @@ show_elapsed &
 	export CCACHE_BASEDIR="$PWD"
 
 	echo "+++gbk++++ make $JOBS $DEFCONFIG"
-	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" nice make $JOBS $DEFCONFIG
+	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" nice make ${CC:+CC="$CC"} $JOBS $DEFCONFIG
 
 	echo "+++gbk++++ make $JOBS $TARGET $FLAGS"
-	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" nice make $JOBS $TARGET $FLAGS
+	ARCH="$ARCH" CROSS_COMPILE="$CROSS_COMPILE" nice make ${CC:+CC="$CC"} $JOBS $TARGET $FLAGS
 
 	STATUS=$?
 	echo "+++gbk++++ build exit status was $STATUS"
