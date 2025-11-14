@@ -159,7 +159,7 @@ mkdir "$WORKDIR" || exit
 BUILDDIR="$WORKDIR/build"
 LOG="$WORKDIR/build.log"
 touch "$WORKDIR/building"
-trap "rm -rf $WORKDIR/building $BUILDDIR" 0
+trap 'rm -rf "$WORKDIR/building" "$BUILDDIR"' 0
 
 ###
 ### Run the build process in a subshell and capture output to a logfile.
