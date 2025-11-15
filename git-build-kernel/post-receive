@@ -12,6 +12,7 @@ GBK_DIR="$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")"
 
 # echo "pwd is:" ; pwd		# Nb. we will be run from inside ".git/"
 
+# shellcheck disable=SC2034
 while read -r old_object new_object ref_name
 do
 	#echo "old_object=$old_object"
