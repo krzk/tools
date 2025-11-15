@@ -2,7 +2,7 @@
 # .git/hooks/post-receive --> git-build-kernel automatic push builder
 # Kamal Mostafa <kamal@canonical.com>
 # Copyright 2022 Canonical Ltd.
-# Copyright (c) 2022 Krzysztof Kozlowski <krzk@kernel.org>
+# Copyright (c) 2022-2025 Krzysztof Kozlowski <krzk@kernel.org>
 #
 # SPDX-License-Identifier: GPL-3.0-only
 
@@ -39,7 +39,7 @@ do
 		build)
 			;;
 		dt_binding_check|dt_compatible_check|dtbs|dtbs_w1|dtbs_check|dtbs_check_w1)
-			target="-t $ref_p2_prefix"
+			target="$ref_p2_prefix"
 			;;
 		*)
 			echo "skipping unmatched target $ref_p2_prefix"
@@ -76,7 +76,7 @@ do
 
 	echo "building ... (ok to interrupt, build will continue) ..."
 
-	$GBK_DIR/git-build-kernel -r "$ref_name" -a $arch -c $config $target
+	"${GBK_DIR}/git-build-kernel" -r "$ref_name" -a "$arch" -c "$config" ${target:+-t "$target"}
 
 	### dispose of the "refs/build/*" refname file
 	rm "$ref_name"
