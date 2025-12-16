@@ -28,6 +28,8 @@ elif [[ $REMOTE_URL == *"/krzk/linux-w1.git"* ]]; then
 	BRANCHES="fixes for-next w1-next"
 elif [[ $REMOTE_URL == *"/pinctrl/samsung.git"* ]]; then
 	BRANCHES="fixes for-next pinctrl-next"
+elif [[ $REMOTE_URL == *"/soc/soc.git"* ]]; then
+	BRANCHES="arm/fixes for-next"
 else
 	die "Unknown upstream"
 fi
