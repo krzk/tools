@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2024 Krzysztof Kozlowski
+# Copyright (c) 2024,2025 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <krzk@kernel.org>
 #
 # SPDX-License-Identifier: GPL-2.0
@@ -10,7 +10,24 @@
 #
 
 TOOLS_DIR="$HOME/dev/tools/linux/"
+LINUS_MASTER_REF="linus/master"
 
+echo -n "[Checking merge] "
+git --no-pager log --format="%C(auto) %h %s" -n1
+
+echo "[b4] "
 ${TOOLS_DIR}verify_b4.sh >&2
+test $? -eq 0 && echo "OK"
+echo
+
+echo "[Signed-off-by] "
+${TOOLS_DIR}verify_signedoff.sh HEAD@{1}..HEAD
+test $? -eq 0 && echo "OK"
+echo
+
+echo "[Fixes] "
+${TOOLS_DIR}verify_fixes.sh "$LINUS_MASTER_REF" HEAD@{1}..HEAD
+test $? -eq 0 && echo "OK"
+echo
 
 exit 0
