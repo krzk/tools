@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2016-2023,2025 Krzysztof Kozlowski
+# Copyright (c) 2016-2023,2025-2026 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -32,11 +32,13 @@ CC_KRZK="Krzysztof Kozlowski <krzk@kernel.org>"
 
 if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
 	TO="Arnd Bergmann <arnd@arndb.de>, soc@lists.linux.dev"
+	TO_HI="Arnd and SoC folks"
 	CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org"
 	CC="Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, $CC, $CC_KRZK"
 	if [[ $TAG == *"-clk-"* ]]; then
 		SUBJECT="clk: samsung:"
 		TO="Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>"
+		TO_HI="Stephen and Michael"
 		CC="Sylwester Nawrocki <snawrocki@kernel.org>, $CC"
 		CC="Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, $CC"
 	elif [[ $TAG == *"-drivers-"* ]]; then
@@ -53,27 +55,33 @@ if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
 elif [[ $REMOTE_URL == *"/krzk/linux-dt.git"* ]]; then
 	if [[ $TAG == *"qcom-pinctrl"* ]]; then
 		TO="Linus Walleij <linus.walleij@linaro.org>"
+		TO_HI="Linus"
 		CC="Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@somainline.org>, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, $CC_KRZK"
 		SUBJECT="pinctrl: dt-bindings: qcom:"
 	elif [[ $TAG == *"dt-bindings-"* ]]; then
 		TO="Rob Herring <robh@kernel.org>"
+		TO_HI="Rob"
 		CC="devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, $CC_KRZK"
 		SUBJECT="dt-bindings:"
 	elif [[ $TAG == *"dt-"* ]]; then
 		TO="Arnd Bergmann <arnd@arndb.de>, soc@lists.linux.dev"
+		TO_HI="Arnd and SoC folks"
 		CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, $CC_KRZK"
 		SUBJECT="ARM: dts: "
 	elif [[ $TAG == *"dt64-"* ]]; then
 		TO="Arnd Bergmann <arnd@arndb.de>, soc@lists.linux.dev"
+		TO_HI="Arnd and SoC folks"
 		CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, $CC_KRZK"
 		SUBJECT="arm64: dts: "
 	else
 		TO="Arnd Bergmann <arnd@arndb.de>, soc@lists.linux.dev"
+		TO_HI="Arnd and SoC folks"
 		CC="linux-kernel@vger.kernel.org, $CC_KRZK"
 		SUBJECT="drivers:"
 	fi
 elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
 	TO="Arnd Bergmann <arnd@arndb.de>, soc@lists.linux.dev"
+	TO_HI="Arnd and SoC folks"
 	CC="linux-kernel@vger.kernel.org, $CC_KRZK"
 	if [[ $TAG == *"-fixes-"* ]]; then
 		SUBJECT="memory: fixes:"
@@ -82,6 +90,7 @@ elif [[ $REMOTE_URL == *"/krzk/linux-mem-ctrl.git"* ]]; then
 	fi
 elif [[ $REMOTE_URL == *"/krzk/linux-w1.git"* ]]; then
 	TO="Greg Kroah-Hartman <gregkh@linuxfoundation.org>"
+	TO_HI="Greg"
 	CC="linux-kernel@vger.kernel.org, $CC_KRZK"
 	if [[ $TAG == *"-fixes-"* ]]; then
 		SUBJECT="w1: fixes:"
@@ -90,6 +99,7 @@ elif [[ $REMOTE_URL == *"/krzk/linux-w1.git"* ]]; then
 	fi
 elif [[ $REMOTE_URL == *"/pinctrl/samsung.git"* ]]; then
 	TO="Linus Walleij <linus.walleij@linaro.org>"
+	TO_HI="Linus"
 	CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org"
 	CC="Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, $CC, $CC_KRZK"
 	SUBJECT="pinctrl: samsung:"
@@ -105,7 +115,7 @@ From: Krzysztof Kozlowski <krzk@kernel.org>
 To: $TO
 Cc: $CC
 
-Hi,
+Hi ${TO_HI},
 
 
 
