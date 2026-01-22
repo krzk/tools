@@ -153,7 +153,6 @@
       WORKER_ENVIRONMENT_BLACKLIST: 'SSH_KEY_B64 WORKERPASS'
     user: '{{ buildbot_user }}'
   remote_user: '{{ buildbot_user }}'
-  when: docker_image_build.changed | default(False)
 
 - name: Deploy worker auth to master
   lineinfile:
