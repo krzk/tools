@@ -14,6 +14,10 @@ WORKDIR     {{ buildbot_home }}
 
 ARG         DEBIAN_FRONTEND=noninteractive
 
+RUN mkdir -p {{ buildbot_home }} \
+    && useradd -ms /bin/bash buildbot \
+    && chown -R buildbot {{ buildbot_home }}
+
 RUN echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/99norecommends
 RUN echo 'APT::Install-Suggests "false";' >> /etc/apt/apt.conf.d/99norecommends
 
@@ -35,10 +39,7 @@ RUN apt-get update \
         curl \
         mc \
         unattended-upgrades \
-    && rm -rf /var/lib/apt/lists/* \
-    && mkdir -p {{ buildbot_home }} \
-    && useradd -ms /bin/bash buildbot \
-    && chown -R buildbot {{ buildbot_home }}
+    && rm -rf /var/lib/apt/lists/*
 
 RUN apt-get update \
     && apt-get install -y locales \
