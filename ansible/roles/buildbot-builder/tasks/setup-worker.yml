@@ -151,6 +151,7 @@
       WORKERNAME: '{{ buildbot_worker_name }}'
       WORKERPASS: '{{ buildbot_worker_password }}'
       WORKER_ENVIRONMENT_BLACKLIST: 'SSH_KEY_B64 WORKERPASS'
+    user: '{{ buildbot_user }}'
   remote_user: '{{ buildbot_user }}'
   when: docker_image_build.changed | default(False)
 
