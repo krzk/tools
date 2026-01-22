@@ -15,7 +15,8 @@ WORKDIR     {{ buildbot_home }}
 ARG         DEBIAN_FRONTEND=noninteractive
 
 RUN mkdir -p {{ buildbot_home }} \
-    && useradd -ms /bin/bash buildbot \
+    && groupadd -g "{{ getent_passwd[buildbot_user].2 }}" buildbot \
+    && useradd -m -u "{{ getent_passwd[buildbot_user].1 }}" -g "{{ getent_passwd[buildbot_user].2 }}" -s /bin/bash buildbot \
     && chown -R buildbot {{ buildbot_home }}
 
 RUN echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/99norecommends

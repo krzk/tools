@@ -28,6 +28,17 @@
     - host_buildbot_master_ssh
     - user_buildbot_master_ssh
 
+  # Get host buildbot UID/GID, so image will have matching UID/GID necessary for
+  # easy mapping of permission used for bind mounts (public_html)
+- getent:
+    database: passwd
+
+- debug:
+    msg: |
+      Host UID for mapping into container
+      {{ buildbot_user }} uid: {{ getent_passwd[buildbot_user].1 }}
+      {{ buildbot_user }} gid: {{ getent_passwd[buildbot_user].2 }}
+
 - name: Install Docker dependencies
   apt:
     name:
