@@ -50,6 +50,7 @@ usage() {
 	echo " -k               - Disable out-of-tree build (KBUILD_OUTPUT)"
 	echo " -l <cmdline>     - Append command line (some images might have default,"
 	echo "                    so this only appends)"
+	echo " -L <cmdline>     - Replace command line"
 	echo " -r <cross cc>    - Set custom cross compiler, examples:"
 	echo "                    mips64-linux-gnuabi64-, powerpc64-linux-gnu-, hppa64-linux-gnu-"
 	echo " -R <ramdisk>     - Path to ramdisk for certain images."
@@ -133,11 +134,12 @@ KBUILD_OUTPUT="build/"
 CC=""
 CROSS_COMPILE=""
 CMDLINE=""
+CMDLINE_APPEND=""
 MODULES_INSTALL_PATH="modules-out"
 RAMDISK=""
 RAMDISK_SRC="${HOME}/dev/linux/testing/arm64-rootfs/initramfs-qemuarm64-krzk.cpio.lz4"
 
-while getopts "Chkl:t:S:s:p:c:d:A:b:E:e:D:M:j:I:r:R:m:" flag
+while getopts "Chkl:L:t:S:s:p:c:d:A:b:E:e:D:M:j:I:r:R:m:" flag
 do
 	case "$flag" in
 		S)
@@ -195,6 +197,9 @@ do
 			KBUILD_OUTPUT=""
 			;;
 		l)
+			CMDLINE_APPEND="$OPTARG"
+			;;
+		L)
 			CMDLINE="$OPTARG"
 			;;
 		m)
@@ -335,6 +340,10 @@ else
 		-o "$CHOSEN_IMAGE" = "e850" \
 		&& die "Image '$CHOSEN_IMAGE' requires dts_name"
 	echo "Missing dts_name parameter, ignoring DTS"
+fi
+
+if [ -n "$CMDLINE" ] && [ -n "$CMDLINE_APPEND" ]; then
+	die "Conflicting arguments: -l and -L"
 fi
 
 if [ -n "$KBUILD_OUTPUT" ]; then
@@ -546,7 +555,12 @@ make_image_qcom() {
 	make_ramdisk
 
 	# Some targets might require: --header_version 2
-	cmdline="$cmdline $CMDLINE"
+	if [ -n "$CMDLINE" ]; then
+		cmdline="$CMDLINE"
+	else
+		cmdline="$cmdline $CMDLINE"
+	fi
+
 	echo "Making kernel image with cmdline: $cmdline"
 	mkbootimg --kernel ${IMAGE_OUT_PATH} \
 		--ramdisk ${RAMDISK_PATH} \
@@ -572,7 +586,12 @@ make_image_qcom2() {
 	# Some targets might require:
 	# --header_version 2
 	# --os_version 14.0.0 --os_patch_level 2023-10
-	cmdline="$cmdline $CMDLINE"
+	if [ -n "$CMDLINE" ]; then
+		cmdline="$CMDLINE"
+	else
+		cmdline="$cmdline $CMDLINE"
+	fi
+
 	echo "Making kernel image with cmdline: $cmdline"
 	mkbootimg --kernel ${image_path} \
 		--ramdisk ${RAMDISK_PATH} \
@@ -604,7 +623,12 @@ make_image_e850() {
 	append_dtb
 	make_ramdisk
 
-	cmdline="$cmdline $CMDLINE"
+	if [ -n "$CMDLINE" ]; then
+		cmdline="$CMDLINE"
+	else
+		cmdline="$cmdline $CMDLINE"
+	fi
+
 	echo "Making kernel image with cmdline: $cmdline"
 	mkbootimg --kernel ${image_path} \
 		--ramdisk ${RAMDISK_PATH} \
