@@ -1,7 +1,7 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-2.0
 #
-# Copyright (c) 2023-2025 Krzysztof Kozlowski
+# Copyright (c) 2023-2026 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <krzk@kernel.org>
 #
 # Script for building kernel images for several platforms.
@@ -393,6 +393,27 @@ tmp_cleanup() {
 	test -n "$RAMDISK_TMP" && rm -fr "$RAMDISK_TMP"
 }
 
+cmd_compress() {
+	local file="$1"
+
+	if [[ -z "$file" ]]; then
+		die "Usage: decompress <file>"
+	fi
+
+	case "$file" in
+	*.gz)     echo "gzip" ;;
+	*.bz2)    echo "bzip" ;;
+	*.xz)     echo "xz" ;;
+	*.lzma)   echo "lzma" ;;
+	*.lz4)    echo "lz4" ;;
+	*)
+		die "Don't know how to decompress: $file"
+		;;
+	esac
+
+	return 0
+}
+
 make_dtbs() {
 	$MAKE dtbs $JOBS || die "Make dtbs error"
 	return 0
@@ -526,12 +547,9 @@ make_ramdisk() {
 			local modules_src_path="${workdir}/${KBUILD_OUTPUT}${MODULES_INSTALL_PATH}/lib/modules"
 			local lztool
 
+			lztool="$(cmd_compress $RAMDISK_SRC)"
 			cd "$RAMDISK_TMP" || die "No ramdisk tmp"
-			if [ "${RAMDISK_SRC##*.}" == "lz4" ]; then
-				lztool="lz4"
-			else
-				lztool="lzma"
-			fi
+
 			$lztool -d -c "${RAMDISK_SRC}" | fakeroot cpio -idm --quiet || die "Unpack source ramdisk error"
 			echo "Installing modules to ramdisk ($(du -sh ${modules_src_path} | awk '{print $1}'))"
 			cp -r ${modules_src_path} ./lib/ || die "cp modules error"
