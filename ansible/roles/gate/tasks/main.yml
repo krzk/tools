@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0
 #
-# Copyright (c) 2019-2025 Krzysztof Kozlowski
+# Copyright (c) 2019-2026 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 ---
@@ -35,7 +35,7 @@
   ansible.posix.authorized_key:
     user: '{{ user_gate }}'
     state: present
-    key: "{{ lookup('file', '{{ item }}') }}"
+    key: "{{ lookup('file', item) }}"
   with_fileglob:
     - "{{ lookup('env','HOME') + '/.ssh/id_rsa.pub' }}"
     - "{{ lookup('env','HOME') + '/.ssh/id_ed25519.pub' }}"
