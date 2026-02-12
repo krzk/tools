@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0
 #
-# Copyright (c) 2025 Krzysztof Kozlowski
+# Copyright (c) 2025-2026 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <krzk@kernel.org>
 ---
 - name: Check requirements for variables
@@ -9,6 +9,7 @@
   loop:
     - buildbot_home
     - buildbot_user
+    - buildbot_builder_with_public_html_storage
 
 - name: Create public_html
   ansible.builtin.file:
@@ -16,6 +17,7 @@
     mode: '0755'
     state: directory
   remote_user: '{{ buildbot_user }}'
+  when: buildbot_builder_with_public_html_storage
 
 - name: Set up cron - cleanup files
   ansible.builtin.cron:
@@ -26,6 +28,7 @@
   with_items:
     - '{{ buildbot_home }}/public_html/deploy-bin'
   remote_user: '{{ buildbot_user }}'
+  when: buildbot_builder_with_public_html_storage
 
 - name: Set up cron - cleanup dirs
   ansible.builtin.cron:
@@ -36,3 +39,4 @@
   with_items:
     - '{{ buildbot_home }}/public_html/deploy-bin'
   remote_user: '{{ buildbot_user }}'
+  when: buildbot_builder_with_public_html_storage
