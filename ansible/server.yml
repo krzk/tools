@@ -1,12 +1,20 @@
 # SPDX-License-Identifier: GPL-2.0
 #
-# Copyright (c) 2019,2021,2022 Krzysztof Kozlowski
+# Copyright (c) 2019,2021,2022,2026 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <krzk@kernel.org>
 ---
 - hosts: servers
   roles:
     - hardened
     - mail-forward
+    - sshd
+
+# Servers low priority / high performance, so acting like intra_machines
+- hosts: servers_highperf
+  roles:
+    - hardened
+    - mail-forward
+    - safe-env
     - sshd
 
 - hosts: gates
