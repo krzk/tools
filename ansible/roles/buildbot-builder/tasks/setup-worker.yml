@@ -97,7 +97,8 @@
   remote_user: '{{ buildbot_user }}'
 
 - name: Build buildbot-worker Docker image
-  community.general.docker_image:
+  # Ubuntu ansible collections has community.docker v4.6, not v5.0, so cannot use community.docker.docker_image_build module
+  community.docker.docker_image:
     name: '{{ buildbot_docker_image_name }}'
     build:
       path: '{{ buildbot_docker_conf_dir }}/'
