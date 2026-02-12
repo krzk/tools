@@ -1,5 +1,5 @@
 ---
-# Copyright (c) 2022-2025 Krzysztof Kozlowski
+# Copyright (c) 2022-2026 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <krzk@kernel.org>
 #
 # SPDX-License-Identifier: GPL-2.0
@@ -11,6 +11,7 @@
     - postfix_my_domain
     - postfix_my_hostname
     - postfix_relay_host
+    - postfix_sasl_relay_gmail_password
 
 - name: Update apt-cache
   apt:
