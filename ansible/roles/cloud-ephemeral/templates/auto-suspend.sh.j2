@@ -1,0 +1,10 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (c) 2026 Krzysztof Kozlowski <krzk@kernel.org>
+
+if [ -e "/tmp/auto-suspend.lock" ]; then
+	exit 0
+fi
+
+echo "Hibernating...."
+/usr/bin/systemctl suspend
