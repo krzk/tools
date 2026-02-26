@@ -22,14 +22,24 @@
     - buildbot_ccache_limit
     - buildbot_docker_conf_dir
     - buildbot_docker_image_name
-    - buildbot_docker_container_name
-    - buildbot_user
+    - buildbot_docker_volume_prefix
     - buildbot_home
     - buildbot_master_hostname
-    - buildbot_worker_name
-    - buildbot_worker_password
+    - buildbot_workers
+    - buildbot_user
     - host_buildbot_master_ssh
     - user_buildbot_master_ssh
+
+- name: Check requirements for workers array
+  assert:
+    that:
+      - 'item.buildbot_docker_container_name is defined'
+      - 'item.buildbot_worker_name is defined'
+      - 'item.buildbot_worker_password is defined'
+    fail_msg: 'Workers entry is missing required keys: {{ item }}'
+  loop: '{{ buildbot_workers | default([]) }}'
+  loop_control:
+    label: '{{ item.buildbot_worker_name | default("unnamed-worker") }}'
 
   # Get host buildbot UID/GID, so image will have matching UID/GID necessary for
   # easy mapping of permission used for bind mounts (public_html)
@@ -113,17 +123,17 @@
 
 - name: Create cache (.ccache) volume
   community.docker.docker_volume:
-    name: '{{ buildbot_docker_container_name }}-ccache'
+    name: '{{ buildbot_docker_volume_prefix }}-ccache'
   remote_user: '{{ buildbot_user }}'
 
 - name: Create Yocto downloads volume
   community.docker.docker_volume:
-    name: '{{ buildbot_docker_container_name }}-yocto-downloads'
+    name: '{{ buildbot_docker_volume_prefix }}-yocto-downloads'
   remote_user: '{{ buildbot_user }}'
 
 - name: Create Yocto shared state volume
   community.docker.docker_volume:
-    name: '{{ buildbot_docker_container_name }}-yocto-sstate-cache'
+    name: '{{ buildbot_docker_volume_prefix }}-yocto-sstate-cache'
   remote_user: '{{ buildbot_user }}'
 
 - name: Read remote buildbot SSH key
@@ -134,16 +144,16 @@
 
 - name: Restart buildbot-worker container
   community.general.docker_container:
-    name: '{{ buildbot_docker_container_name }}'
+    name: '{{ item.buildbot_docker_container_name }}'
     image: '{{ buildbot_docker_image_name }}'
     network_mode: host
     tmpfs:
       - '/tmp:rw,nosuid,nodev,exec'
     volumes:
-      - '{{ buildbot_docker_container_name }}-ccache:{{ buildbot_home }}/.cache/ccache:rw'
-      - '{{ buildbot_docker_container_name }}-yocto-downloads:{{ buildbot_home }}/yocto-downloads:rw'
+      - '{{ buildbot_docker_volume_prefix }}-ccache:{{ buildbot_home }}/.cache/ccache:rw'
+      - '{{ buildbot_docker_volume_prefix }}-yocto-downloads:{{ buildbot_home }}/yocto-downloads:rw'
       # TODO shared-sstate, because new build takes 50 minutes
-      - '{{ buildbot_docker_container_name }}-yocto-sstate-cache:{{ buildbot_home }}/yocto-sstate-cache:rw'
+      - '{{ buildbot_docker_volume_prefix }}-yocto-sstate-cache:{{ buildbot_home }}/yocto-sstate-cache:rw'
       - '/var/lib/mirror:/var/lib/mirror:ro'
       - '{{ buildbot_home }}/public_html:{{ buildbot_home }}/public_html:rw'
     state: started
@@ -153,10 +163,13 @@
       BUILDMASTER: '{{ buildbot_master_hostname }}'
       BUILDMASTER_PORT: '9989'
       SSH_KEY_B64: '{{ ssh_key["content"] }}'
-      WORKERNAME: '{{ buildbot_worker_name }}'
-      WORKERPASS: '{{ buildbot_worker_password }}'
+      WORKERNAME: '{{ item.buildbot_worker_name }}'
+      WORKERPASS: '{{ item.buildbot_worker_password }}'
       WORKER_ENVIRONMENT_BLACKLIST: 'SSH_KEY_B64 WORKERPASS'
     user: '{{ buildbot_user }}'
+  loop: '{{ buildbot_workers | default([]) }}'
+  loop_control:
+    label: '{{ item.buildbot_worker_name | default("unnamed-worker") }}'
   remote_user: '{{ buildbot_user }}'
 
 - name: Deploy worker auth to master
@@ -164,8 +177,11 @@
     path: 'master/master_auth.py'
     state: present
     insertafter: EOF
-    regexp: '^master_auth_config\["{{ buildbot_worker_name }}-worker-pass"\] '
-    line: 'master_auth_config["{{ buildbot_worker_name }}-worker-pass"] = "{{ buildbot_worker_password }}"'
+    regexp: '^master_auth_config\["{{ item.buildbot_worker_name }}-worker-pass"\] '
+    line: 'master_auth_config["{{ item.buildbot_worker_name }}-worker-pass"] = "{{ item.buildbot_worker_password }}"'
+  loop: '{{ buildbot_workers | default([]) }}'
+  loop_control:
+    label: '{{ item.buildbot_worker_name | default("unnamed-worker") }}'
   delegate_to: '{{ host_buildbot_master_ssh }}'
   remote_user: '{{ user_buildbot_master_ssh }}'
   # Ansible has trouble with concurrent steps on one machine -> gate,

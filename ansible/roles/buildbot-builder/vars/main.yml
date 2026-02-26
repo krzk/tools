@@ -1,5 +1,5 @@
 ---
 buildbot_home: '/home/{{ buildbot_user }}'
-buildbot_docker_container_name: 'buildbot-worker'
+buildbot_docker_volume_prefix: 'buildbot-worker'
 buildbot_docker_image_name: 'buildbot-worker-krzk'
 buildbot_docker_conf_dir: '{{ buildbot_home }}/buildbot-docker-build'
