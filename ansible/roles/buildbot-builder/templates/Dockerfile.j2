@@ -119,7 +119,11 @@ RUN mkdir -p {{ buildbot_home }}/.ssh \
         {{ buildbot_home }}/.cache/ccache \
         {{ buildbot_home }}/yocto-downloads \
         {{ buildbot_home }}/yocto-sstate-cache \
+        {{ buildbot_home }}/info \
     && chmod -R og-rwx {{ buildbot_home }}/.ssh
+
+RUN echo "krzk" > {{ buildbot_home }}/info/admin
+RUN echo "{{ buildbot_worker_description }}" > {{ buildbot_home }}/info/host
 
 RUN ccache -M {{ buildbot_ccache_limit }}
 

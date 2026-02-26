@@ -25,6 +25,7 @@
     - buildbot_docker_volume_prefix
     - buildbot_home
     - buildbot_master_hostname
+    - buildbot_worker_description
     - buildbot_workers
     - buildbot_user
     - host_buildbot_master_ssh
