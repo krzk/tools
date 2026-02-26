@@ -1059,7 +1059,7 @@ config_qemutest() {
 	config_item_on HW_RANDOM_VIRTIO SND_VIRTIO VIRTIO_BALLOON BALLOON_COMPACTION CRYPTO_DEV_VIRTIO
 
 	# Grows kernel significantly, but useful for proper faddr2line:
-	config_item_on DEBUG_INFO DEBUG_INFO_REDUCED DEBUG_INFO_COMPRESSED
+	config_item_on DEBUG_INFO_DWARF5 DEBUG_INFO DEBUG_INFO_REDUCED DEBUG_INFO_COMPRESSED
 
 	config_item_on DEBUG_VM
 	config_item_off DEBUG_VM_VMACACHE DEBUG_VM_RB DEBUG_VM_PGFLAGS
