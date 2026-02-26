@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # Copyright (c) 2021 Canonical Ltd.
-# Copyright (c) 2025 Krzysztof Kozlowski
+# Copyright (c) 2025-2026 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <krzk@kernel.org>
 #
 # SPDX-License-Identifier: GPL-2.0
@@ -23,6 +23,7 @@ IMG_FILE=""
 IMG_FILE_TYPE=""
 QEMU_MEM="${QEMU_MEM:=4G}"
 QEMU_CPU="${QEMU_CPU:=4}"
+BIOS=""
 
 while getopts "hd:k:m:" flag
 do
@@ -47,10 +48,15 @@ else
 	die "Type of drive image not recognized by extension"
 fi
 
+if [ -f /usr/share/qemu/OVMF.fd ]; then
+	BIOS="-bios /usr/share/qemu/OVMF.fd"
+fi
+
 qemu-system-x86_64 -nographic -enable-kvm \
 	-drive "file=${IMG_FILE},format=${IMG_FILE_TYPE}" \
 	-cpu host \
 	-m "${QEMU_MEM}" -smp "cores=${QEMU_CPU}" \
 	-device virtio-scsi-pci,id=scsi \
+	$BIOS \
 	-usb \
 	-nic user,hostfwd=tcp:127.0.0.1:60022-:22
