@@ -379,6 +379,13 @@ def steps_build_clean(env, always_run=False):
                                  name='Remove kbuild output directory'))
     return st
 
+def steps_build_prepare_dir(env):
+    st = []
+    st.append(steps.ShellCommand(command=['mkdir', '-p', env['KBUILD_OUTPUT']],
+                                 haltOnFailure=True,
+                                 name='Prepare kbuild output directory'))
+    return st
+
 def steps_build_common(env, kbuild_output, config=None):
     st = []
     # OpenStack machines have frequent github.com name resolution failures:
@@ -388,6 +395,7 @@ def steps_build_common(env, kbuild_output, config=None):
                                  haltOnFailure=False, warnOnFailure=True, flunkOnFailure=False,
                                  name='Cache DNS addresses (workaround)'))
     st.extend(steps_build_clean(env))
+    st.extend(steps_build_prepare_dir(env))
     cmd = '''
     repo="%(prop:repository)s"
     git config --global --replace-all safe.directory "${repo#file://}"
