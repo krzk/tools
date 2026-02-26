@@ -23,11 +23,9 @@
     - tunnels
     - user_tunnel
 
-# TODO: no clue how to convert it to loop with flattened items
-- name: Check requirements for variables
-  debug:
-  when: lookup('vars', item) is undefined
-  loop:
+- name: Check requirements for tunnels
+  assert:
+    that:
       - 'item.host_gate is defined'
       - 'item.host_gate_ssh is defined'
       - 'item.port_forward is defined'
@@ -35,7 +33,10 @@
       - 'item.port_tunnel_on_gate is defined'
       - 'item.pubkey_gate is defined'
       - 'item.user_gate is defined'
-  with_flattened: '{{ tunnels }}'
+    fail_msg: 'Tunnel entry is missing required keys: {{ item }}'
+  loop: '{{ tunnels | default([]) }}'
+  loop_control:
+    label: '{{ item.host_gate | default("unnamed-tunnel") }}'
 
 - name: Set environment for Debian
   set_fact:
