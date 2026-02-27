@@ -46,16 +46,6 @@ DTBS_CHECK_KNOWN_WARNINGS = {
                 ('.*exynos5250-snow-rev5.dtb$', re.escape("/i2c-arbitrator/i2c-arb/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
                 ('.*exynos5420-peach-pit.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
                 ('.*exynos5800-peach-pi.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
-                # Appear on next/pending-fixes, scheduled for v5.10-rc1
-                ('.*exynos4.*.dtb$', re.escape("keypad@100a0000: 'linux,keypad-no-autorepeat' does not match any of the regexes: '^key-[0-9a-z]+$', 'pinctrl-[0-9]+'"), None, None),
-                ('.*exynos4412-smdk4412.dtb$', re.escape("keypad@100a0000: 'key-A', 'key-B', 'key-C', 'key-D', 'key-E', 'linux,keypad-no-autorepeat' do not match any of the regexes: '^key-[0-9a-z]+$', 'pinctrl-[0-9]+'"), None, None),
-                # Appearing with dtschema 2025.6 and should be fixed for v6.17
-                ('.*exynos3250-.*.dtb$', "i2c-gpio-. \(i2c-gpio\): \$nodename:0: 'i2c-gpio-.' does not match.*", None, None),
-                ('.*exynos3250-.*.dtb$', "i2c-gpio-. \(i2c-gpio\): Unevaluated properties are not allowed \('#address-cells', '#size-cells', .*", None, None),
-                ('.*exynos4210-.*.dtb$', "i2c-gpio-. \(i2c-gpio\): \$nodename:0: 'i2c-gpio-.' does not match.*", None, None),
-                ('.*exynos4210-.*.dtb$', "i2c-gpio-. \(i2c-gpio\): Unevaluated properties are not allowed \('#address-cells', '#size-cells', .*", None, None),
-                ('.*exynos4[24]12-.*.dtb$', "i2c-gpio-. \(i2c-gpio\): \$nodename:0: 'i2c-gpio-.' does not match.*", None, None),
-                ('.*exynos4[24]12-.*.dtb$', "i2c-gpio-. \(i2c-gpio\): Unevaluated properties are not allowed \('#address-cells', '#size-cells', .*", None, None),
             ],
             's3c6400': [
             ],
@@ -84,38 +74,20 @@ DTBS_CHECK_KNOWN_WARNINGS = {
                 ('.*s5pv210-torbreck.dtb$', "i2s@e[0-9a-f]+ \(samsung,s3c6410-i2s\): #sound-dai-cells: 1 was expected", None, None),
                 ('.*s5pv210-torbreck.dtb$', "i2s@e[0-9a-f]+ \(samsung,s5pv210-i2s\): #sound-dai-cells: 1 was expected", None, None),
                 ('.*s5pv210-torbreck.dtb$', "i2s@e[0-9a-f]+: #sound-dai-cells:(0:0:)? 1 was expected", None, None),
-                # Appearing with dtschema 2025.6 and should be fixed for v6.17
-                ('.*s5pv210-.*.dtb$', "i2c-gpio-. \(i2c-gpio\): \$nodename:0: 'i2c-gpio-.' does not match.*", None, None),
-                ('.*s5pv210-.*.dtb$', "i2c-gpio-. \(i2c-gpio\): Unevaluated properties are not allowed \('#address-cells', '#size-cells', .*", None, None),
             ],
         },
         'arm64': {
             'defconfig': [
-                # Pending on mailing lists (probably v6.11-rc1)
-                ('.*gs101-oriole.dtb$', re.escape("/soc@0/phy@11100000: failed to match any schema with compatible: ['google,gs101-usb31drd-phy']"), None, None),
-                # Pending on mailing lists, probably v6.14-rc1 - https://lore.kernel.org/all/20241206-gs101-phy-lanes-orientation-phy-v4-2-f5961268b149@linaro.org/
-                ('.*gs101-oriole.dtb$', re.escape("phy@11100000: 'orientation-switch' does not match any of the regexes: 'pinctrl-[0-9]+'"), None, None),
-                ('.*gs101-raven.dtb$', re.escape("phy@11100000: 'orientation-switch' does not match any of the regexes: 'pinctrl-[0-9]+'"), None, None),
-                # Appearing with dtschema 2025.6 and should be fixed for v6.17
-                ('.*exynos5433-tm2.*.dtb$', "i2c-gpio-. \(i2c-gpio\): \$nodename:0: 'i2c-gpio-.' does not match.*", None, None),
-                ('.*exynos5433-tm2.*.dtb$', "i2c-gpio-. \(i2c-gpio\): Unevaluated properties are not allowed \('#address-cells', '#size-cells', .*", None, None),
             ],
         },
     },
     'krzk': {
         'arm': {
             'exynos': [
-                # Applied for v6.10-rc1
-                ('.*exynos.*.dtb$', re.escape("/soc/dp-controller@145b0000: failed to match any schema with compatible: ['samsung,exynos5-dp']"), None, None),
             ],
             's3c6400': [
-                # Applied for v6.10-rc1 (krzk/clk)
-                ('.*s3c6410-.*.dtb$', re.escape("/soc/clock-controller@7e00f000: failed to match any schema with compatible: ['samsung,s3c6410-clock']"), None, None),
             ],
             's5pv210': [
-                # Applied for v6.10-rc1
-                ('.*s5pv210-.*.dtb$', re.escape("/soc/onenand@b0600000: failed to match any schema with compatible: ['samsung,s5pv210-onenand']"), None, None),
-                ('.*s5pv210-.*.dtb$', re.escape("/soc/nand-controller@b0600000: failed to match any schema with compatible: ['samsung,s5pv210-onenand']"), None, None),
                 ('.*s5pv210-.*.dtb$', re.escape("/soc/dmc@f0000000: failed to match any schema with compatible: ['samsung,s5pv210-dmc']"), None, None),
                 ('.*s5pv210-.*.dtb$', re.escape("/soc/dmc@f1400000: failed to match any schema with compatible: ['samsung,s5pv210-dmc']"), None, None),
             ],
