@@ -106,6 +106,10 @@ DT_BINDING_CHECK_KNOWN_WARNINGS = [
     ('.*/slimbus/slimbus.example.dtb$', re.escape("slim@28080000 (qcom,slim-ngd-v1.5.0): #address-cells: 1 was expected"), None, None),
     ('.*/slimbus/slimbus.example.dtb$', re.escape("slim@28080000 (qcom,slim-ngd-v1.5.0): 'dmas' is a required property"), None, None),
     ('.*/slimbus/slimbus.example.dtb$', re.escape("slim@28080000 (qcom,slim-ngd-v1.5.0): 'dma-names' is a required property"), None, None),
+    # Appeared at v7.0-rc1:
+    ('.*/net/renesas,ether.example.dtb', re.escape("ethernet-phy@1 (ethernet-phy-id0022.1537): compatible: ['ethernet-phy-id0022.1537', 'ethernet-phy-ieee802.3-c22'] is too long"), None, None),
+    ('.*/mtd/st,spear600-smi.example.dtb', re.escape("flash@fc000000 (st,spear600-smi): flash@f8000000: Unevaluated properties are not allowed ('st,smi-fast-mode' was unexpected)"), None, None),
+    ('.*/mtd/st,spear600-smi.example.dtb', re.escape("flash@fc000000 (st,spear600-smi): Unevaluated properties are not allowed ('flash@f8000000' was unexpected)"), None, None),
 ]
 
 DTBS_CHECK_BOARDS = {
