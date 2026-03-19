@@ -576,7 +576,7 @@ make_image_qcom() {
 	if [ -n "$CMDLINE" ]; then
 		cmdline="$CMDLINE"
 	else
-		cmdline="$cmdline $CMDLINE"
+		cmdline="$cmdline $CMDLINE_APPEND"
 	fi
 
 	echo "Making kernel image with cmdline: $cmdline"
@@ -607,7 +607,7 @@ make_image_qcom2() {
 	if [ -n "$CMDLINE" ]; then
 		cmdline="$CMDLINE"
 	else
-		cmdline="$cmdline $CMDLINE"
+		cmdline="$cmdline $CMDLINE_APPEND"
 	fi
 
 	echo "Making kernel image with cmdline: $cmdline"
