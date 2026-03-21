@@ -380,6 +380,15 @@ def steps_build_common(env, kbuild_output, config=None):
                         workdir='tools',
                         haltOnFailure=True,
                         env=util.Property('git_env')))
+    st.append(steps.Git(repourl='https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc-tools.git',
+                        name='Clone soc tools sources',
+                        mode='incremental',
+                        alwaysUseLatest=True,
+                        branch='master',
+                        getDescription=False,
+                        workdir='soc-tools',
+                        haltOnFailure=True,
+                        env=util.Property('git_env')))
     # Workers use grokmirror same way as buildbot-master, so same repository path will work
     st.append(steps.Git(repourl=util.Property('repository'),
                         name='Clone the sources',
