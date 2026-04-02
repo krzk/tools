@@ -112,7 +112,7 @@ fi
 git tag -v $TAG &> /dev/null || die "Wrong tag or signature"
 
 echo "Output to: $OUT"
-echo "Subject: [GIT PULL] $SUBJECT xxx for v6.x
+echo "Subject: [GIT PULL] $SUBJECT xxx for v7.x
 From: Krzysztof Kozlowski <krzk@kernel.org>
 To: $TO
 Cc: $CC
