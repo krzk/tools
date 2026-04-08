@@ -78,6 +78,14 @@ DTBS_CHECK_KNOWN_WARNINGS = {
         },
         'arm64': {
             'defconfig': [
+                # Patches on the lists, maybe will reach v7.2
+                ('.*/qcom/monaco\.dtsi$', ".*\(interrupt_map\):.*pci@1c00000.*Missing property '#address-cells' .* using 0 as fallback", None, None),
+                ('.*/qcom/monaco\.dtsi$', ".*\(interrupt_map\):.*pci@1c10000.*Missing property '#address-cells' .* using 0 as fallback", None, None),
+                # Permanently ignore for all Qualcomm files, should be moved to W=2.
+                # It is not expected for Samsung, though.
+                # File: /home/buildbot/kernel/build/arch/arm64/boot/dts/qcom/kaanapali.dtsi
+                # Warn: 3287.27-3374.6: Warning (avoid_unnecessary_addr_size): /soc@0/display-subsystem@9800000/dsi@9ac0000: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" or "ranges" property
+                ('.*/qcom/.*\.dtsi$', '.*\(avoid_unnecessary_addr_size\):.*unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" or "ranges" property', None, None),
             ],
         },
     },
@@ -138,7 +146,10 @@ DTBS_CHECK_BOARDS = {
     },
 }
 
-DTBS_CHECK_WARNING_PATTERN = "^(.*?\.dtb): (.*)$"
+# DTC warnings have two lines with ':', so look for file pattern starting with '/'
+# /home/buildbot/kernel/build/arch/arm64/boot/dts/qcom/agatti.dtsi:2033.27-2106.6: Warning (avoid_unnecessary_addr_size): /soc@0/display-subsystem@5e00000/dsi@5e94000: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" or "ranges" property
+#  also defined at /home/buildbot/kernel/build/arch/arm64/boot/dts/qcom/qrb2210-arduino-imola.dts:222.12-226.3
+DTBS_CHECK_WARNING_PATTERN = "^(/.*?\.(dtb|dts|dtsi)): ?(.*)$"
 DT_BINDING_CHECK_WARNING_PATTERN = "^(.*?\.yaml|.*?\.example\.dtb): (.*)$"
 
 def warnExtractFromRegexpGroups(self, line, match):
@@ -146,7 +157,9 @@ def warnExtractFromRegexpGroups(self, line, match):
     Extract file name and warning text as groups (1,2)
     of warningPattern match."""
     file = match.group(1)
-    text = match.group(2)
+    text = match.group(3)
+    #print("AAA file match=" + str(re.match(DTBS_CHECK_KNOWN_WARNINGS['all']['arm64']['defconfig'][0][0], file)))
+    #print("AAA text match=" + str(re.match(DTBS_CHECK_KNOWN_WARNINGS['all']['arm64']['defconfig'][0][1], text)))
     return (file, None, text)
 
 def get_warning_suppression_list(env, config, next_or_mainline):
@@ -698,7 +711,7 @@ def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, 
     if only_changed_files:
         for schema in schema_dirs:
             step_name = 'make dtbs_check baseline: ' + env['ARCH'] + '/' + step_name_cfg + '/' + schema.strip('/')
-            cmd_dtbs_check = [util.Interpolate(CMD_MAKE), 'dtbs_check']
+            cmd_dtbs_check = [util.Interpolate(CMD_MAKE), 'W=1', 'dtbs_check']
             if schema:
                 cmd_dtbs_check.append(f'DT_SCHEMA_FILES={schema}')
             st.append(steps.ShellCommand(command=cmd_dtbs_check,
@@ -708,7 +721,7 @@ def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, 
 
     for schema in schema_dirs:
         step_name = 'make dtbs_check warnings: ' + env['ARCH'] + '/' + step_name_cfg + '/' + schema.strip('/')
-        cmd_dtbs_check = [util.Interpolate(CMD_MAKE), 'dtbs_check']
+        cmd_dtbs_check = [util.Interpolate(CMD_MAKE), 'W=1', 'dtbs_check']
         if schema:
             cmd_dtbs_check.append(f'DT_SCHEMA_FILES={schema}')
         st.append(steps.Compile(command=cmd_dtbs_check,
@@ -720,20 +733,23 @@ def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, 
                                 env=env, name=step_name[:50]))
     return st
 
-def steps_dtbs_check_boards(env, kbuild_output, boards, config=None, git_reset=True):
+def steps_dtbs_check_boards(env, kbuild_output, boards, config=None, git_reset=True, next_or_mainline=False):
     st = []
     if git_reset:
         st += steps_build_common(env, kbuild_output, config)
     else:
         st.append(step_make_config(env, config))
 
+    real_config = config if config else 'defconfig'
+    suppression_list = get_warning_suppression_list(env, real_config, next_or_mainline)
     for board in boards:
         step_name = 'make dtbs_check for {}'.format(board)
 
-        st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'CHECK_DTBS=y',
+        st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'CHECK_DTBS=y', 'W=1',
                                          '{}.dtb'.format(board)],
                                 haltOnFailure=True,
                                 warnOnWarnings=True,
+                                suppressionList=suppression_list,
                                 warningPattern=DTBS_CHECK_WARNING_PATTERN,
                                 warningExtractor=warnExtractFromRegexpGroups,
                                 env=env, name=step_name[:50]))
