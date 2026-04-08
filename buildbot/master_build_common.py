@@ -149,6 +149,17 @@ def warnExtractFromRegexpGroups(self, line, match):
     text = match.group(2)
     return (file, None, text)
 
+def get_warning_suppression_list(env, config, next_or_mainline):
+    suppression_list = []
+    if env['ARCH'] in DTBS_CHECK_KNOWN_WARNINGS['all']:
+        if config in DTBS_CHECK_KNOWN_WARNINGS['all'][env['ARCH']]:
+            suppression_list = DTBS_CHECK_KNOWN_WARNINGS['all'][env['ARCH']][config]
+    if not next_or_mainline:
+        if env['ARCH'] in DTBS_CHECK_KNOWN_WARNINGS['krzk']:
+            if config in DTBS_CHECK_KNOWN_WARNINGS['krzk'][env['ARCH']]:
+                suppression_list.extend(DTBS_CHECK_KNOWN_WARNINGS['krzk'][env['ARCH']][config])
+    return suppression_list
+
 class ShellCmdWithLink(steps.ShellCommand):
     renderables = ['url']
 
@@ -683,6 +694,7 @@ def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, 
 
     step_name_cfg = str(config) + ' config' if config else 'defconfig'
     real_config = config if config else 'defconfig'
+    suppression_list = get_warning_suppression_list(env, real_config, next_or_mainline)
     if only_changed_files:
         for schema in schema_dirs:
             step_name = 'make dtbs_check baseline: ' + env['ARCH'] + '/' + step_name_cfg + '/' + schema.strip('/')
@@ -699,14 +711,6 @@ def steps_dtbs_check(env, kbuild_output, platform, config=None, git_reset=True, 
         cmd_dtbs_check = [util.Interpolate(CMD_MAKE), 'dtbs_check']
         if schema:
             cmd_dtbs_check.append(f'DT_SCHEMA_FILES={schema}')
-        suppression_list = []
-        if env['ARCH'] in DTBS_CHECK_KNOWN_WARNINGS['all']:
-            if real_config in DTBS_CHECK_KNOWN_WARNINGS['all'][env['ARCH']]:
-                suppression_list = DTBS_CHECK_KNOWN_WARNINGS['all'][env['ARCH']][real_config]
-        if not next_or_mainline:
-            if env['ARCH'] in DTBS_CHECK_KNOWN_WARNINGS['krzk']:
-                if real_config in DTBS_CHECK_KNOWN_WARNINGS['krzk'][env['ARCH']]:
-                    suppression_list.extend(DTBS_CHECK_KNOWN_WARNINGS['krzk'][env['ARCH']][real_config])
         st.append(steps.Compile(command=cmd_dtbs_check,
                                 haltOnFailure=True,
                                 warnOnWarnings=True,
