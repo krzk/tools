@@ -1,12 +1,31 @@
 # -*- python -*-
 # ex: set filetype=python:
 #
-# Copyright (c) 2019,2025 Krzysztof Kozlowski
-# Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-#                             <krzk@kernel.org>
+# Copyright (c) 2019,2025-2026 Krzysztof Kozlowski <krzk@kernel.org>
 #
 # SPDX-License-Identifier: GPL-2.0
 #
+
+def step_is_kernel_linux_next(step):
+    """ Return True if step is part of building/booting linux-next kernel master branch (not pending-fixes)
+    Arguments:
+        step - buildbot.step
+    Returns:
+        bool
+    """
+    project = step.getProperty('project')
+    if (not project) or (not len(project)):
+        return False
+    if project != 'next':
+        return False
+
+    branch = step.getProperty('branch')
+    if (not branch) or (not len(branch)):
+        return False
+    if branch != 'master':
+        return False
+
+    return True
 
 def step_is_kernel_newer(step, exp_major, exp_minor):
     """ Return True if step is part of building/booting kernel version >= exp_major.exp_minor

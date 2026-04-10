@@ -9,6 +9,7 @@
 #
 
 from master_auth import master_auth_config
+from master_var_common import step_is_kernel_linux_next, step_is_kernel_newer
 
 from buildbot.plugins import steps, util
 from buildbot import process
@@ -144,6 +145,13 @@ DTBS_CHECK_BOARDS = {
             'qcom/x1p42100-asus-zenbook-a14',
         ],
     },
+}
+
+def step_is_kernel_with_eliza(step):
+    return (step_is_kernel_newer(step, 7, 1) or step_is_kernel_linux_next(step))
+
+DTBS_CHECK_BOARDS_SKIP = {
+    'qcom/eliza-mtp': step_is_kernel_with_eliza,
 }
 
 # DTC warnings have two lines with ':', so look for file pattern starting with '/'
@@ -743,6 +751,9 @@ def steps_dtbs_check_boards(env, kbuild_output, boards, config=None, git_reset=T
     real_config = config if config else 'defconfig'
     suppression_list = get_warning_suppression_list(env, real_config, next_or_mainline)
     for board in boards:
+        do_step_if = True
+        if board in DTBS_CHECK_BOARDS_SKIP:
+            do_step_if = DTBS_CHECK_BOARDS_SKIP[board]
         step_name = 'make dtbs_check for {}'.format(board)
 
         st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'CHECK_DTBS=y', 'W=1',
@@ -752,6 +763,7 @@ def steps_dtbs_check_boards(env, kbuild_output, boards, config=None, git_reset=T
                                 suppressionList=suppression_list,
                                 warningPattern=DTBS_CHECK_WARNING_PATTERN,
                                 warningExtractor=warnExtractFromRegexpGroups,
+                                doStepIf=do_step_if,
                                 env=env, name=step_name[:50]))
     return st
 
