@@ -74,6 +74,7 @@ def cmd_ssh(target, command):
     return ['ssh',
             '-o', f'ConnectTimeout {TIMEOUT_SSH}',
             '-o', 'StrictHostKeyChecking no',
+            '-o', 'WarnWeakCrypto no-pq-kex',
             '%s@%s' % (TARGET_SSH_USER, target)] + command
 
 def step_test_serial(target):
