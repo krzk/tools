@@ -17,9 +17,6 @@ import twisted
 import re
 import shlex
 
-REPO_SOC_TOOLS_PATH = '/var/lib/mirror/pub/scm/linux/kernel/git/soc/soc-tools.git'
-REPO_SOC_TOOLS_REV = '7cbff50ee75acc401bb9a6e64f1b625b8d4063bb'
-
 BUILD_WARN_IGNORE = [
     # Forever or re-appearing warnings
     (None, '.*warning: #warning syscall .* not implemented.*', None, None),
@@ -399,33 +396,18 @@ def steps_build_common(env, kbuild_output, config=None):
     cmd = '''
     repo="%(prop:repository)s"
     git config --global --replace-all safe.directory "${repo#file://}"
-    git config --global --add safe.directory ''' + REPO_SOC_TOOLS_PATH + '''
     '''
     st.append(steps.ShellCommand(command=util.Interpolate(cmd),
                                  haltOnFailure=True,
                                  name='Mark local mirror repo as safe'))
     st.append(steps.Git(repourl='https://github.com/krzk/tools.git',
                         name='Clone krzk tools sources',
+                        submodules=True,
                         mode='incremental',
                         alwaysUseLatest=True,
                         branch='master',
                         getDescription=False,
                         workdir='tools',
-                        haltOnFailure=True,
-                        env=util.Property('git_env')))
-    st.append(steps.Git(repourl='file://' + REPO_SOC_TOOLS_PATH,
-                        name='Clone soc tools sources',
-                        mode='incremental',
-                        alwaysUseLatest=True,
-                        # Use revision as branch. This will change the `git fetch` to
-                        # fetch only this revision, instead of actual latest tree commit, however
-                        # alwaysUseLatest=True still has to be supplied, to completely ignore source stamp
-                        # data coming from Schedeuler.
-                        # Using here revision as branch will also cause checking out branch with such name
-                        # but that does not matter really.
-                        branch=REPO_SOC_TOOLS_REV,
-                        getDescription=False,
-                        workdir='soc-tools',
                         haltOnFailure=True,
                         env=util.Property('git_env')))
     # Workers use grokmirror same way as buildbot-master, so same repository path will work

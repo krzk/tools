@@ -13,4 +13,3 @@ mirror_repos_korg:
  - /pub/scm/linux/kernel/git/pinctrl/samsung.git
  - /pub/scm/linux/kernel/git/krzk/linux-mem-ctrl.git
  - /pub/scm/linux/kernel/git/krzk/linux-w1.git
- - /pub/scm/linux/kernel/git/soc/soc-tools.git
