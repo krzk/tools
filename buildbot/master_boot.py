@@ -803,7 +803,7 @@ def steps_test_suite_slow(target, config):
 
 def steps_download(target):
     st = []
-    mastersrc_dir = '%(prop:trigger_builder)s/%(prop:revision)s'
+    mastersrc_dir = '%(prop:trigger_builder)s/%(prop:linux:revision)s'
 
     st.append(step_download_from_build_storage('Download zImage',
                                                mastersrc_dir + '/zImage',
@@ -833,6 +833,7 @@ def steps_boot(builder_name, target, config, run_pm_tests=False):
                         name='Clone krzk tools sources',
                         mode='incremental',
                         alwaysUseLatest=True,
+                        codebase='krzk-tools',
                         branch='master',
                         getDescription=False,
                         workdir='tools',

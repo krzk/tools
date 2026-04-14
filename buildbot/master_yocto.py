@@ -80,6 +80,7 @@ def steps_yocto_builder(builder_name, machine, image):
                         # but not the build directory to still have the sstate
                         mode='full',
                         method='clean',
+                        codebase='krzk-yocto',
                         haltOnFailure=True))
     st.extend(steps_yocto_prepare_downloads())
     st.append(step_yocto_cmd(f'Build: {image}',
