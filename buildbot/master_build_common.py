@@ -17,6 +17,8 @@ import twisted
 import re
 import shlex
 
+REPO_SOC_TOOLS_REV = '7cbff50ee75acc401bb9a6e64f1b625b8d4063bb'
+
 BUILD_WARN_IGNORE = [
     # Forever or re-appearing warnings
     (None, '.*warning: #warning syscall .* not implemented.*', None, None),
@@ -413,7 +415,13 @@ def steps_build_common(env, kbuild_output, config=None):
                         name='Clone soc tools sources',
                         mode='incremental',
                         alwaysUseLatest=True,
-                        branch='master',
+                        # Use revision as branch. This will change the `git fetch` to
+                        # fetch only this revision, instead of actual latest tree commit, however
+                        # alwaysUseLatest=True still has to be supplied, to completely ignore source stamp
+                        # data coming from Schedeuler.
+                        # Using here revision as branch will also cause checking out branch with such name
+                        # but that does not matter really.
+                        branch=REPO_SOC_TOOLS_REV,
                         getDescription=False,
                         workdir='soc-tools',
                         haltOnFailure=True,
