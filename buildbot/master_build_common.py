@@ -17,6 +17,7 @@ import twisted
 import re
 import shlex
 
+REPO_SOC_TOOLS_PATH = '/var/lib/mirror/pub/scm/linux/kernel/git/soc/soc-tools.git'
 REPO_SOC_TOOLS_REV = '7cbff50ee75acc401bb9a6e64f1b625b8d4063bb'
 
 BUILD_WARN_IGNORE = [
@@ -398,6 +399,7 @@ def steps_build_common(env, kbuild_output, config=None):
     cmd = '''
     repo="%(prop:repository)s"
     git config --global --replace-all safe.directory "${repo#file://}"
+    git config --global --add safe.directory ''' + REPO_SOC_TOOLS_PATH + '''
     '''
     st.append(steps.ShellCommand(command=util.Interpolate(cmd),
                                  haltOnFailure=True,
@@ -411,7 +413,7 @@ def steps_build_common(env, kbuild_output, config=None):
                         workdir='tools',
                         haltOnFailure=True,
                         env=util.Property('git_env')))
-    st.append(steps.Git(repourl='https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc-tools.git',
+    st.append(steps.Git(repourl='file://' + REPO_SOC_TOOLS_PATH,
                         name='Clone soc tools sources',
                         mode='incremental',
                         alwaysUseLatest=True,
