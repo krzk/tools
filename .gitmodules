@@ -1,3 +1,3 @@
 [submodule "soc-tools"]
 	path = soc-tools
-	url = https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc-tools.git
+	url = https://kernel.googlesource.com/pub/scm/linux/kernel/git/soc/soc-tools
