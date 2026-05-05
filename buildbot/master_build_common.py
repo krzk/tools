@@ -158,7 +158,7 @@ DTBS_CHECK_BOARDS_SKIP = {
 # /home/buildbot/kernel/build/arch/arm64/boot/dts/qcom/agatti.dtsi:2033.27-2106.6: Warning (avoid_unnecessary_addr_size): /soc@0/display-subsystem@5e00000/dsi@5e94000: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" or "ranges" property
 #  also defined at /home/buildbot/kernel/build/arch/arm64/boot/dts/qcom/qrb2210-arduino-imola.dts:222.12-226.3
 DTBS_CHECK_WARNING_PATTERN = "^(/.*?\.(dtb|dts|dtsi)): ?(.*)$"
-DT_BINDING_CHECK_WARNING_PATTERN = "^(.*?\.yaml|.*?\.example\.dtb): (.*)$"
+DT_BINDING_CHECK_WARNING_PATTERN = "^(.*?\.(yaml|example\.dtb)): (.*)$"
 
 def warnExtractFromRegexpGroups(self, line, match):
     """
