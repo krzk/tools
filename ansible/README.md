@@ -18,6 +18,7 @@ SPDX-License-Identifier: GPL-2.0
  - buildbot-git-mirror - grok mirror client on Buildbot master and workers
  - buildbot-upload-dest - unpirivileged user on Buildbot master for uploading
    binaries from the build servers
+ - cloud - Tweaking cloud machines, e.g. for faster hibernation
  - gate - SSH server for reverse proxy tunnels
  - hardened - Generic configuration and hardening of servers
  - mail-forward - Postfix mail server forwarding mail as relay

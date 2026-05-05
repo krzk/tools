@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (c) 2026 Krzysztof Kozlowski <krzk@kernel.org>
+---
+- name: Install SystemD unit file
+  template:
+    src: sleep-speed-up.service.j2
+    dest: /etc/systemd/system/sleep-speed-up.service
+    mode: '0644'
+  become: yes
+  become_user: root
+  register: systemd_service
+
+- name: Systemd reload
+  systemd:
+    daemon_reload: yes
+  become: yes
+  become_user: root
+  when: systemd_service.changed | default(False)
+
+- name: Systemd enable service
+  systemd:
+    name: sleep-speed-up.service
+    enabled: yes
+    masked: no
+  become: yes
+  become_user: root
+  when: systemd_service.changed | default(False)

@@ -12,6 +12,7 @@
 # Servers low priority / high performance, so acting like intra_machines
 - hosts: servers_highperf
   roles:
+    - cloud
     - hardened
     - mail-forward
     - safe-env

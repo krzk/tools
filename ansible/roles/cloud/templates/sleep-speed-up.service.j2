@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: GPL-2.0
+# Copyright (c) 2026 Krzysztof Kozlowski <krzk@kernel.org>
+
+[Unit]
+Description=Speedup going to sleep/hibernate
+Before=sleep.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'echo "Dropping caches..." && sync && sync && sync && echo 3 > /proc/sys/vm/drop_caches'
+TimeoutSec=0
+
+[Install]
+WantedBy=sleep.target
