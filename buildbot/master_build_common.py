@@ -35,6 +35,8 @@ BUILD_WARN_IGNORE = [
     (None, 'warning: arch/powerpc/boot/zImage.epapr has a LOAD segment with RWX permissions', None, None),
     # Fix probably in linux-next after v6.16-rc1 (so for v6.17):
     ('.*emif.c:67$', re.escape("struct member 'lpmode' not described in 'emif_data'"), None, None),
+    # Fix targetting v7.3:
+    ('.*memory/omap-gpmc\.c:441$', 'Excess function parameter ', None, None),
     ]
 CMD_MAKE = '%(prop:builddir:-~/)s/tools/buildbot/build-slave.sh'
 
