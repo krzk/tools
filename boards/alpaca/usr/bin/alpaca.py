@@ -69,10 +69,30 @@ class Alpaca:
         return ret
 
     def usb_connect(self):
-        return self.send('connect host')
+        cmd = 'connect host'
+        ret = self.send(cmd)
+        if not ret:
+            print(f'Failed command: {cmd}')
+
+        cmd = 'usbDevicePower 1'
+        ret = self.send(cmd)
+        if not ret:
+            print(f'Failed command: {cmd}')
+
+        return ret
 
     def usb_disconnect(self):
-        return self.send('connect none')
+        cmd = 'connect none'
+        ret = self.send(cmd)
+        if not ret:
+            print(f'Failed command: {cmd}')
+
+        cmd = 'usbDevicePower 0'
+        ret = self.send(cmd)
+        if not ret:
+            print(f'Failed command: {cmd}')
+
+        return ret
 
     def power_alpaca_on(self):
         """Power on the Alpaca debug board"""
@@ -132,6 +152,7 @@ class Alpaca:
     def board_start(self):
         """Power on and start the board."""
         self.power_off()
+        self.send('ttl outputBit 4 0')
         self.power_key_press()
         self.power_on()
         time.sleep(2.0)
