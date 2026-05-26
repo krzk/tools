@@ -292,7 +292,10 @@ def step_make_config(env, config=None):
     step_name = str(config) + ' config' if config else 'defconfig'
     step_name = 'make ' + step_name
     return steps.Compile(command=cmd_make_config(config),
-                         haltOnFailure=True, env=env, name=step_name)
+                         haltOnFailure=True,
+                         warnOnWarnings=True,
+                         suppressionList=BUILD_WARN_IGNORE,
+                         env=env, name=step_name)
 
 def step_touch_commit_files():
     cmd = '''
