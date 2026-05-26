@@ -37,6 +37,10 @@ BUILD_WARN_IGNORE = [
     ('.*emif.c:67$', re.escape("struct member 'lpmode' not described in 'emif_data'"), None, None),
     # Fix targetting v7.3:
     ('.*memory/omap-gpmc\.c:441$', 'Excess function parameter ', None, None),
+    # False positive, starting with v7.2-rc1, not yet fixed:
+    ('.*firmware/samsung/exynos-acpm.c:117$', re.escape("struct member '__counted_by_ptr(cmdcnt' not described in 'acpm_rx_data'"), None, None),
+    # Only in next in may 2026:
+    ('.*arm64/configs/defconfig:238$', ':warning: override: reassigning to symbol PCI_SKY1_HOST', None, None),
     ]
 CMD_MAKE = '%(prop:builddir:-~/)s/tools/buildbot/build-slave.sh'
 
