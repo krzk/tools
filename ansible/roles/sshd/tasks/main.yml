@@ -19,7 +19,7 @@
 
 - name: Add current user to group SSH logins
   user:
-    name: '{{ ansible_user_id }}'
+    name: "{{ ansible_facts['user_id'] }}"
     append: yes
     force: no
     generate_ssh_key: no

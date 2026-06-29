@@ -44,11 +44,11 @@
 
 - name: Add admin to buildbot group
   user:
-    name: '{{ ansible_user_id }}'
+    name: "{{ ansible_facts['user_id'] }}"
     groups: '{{ buildbot_group }}'
     append: yes
-  # become_user must be aparently set after usage of ansible_user_id
-  # so ansible_user_id will point to original invoker (not root)
+  # become_user must be aparently set after usage of ansible_facts['user_id']
+  # so ansible_facts['user_id'] will point to original invoker (not root)
   become: yes
   become_user: root
 
