@@ -135,15 +135,14 @@ DTBS_CHECK_BOARDS = {
             'qcom/kaanapali-qrd',
             'qcom/lemans-evk',
             'qcom/monaco-evk',
+            'qcom/monaco-arduino-monza',
             'qcom/qrb2210-arduino-imola',
             'qcom/sm8550-hdk',
             'qcom/sm8550-mtp',
             'qcom/sm8550-qrd',
-            # Fixes on the list for + unknown warnings:
-            # 'qcom/sm8650-hdk',
+            'qcom/sm8650-hdk',
             'qcom/sm8650-mtp',
-            # Fixes on the list for:
-            # 'qcom/sm8650-qrd',
+            'qcom/sm8650-qrd',
             'qcom/sm8750-mtp',
             'qcom/sm8750-qrd',
             'qcom/x1e78100-lenovo-thinkpad-t14s',
