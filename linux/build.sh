@@ -29,7 +29,7 @@ usage() {
 	echo " -M <options>     - Enable as modules these config options (comma"
 	echo "                    separated list of options without the CONFIG_ prefix)"
 	echo " -S <set>         - Run a specific config set."
-	echo "                    Valid sets: crypto, tests, buildbot, qcom, qemutest, nfc, t14s"
+	echo "                    Valid sets: crypto, tests, buildbot, qcom, qemutest, samsung, nfc, t14s"
 	echo
 	echo " Build options:"
 	echo " -A <arch>        - Build for architecture, one of:"
@@ -1096,6 +1096,20 @@ config_qemutest() {
 	#config_item_module BT_HCIBLUECARD BT_MRVL BT_ATH3K
 }
 
+# Samsung dev boards
+config_samsung() {
+	# Disable other arm64 archs to speed up
+	config_item_off	ARCH_QCOM
+	config_item_off ARCH_ACTIONS ARCH_AIROHA ARCH_SUNXI ARCH_ALPINE ARCH_APPLE ARCH_AXIADO ARCH_BCM
+	#ARCH_BCM2835 ARCH_BCM_IPROC ARCH_BCMBCA ARCH_BRCMSTB
+	config_item_off ARCH_BERLIN ARCH_BLAIZE ARCH_BST ARCH_CIX ARCH_SPARX5 ARCH_K3 ARCH_LG1K ARCH_HISI ARCH_KEEMBAY
+	config_item_off ARCH_MEDIATEK ARCH_MESON ARCH_MVEBU ARCH_NXP ARCH_LAYERSCAPE ARCH_MXC
+	config_item_off ARCH_S32 ARCH_MA35 ARCH_NPCM ARCH_REALTEK ARCH_RENESAS ARCH_ROCKCHIP
+	config_item_off ARCH_SEATTLE ARCH_INTEL_SOCFPGA ARCH_SOPHGO ARCH_STM32 ARCH_SYNQUACER ARCH_TEGRA
+	config_item_off ARCH_SPRD ARCH_THUNDER ARCH_THUNDER2
+	config_item_off ARCH_UNIPHIER ARCH_VEXPRESS ARCH_VISCONTI ARCH_XGENE ARCH_ZYNQMP
+}
+
 # Lenovo T14s
 config_t14s() {
 	config_qcom_common
@@ -1182,6 +1196,12 @@ build_qcom() {
 	build_kernel $DTS_NAME
 }
 
+build_samsung() {
+	config_samsung
+
+	build_kernel $DTS_NAME
+}
+
 build_t14s() {
 	config_t14s
 
@@ -1210,6 +1230,9 @@ if [ "$TEST_CONFIG" != "" ]; then
 		;;
 	qcom)
 		build_qcom
+		;;
+	samsung)
+		build_samsung
 		;;
 	t14s)
 		build_t14s
