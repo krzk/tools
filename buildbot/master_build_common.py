@@ -36,7 +36,7 @@ BUILD_WARN_IGNORE = [
     # Fix probably in linux-next after v6.16-rc1 (so for v6.17):
     ('.*emif.c:67$', re.escape("struct member 'lpmode' not described in 'emif_data'"), None, None),
     # Fix targetting v7.3:
-    ('.*memory/omap-gpmc\.c:441$', 'Excess function parameter ', None, None),
+    ('.*memory/omap-gpmc\\.c:441$', 'Excess function parameter ', None, None),
     # False positive, starting with v7.2-rc1, not yet fixed:
     ('.*firmware/samsung/exynos-acpm.c:117$', re.escape("struct member '__counted_by_ptr(cmdcnt' not described in 'acpm_rx_data'"), None, None),
     # Only in next in may 2026:
@@ -58,41 +58,41 @@ DTBS_CHECK_KNOWN_WARNINGS = {
             ],
             's5pv210': [
                 # For dtschema >=2025.6
-                ('.*s5pv210-aquila.dtb$', "i2s@e[0-9a-f]+ \(samsung,s3c6410-i2s\): #sound-dai-cells: 1 was expected", None, None),
-                ('.*s5pv210-aquila.dtb$', "i2s@e[0-9a-f]+ \(samsung,s5pv210-i2s\): #sound-dai-cells: 1 was expected", None, None),
+                ('.*s5pv210-aquila.dtb$', "i2s@e[0-9a-f]+ \\(samsung,s3c6410-i2s\\): #sound-dai-cells: 1 was expected", None, None),
+                ('.*s5pv210-aquila.dtb$', "i2s@e[0-9a-f]+ \\(samsung,s5pv210-i2s\\): #sound-dai-cells: 1 was expected", None, None),
                 # For dtschema <=2025.2
                 ('.*s5pv210-aquila.dtb$', "i2s@e[0-9a-f]+: #sound-dai-cells:(0:0:)? 1 was expected", None, None),
-                ('.*s5pv210-fascinate4g.dtb$', "i2s@e[0-9a-f]+ \(samsung,s3c6410-i2s\): #sound-dai-cells: 1 was expected", None, None),
-                ('.*s5pv210-fascinate4g.dtb$', "i2s@e[0-9a-f]+ \(samsung,s5pv210-i2s\): #sound-dai-cells: 1 was expected", None, None),
+                ('.*s5pv210-fascinate4g.dtb$', "i2s@e[0-9a-f]+ \\(samsung,s3c6410-i2s\\): #sound-dai-cells: 1 was expected", None, None),
+                ('.*s5pv210-fascinate4g.dtb$', "i2s@e[0-9a-f]+ \\(samsung,s5pv210-i2s\\): #sound-dai-cells: 1 was expected", None, None),
                 ('.*s5pv210-fascinate4g.dtb$', "i2s@e[0-9a-f]+: #sound-dai-cells:(0:0:)? 1 was expected", None, None),
-                ('.*s5pv210-galaxys.dtb$', "i2s@e[0-9a-f]+ \(samsung,s3c6410-i2s\): #sound-dai-cells: 1 was expected", None, None),
-                ('.*s5pv210-galaxys.dtb$', "i2s@e[0-9a-f]+ \(samsung,s5pv210-i2s\): #sound-dai-cells: 1 was expected", None, None),
+                ('.*s5pv210-galaxys.dtb$', "i2s@e[0-9a-f]+ \\(samsung,s3c6410-i2s\\): #sound-dai-cells: 1 was expected", None, None),
+                ('.*s5pv210-galaxys.dtb$', "i2s@e[0-9a-f]+ \\(samsung,s5pv210-i2s\\): #sound-dai-cells: 1 was expected", None, None),
                 ('.*s5pv210-galaxys.dtb$', "i2s@e[0-9a-f]+: #sound-dai-cells:(0:0:)? 1 was expected", None, None),
                 ('.*s5pv210-goni.dtb$', re.escape("/soc/i2c@e1800000/sensor@30: failed to match any schema with compatible: ['siliconfile,noon010pc30']"), None, None),
-                ('.*s5pv210-goni.dtb$', "i2s@e[0-9a-f]+ \(samsung,s3c6410-i2s\): #sound-dai-cells: 1 was expected", None, None),
-                ('.*s5pv210-goni.dtb$', "i2s@e[0-9a-f]+ \(samsung,s5pv210-i2s\): #sound-dai-cells: 1 was expected", None, None),
+                ('.*s5pv210-goni.dtb$', "i2s@e[0-9a-f]+ \\(samsung,s3c6410-i2s\\): #sound-dai-cells: 1 was expected", None, None),
+                ('.*s5pv210-goni.dtb$', "i2s@e[0-9a-f]+ \\(samsung,s5pv210-i2s\\): #sound-dai-cells: 1 was expected", None, None),
                 ('.*s5pv210-goni.dtb$', "i2s@e[0-9a-f]+: #sound-dai-cells:(0:0:)? 1 was expected", None, None),
-                ('.*s5pv210-smdkc110.dtb$', "i2s@e[0-9a-f]+ \(samsung,s3c6410-i2s\): #sound-dai-cells: 1 was expected", None, None),
-                ('.*s5pv210-smdkc110.dtb$', "i2s@e[0-9a-f]+ \(samsung,s5pv210-i2s\): #sound-dai-cells: 1 was expected", None, None),
+                ('.*s5pv210-smdkc110.dtb$', "i2s@e[0-9a-f]+ \\(samsung,s3c6410-i2s\\): #sound-dai-cells: 1 was expected", None, None),
+                ('.*s5pv210-smdkc110.dtb$', "i2s@e[0-9a-f]+ \\(samsung,s5pv210-i2s\\): #sound-dai-cells: 1 was expected", None, None),
                 ('.*s5pv210-smdkc110.dtb$', "i2s@e[0-9a-f]+: #sound-dai-cells:(0:0:)? 1 was expected", None, None),
-                ('.*s5pv210-smdkv210.dtb$', "i2s@e[0-9a-f]+ \(samsung,s3c6410-i2s\): #sound-dai-cells: 1 was expected", None, None),
-                ('.*s5pv210-smdkv210.dtb$', "i2s@e[0-9a-f]+ \(samsung,s5pv210-i2s\): #sound-dai-cells: 1 was expected", None, None),
+                ('.*s5pv210-smdkv210.dtb$', "i2s@e[0-9a-f]+ \\(samsung,s3c6410-i2s\\): #sound-dai-cells: 1 was expected", None, None),
+                ('.*s5pv210-smdkv210.dtb$', "i2s@e[0-9a-f]+ \\(samsung,s5pv210-i2s\\): #sound-dai-cells: 1 was expected", None, None),
                 ('.*s5pv210-smdkv210.dtb$', "i2s@e[0-9a-f]+: #sound-dai-cells:(0:0:)? 1 was expected", None, None),
-                ('.*s5pv210-torbreck.dtb$', "i2s@e[0-9a-f]+ \(samsung,s3c6410-i2s\): #sound-dai-cells: 1 was expected", None, None),
-                ('.*s5pv210-torbreck.dtb$', "i2s@e[0-9a-f]+ \(samsung,s5pv210-i2s\): #sound-dai-cells: 1 was expected", None, None),
+                ('.*s5pv210-torbreck.dtb$', "i2s@e[0-9a-f]+ \\(samsung,s3c6410-i2s\\): #sound-dai-cells: 1 was expected", None, None),
+                ('.*s5pv210-torbreck.dtb$', "i2s@e[0-9a-f]+ \\(samsung,s5pv210-i2s\\): #sound-dai-cells: 1 was expected", None, None),
                 ('.*s5pv210-torbreck.dtb$', "i2s@e[0-9a-f]+: #sound-dai-cells:(0:0:)? 1 was expected", None, None),
             ],
         },
         'arm64': {
             'defconfig': [
                 # Patches on the lists, maybe will reach v7.2
-                ('.*/qcom/monaco\.dtsi$', ".*\(interrupt_map\):.*pci@1c00000.*Missing property '#address-cells' .* using 0 as fallback", None, None),
-                ('.*/qcom/monaco\.dtsi$', ".*\(interrupt_map\):.*pci@1c10000.*Missing property '#address-cells' .* using 0 as fallback", None, None),
+                ('.*/qcom/monaco\\.dtsi$', ".*\\(interrupt_map\\):.*pci@1c00000.*Missing property '#address-cells' .* using 0 as fallback", None, None),
+                ('.*/qcom/monaco\\.dtsi$', ".*\\(interrupt_map\\):.*pci@1c10000.*Missing property '#address-cells' .* using 0 as fallback", None, None),
                 # Permanently ignore for all Qualcomm files, should be moved to W=2.
                 # It is not expected for Samsung, though.
                 # File: /home/buildbot/kernel/build/arch/arm64/boot/dts/qcom/kaanapali.dtsi
                 # Warn: 3287.27-3374.6: Warning (avoid_unnecessary_addr_size): /soc@0/display-subsystem@9800000/dsi@9ac0000: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" or "ranges" property
-                ('.*/qcom/.*\.dtsi$', '.*\(avoid_unnecessary_addr_size\):.*unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" or "ranges" property', None, None),
+                ('.*/qcom/.*\\.dtsi$', '.*\\(avoid_unnecessary_addr_size\\):.*unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" or "ranges" property', None, None),
             ],
         },
     },
@@ -162,8 +162,8 @@ DTBS_CHECK_BOARDS_SKIP = {
 # DTC warnings have two lines with ':', so look for file pattern starting with '/'
 # /home/buildbot/kernel/build/arch/arm64/boot/dts/qcom/agatti.dtsi:2033.27-2106.6: Warning (avoid_unnecessary_addr_size): /soc@0/display-subsystem@5e00000/dsi@5e94000: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" or "ranges" property
 #  also defined at /home/buildbot/kernel/build/arch/arm64/boot/dts/qcom/qrb2210-arduino-imola.dts:222.12-226.3
-DTBS_CHECK_WARNING_PATTERN = "^(/.*?\.(dtb|dts|dtsi)): ?(.*)$"
-DT_BINDING_CHECK_WARNING_PATTERN = "^(.*?\.(yaml|example\.dtb)): (.*)$"
+DTBS_CHECK_WARNING_PATTERN = "^(/.*?\\.(dtb|dts|dtsi)): ?(.*)$"
+DT_BINDING_CHECK_WARNING_PATTERN = "^(.*?\\.(yaml|example\\.dtb)): (.*)$"
 
 def warnExtractFromRegexpGroups(self, line, match):
     """
