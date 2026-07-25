@@ -164,6 +164,7 @@ DTBS_CHECK_BOARDS_SKIP = {
 #  also defined at /home/buildbot/kernel/build/arch/arm64/boot/dts/qcom/qrb2210-arduino-imola.dts:222.12-226.3
 DTBS_CHECK_WARNING_PATTERN = "^(/.*?\\.(dtb|dts|dtsi)): ?(.*)$"
 DT_BINDING_CHECK_WARNING_PATTERN = "^(.*?\\.(yaml|example\\.dtb)): (.*)$"
+DT_CHECK_STYLE_WARNING_PATTERN = "^(.*?\\.dtsi?):([0-9]+): ?(.*)$"
 
 def warnExtractFromRegexpGroups(self, line, match):
     """
@@ -212,6 +213,28 @@ def cmd_make_config(config=None):
     else:
         config = str(config) + '_defconfig'
     return [util.Interpolate(CMD_MAKE), config]
+
+def cmd_on_commit_files(cmd):
+    return '''
+    DIFF_CMD="git diff-tree --diff-filter=ACMRT --no-commit-id --name-only -r"
+    git rev-parse HEAD^2 > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        # It's a merge
+        if [ "$(git rev-parse HEAD^2)" = "$(git rev-parse origin/master)" ]; then
+            # Merge with master, so get only one parent
+            FILES="`$DIFF_CMD HEAD^2..HEAD`"
+        elif [ "$(git rev-parse HEAD^1)" = "$(git rev-parse origin/master)" ]; then
+            # Merge with master, so get only one parent
+            FILES="`$DIFF_CMD HEAD^1..HEAD`"
+        else
+            # Merge between my branches, touch files changed by both parents
+            FILES="`$DIFF_CMD HEAD^1..HEAD` `$DIFF_CMD HEAD^2..HEAD`"
+        fi
+    else
+        FILES="`$DIFF_CMD HEAD`"
+    fi
+    echo ''' + cmd + ''' $FILES
+    ''' + cmd + ''' $FILES'''
 
 def step_set_prop_if_file_exists(name, prop, files):
     """ Return step for setting a property if given file exists. The file will be used
@@ -297,27 +320,7 @@ def step_make_config(env, config=None):
                          env=env, name=step_name)
 
 def step_touch_commit_files():
-    cmd = '''
-    DIFF_CMD="git diff-tree --diff-filter=ACMRT --no-commit-id --name-only -r"
-    git rev-parse HEAD^2 > /dev/null 2>&1
-    if [ $? -eq 0 ]; then
-        # It's a merge
-        if [ "$(git rev-parse HEAD^2)" = "$(git rev-parse origin/master)" ]; then
-            # Merge with master, so get only one parent
-            FILES="`$DIFF_CMD HEAD^2..HEAD`"
-        elif [ "$(git rev-parse HEAD^1)" = "$(git rev-parse origin/master)" ]; then
-            # Merge with master, so get only one parent
-            FILES="`$DIFF_CMD HEAD^1..HEAD`"
-        else
-            # Merge between my branches, touch files changed by both parents
-            FILES="`$DIFF_CMD HEAD^1..HEAD` `$DIFF_CMD HEAD^2..HEAD`"
-        fi
-    else
-        FILES="`$DIFF_CMD HEAD`"
-    fi
-    touch $FILES
-    echo $FILES
-    '''
+    cmd = cmd_on_commit_files('touch')
     return steps.ShellCommand(command=['/bin/sh', '-c', cmd],
                               haltOnFailure=True,
                               name='touch changed files')
@@ -788,6 +791,18 @@ def steps_dtbs_warnings(env, kbuild_output, config=None):
                             warnOnWarnings=True,
                             suppressionList=BUILD_WARN_IGNORE,
                             env=env, name=step_name))
+
+    step_name = 'DTS check style: ' + env['ARCH'] + '/' + step_name_cfg
+    cmd = cmd_on_commit_files('scripts/dtc/dt-check-style')
+    st.append(steps.Compile(command=['/bin/sh', '-c', cmd],
+                            haltOnFailure=False,
+                            warnOnFailure=True,
+                            warnOnWarnings=True,
+                            flunkOnFailure=False,
+                            warningPattern=DT_CHECK_STYLE_WARNING_PATTERN,
+                            warningExtractor=steps.Compile.warnExtractFromRegexpGroups,
+                            env=env, name=step_name))
+
     return st
 
 def steps_build_with_warnings_diff(builder_name, kbuild_output, env):
