@@ -55,7 +55,7 @@ if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
 	fi
 elif [[ $REMOTE_URL == *"/krzk/linux-dt.git"* ]]; then
 	if [[ $TAG == *"qcom-pinctrl"* ]]; then
-		TO="Linus Walleij <linus.walleij@linaro.org>"
+		TO="Linus Walleij <linusw@kernel.org>"
 		TO_HI="Linus"
 		CC="Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@somainline.org>, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, $CC_KRZK"
 		SUBJECT="pinctrl: dt-bindings: qcom:"
@@ -99,7 +99,7 @@ elif [[ $REMOTE_URL == *"/krzk/linux-w1.git"* ]]; then
 		SUBJECT="w1:"
 	fi
 elif [[ $REMOTE_URL == *"/pinctrl/samsung.git"* ]]; then
-	TO="Linus Walleij <linus.walleij@linaro.org>"
+	TO="Linus Walleij <linusw@kernel.org>"
 	TO_HI="Linus"
 	CC="linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org"
 	CC="Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, $CC, $CC_KRZK"
