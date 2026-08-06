@@ -28,8 +28,7 @@ REMOTE="$(git rev-parse --abbrev-ref --symbolic-full-name master@{upstream})"
 REMOTE="${REMOTE%%/*}"
 REMOTE_URL="$(git remote get-url ${REMOTE})"
 
-TO_SOC="Arnd Bergmann <arnd@arndb.de>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Linus Walleij <linusw@kernel.org>, Drew Fustini <fustini@kernel.org>"
-TO_SOC="${TO_SOC}, soc@lists.linux.dev"
+TO_SOC="soc@lists.linux.dev"
 CC_KRZK="Krzysztof Kozlowski <krzk@kernel.org>"
 
 if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
