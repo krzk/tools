@@ -40,7 +40,7 @@ if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
 		SUBJECT="clk: samsung:"
 		TO="Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>"
 		TO_HI="Stephen and Michael"
-		CC="Sylwester Nawrocki <snawrocki@kernel.org>, $CC"
+		CC="Sylwester Nawrocki <snawrocki@kernel.org>, Brian Masney <bmasney@redhat.com>, $CC"
 		CC="Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, $CC"
 	elif [[ $TAG == *"-drivers-"* ]]; then
 		SUBJECT="samsung: drivers"
