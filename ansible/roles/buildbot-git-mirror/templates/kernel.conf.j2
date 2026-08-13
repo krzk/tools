@@ -258,7 +258,7 @@ reclone_on_errors = fatal: bad tree object
 #
 # Should we repack the repositories? You almost always want this on,
 # unless you are doing something really odd.
-repack = no
+repack = yes
 #
 # We set proper flags for repacking depending if the repo is using
 # alternates or not, and whether this is a full repack or not. We will
@@ -266,7 +266,7 @@ repack = no
 # faster.  You can add other flags (e.g. --threads and --window-memory)
 # via the following parameter:
 #extra_repack_flags =
-extra_repack_flags = --threads=1 --window-memory=4m --depth=20
+extra_repack_flags = --threads=2 --window-memory=4m
 #
 # These flags are added *in addition* to extra_repack_flags
 #extra_repack_flags_full = --window=250 --depth=50
