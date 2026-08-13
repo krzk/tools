@@ -128,16 +128,6 @@
   become: yes
   become_user: '{{ user_buildbot_upload }}'
 
-- name: Link uploads within Buildbot
-  ansible.builtin.file:
-    src: '/home/{{ user_buildbot_upload }}/{{ item }}'
-    dest: '/home/{{ user_buildbot_master_ssh }}/master/{{ item }}'
-    state: link
-  with_items:
-    - deploy-pub
-  become: yes
-  become_user: '{{ user_buildbot_master_ssh }}'
-
 - name: Allow Buildbot user to manage also uploads
   user:
     name: '{{ user_buildbot_master_ssh }}'
@@ -155,3 +145,13 @@
     group: root
   become: yes
   become_user: root
+
+- name: Link uploads within Buildbot
+  ansible.builtin.file:
+    src: '/home/{{ user_buildbot_upload }}/{{ item }}'
+    dest: '/home/{{ user_buildbot_master_ssh }}/master/{{ item }}'
+    state: link
+  with_items:
+    - deploy-pub
+  become: yes
+  become_user: '{{ user_buildbot_master_ssh }}'
