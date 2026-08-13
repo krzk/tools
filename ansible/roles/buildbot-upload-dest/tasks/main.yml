@@ -126,7 +126,8 @@
       {{ mail_foward_to }}
     dest: '/home/{{ user_buildbot_upload }}/.forward'
   become: yes
-  become_user: '{{ user_buildbot_upload }}'
+  # '{{ user_buildbot_upload }}' cannot spawn shell (nologin), thus use root
+  become_user: root
 
 - name: Allow Buildbot user to manage also uploads
   user:
