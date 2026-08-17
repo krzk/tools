@@ -9,6 +9,7 @@
   when: lookup('vars', item) is undefined
   loop:
     - ssh_allow_group
+    - ssh_port
 
 - name: Add group for SSH logins
   group:
