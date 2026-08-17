@@ -1,8 +1,14 @@
 # SPDX-License-Identifier: GPL-2.0
 #
-# Copyright (c) 2021,2022,2025 Krzysztof Kozlowski
+# Copyright (c) 2021,2022,2025-2026 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <krzk@kernel.org>
 ---
+# Masters need to be configured before builders
+- hosts: buildbot_masters
+  roles:
+    - buildbot-git-mirror
+    - buildbot-upload-dest
+
 - hosts: buildbot_builders
   roles:
     - hardened
@@ -14,8 +20,3 @@
 - hosts: buildbot_artifact_storage
   roles:
     - buildbot-build-storage
-
-- hosts: buildbot_masters
-  roles:
-    - buildbot-git-mirror
-    - buildbot-upload-dest
