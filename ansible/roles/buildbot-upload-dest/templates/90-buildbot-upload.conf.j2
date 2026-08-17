@@ -1,0 +1,7 @@
+Match User {{ user_buildbot_upload }}
+    ChrootDirectory /home/{{ user_buildbot_upload }}
+    ForceCommand internal-sftp
+    PermitTunnel no
+    AllowAgentForwarding no
+    AllowTcpForwarding no
+    X11Forwarding no

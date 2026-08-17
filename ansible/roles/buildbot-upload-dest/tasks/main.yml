@@ -34,18 +34,13 @@
   become_user: root
 
 - name: Configure SSH for uploads
-  blockinfile:
-    path: '/etc/ssh/sshd_config'
-    state: present
-    block: |
-      Match User {{ user_buildbot_upload }}
-        ChrootDirectory /home/{{ user_buildbot_upload }}
-        ForceCommand internal-sftp
-        PermitTunnel no
-        AllowAgentForwarding no
-        AllowTcpForwarding no
-        X11Forwarding no
+  template:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    mode: '{{ item.mode }}'
     validate: /usr/sbin/sshd -T -f %s
+  with_items:
+    - {src: '90-buildbot-upload.conf.j2', dest: '/etc/ssh/sshd_config.d/90-buildbot-upload.conf', mode: '0644'}
   become: yes
   become_user: root
   register: sshd_config
