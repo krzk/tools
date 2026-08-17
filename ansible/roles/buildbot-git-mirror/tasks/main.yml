@@ -44,9 +44,8 @@
   tags: packages, python
   become: yes
   become_user: root
-  when:
-    - ansible_facts['os_family'] == 'Debian'
-    - ansible_facts['lsb']['major_release'] | int >= 24
+  when: (ansible_facts['distribution'] == 'Debian') or
+        ((ansible_facts['distribution'] == 'Ubuntu') and (ansible_facts['lsb']['major_release'] | int >= 24))
 
 - name: Install grokmirror
   pip:
@@ -58,7 +57,7 @@
   become: yes
   become_user: root
   when: (ansible_facts['os_family'] != 'Debian') or
-        ((ansible_facts['os_family'] == 'Debian') and (ansible_facts['lsb']['major_release'] | int < 24))
+        ((ansible_facts['distribution'] == 'Ubuntu') and (ansible_facts['lsb']['major_release'] | int < 24))
 
 - name: Create unprivileged user
   user:
@@ -140,9 +139,8 @@
     - '/etc/systemd/system/grok-pull@kernel.service.d'
   become: yes
   become_user: root
-  when:
-    - ansible_facts['os_family'] == 'Debian'
-    - ansible_facts['lsb']['major_release'] | int >= 24
+  when: (ansible_facts['distribution'] == 'Debian') or
+        ((ansible_facts['distribution'] == 'Ubuntu') and (ansible_facts['lsb']['major_release'] | int >= 24))
 
 - name: Install service override files
   ansible.builtin.template:
@@ -154,9 +152,8 @@
     - {src: '10-usergroup.conf.j2', dest: '/etc/systemd/system/grok-pull@kernel.service.d/10-usergroup.conf', mode: '0644'}
   become: yes
   become_user: root
-  when:
-    - ansible_facts['os_family'] == 'Debian'
-    - ansible_facts['lsb']['major_release'] | int >= 24
+  when: (ansible_facts['distribution'] == 'Debian') or
+        ((ansible_facts['distribution'] == 'Ubuntu') and (ansible_facts['lsb']['major_release'] | int >= 24))
 
 - name: Install service files
   ansible.builtin.template:
@@ -170,7 +167,7 @@
   become: yes
   become_user: root
   when: (ansible_facts['os_family'] != 'Debian') or
-        ((ansible_facts['os_family'] == 'Debian') and (ansible_facts['lsb']['major_release'] | int < 24))
+        ((ansible_facts['distribution'] == 'Ubuntu') and (ansible_facts['lsb']['major_release'] | int < 24))
 
 - name: Link service files
   ansible.builtin.file:
@@ -184,7 +181,7 @@
   become: yes
   become_user: root
   when: (ansible_facts['os_family'] != 'Debian') or
-        ((ansible_facts['os_family'] == 'Debian') and (ansible_facts['lsb']['major_release'] | int < 24))
+        ((ansible_facts['distribution'] == 'Ubuntu') and (ansible_facts['lsb']['major_release'] | int < 24))
 
 - name: Systemd reload
   ansible.builtin.systemd:
