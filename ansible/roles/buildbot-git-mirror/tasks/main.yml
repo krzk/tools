@@ -34,7 +34,9 @@
   tags: packages, python
   become: yes
   become_user: root
-  when: ansible_facts['os_family'] == 'Debian'
+  when:
+    - ansible_facts['distribution'] == 'Ubuntu'
+    - ansible_facts['lsb']['major_release'] | int < 24
 
 - name: Install grokmirror
   apt:
