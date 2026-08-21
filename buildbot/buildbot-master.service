@@ -1,4 +1,4 @@
-# Copyright (c) 2015-2021 Krzysztof Kozlowski
+# Copyright (c) 2015-2021,2026 Krzysztof Kozlowski
 # Author: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 #                             <krzk@kernel.org>
 #
@@ -8,6 +8,7 @@
 Description=Launch buildbot master
 After=network.target network-online.target
 Requires=network-online.target
+After=mysql.service mariadb.service
 
 [Service]
 Type=forking
