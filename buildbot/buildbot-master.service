@@ -16,10 +16,20 @@ ExecStart=/usr/local/bin/buildbot.sh start master
 ExecStop=/usr/local/bin/buildbot.sh stop master
 ExecReload=/usr/local/bin/buildbot.sh reload master
 User=buildbot
+Group=buildbot
 PIDFile=/home/buildbot/master/twistd.pid
 Restart=on-abnormal
 RestartSec=15
 TimeoutStartSec=180
+ProtectSystem=strict
+ReadWritePaths=/home/buildbot/master/
+# TODO: Move to /var/lib?
+# ProtectHome=yes
+# StateDirectory=buildbot
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=strict
+PrivateTmp=yes
 
 [Install]
 WantedBy=multi-user.target
