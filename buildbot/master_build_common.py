@@ -152,6 +152,17 @@ DTBS_CHECK_BOARDS = {
     },
 }
 
+DTBS_PATH_PLATFORM = {
+    'arm': {
+        'qcom': ['qcom'],
+        'samsung': ['samsung',],
+    },
+    'arm64': {
+        'qcom': ['qcom'],
+        'samsung': ['exynos', 'exynos/axis', 'exynos/google', 'tesla'],
+    },
+}
+
 def step_is_kernel_with_eliza(step):
     return (step_is_kernel_newer(step, 7, 1) or step_is_kernel_linux_next(step))
 
@@ -395,7 +406,7 @@ def steps_build_clean(env, always_run=False):
                                  name='Remove kbuild output directory'))
     return st
 
-def steps_build_common(env, kbuild_output, config=None):
+def steps_build_common(env, kbuild_output, config=None, make_config=True):
     st = []
     # OpenStack machines have frequent github.com name resolution failures:
     # fatal: unable to access 'https://github.com/krzk/tools.git/': Could not resolve host: github.com
@@ -445,7 +456,8 @@ def steps_build_common(env, kbuild_output, config=None):
     st.append(step_set_prop_if_file_exists('Set property: ARM DTS vendor subdirs',
                                            'arm_boot_dts_vendor_subdirs',
                                            ['arch/arm/boot/dts/samsung/Makefile']))
-    st.append(step_make_config(env, config))
+    if make_config:
+        st.append(step_make_config(env, config))
 
     return st
 
@@ -634,9 +646,20 @@ def steps_build_dtbs(builder_name, kbuild_output, env):
                             env=env, name='make dtbs_install'))
     return st
 
-def steps_dts_check_style(env):
+
+def steps_dts_check_style(env, platform, only_changed_files):
     st = []
-    cmd = cmd_on_commit_files('scripts/dtc/dt-check-style')
+    if platform and only_changed_files:
+        raise ValueError(f'Unsupported configuration (platform: {platform}, only_changed_files: {only_changed_files})')
+    if not platform and not only_changed_files:
+        raise ValueError(f'Unsupported configuration (platform: {platform}, only_changed_files: {only_changed_files})')
+
+    if only_changed_files:
+        cmd = cmd_on_commit_files('scripts/dtc/dt-check-style')
+    else:
+        cmd = 'scripts/dtc/dt-check-style'
+        for path in DTBS_PATH_PLATFORM[env['ARCH']][platform]:
+            cmd += f' arch/{env['ARCH']}/boot/dts/{path}/*.dts*'
     st.append(steps.Compile(command=['/bin/sh', '-c', cmd],
                             haltOnFailure=False,
                             warnOnFailure=True,
@@ -646,6 +669,7 @@ def steps_dts_check_style(env):
                             warningExtractor=steps.Compile.warnExtractFromRegexpGroups,
                             env=env, name='DTS check style'))
     return st
+
 
 def steps_dt_binding_check(env, kbuild_output):
     st = []
