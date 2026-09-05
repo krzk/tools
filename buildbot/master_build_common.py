@@ -130,6 +130,7 @@ DT_BINDING_CHECK_KNOWN_WARNINGS = [
 DTBS_CHECK_BOARDS = {
     'arm64': {
         'qcom': [
+            'qcom/eliza-cqs-evk',
             'qcom/eliza-mtp',
             'qcom/kaanapali-mtp',
             'qcom/kaanapali-qrd',
@@ -164,10 +165,10 @@ DTBS_PATH_PLATFORM = {
 }
 
 def step_is_kernel_with_eliza(step):
-    return (step_is_kernel_newer(step, 7, 1) or step_is_kernel_linux_next(step))
+    return (step_is_kernel_newer(step, 7, 3) or step_is_kernel_linux_next(step))
 
 DTBS_CHECK_BOARDS_SKIP = {
-    'qcom/eliza-mtp': step_is_kernel_with_eliza,
+    'qcom/eliza-cqs-evk': step_is_kernel_with_eliza,
 }
 
 # DTC warnings have two lines with ':', so look for file pattern starting with '/'
