@@ -634,6 +634,19 @@ def steps_build_dtbs(builder_name, kbuild_output, env):
                             env=env, name='make dtbs_install'))
     return st
 
+def steps_dts_check_style(env):
+    st = []
+    cmd = cmd_on_commit_files('scripts/dtc/dt-check-style')
+    st.append(steps.Compile(command=['/bin/sh', '-c', cmd],
+                            haltOnFailure=False,
+                            warnOnFailure=True,
+                            warnOnWarnings=True,
+                            flunkOnFailure=False,
+                            warningPattern=DT_CHECK_STYLE_WARNING_PATTERN,
+                            warningExtractor=steps.Compile.warnExtractFromRegexpGroups,
+                            env=env, name='DTS check style'))
+    return st
+
 def steps_dt_binding_check(env, kbuild_output):
     st = []
     st += steps_build_common(env, kbuild_output)
@@ -790,17 +803,6 @@ def steps_dtbs_warnings(env, kbuild_output, config=None):
                             haltOnFailure=True,
                             warnOnWarnings=True,
                             suppressionList=BUILD_WARN_IGNORE,
-                            env=env, name=step_name))
-
-    step_name = 'DTS check style: ' + env['ARCH'] + '/' + step_name_cfg
-    cmd = cmd_on_commit_files('scripts/dtc/dt-check-style')
-    st.append(steps.Compile(command=['/bin/sh', '-c', cmd],
-                            haltOnFailure=False,
-                            warnOnFailure=True,
-                            warnOnWarnings=True,
-                            flunkOnFailure=False,
-                            warningPattern=DT_CHECK_STYLE_WARNING_PATTERN,
-                            warningExtractor=steps.Compile.warnExtractFromRegexpGroups,
                             env=env, name=step_name))
 
     return st
