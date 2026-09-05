@@ -175,7 +175,7 @@ DTBS_CHECK_BOARDS_SKIP = {
 #  also defined at /home/buildbot/kernel/build/arch/arm64/boot/dts/qcom/qrb2210-arduino-imola.dts:222.12-226.3
 DTBS_CHECK_WARNING_PATTERN = "^(/.*?\\.(dtb|dts|dtsi)): ?(.*)$"
 DT_BINDING_CHECK_WARNING_PATTERN = "^(.*?\\.(yaml|example\\.dtb)): (.*)$"
-DT_CHECK_STYLE_WARNING_PATTERN = "^(.*?\\.dtsi?):([0-9]+): ?(.*)$"
+DT_CHECK_STYLE_WARNING_PATTERN = "^(.*?\\.dts[io]?):([0-9]+): ?(.*)$"
 
 def warnExtractFromRegexpGroups(self, line, match):
     """
