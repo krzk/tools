@@ -160,7 +160,7 @@ DTBS_PATH_PLATFORM = {
     },
     'arm64': {
         'qcom': ['qcom'],
-        'samsung': ['exynos', 'exynos/axis', 'exynos/google', 'tesla'],
+        'samsung': ['exynos', 'exynos/axis', 'exynos/google', 'google', 'tesla'],
     },
 }
 
