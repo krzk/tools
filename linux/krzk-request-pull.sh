@@ -38,9 +38,9 @@ if [[ $REMOTE_URL == *"/krzk/linux.git"* ]]; then
 	CC="Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, $CC, $CC_KRZK"
 	if [[ $TAG == *"-clk-"* ]]; then
 		SUBJECT="clk: samsung:"
-		TO="Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>"
-		TO_HI="Stephen and Michael"
-		CC="Sylwester Nawrocki <snawrocki@kernel.org>, Brian Masney <bmasney@redhat.com>, $CC"
+		TO="Stephen Boyd <sboyd@kernel.org>, Brian Masney <bmasney+clk@redhat.com>, Jerome Brunet <jbrunet+clk@baylibre.com>"
+		TO_HI="Stephen, Brian and Jerome"
+		CC="Sylwester Nawrocki <snawrocki@kernel.org>, $CC"
 		CC="Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, $CC"
 	elif [[ $TAG == *"-drivers-"* ]]; then
 		SUBJECT="samsung: drivers"
