@@ -7,7 +7,7 @@
 
 FROM alpine:latest
 USER		root
-WORKDIR		/root	
+WORKDIR		/root
 
 RUN apk update
 
