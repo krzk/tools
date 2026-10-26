@@ -155,7 +155,7 @@ class Alpaca:
         self.send('ttl outputBit 4 0')
         self.power_key_press()
         self.power_on()
-        time.sleep(2.0)
+        time.sleep(0.5)
         self.power_key_release()
 
     def power_off(self):
