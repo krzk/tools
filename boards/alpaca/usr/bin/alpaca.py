@@ -121,10 +121,10 @@ class Alpaca:
         return self.send('ttl outputBit 1 0')
 
     def sw_download_key_press(self):
-        return self.send('ttl outputBit 4 1')
+        return self.send('ttl outputBit 2 1')
 
     def sw_download_key_release(self):
-        return self.send('ttl outputBit 4 0')
+        return self.send('ttl outputBit 2 0')
 
     def close(self):
         """Close the serial port."""
@@ -134,12 +134,12 @@ class Alpaca:
         print('Booting to EDL')
         self.power_off()
         self.power_key_press()
-        time.sleep(0.5)
         self.power_on()
         print('Toggle EDL on')
         self.sw_download_key_press()
-        time.sleep(3.0)
+        time.sleep(0.5)
         self.power_key_release()
+        time.sleep(2.0)
         print('Toggle EDL off')
         self.sw_download_key_release()
         time.sleep(2.0)
