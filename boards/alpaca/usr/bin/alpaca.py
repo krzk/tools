@@ -120,6 +120,12 @@ class Alpaca:
     def power_key_release(self):
         return self.send('ttl outputBit 1 0')
 
+    def sw_download_key_press(self):
+        return self.send('ttl outputBit 4 1')
+
+    def sw_download_key_release(self):
+        return self.send('ttl outputBit 4 0')
+
     def close(self):
         """Close the serial port."""
         self.serial.close()
@@ -131,11 +137,11 @@ class Alpaca:
         time.sleep(0.5)
         self.power_on()
         print('Toggle EDL on')
-        self.send('ttl outputBit 4 1')
+        self.sw_download_key_press()
         time.sleep(3.0)
         self.power_key_release()
         print('Toggle EDL off')
-        self.send('ttl outputBit 4 0')
+        self.sw_download_key_release()
         time.sleep(2.0)
 
     def board_boot_to_uefi(self, wait_time_sec=5.0):
@@ -152,7 +158,7 @@ class Alpaca:
     def board_start(self):
         """Power on and start the board."""
         self.power_off()
-        self.send('ttl outputBit 4 0')
+        self.sw_download_key_release()
         self.power_key_press()
         self.power_on()
         time.sleep(0.5)
