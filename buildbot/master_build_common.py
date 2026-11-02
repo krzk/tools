@@ -171,10 +171,12 @@ DTBS_CHECK_BOARDS_SKIP = {
     'qcom/eliza-cqs-evk': step_is_kernel_with_eliza,
 }
 
-# DTC warnings have two lines with ':', so look for file pattern starting with '/'
+# DTC warnings have two lines with ':', so look for file pattern starting with '/' or other path character:
 # /home/buildbot/kernel/build/arch/arm64/boot/dts/qcom/agatti.dtsi:2033.27-2106.6: Warning (avoid_unnecessary_addr_size): /soc@0/display-subsystem@5e00000/dsi@5e94000: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" or "ranges" property
 #  also defined at /home/buildbot/kernel/build/arch/arm64/boot/dts/qcom/qrb2210-arduino-imola.dts:222.12-226.3
-DTBS_CHECK_WARNING_PATTERN = "^(/.*?\\.(dtb|dts|dtsi)): ?(.*)$"
+# dtbs_check start with a relative path:
+# arch/arm64/boot/dts/exynos/exynos5433-tm2.dtb: audio-codec@0 (wlf,wm5110): Unevaluated properties are not allowed ('wlf,ldoena-gpios', 'wlf,reset-gpios' were unexpected)
+DTBS_CHECK_WARNING_PATTERN = "^([a-z/].*?\\.(dtb|dts|dtsi)): ?(.*)$"
 DT_BINDING_CHECK_WARNING_PATTERN = "^(.*?\\.(yaml|example\\.dtb)): (.*)$"
 DT_CHECK_STYLE_WARNING_PATTERN = "^(.*?\\.dts[io]?):([0-9]+): ?(.*)$"
 
