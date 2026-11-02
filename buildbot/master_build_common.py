@@ -50,7 +50,9 @@ DTBS_CHECK_KNOWN_WARNINGS = {
             'exynos': [
                 # Pending on mailing list (old patchset)
                 ('.*exynos5250-snow.dtb$', re.escape("/i2c-arbitrator/i2c-arb/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
+                ('.*exynos5250-snow.dtb$', "fet[1-7]:.*ti,overcurrent-wait: b'.*' is not of type 'object', 'integer', 'array', 'boolean', 'null'", None, None),
                 ('.*exynos5250-snow-rev5.dtb$', re.escape("/i2c-arbitrator/i2c-arb/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
+                ('.*exynos5250-snow-rev5.dtb$', "fet[1-7]:.*ti,overcurrent-wait: b'.*' is not of type 'object', 'integer', 'array', 'boolean', 'null'", None, None),
                 ('.*exynos5420-peach-pit.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
                 ('.*exynos5800-peach-pi.dtb$', re.escape("/soc/spi@12d40000/cros-ec@0/i2c-tunnel/power-regulator@48: failed to match any schema with compatible: ['ti,tps65090']"), None, None),
             ],
