@@ -102,7 +102,7 @@ site = https://git.kernel.org
 # file:// (when manifest file is on NFS, for example)
 # NB: You can no longer specify username:password as part of the URL with
 #     grokmirror 2.x and above. You can use a netrc file for this purpose.
-manifest = ${site}/manifest.js.gz
+manifest = {{ mirror_manifest_url }}
 #
 # As an alternative to setting a manifest URL, you can define a manifest_command.
 # It has three possible outcomes:
