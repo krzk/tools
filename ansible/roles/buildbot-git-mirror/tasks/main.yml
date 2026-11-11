@@ -129,6 +129,17 @@
   become: yes
   become_user: root
 
+# Some builders get fra.source.kernel.org, which is around 1-2 minutes behind sea and sto,
+# completely breaking fetching sources by Buildbot workers
+- name: Pin git.kernel.org for broken mirroring
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    search_string: 'git.kernel.org'
+    line: '{{ git_kernel_org_pin_ip_mirror }}	git.kernel.org'
+  become: yes
+  become_user: root
+  when: git_kernel_org_pin_ip_mirror is defined
+
 - name: Mkdir service override directory
   ansible.builtin.file:
     path: '{{ item }}'
