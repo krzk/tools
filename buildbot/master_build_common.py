@@ -803,7 +803,7 @@ def steps_dtbs_check_boards(env, kbuild_output, boards, config=None, git_reset=T
 
         st.append(steps.Compile(command=[util.Interpolate(CMD_MAKE), 'CHECK_DTBS=y', 'W=1',
                                          '{}.dtb'.format(board)],
-                                haltOnFailure=True,
+                                haltOnFailure=False,
                                 warnOnWarnings=True,
                                 suppressionList=suppression_list,
                                 warningPattern=DTBS_CHECK_WARNING_PATTERN,
