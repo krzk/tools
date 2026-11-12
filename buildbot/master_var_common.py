@@ -52,3 +52,16 @@ def step_is_kernel_newer(step, exp_major, exp_minor):
     if (ver_major == exp_major) and (ver_minor >= exp_minor):
         return True
     return False
+
+def step_is_kernel_newer_or_next(step, exp_major, exp_minor):
+    """ Return True if step is part of building/booting kernel version >= exp_major.exp_minor
+    or it is linux-next kernel master branch (not pending-fixes)
+    Arguments:
+        step - buildbot.step
+        exp_major - expected major version or newer
+        exp_minor - expected minor version or newer
+    Returns:
+        bool
+    """
+
+    return step_is_kernel_newer(step, exp_major, exp_minor) or step_is_kernel_linux_next(step)

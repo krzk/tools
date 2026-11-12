@@ -9,7 +9,7 @@
 #
 
 from master_auth import master_auth_config
-from master_var_common import step_is_kernel_linux_next, step_is_kernel_newer
+from master_var_common import step_is_kernel_newer_or_next
 
 from buildbot.plugins import steps, util
 from buildbot import process
@@ -134,12 +134,25 @@ DTBS_CHECK_BOARDS = {
         'qcom': [
             'qcom/eliza-cqs-evk',
             'qcom/eliza-mtp',
+            'qcom/glymur-crd',
+            'qcom/glymur-hp-elitebook-x-g2q',
+            'qcom/glymur-lenovo-yoga-slim7x',
             'qcom/kaanapali-mtp',
             'qcom/kaanapali-qrd',
+            'qcom/kalambo-crd',
             'qcom/lemans-evk',
+            'qcom/mahua-crd',
+            'qcom/mahua-lenovo-thinkpad-t14s-gen7-lcd',
             'qcom/monaco-evk',
             'qcom/monaco-arduino-monza',
+            'qcom/nord-ride',
+            'qcom/nord-ride-embedded',
+            'qcom/nord-rrd',
+            'qcom/purwa-iot-evk',
             'qcom/qrb2210-arduino-imola',
+            'qcom/shikra-cqm-evk',
+            'qcom/shikra-cqs-evk',
+            'qcom/shikra-iqs-evk',
             'qcom/sm8550-hdk',
             'qcom/sm8550-mtp',
             'qcom/sm8550-qrd',
@@ -148,6 +161,7 @@ DTBS_CHECK_BOARDS = {
             'qcom/sm8650-qrd',
             'qcom/sm8750-mtp',
             'qcom/sm8750-qrd',
+            'qcom/talos-evk',
             'qcom/x1e78100-lenovo-thinkpad-t14s',
             'qcom/x1e80100-dell-xps13-9345',
             'qcom/x1p42100-asus-zenbook-a14',
@@ -167,10 +181,16 @@ DTBS_PATH_PLATFORM = {
 }
 
 def step_is_kernel_with_eliza(step):
-    return (step_is_kernel_newer(step, 7, 3) or step_is_kernel_linux_next(step))
+    return step_is_kernel_newer_or_next(step, 7, 3)
+
+def step_is_kernel_with_kalambo(step):
+    return step_is_kernel_newer_or_next(step, 7, 5)
+
 
 DTBS_CHECK_BOARDS_SKIP = {
     'qcom/eliza-cqs-evk': step_is_kernel_with_eliza,
+    'qcom/kalambo-crd': step_is_kernel_with_kalambo,
+    'qcom/nord-ride-embedded': step_is_kernel_with_kalambo,
 }
 
 # DTC warnings have two lines with ':', so look for file pattern starting with '/' or other path character:
