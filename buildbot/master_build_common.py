@@ -132,7 +132,7 @@ DT_BINDING_CHECK_KNOWN_WARNINGS = [
 DTBS_CHECK_BOARDS = {
     'arm64': {
         'qcom': [
-            'qcom/eliza-cqs-evk',
+            'qcom/eliza-cqs-evk-emmc',
             'qcom/eliza-mtp',
             'qcom/glymur-crd',
             'qcom/glymur-hp-elitebook-x-g2q',
@@ -181,14 +181,14 @@ DTBS_PATH_PLATFORM = {
 }
 
 def step_is_kernel_with_eliza(step):
-    return step_is_kernel_newer_or_next(step, 7, 3)
+    return step_is_kernel_newer_or_next(step, 7, 5)
 
 def step_is_kernel_with_kalambo(step):
     return step_is_kernel_newer_or_next(step, 7, 5)
 
 
 DTBS_CHECK_BOARDS_SKIP = {
-    'qcom/eliza-cqs-evk': step_is_kernel_with_eliza,
+    'qcom/eliza-cqs-evk-emmc': step_is_kernel_with_eliza,
     'qcom/kalambo-crd': step_is_kernel_with_kalambo,
     'qcom/nord-ride-embedded': step_is_kernel_with_kalambo,
 }
