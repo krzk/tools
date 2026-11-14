@@ -231,4 +231,4 @@ echo "      $HOSTNAME:$LOG"
 
 # cat $LOG
 
-[ $STATUS != 0 ] && exit $STATUS
+exit $STATUS
