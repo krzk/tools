@@ -9,6 +9,9 @@
 #
 
 DEFAULT_CONFIG="defconfig"
+# Maximum number of build warnings/errors printed after the build. Full list
+# is always stored next to the build log.
+MAX_ISSUES="${GBK_MAX_ISSUES:-200}"
 
 function usage() {
 	{
@@ -26,6 +29,42 @@ function usage() {
 
 	} 1>&2
 	exit 1
+}
+
+# Extract unique warnings and errors from build log (compiler, linker, modpost,
+# Kconfig, dtc, dtbs_check, dt_binding_check, yamllint, make).
+# dtschema "from schema $id" continuation lines are kept together with the
+# message they belong to.
+extract_issues() {
+	awk '
+	function flush() {
+		if (rec != "" && !seen[rec]++)
+			print rec
+		rec = ""
+	}
+	/^[ \t]+from schema \$id:/ {
+		if (rec != "")
+			rec = rec "\n" $0
+		next
+	}
+	/^[^ ]+: ?(fatal )?(warning|error): / ||		# gcc, clang, kernel-doc, Kconfig
+	/^(warning|error): / ||
+	/(^|: )(Warning|Error) \(/ ||				# dtc
+	/^(Error|FATAL ERROR|WARNING|ERROR): / ||		# dtc, modpost, Kconfig
+	/^[^ ]+\.dtbo?: / ||					# dtbs_check, dt_binding_check examples
+	/^[^ ]+\.yaml: / ||					# dt_binding_check
+	/^[^ ]+\.yaml:[0-9]+:[0-9]+: \[(warning|error)\]/ ||	# yamllint
+	/^([^ ]+-)?ld(\.[a-z]+)?: / ||				# linker
+	/^make(\[[0-9]+\])?: \*\*\* / ||			# make
+	/^[^ ]+:[0-9]+: \*\*\* / ||
+	/^\/bin\/(ba)?sh: / {
+		flush()
+		rec = $0
+		next
+	}
+	{ flush() }
+	END { flush() }
+	' "$1"
 }
 
 have_ccache() {
@@ -158,6 +197,7 @@ mkdir "$WORKDIR" || exit
 
 BUILDDIR="$WORKDIR/build"
 LOG="$WORKDIR/build.log"
+ISSUES_LOG="$WORKDIR/issues.log"
 touch "$WORKDIR/building"
 trap 'rm -rf "$WORKDIR/building" "$BUILDDIR"' 0
 
@@ -229,6 +269,18 @@ else echo "  !!! BUILD FAILED !!! build log:"
 fi
 echo "      $HOSTNAME:$LOG"
 
-# cat $LOG
+extract_issues "$LOG" > "$ISSUES_LOG"
+# Count messages, not their indented continuation lines
+ISSUES_NUM="$(grep -c -v '^[[:space:]]' "$ISSUES_LOG")"
+if [ "$ISSUES_NUM" -gt 0 ]; then
+	echo "  build warnings/errors ($ISSUES_NUM unique):"
+	awk -v max="$MAX_ISSUES" '!/^[ \t]/ { n++ } n <= max { print "    " $0 }' "$ISSUES_LOG"
+	if [ "$ISSUES_NUM" -gt "$MAX_ISSUES" ]; then
+		echo "    ... and $((ISSUES_NUM - MAX_ISSUES)) more, full list:"
+		echo "      $HOSTNAME:$ISSUES_LOG"
+	fi
+else
+	echo "  no build warnings/errors found"
+fi
 
 exit $STATUS

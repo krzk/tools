@@ -60,6 +60,10 @@ Features:
  - Builds are done on /tmp, so be sure it is tmpfs and you have a lot of RAM,
    for best experience.
    After the build, logs are left in /tmp, but no build output/binaries.
+ - After the build, unique warnings and errors (compiler, linker, modpost,
+   Kconfig, dtc, dtbs_check, dt_binding_check) are printed, limited to 200
+   messages (override with GBK_MAX_ISSUES environment variable on the build
+   server).  Full list is stored next to the build log as issues.log.
  - Recognized cross-compile architectures:
    x86_64, i386, alpha, arm, arm64, m68k, mips, powerpc, powerpc64, riscv,
    s390, sparc
