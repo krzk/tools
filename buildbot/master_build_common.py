@@ -127,6 +127,8 @@ DT_BINDING_CHECK_KNOWN_WARNINGS = [
     ('.*/net/renesas,ether.example.dtb', re.escape("ethernet-phy@1 (ethernet-phy-id0022.1537): compatible: ['ethernet-phy-id0022.1537', 'ethernet-phy-ieee802.3-c22'] is too long"), None, None),
     ('.*/mtd/st,spear600-smi.example.dtb', re.escape("flash@fc000000 (st,spear600-smi): flash@f8000000: Unevaluated properties are not allowed ('st,smi-fast-mode' was unexpected)"), None, None),
     ('.*/mtd/st,spear600-smi.example.dtb', re.escape("flash@fc000000 (st,spear600-smi): Unevaluated properties are not allowed ('flash@f8000000' was unexpected)"), None, None),
+    # Appeared at v7.4-rc1:
+    ('.*/display/imx/fsl,imx-lcdc.example.dtb', "display0: fsl,pcr: b'.*' is not of type 'object', 'integer', 'array', 'boolean', 'null'", None, None),
 ]
 
 DTBS_CHECK_BOARDS = {
