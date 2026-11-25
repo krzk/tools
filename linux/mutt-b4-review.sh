@@ -15,6 +15,7 @@ readonly PROJECTS=(
 	"dt"
 	"mem-ctrl"
 	"pinctrl"
+	"review-dt"
 	"samsung-soc"
 	"w1"
 )
